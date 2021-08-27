@@ -1,5 +1,5 @@
 # (Track)ManiaExchange Randomizer
-## Takes randomly a map from (T)MX and playes it
+## Takes randomly a map from (T)MX and plays it
 
 ---
 ### Usage:
