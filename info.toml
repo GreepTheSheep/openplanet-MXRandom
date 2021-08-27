@@ -1,0 +1,11 @@
+[meta]
+name = "ManiaExchange Random Map Picker"
+author = "Greep"
+category = "TMX"
+perms = "paid"
+siteid = 123
+
+version = "1.0"
+
+[script]
+imports = [ "Icons.as" ]
