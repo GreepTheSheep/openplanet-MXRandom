@@ -7,8 +7,18 @@ void RenderMenu()
         if (!isTitePackLoaded()) sendNoTitlePackError();
         else
         {
-            RandomMapProcess = true;
-            isSearching = !isSearching;
+#if TMNEXT
+            if (!Permissions::PlayLocalMap())
+            {
+                vec4 color = UI::HSV(999, 1, 0.7);
+                UI::ShowNotification(Icons::Times + " Missing permissions!", "You don't have permissions to play other maps than the official campaign.", color, 20000);
+            } else {
+#endif
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+#if TMNEXT
+            }
+#endif
         }
 	}
 }
