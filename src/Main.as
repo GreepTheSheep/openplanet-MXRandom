@@ -70,6 +70,7 @@ void Main()
         if (RandomMapProcess && !isSearching)
         {
             RandomMapProcess = false;
+            UI::ShowNotification(Icons::Check + " Stopped searching", "You have canceled the search");
             log("Stopped searching");
         }
     }
