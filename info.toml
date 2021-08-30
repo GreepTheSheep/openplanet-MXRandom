@@ -3,7 +3,7 @@ name = "ManiaExchange Random Map Picker"
 author = "Greep"
 category = "TMX"
 perms = "paid"
-siteid = 123
+siteid = 124
 
 version = "1.0"
 

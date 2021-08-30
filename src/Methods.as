@@ -183,14 +183,7 @@ Json::Value ResponseToJSON(const string &in HTTPResponse) {
 
 // --- Sounds (Thanks Nsgr) ---
 
-void PlaySound(string FileName = "", float Volume = 1, float Pitch = 1) {
-    if (FileName == ""){
-#if MP4
-        FileName = "Race3.wav";
-#if TMNEXT
-        FileName = "MatchFound.wav";
-#endif
-    }
+void PlaySound(string FileName = "Race3.wav", float Volume = 1, float Pitch = 1) {
     auto audioPort = GetApp().AudioPort;
     for (uint i = 0; i < audioPort.Sources.Length; i++) {
         auto source = audioPort.Sources[i];
