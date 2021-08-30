@@ -161,7 +161,6 @@ Json::Value GetRandomMap() {
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
-    Headers["User-Agent"] = "Openplanet" /* add here OP version */ + " " + name + "/" + Meta::ExecutingPlugin().get_Version();
     req.Body = "";
     req.Start();
     while (!req.Finished()) {
