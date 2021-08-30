@@ -3,7 +3,7 @@ bool isSearching = false;
 
 void RenderMenu()
 {
-	if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Random map", "", isSearching)) {
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Random map", "", isSearching)) {
         if (!isTitePackLoaded()) sendNoTitlePackError();
         else
         {
@@ -20,7 +20,7 @@ void RenderMenu()
             }
 #endif
         }
-	}
+    }
 }
 
 void Main()

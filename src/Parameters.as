@@ -4,7 +4,7 @@ string shortMXName = "MX";
 string MXColor = "\\$39f";
 string gameName = "MP4";
 string TMXURL = "tm.mania.exchange";
-#if TMNEXT
+#elif TMNEXT
 string name = "TrackmaniaExchange Random Map Picker";
 string shortMXName = "TMX";
 string MXColor = "\\$9fc";

@@ -87,13 +87,11 @@ bool isMapSettingsCompatible(Json::Value MapMX)
     if (!mp4) {
         log("Map is not compatible with MP4.");
     };
-#endif
 
-    return length 
-#if MP4
-    && titlepack && mp4
+    return length && titlepack && mp4;
+#elif TMNEXT
+    return length;
 #endif
-    ;
 }
 
 bool isMapLengthCompatible(Json::Value MapMX)
@@ -186,15 +184,14 @@ Json::Value ResponseToJSON(const string &in HTTPResponse) {
 
 // --- Sounds (Thanks Nsgr) ---
 
-void PlaySound(
+void PlaySound(string FileName = "", float Volume = 1, float Pitch = 1) {
+    if (FileName == ""){
 #if MP4
-    string FileName = "Race3.wav",
+        FileName = "Race3.wav";
 #if TMNEXT
-    string FileName = "MatchFound.wav",
+        FileName = "MatchFound.wav";
 #endif
-    float Volume = 1,
-    float Pitch = 1
-    ) {
+    }
     auto audioPort = GetApp().AudioPort;
     for (uint i = 0; i < audioPort.Sources.Length; i++) {
         auto source = audioPort.Sources[i];
@@ -226,7 +223,7 @@ void PlaySound(
     }
     error("Couldn't find sound to play!", "Filename: " + FileName);
 
-    // Backup sound: "ManiaPlanetZoomIn.wav"
+    // Backup sound: "Race3.wav"
     for (uint i = 0; i < audioPort.Sources.Length; i++) {
         auto source = audioPort.Sources[i];
         auto sound = source.PlugSound;
@@ -249,5 +246,6 @@ void PlaySound(
             return;
         }
     }
-    error("Couldn't find backup ManiaPlanetZoomIn.wav", "Sources: " + audioPort.Sources.Length);
+    error("Couldn't find backup Race3.wav", "Sources: " + audioPort.Sources.Length);
 }
+
