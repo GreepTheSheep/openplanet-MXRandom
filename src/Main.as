@@ -1,8 +1,16 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
+bool menu_visibility = true;
+
+int64 QueueTimeStart;
+
 void RenderMenu()
 {
+    if(UI::MenuItem(MXColor + Icons::MousePointer + " \\$z"+shortMXName+" Random (Menu)", "", menu_visibility)) {
+		menu_visibility = !menu_visibility;	
+	}
+
     if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Random map", "", isSearching)) {
         if (!isTitePackLoaded()) sendNoTitlePackError();
         else
@@ -16,6 +24,7 @@ void RenderMenu()
 #endif
                 RandomMapProcess = true;
                 isSearching = !isSearching;
+                QueueTimeStart = Time::get_Stamp();
 #if TMNEXT
             }
 #endif
