@@ -25,5 +25,5 @@ enum MapLength
     Long,
 }
 
-[Setting name="Map length"]
+[Setting name="Map length" category="Searching"]
 MapLength Setting_MapLength = MapLength::Anything;
