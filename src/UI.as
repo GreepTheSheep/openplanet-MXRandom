@@ -1,3 +1,6 @@
+int oldTimestamp = 0;
+int rand = 0;
+
 void RenderInterface() {
 	if (!menu_visibility) {
 		return;
@@ -12,11 +15,10 @@ void RenderInterface() {
 }
 
 void RenderHeader() {
-    if (!isSearching) {
-        if (RenderPlayRandomButton()) {
-            if (!isTitePackLoaded()) sendNoTitlePackError();
-            else
-            {
+    // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
+    if (isTitePackLoaded()) {
+        if (!isSearching) {
+            if (RenderPlayRandomButton()) {
 #if TMNEXT
                 if (!Permissions::PlayLocalMap())
                 {
@@ -31,15 +33,15 @@ void RenderHeader() {
                 }
 #endif
             }
+        } else {
+            if (RenderStopRandomButton()) {
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+            }
         }
-    } else {
-        if (RenderStopRandomButton()) {
-            RandomMapProcess = true;
-            isSearching = !isSearching;
-        }
+        UI::SetCursorPos(vec2(0, 100));
+        UI::Separator();
     }
-    UI::SetCursorPos(vec2(0, 100));
-    UI::Separator();
 }
 
 bool RenderPlayRandomButton() {
@@ -77,11 +79,29 @@ void RenderFooter() {
     UI::SetCursorPos(vec2(8, UI::GetWindowSize().y-26));
     UI::Separator();
     UI::SetCursorPos(vec2(8, UI::GetWindowSize().y-24));
-    if (isSearching) {
-        int HourGlassValue = (Time::Stamp / 2) % 3;
-        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-        UI::Text(Hourglass + "Searching for a random map... ("+ Time::FormatString("%M:%S", Time::get_Stamp()-QueueTimeStart) +")");
+    if (!isTitePackLoaded()) {
+        UI::Text("\\$f00"+Icons::Times+" \\$zNo titlepack loaded");
     } else {
-        UI::Text("Press " + Icons::Play + " to start searching");
+        if (isSearching) {
+            int HourGlassValue = Time::Stamp % 3;
+            string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+            UI::Text(Hourglass + "Searching for a random map... ("+ Time::FormatString("%M:%S", Time::get_Stamp()-QueueTimeStart) +")");
+        } else {
+            int timestamps = (Time::Stamp / 25) % 2;
+            if (oldTimestamp != timestamps) {
+                rand = Math::Rand(0,4);
+                oldTimestamp = timestamps;
+            }
+            // int timestamps = Math::Rand(0,4);
+            string readyTxt;
+            switch (rand) {
+                case 0: readyTxt = "Waiting for inputs..."; break;
+                case 1: readyTxt = "Click on the " + Icons::Play + " button to start playing maps"; break;
+                case 2: readyTxt = "You can checkout the recently played maps list!"; break;
+                case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
+                case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
+            }
+            UI::Text("\\$666"+readyTxt);
+        }
     }
 }
