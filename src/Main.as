@@ -12,6 +12,9 @@ void RenderMenu()
     if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", menu_visibility)) {
 		menu_visibility = !menu_visibility;	
 	}
+    if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
+		OpenBrowserURL("https://flinkblog.de/RMC/");
+	}
 }
 
 void Main()
