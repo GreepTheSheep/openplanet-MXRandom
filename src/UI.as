@@ -17,30 +17,26 @@ void RenderInterface() {
 void RenderHeader() {
     // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
     if (isTitePackLoaded()) {
-        if (!isSearching) {
-            if (RenderPlayRandomButton()) {
 #if TMNEXT
-                if (!Permissions::PlayLocalMap())
-                {
-                    vec4 color = UI::HSV(0, 1, 0.5);
-                    UI::ShowNotification(Icons::Times + " Missing permissions!", "You don't have permissions to play other maps than the official campaign.", color, 20000);
-                } else {
+        if (Permissions::PlayLocalMap()){
 #endif
+            if (!isSearching) {
+                if (RenderPlayRandomButton()) {
                     RandomMapProcess = true;
                     isSearching = !isSearching;
                     QueueTimeStart = Time::get_Stamp();
-#if TMNEXT
                 }
-#endif
+            } else {
+                if (RenderStopRandomButton()) {
+                    RandomMapProcess = true;
+                    isSearching = !isSearching;
+                }
             }
-        } else {
-            if (RenderStopRandomButton()) {
-                RandomMapProcess = true;
-                isSearching = !isSearching;
-            }
+            UI::SetCursorPos(vec2(0, 100));
+            UI::Separator();
+#if TMNEXT
         }
-        UI::SetCursorPos(vec2(0, 100));
-        UI::Separator();
+#endif
     }
 }
 
@@ -87,21 +83,29 @@ void RenderFooter() {
             string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
             UI::Text(Hourglass + "Searching for a random map... ("+ Time::FormatString("%M:%S", Time::get_Stamp()-QueueTimeStart) +")");
         } else {
-            int timestamps = (Time::Stamp / 25) % 2;
-            if (oldTimestamp != timestamps) {
-                rand = Math::Rand(0,4);
-                oldTimestamp = timestamps;
+#if TMNEXT
+            if (!Permissions::PlayLocalMap()) {
+                UI::Text("\\$f00"+Icons::Times+" Missing permissions! You don't have permissions to play other maps than the official campaign.");
+            } else {
+#endif
+                int timestamps = (Time::Stamp / 25) % 2;
+                if (oldTimestamp != timestamps) {
+                    rand = Math::Rand(0,4);
+                    oldTimestamp = timestamps;
+                }
+                // int timestamps = Math::Rand(0,4);
+                string readyTxt;
+                switch (rand) {
+                    case 0: readyTxt = "Waiting for inputs..."; break;
+                    case 1: readyTxt = "Click on the " + Icons::Play + " button to start playing maps"; break;
+                    case 2: readyTxt = "You can checkout the recently played maps list!"; break;
+                    case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
+                    case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
+                }
+                UI::Text("\\$666"+readyTxt);
+#if TMNEXT
             }
-            // int timestamps = Math::Rand(0,4);
-            string readyTxt;
-            switch (rand) {
-                case 0: readyTxt = "Waiting for inputs..."; break;
-                case 1: readyTxt = "Click on the " + Icons::Play + " button to start playing maps"; break;
-                case 2: readyTxt = "You can checkout the recently played maps list!"; break;
-                case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
-                case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
-            }
-            UI::Text("\\$666"+readyTxt);
+#endif
         }
     }
 }
