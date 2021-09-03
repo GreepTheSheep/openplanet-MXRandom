@@ -1,7 +1,7 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = Setting_OpenAtStartup;
+bool menu_visibility = false;
 
 int64 QueueTimeStart;
 

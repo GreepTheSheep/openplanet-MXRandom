@@ -1,6 +1,3 @@
-[Setting name="Open the menu when starting up Openplanet" category="Menu"]
-bool Setting_OpenAtStartup = false;
-
 [Setting name="Window default size (Height value)" category="Menu"]
 int Setting_WindowSize_h = 630;
 
