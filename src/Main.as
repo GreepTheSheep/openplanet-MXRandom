@@ -7,29 +7,9 @@ int64 QueueTimeStart;
 
 void RenderMenu()
 {
-    if(UI::MenuItem(MXColor + Icons::MousePointer + " \\$z"+shortMXName+" Random (Menu)", "", menu_visibility)) {
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", menu_visibility)) {
 		menu_visibility = !menu_visibility;	
 	}
-
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Random map", "", isSearching)) {
-        if (!isTitePackLoaded()) sendNoTitlePackError();
-        else
-        {
-#if TMNEXT
-            if (!Permissions::PlayLocalMap())
-            {
-                vec4 color = UI::HSV(999, 1, 0.7);
-                UI::ShowNotification(Icons::Times + " Missing permissions!", "You don't have permissions to play other maps than the official campaign.", color, 20000);
-            } else {
-#endif
-                RandomMapProcess = true;
-                isSearching = !isSearching;
-                QueueTimeStart = Time::get_Stamp();
-#if TMNEXT
-            }
-#endif
-        }
-    }
 }
 
 void Main()
