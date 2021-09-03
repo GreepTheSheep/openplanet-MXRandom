@@ -8,4 +8,4 @@ siteid = 124
 version = "1.0"
 
 [script]
-imports = [ "Icons.as", "Permissions.as" ]
+imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]

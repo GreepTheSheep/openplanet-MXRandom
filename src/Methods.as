@@ -28,6 +28,16 @@ void DownloadAndLoadMap(int mapId)
     app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
 }
 
+void DownloadAndLoadMapNoYield(int mapId)
+{
+    CTrackMania@ app = cast<CTrackMania>(GetApp());
+    app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
+    if (!app.ManiaTitleControlScriptAPI.IsReady){
+        UI::ShowNotification(Icons::Kenney::Reload + " Please retry", "We cannot load a new map while you are already on a map. So I returned you to the menu to make you load the map", vec4(0.6,0,0,0.8), 5000);
+    }
+    app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
+}
+
 // -----------MP4-----------
 
 bool isTitePackLoaded()
@@ -57,10 +67,9 @@ void sendNoTitlePackError()
     UI::ShowNotification(Icons::Times + " " + name + " - No titlepack loaded", "Please enter in a titlepack before trying to load a map.", color, 5000);
 }
 
-bool isMapTitlePackCompatible(Json::Value MapMX)
+bool isMapTitlePackCompatible(string titlepack)
 {
-    string tmxTitlePack = MapMX["TitlePack"];
-    return getTitlePack() == tmxTitlePack;
+    return getTitlePack() == titlepack;
 }
 
 bool isMapMP4Compatible(Json::Value MapMX)
@@ -78,7 +87,7 @@ bool isMapSettingsCompatible(Json::Value MapMX)
         log("Map length is not compatible.");
     };
 #if MP4
-    bool titlepack = isMapTitlePackCompatible(MapMX);
+    bool titlepack = isMapTitlePackCompatible(MapMX["TitlePack"]);
     if (!titlepack) {
         log("Titlepack is not compatible.");
     };
@@ -246,7 +255,7 @@ void PlaySound(string FileName = "Race3.wav", float Volume = 1, float Pitch = 1)
 Json::Value loadRecentlyPlayed() {
     Json::Value FileData = Json::FromFile(RecentlyPlayedJSON);
     if (FileData.GetType() == Json::Type::Null) {
-		UI::ShowNotification("\\$afa" + Icons::Bullhorn + " Thanks for installing "+name+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
+		UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing "+name+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
         saveRecentlyPlayed(Json::Array());
         return Json::Array();
     } else if (FileData.GetType() != Json::Type::Array) {
@@ -277,13 +286,23 @@ void CreatePlayedMapJson(Json::Value mapData) {
     string mapName = mapData["Name"];
     string mapAuthor = mapData["Username"];
     string mapUid = mapData["TrackUID"];
-    string playedAt = Time::FormatString("%F %r");
+    string titlepack = mapData["TitlePack"];
+
+    Json::Value playedAt = Json::Object();
+    Time::Info date = Time::Parse();
+    playedAt["Year"] = date.Year;
+    playedAt["Month"] = date.Month;
+    playedAt["Day"] = date.Day;
+    playedAt["Hour"] = date.Hour;
+    playedAt["Minute"] = date.Minute;
+    playedAt["Second"] = date.Second;
 
     Json::Value mapJson = Json::Object();
     mapJson["MXID"] = mxMapId;
     mapJson["name"] = mapName;
     mapJson["author"] = mapAuthor;
     mapJson["UID"] = mapUid;
+    mapJson["titlepack"] = titlepack;
     mapJson["playedAt"] = playedAt;
 
     addToRecentlyPlayed(mapJson);
