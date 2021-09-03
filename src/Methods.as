@@ -241,3 +241,50 @@ void PlaySound(string FileName = "Race3.wav", float Volume = 1, float Pitch = 1)
     error("Couldn't find backup Race3.wav", "Sources: " + audioPort.Sources.Length);
 }
 
+// ---------- JSON (Recently played maps) ----------
+
+Json::Value loadRecentlyPlayed() {
+    Json::Value FileData = Json::FromFile(RecentlyPlayedJSON);
+    if (FileData.GetType() == Json::Type::Null) {
+		UI::ShowNotification("\\$afa" + Icons::Bullhorn + " Thanks for installing "+name+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
+        saveRecentlyPlayed(Json::Array());
+        return Json::Array();
+    } else if (FileData.GetType() != Json::Type::Array) {
+        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data file: " + RecentlyPlayedJSON);
+        return Json::Array();
+    } else return FileData;
+}
+
+void saveRecentlyPlayed(Json::Value data) {
+    Json::ToFile(RecentlyPlayedJSON, data);
+}
+
+void addToRecentlyPlayed(Json::Value data) {
+    // Method: Creates a new Array to save first the new map, then the old ones.
+    Json::Value arr = Json::Array();
+    arr.Add(data);
+    Json::Value FileData = loadRecentlyPlayed();
+    if (FileData.get_Length() > 0) {
+        for (uint i = 0; i < FileData.get_Length(); i++) {
+            arr.Add(FileData[i]);
+        }
+    }
+    saveRecentlyPlayed(arr);
+}
+
+void CreatePlayedMapJson(Json::Value mapData) {
+    int mxMapId = mapData["TrackID"];
+    string mapName = mapData["Name"];
+    string mapAuthor = mapData["Username"];
+    string mapUid = mapData["TrackUID"];
+    string playedAt = Time::FormatString("%F %r");
+
+    Json::Value mapJson = Json::Object();
+    mapJson["MXID"] = mxMapId;
+    mapJson["name"] = mapName;
+    mapJson["author"] = mapAuthor;
+    mapJson["UID"] = mapUid;
+    mapJson["playedAt"] = playedAt;
+
+    addToRecentlyPlayed(mapJson);
+}

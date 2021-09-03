@@ -3,6 +3,8 @@ bool isSearching = false;
 
 bool menu_visibility = false;
 
+Json::Value RecentlyPlayedMaps;
+
 int64 QueueTimeStart;
 
 void RenderMenu()
@@ -14,6 +16,7 @@ void RenderMenu()
 
 void Main()
 {
+    RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
         if (RandomMapProcess && isSearching)
@@ -46,9 +49,11 @@ void Main()
                     isSearching = false;
                     int mapId = mapRes["TrackID"];
                     string mapName = mapRes["Name"];
+                    string mapAuthor = mapRes["Username"];
                     log("Track found: " + mapName + " - ID: " + mapId);
-                    vec4 color = UI::HSV(999, 1, 0.7);
-                    UI::ShowNotification(Icons::Check + " Map found!", mapName + "\n\n"+Icons::Download+"Downloading...", color, 5000);
+                    vec4 color = UI::HSV(0.25, 1, 0.7);
+                    UI::ShowNotification(Icons::Check + " Map found!", mapName + "\nby: "+mapAuthor+"\n\n"+Icons::Download+"Downloading...", color, 5000);
+                    CreatePlayedMapJson(mapRes);
                     DownloadAndLoadMap(mapId);
                     PlaySound();
                 } else {
