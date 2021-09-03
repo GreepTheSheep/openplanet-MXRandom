@@ -6,8 +6,8 @@ void RenderInterface() {
 	if (!menu_visibility) {
 		return;
 	}
-    UI::SetNextWindowSize(Setting_WindowSize_h, Setting_WindowSize_w);
-	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by Greep)", menu_visibility)) {
+	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by Greep)", menu_visibility, 2097154)) {
+        UI::SetWindowSize(vec2(650, Setting_WindowSize_w));
         RenderHeader();
         RenderBody();
         RenderFooter();
