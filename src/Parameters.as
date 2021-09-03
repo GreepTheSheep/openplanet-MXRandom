@@ -11,3 +11,5 @@ string MXColor = "\\$9fc";
 string gameName = "TMNEXT";
 string TMXURL = "trackmania.exchange";
 #endif
+
+string RecentlyPlayedJSON = IO::FromDataFolder("TMXRandom_PlayedMaps.json");

@@ -1,30 +1,25 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
+bool menu_visibility = false;
+
+Json::Value RecentlyPlayedMaps;
+
+int64 QueueTimeStart;
+
 void RenderMenu()
 {
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Random map", "", isSearching)) {
-        if (!isTitePackLoaded()) sendNoTitlePackError();
-        else
-        {
-#if TMNEXT
-            if (!Permissions::PlayLocalMap())
-            {
-                vec4 color = UI::HSV(999, 1, 0.7);
-                UI::ShowNotification(Icons::Times + " Missing permissions!", "You don't have permissions to play other maps than the official campaign.", color, 20000);
-            } else {
-#endif
-                RandomMapProcess = true;
-                isSearching = !isSearching;
-#if TMNEXT
-            }
-#endif
-        }
-    }
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", menu_visibility)) {
+		menu_visibility = !menu_visibility;	
+	}
+    if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
+		OpenBrowserURL("https://flinkblog.de/RMC/");
+	}
 }
 
 void Main()
 {
+    RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
         if (RandomMapProcess && isSearching)
@@ -57,9 +52,11 @@ void Main()
                     isSearching = false;
                     int mapId = mapRes["TrackID"];
                     string mapName = mapRes["Name"];
+                    string mapAuthor = mapRes["Username"];
                     log("Track found: " + mapName + " - ID: " + mapId);
-                    vec4 color = UI::HSV(999, 1, 0.7);
-                    UI::ShowNotification(Icons::Check + " Map found!", mapName + "\n\n"+Icons::Download+"Downloading...", color, 5000);
+                    vec4 color = UI::HSV(0.25, 1, 0.7);
+                    UI::ShowNotification(Icons::Check + " Map found!", mapName + "\nby: "+mapAuthor+"\n\n"+Icons::Download+"Downloading...", color, 5000);
+                    CreatePlayedMapJson(mapRes);
                     DownloadAndLoadMap(mapId);
                     PlaySound();
                 } else {

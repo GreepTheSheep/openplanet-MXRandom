@@ -1,3 +1,6 @@
+[Setting name="Window default width" category="Menu"]
+int Setting_WindowSize_w = 450;
+
 enum MapLength
 {
     Anything,
@@ -18,5 +21,5 @@ enum MapLength
     Long,
 }
 
-[Setting name="Map length"]
+[Setting name="Map length" category="Searching"]
 MapLength Setting_MapLength = MapLength::Anything;
