@@ -119,9 +119,10 @@ void RenderBody() {
             UI::PopStyleColor(3);
             
 #if TMNEXT
-if (Permissions::PlayLocalMap()){
-#endif
+            if (Permissions::PlayLocalMap()){
+#elif MP4
             if (isTitePackLoaded() && isMapTitlePackCompatible(mapTitlepack)) {
+#endif
                 pos_orig = UI::GetCursorPos();
                 UI::SetCursorPos(vec2(pos_orig.x + 35, pos_orig.y));
                 UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
@@ -133,9 +134,6 @@ if (Permissions::PlayLocalMap()){
                 UI::SetCursorPos(pos_orig);
                 UI::PopStyleColor(3);
             }
-#if TMNEXT
-}
-#endif
             UI::PopID();
         }
         UI::EndTable();
