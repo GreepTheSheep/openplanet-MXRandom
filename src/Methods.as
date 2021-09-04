@@ -78,95 +78,21 @@ bool isMapMP4Compatible(Json::Value MapMX)
     return isMP4;
 }
 
-// ------------Map compare-----------
-
-bool isMapSettingsCompatible(Json::Value MapMX)
-{
-    bool length = isMapLengthCompatible(MapMX);
-    if (!length) {
-        log("Map length is not compatible.");
-    };
-#if MP4
-    bool titlepack = isMapTitlePackCompatible(MapMX["TitlePack"]);
-    if (!titlepack) {
-        log("Titlepack is not compatible.");
-    };
-
-    bool mp4 = isMapMP4Compatible(MapMX);
-    if (!mp4) {
-        log("Map is not compatible with MP4.");
-    };
-
-    return length && titlepack && mp4;
-#elif TMNEXT
-    return length;
-#endif
-}
-
-bool isMapLengthCompatible(Json::Value MapMX)
-{
-    string mapLength;
-    switch (Setting_MapLength) {
-        case MapLength::Anything :
-            mapLength = "Anything";
-            break;
-        case MapLength::_15seconds :
-            mapLength = "15 secs";
-            break;
-        case MapLength::_30seconds :
-            mapLength = "30 secs";
-            break;
-        case MapLength::_45seconds :
-            mapLength = "45 secs";
-            break;
-        case MapLength::_1minutes :
-            mapLength = "1 min";
-            break;
-        case MapLength::_1minutes_15seconds :
-            mapLength = "1 m 15 s";
-            break;
-        case MapLength::_1minutes_30seconds :
-            mapLength = "1 m 30 s";
-            break;
-        case MapLength::_1minutes_45seconds :
-            mapLength = "1 m 45 s";
-            break;
-        case MapLength::_2minutes :
-            mapLength = "2 min";
-            break;
-        case MapLength::_2minutes_30seconds :
-            mapLength = "2 m 30 s";
-            break;
-        case MapLength::_3minutes :
-            mapLength = "3 min";
-            break;
-        case MapLength::_3minutes_30seconds :
-            mapLength = "3 m 30 s";
-            break;
-        case MapLength::_4minutes :
-            mapLength = "4 min";
-            break;
-        case MapLength::_4minutes_30seconds :
-            mapLength = "4 m 30 s";
-            break;
-        case MapLength::_5minutes :
-            mapLength = "5 min";
-            break;
-        case MapLength::Long :
-            mapLength = "Long";
-            break;
-    }
-    string tmxLength = MapMX["LengthName"];
-    if (mapLength == "Anything") return true;
-    else return mapLength == tmxLength;
-}
-
 // ------------NET--------------
 
 Json::Value GetRandomMap() {
     Net::HttpRequest req;
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
+    if (Setting_MapLength != MapLength::Anything){
+        req.Url += "&length=" + Setting_MapLength;
+    }
+    if (Setting_MapType != MapType::Anything){
+        req.Url += "&style=" + Setting_MapType;
+    }
+#if MP4
+    req.Url = "&tpack=" + getTitlePack() + "&gv=1";
+#endif
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";

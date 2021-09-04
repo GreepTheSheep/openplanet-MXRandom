@@ -26,28 +26,12 @@ void Main()
         {
             RandomMapProcess = false;
 
-            string waitTxt = "Looking for a map that matches your settings...";
-#if MP4
-            waitTxt += "\n\nOn Maniaplanet, it can take a very long time (because it needs more verification)\nSo sit back and let it happen!";
-#endif
-            UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", waitTxt, 10000);
-            string tmxTitlePack = "";
+            UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", "Looking for a map that matches your settings...");
             string savedMPTitlePack = getTitlePack(true);
-            int requestsNb = 1;
             Json::Value mapRes;
             if (isTitePackLoaded()) {
-                log("Starting looking for a random map - request #" + requestsNb);
+                log("Starting looking for a random map");
                 mapRes = GetRandomMap();
-                while (!isMapSettingsCompatible(mapRes)) {
-                    yield();
-                    // On MP4, it can happens that the user changes the title pack while the request is running
-                    if (savedMPTitlePack != getTitlePack(true) || !isSearching) {
-                        break;
-                    }
-                    requestsNb++;
-                    log("Starting looking for a random map - request #" + requestsNb);
-                    mapRes = GetRandomMap();
-                }
                 if (isSearching && savedMPTitlePack == getTitlePack(true)) {
                     isSearching = false;
                     int mapId = mapRes["TrackID"];
