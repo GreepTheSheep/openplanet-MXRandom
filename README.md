@@ -4,7 +4,6 @@
 ---
 ### Usage:
 
-Select "MX Random map" on the "Scripts" pannel, then it searches a map randomly from ManiaExchange for TM2 or TrackmaniaExchange for TM2020
+Select "MX Random" on the "Scripts" pannel.
 
-### Advanced
-You can set the length of the map in the plugin settings. It chooses a length from the MX map result. So it may not be 100% accurate.
+![Screenshot 2021-09-04 161140](https://user-images.githubusercontent.com/42576124/132097485-366ea819-f8f8-4580-aaf4-6a47f64e7b50.png)
