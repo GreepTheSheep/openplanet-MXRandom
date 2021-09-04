@@ -1,5 +1,5 @@
-[Setting name="Window default width" category="Menu"]
-int Setting_WindowSize_w = 450;
+[Setting name="Window default height" category="Menu"]
+int Setting_WindowSize_h = 450;
 
 enum MapLength
 {
