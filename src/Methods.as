@@ -100,17 +100,23 @@ Json::Value GetRandomMap() {
         req.Url += "&style=" + Setting_MapType;
     }
 #if MP4
-    req.Url = "&tpack=" + getTitlePack() + "&gv=1";
+    req.Url += "&tpack=" + getTitlePack() + "&gv=1";
 #endif
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
     req.Body = "";
-    req.Start();
-    while (!req.Finished()) {
-        yield();
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Object) {
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+        if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
-    Json::Value json = ResponseToJSON(req.String());
     return json["results"][0];
 }
 
