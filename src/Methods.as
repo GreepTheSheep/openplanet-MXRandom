@@ -16,6 +16,15 @@ void error(string msg, string log = "")
     }
 }
 
+// ----------- Utility -----------
+
+string changeEnumStyle(string enumName){
+    string str = enumName.SubStr(enumName.IndexOf(":") + 2);
+    //replace "_" with " "
+    str = str.Replace("_", " ");
+    return str;
+}
+
 // -----------Map download-----------
 
 void DownloadAndLoadMap(int mapId)
@@ -24,16 +33,6 @@ void DownloadAndLoadMap(int mapId)
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
         yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
-    }
-    app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
-}
-
-void DownloadAndLoadMapNoYield(int mapId)
-{
-    CTrackMania@ app = cast<CTrackMania>(GetApp());
-    app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
-    if (!app.ManiaTitleControlScriptAPI.IsReady){
-        UI::ShowNotification(Icons::Kenney::Reload + " Please retry", "We cannot load a new map while you are already on a map. So I returned you to the menu to make you load the map", vec4(0.6,0,0,0.8), 5000);
     }
     app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
 }
@@ -78,105 +77,56 @@ bool isMapMP4Compatible(Json::Value MapMX)
     return isMP4;
 }
 
-// ------------Map compare-----------
-
-bool isMapSettingsCompatible(Json::Value MapMX)
-{
-    bool length = isMapLengthCompatible(MapMX);
-    if (!length) {
-        log("Map length is not compatible.");
-    };
-#if MP4
-    bool titlepack = isMapTitlePackCompatible(MapMX["TitlePack"]);
-    if (!titlepack) {
-        log("Titlepack is not compatible.");
-    };
-
-    bool mp4 = isMapMP4Compatible(MapMX);
-    if (!mp4) {
-        log("Map is not compatible with MP4.");
-    };
-
-    return length && titlepack && mp4;
-#elif TMNEXT
-    return length;
-#endif
-}
-
-bool isMapLengthCompatible(Json::Value MapMX)
-{
-    string mapLength;
-    switch (Setting_MapLength) {
-        case MapLength::Anything :
-            mapLength = "Anything";
-            break;
-        case MapLength::_15seconds :
-            mapLength = "15 secs";
-            break;
-        case MapLength::_30seconds :
-            mapLength = "30 secs";
-            break;
-        case MapLength::_45seconds :
-            mapLength = "45 secs";
-            break;
-        case MapLength::_1minutes :
-            mapLength = "1 min";
-            break;
-        case MapLength::_1minutes_15seconds :
-            mapLength = "1 m 15 s";
-            break;
-        case MapLength::_1minutes_30seconds :
-            mapLength = "1 m 30 s";
-            break;
-        case MapLength::_1minutes_45seconds :
-            mapLength = "1 m 45 s";
-            break;
-        case MapLength::_2minutes :
-            mapLength = "2 min";
-            break;
-        case MapLength::_2minutes_30seconds :
-            mapLength = "2 m 30 s";
-            break;
-        case MapLength::_3minutes :
-            mapLength = "3 min";
-            break;
-        case MapLength::_3minutes_30seconds :
-            mapLength = "3 m 30 s";
-            break;
-        case MapLength::_4minutes :
-            mapLength = "4 min";
-            break;
-        case MapLength::_4minutes_30seconds :
-            mapLength = "4 m 30 s";
-            break;
-        case MapLength::_5minutes :
-            mapLength = "5 min";
-            break;
-        case MapLength::Long :
-            mapLength = "Long";
-            break;
-    }
-    string tmxLength = MapMX["LengthName"];
-    if (mapLength == "Anything") return true;
-    else return mapLength == tmxLength;
-}
-
 // ------------NET--------------
 
 Json::Value GetRandomMap() {
     Net::HttpRequest req;
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
+    if (Setting_MapLength != MapLength::Anything){
+        req.Url += "&length=" + Setting_MapLength;
+    }
+    if (Setting_MapType != MapType::Anything){
+        req.Url += "&style=" + Setting_MapType;
+    }
+#if MP4
+    req.Url += "&tpack=" + getTitlePack() + "&gv=1";
+#endif
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
     req.Body = "";
-    req.Start();
-    while (!req.Finished()) {
-        yield();
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Object) {
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+        if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
-    Json::Value json = ResponseToJSON(req.String());
     return json["results"][0];
+}
+
+Json::Value GetMap(int mapId) {
+    Net::HttpRequest req;
+    req.Method = Net::HttpMethod::Get;
+    req.Url = "https://"+TMXURL+"/api/maps/get_map_info/multi/"+tostring(mapId);
+    dictionary@ Headers = dictionary();
+    Headers["Accept"] = "application/json";
+    Headers["Content-Type"] = "application/json";
+    req.Body = "";
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Array) {
+        req.Start();
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+        if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+    }
+    return json[0];
 }
 
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
@@ -306,4 +256,22 @@ void CreatePlayedMapJson(Json::Value mapData) {
     mapJson["playedAt"] = playedAt;
 
     addToRecentlyPlayed(mapJson);
+}
+
+// ---------- Inputs ----------
+
+bool OnKeyPress(bool down, VirtualKey key) {
+    if (down) {
+        keyCodes += key;
+        if (key == VirtualKey::Back) {
+            keyCodes = 0;
+        }
+        if (keyCodes == VirtualKey::R + VirtualKey::A + VirtualKey::N + VirtualKey::D + VirtualKey::O + VirtualKey::M + VirtualKey::M + VirtualKey::A + VirtualKey::P) {
+            log("Called random map through konami code");
+            RandomMapProcess = true;
+            isSearching = !isSearching;
+            keyCodes = 0;
+        }
+    }
+    return false;
 }

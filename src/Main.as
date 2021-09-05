@@ -1,11 +1,13 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = false;
+bool menu_visibility = true;
 
 Json::Value RecentlyPlayedMaps;
 
-int64 QueueTimeStart;
+int loadMapId = 0;
+int keyCodes = 0;
+int inputMapID;
 
 void RenderMenu()
 {
@@ -19,35 +21,30 @@ void RenderMenu()
 
 void Main()
 {
+    startnew(SearchCoroutine);
+    startnew(keyDelayCoroutine);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
-        if (RandomMapProcess && isSearching)
-        {
+        if (loadMapId != 0) {
+            DownloadAndLoadMap(loadMapId);
+            loadMapId = 0;
+        }
+    }
+}
+
+void SearchCoroutine() {
+    while (true) {
+        yield();
+        if (RandomMapProcess && isSearching) {
             RandomMapProcess = false;
 
-            string waitTxt = "Looking for a map that matches your settings...";
-#if MP4
-            waitTxt += "\n\nOn Maniaplanet, it can take a very long time (because it needs more verification)\nSo sit back and let it happen!";
-#endif
-            UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", waitTxt, 10000);
-            string tmxTitlePack = "";
+            UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", "Looking for a map that matches your settings...");
             string savedMPTitlePack = getTitlePack(true);
-            int requestsNb = 1;
             Json::Value mapRes;
             if (isTitePackLoaded()) {
-                log("Starting looking for a random map - request #" + requestsNb);
+                log("Starting looking for a random map");
                 mapRes = GetRandomMap();
-                while (!isMapSettingsCompatible(mapRes)) {
-                    yield();
-                    // On MP4, it can happens that the user changes the title pack while the request is running
-                    if (savedMPTitlePack != getTitlePack(true) || !isSearching) {
-                        break;
-                    }
-                    requestsNb++;
-                    log("Starting looking for a random map - request #" + requestsNb);
-                    mapRes = GetRandomMap();
-                }
                 if (isSearching && savedMPTitlePack == getTitlePack(true)) {
                     isSearching = false;
                     int mapId = mapRes["TrackID"];
@@ -57,7 +54,7 @@ void Main()
                     vec4 color = UI::HSV(0.25, 1, 0.7);
                     UI::ShowNotification(Icons::Check + " Map found!", mapName + "\nby: "+mapAuthor+"\n\n"+Icons::Download+"Downloading...", color, 5000);
                     CreatePlayedMapJson(mapRes);
-                    DownloadAndLoadMap(mapId);
+                    loadMapId = mapId;
                     PlaySound();
                 } else {
                     if (savedMPTitlePack != getTitlePack(true)) error("Titlepack changed, search has been canceled", "Old pack: " + savedMPTitlePack + " | New pack: " + getTitlePack(true));
@@ -69,6 +66,17 @@ void Main()
             RandomMapProcess = false;
             UI::ShowNotification(Icons::Check + " Stopped searching", "You have canceled the search");
             log("Stopped searching");
+        }
+    }
+}
+
+void keyDelayCoroutine() {
+    while (true) {
+        yield();
+        if (keyCodes != 0) {
+            sleep(60*1000);
+            log('Reseted KeyCodes.');
+            keyCodes = 0;
         }
     }
 }

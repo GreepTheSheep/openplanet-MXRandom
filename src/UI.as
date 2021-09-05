@@ -6,8 +6,8 @@ void RenderInterface() {
 	if (!menu_visibility) {
 		return;
 	}
-	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by Greep)", menu_visibility, 2097154)) {
-        UI::SetWindowSize(vec2(650, Setting_WindowSize_w));
+	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
+        UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
         RenderHeader();
         RenderBody();
         RenderFooter();
@@ -18,38 +18,63 @@ void RenderInterface() {
 void RenderHeader() {
 #if TMNEXT
     if (Permissions::PlayLocalMap()){
+#elif MP4
+    // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
+    if (isTitePackLoaded()) {
 #endif
-
-        // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
-        if (isTitePackLoaded()) {
-            if (!isSearching) {
-                if (RenderPlayRandomButton()) {
+        if (!isSearching) {
+            if (RenderPlayRandomButton()) {
+                if (inputMapID == 0) {
                     RandomMapProcess = true;
                     isSearching = !isSearching;
-                    QueueTimeStart = Time::get_Stamp();
-                }
-            } else {
-                if (RenderStopRandomButton()) {
-                    RandomMapProcess = true;
-                    isSearching = !isSearching;
+                } else {
+                    Json::Value mapInfo = GetMap(inputMapID);
+                    if (mapInfo["TitlePack"] == getTitlePack()) {
+                        CreatePlayedMapJson(mapInfo);
+                        loadMapId = inputMapID;
+                    } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
                 }
             }
-            UI::SetCursorPos(vec2(0, 100));
-            UI::Separator();
+
+            UI::SetCursorPos(vec2(45, 75));
+            UI::SetNextItemWidth(70);
+            inputMapID = Text::ParseInt(UI::InputText("Play a specific map ("+shortMXName+" map ID)", tostring(inputMapID)));
+        } else {
+            if (RenderStopRandomButton()) {
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+            }
         }
-#if TMNEXT
+
+
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/1.7, 45));
+        string lengthColor = "";
+        if (changeEnumStyle(tostring(Setting_MapLength)) != "Anything") lengthColor = "\\$090";
+        UI::Text("Selected length: " + lengthColor + changeEnumStyle(tostring(Setting_MapLength)));
+
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/1.7, 65));
+        string styleColor = "";
+        if (changeEnumStyle(tostring(Setting_MapType)) != "Anything") styleColor = "\\$090";
+        UI::Text("Selected style: " + styleColor + changeEnumStyle(tostring(Setting_MapType)));
+
+        UI::SetCursorPos(vec2(0, 100));
+        UI::Separator();
     }
-#endif
 }
 
 bool RenderPlayRandomButton() {
     bool pressed;
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.5, 50));
     UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
-    pressed = UI::Button(Icons::Play + " Start searching");
+    if (inputMapID == 0) {
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 35));
+        pressed = UI::Button(Icons::Play + " Start searching");
+    } else {
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/5, 35));
+        pressed = UI::Button(Icons::Play + " Play specific map");
+    }
     UI::PopStyleColor(3);
     UI::SetCursorPos(pos_orig);
     return pressed;
@@ -58,7 +83,7 @@ bool RenderPlayRandomButton() {
 bool RenderStopRandomButton() {
     bool pressed;
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.5, 50));
+    UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 50));
     UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
@@ -119,23 +144,21 @@ void RenderBody() {
             UI::PopStyleColor(3);
             
 #if TMNEXT
-if (Permissions::PlayLocalMap()){
-#endif
+            if (Permissions::PlayLocalMap()){
+#elif MP4
             if (isTitePackLoaded() && isMapTitlePackCompatible(mapTitlepack)) {
+#endif
                 pos_orig = UI::GetCursorPos();
                 UI::SetCursorPos(vec2(pos_orig.x + 35, pos_orig.y));
                 UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
                 UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
                 UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
                 if (UI::Button(Icons::Play)) {
-                    DownloadAndLoadMapNoYield(mxMapId);
+                    loadMapId = mxMapId;
                 }
                 UI::SetCursorPos(pos_orig);
                 UI::PopStyleColor(3);
             }
-#if TMNEXT
-}
-#endif
             UI::PopID();
         }
         UI::EndTable();
@@ -174,7 +197,7 @@ void RenderFooter() {
         if (isSearching) {
             int HourGlassValue = Time::Stamp % 3;
             string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-            UI::Text(MXColor + Hourglass + "\\$zSearching for a random map... ("+ Time::FormatString("%M:%S", Time::get_Stamp()-QueueTimeStart) +")");
+            UI::Text(MXColor + Hourglass + "\\$zSearching for a random map...");
         } else {
 #if TMNEXT
             if (!Permissions::PlayLocalMap()) {
@@ -183,7 +206,7 @@ void RenderFooter() {
 #endif
                 int timestamps = (Time::Stamp / 25) % 2;
                 if (oldTimestamp != timestamps) {
-                    rand = Math::Rand(0,4);
+                    rand = Math::Rand(0,5);
                     oldTimestamp = timestamps;
                 }
                 // int timestamps = Math::Rand(0,4);
@@ -194,6 +217,7 @@ void RenderFooter() {
                     case 2: readyTxt = "You can checkout the recently played maps list!"; break;
                     case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
                     case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
+                    case 5: readyTxt = "You can change the map length and style in the plugin's settings."; break;
                 }
                 UI::Text("\\$666"+readyTxt);
 #if TMNEXT
