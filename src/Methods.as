@@ -253,11 +253,6 @@ bool OnKeyPress(bool down, VirtualKey key) {
             isSearching = !isSearching;
             keyCodes = 0;
         }
-        if (keyCodes == VirtualKey::R + VirtualKey::M + VirtualKey::C) {
-            log("Called RMC website through konami code");
-            OpenBrowserURL("https://flinkblog.de/RMC/");
-            keyCodes = 0;
-        }
     }
     return false;
 }
