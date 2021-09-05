@@ -181,7 +181,7 @@ void RenderFooter() {
         if (isSearching) {
             int HourGlassValue = Time::Stamp % 3;
             string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-            UI::Text(MXColor + Hourglass + "\\$zSearching for a random map... ("+ Time::FormatString("%M:%S", Time::get_Stamp()-QueueTimeStart) +")");
+            UI::Text(MXColor + Hourglass + "\\$zSearching for a random map...");
         } else {
 #if TMNEXT
             if (!Permissions::PlayLocalMap()) {
