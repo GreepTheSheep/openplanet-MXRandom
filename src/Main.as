@@ -21,6 +21,7 @@ void RenderMenu()
 void Main()
 {
     startnew(SearchCoroutine);
+    startnew(keyDelayCoroutine);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
@@ -64,6 +65,17 @@ void SearchCoroutine() {
             RandomMapProcess = false;
             UI::ShowNotification(Icons::Check + " Stopped searching", "You have canceled the search");
             log("Stopped searching");
+        }
+    }
+}
+
+void keyDelayCoroutine() {
+    while (true) {
+        yield();
+        if (keyCodes != 0) {
+            sleep(60*1000);
+            log('Reseted KeyCodes.');
+            keyCodes = 0;
         }
     }
 }
