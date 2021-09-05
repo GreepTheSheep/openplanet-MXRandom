@@ -1,12 +1,13 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = false;
+bool menu_visibility = true;
 
 Json::Value RecentlyPlayedMaps;
 
 int loadMapId = 0;
 int keyCodes = 0;
+int inputMapID;
 
 void RenderMenu()
 {

@@ -24,9 +24,21 @@ void RenderHeader() {
 #endif
         if (!isSearching) {
             if (RenderPlayRandomButton()) {
-                RandomMapProcess = true;
-                isSearching = !isSearching;
+                if (inputMapID == 0) {
+                    RandomMapProcess = true;
+                    isSearching = !isSearching;
+                } else {
+                    Json::Value mapInfo = GetMap(inputMapID);
+                    if (mapInfo["TitlePack"] == getTitlePack()) {
+                        CreatePlayedMapJson(mapInfo);
+                        loadMapId = inputMapID;
+                    } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+                }
             }
+
+            UI::SetCursorPos(vec2(45, 75));
+            UI::SetNextItemWidth(70);
+            inputMapID = Text::ParseInt(UI::InputText("Play a specific map ("+shortMXName+" map ID)", tostring(inputMapID)));
         } else {
             if (RenderStopRandomButton()) {
                 RandomMapProcess = true;
@@ -45,7 +57,6 @@ void RenderHeader() {
         if (changeEnumStyle(tostring(Setting_MapType)) != "Anything") styleColor = "\\$090";
         UI::Text("Selected style: " + styleColor + changeEnumStyle(tostring(Setting_MapType)));
 
-
         UI::SetCursorPos(vec2(0, 100));
         UI::Separator();
     }
@@ -54,11 +65,16 @@ void RenderHeader() {
 bool RenderPlayRandomButton() {
     bool pressed;
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 50));
     UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
-    pressed = UI::Button(Icons::Play + " Start searching");
+    if (inputMapID == 0) {
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 35));
+        pressed = UI::Button(Icons::Play + " Start searching");
+    } else {
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/5, 35));
+        pressed = UI::Button(Icons::Play + " Play specific map");
+    }
     UI::PopStyleColor(3);
     UI::SetCursorPos(pos_orig);
     return pressed;

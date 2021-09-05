@@ -110,6 +110,25 @@ Json::Value GetRandomMap() {
     return json["results"][0];
 }
 
+Json::Value GetMap(int mapId) {
+    Net::HttpRequest req;
+    req.Method = Net::HttpMethod::Get;
+    req.Url = "https://"+TMXURL+"/api/maps/get_map_info/multi/"+tostring(mapId);
+    dictionary@ Headers = dictionary();
+    Headers["Accept"] = "application/json";
+    Headers["Content-Type"] = "application/json";
+    req.Body = "";
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Array) {
+        req.Start();
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+        if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+    }
+    return json[0];
+}
+
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
     Json::Value ReturnedObject;
     try {
