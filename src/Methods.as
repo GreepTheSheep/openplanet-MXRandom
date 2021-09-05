@@ -16,6 +16,15 @@ void error(string msg, string log = "")
     }
 }
 
+// ----------- Utility -----------
+
+string changeEnumStyle(string enumName){
+    string str = enumName.SubStr(enumName.IndexOf(":") + 2);
+    //replace "_" with " "
+    str = str.Replace("_", " ");
+    return str;
+}
+
 // -----------Map download-----------
 
 void DownloadAndLoadMap(int mapId)

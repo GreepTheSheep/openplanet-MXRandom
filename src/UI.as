@@ -18,34 +18,44 @@ void RenderInterface() {
 void RenderHeader() {
 #if TMNEXT
     if (Permissions::PlayLocalMap()){
+#elif MP4
+    // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
+    if (isTitePackLoaded()) {
 #endif
-
-        // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
-        if (isTitePackLoaded()) {
-            if (!isSearching) {
-                if (RenderPlayRandomButton()) {
-                    RandomMapProcess = true;
-                    isSearching = !isSearching;
-                    QueueTimeStart = Time::get_Stamp();
-                }
-            } else {
-                if (RenderStopRandomButton()) {
-                    RandomMapProcess = true;
-                    isSearching = !isSearching;
-                }
+        if (!isSearching) {
+            if (RenderPlayRandomButton()) {
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+                QueueTimeStart = Time::get_Stamp();
             }
-            UI::SetCursorPos(vec2(0, 100));
-            UI::Separator();
+        } else {
+            if (RenderStopRandomButton()) {
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+            }
         }
-#if TMNEXT
+
+
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/1.7, 45));
+        string lengthColor = "";
+        if (changeEnumStyle(tostring(Setting_MapLength)) != "Anything") lengthColor = "\\$090";
+        UI::Text("Selected length: " + lengthColor + changeEnumStyle(tostring(Setting_MapLength)));
+
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x/1.7, 65));
+        string styleColor = "";
+        if (changeEnumStyle(tostring(Setting_MapType)) != "Anything") styleColor = "\\$090";
+        UI::Text("Selected style: " + styleColor + changeEnumStyle(tostring(Setting_MapType)));
+
+
+        UI::SetCursorPos(vec2(0, 100));
+        UI::Separator();
     }
-#endif
 }
 
 bool RenderPlayRandomButton() {
     bool pressed;
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.5, 50));
+    UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 50));
     UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
@@ -58,7 +68,7 @@ bool RenderPlayRandomButton() {
 bool RenderStopRandomButton() {
     bool pressed;
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.5, 50));
+    UI::SetCursorPos(vec2(UI::GetWindowSize().x/4.8, 50));
     UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
@@ -181,7 +191,7 @@ void RenderFooter() {
 #endif
                 int timestamps = (Time::Stamp / 25) % 2;
                 if (oldTimestamp != timestamps) {
-                    rand = Math::Rand(0,4);
+                    rand = Math::Rand(0,5);
                     oldTimestamp = timestamps;
                 }
                 // int timestamps = Math::Rand(0,4);
@@ -192,6 +202,7 @@ void RenderFooter() {
                     case 2: readyTxt = "You can checkout the recently played maps list!"; break;
                     case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
                     case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
+                    case 5: readyTxt = "You can change the map length and style in the plugin's settings."; break;
                 }
                 UI::Text("\\$666"+readyTxt);
 #if TMNEXT
