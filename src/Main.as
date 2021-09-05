@@ -5,7 +5,7 @@ bool menu_visibility = false;
 
 Json::Value RecentlyPlayedMaps;
 
-int64 QueueTimeStart;
+int loadMapId = 0;
 
 void RenderMenu()
 {
@@ -19,11 +19,22 @@ void RenderMenu()
 
 void Main()
 {
+    startnew(SearchCoroutine);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
-        if (RandomMapProcess && isSearching)
-        {
+        if (loadMapId != 0) {
+            DownloadAndLoadMap(loadMapId);
+            loadMapId = 0;
+        }
+        
+    }
+}
+
+void SearchCoroutine() {
+    while (true) {
+        yield();
+        if (RandomMapProcess && isSearching) {
             RandomMapProcess = false;
 
             UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", "Looking for a map that matches your settings...");
@@ -41,7 +52,7 @@ void Main()
                     vec4 color = UI::HSV(0.25, 1, 0.7);
                     UI::ShowNotification(Icons::Check + " Map found!", mapName + "\nby: "+mapAuthor+"\n\n"+Icons::Download+"Downloading...", color, 5000);
                     CreatePlayedMapJson(mapRes);
-                    DownloadAndLoadMap(mapId);
+                    loadMapId = mapId;
                     PlaySound();
                 } else {
                     if (savedMPTitlePack != getTitlePack(true)) error("Titlepack changed, search has been canceled", "Old pack: " + savedMPTitlePack + " | New pack: " + getTitlePack(true));

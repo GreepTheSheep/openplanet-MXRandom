@@ -26,7 +26,6 @@ void RenderHeader() {
             if (RenderPlayRandomButton()) {
                 RandomMapProcess = true;
                 isSearching = !isSearching;
-                QueueTimeStart = Time::get_Stamp();
             }
         } else {
             if (RenderStopRandomButton()) {
@@ -139,7 +138,7 @@ void RenderBody() {
                 UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
                 UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
                 if (UI::Button(Icons::Play)) {
-                    DownloadAndLoadMapNoYield(mxMapId);
+                    loadMapId = mxMapId;
                 }
                 UI::SetCursorPos(pos_orig);
                 UI::PopStyleColor(3);

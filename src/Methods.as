@@ -37,16 +37,6 @@ void DownloadAndLoadMap(int mapId)
     app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
 }
 
-void DownloadAndLoadMapNoYield(int mapId)
-{
-    CTrackMania@ app = cast<CTrackMania>(GetApp());
-    app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
-    if (!app.ManiaTitleControlScriptAPI.IsReady){
-        UI::ShowNotification(Icons::Kenney::Reload + " Please retry", "We cannot load a new map while you are already on a map. So I returned you to the menu to make you load the map", vec4(0.6,0,0,0.8), 5000);
-    }
-    app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
-}
-
 // -----------MP4-----------
 
 bool isTitePackLoaded()
