@@ -238,3 +238,26 @@ void CreatePlayedMapJson(Json::Value mapData) {
 
     addToRecentlyPlayed(mapJson);
 }
+
+// ---------- Inputs ----------
+
+bool OnKeyPress(bool down, VirtualKey key) {
+    if (down) {
+        keyCodes += key;
+        if (key == VirtualKey::Back) {
+            keyCodes = 0;
+        }
+        if (keyCodes == VirtualKey::R + VirtualKey::A + VirtualKey::N + VirtualKey::D + VirtualKey::O + VirtualKey::M + VirtualKey::M + VirtualKey::A + VirtualKey::P) {
+            log("Called random map through konami code");
+            RandomMapProcess = true;
+            isSearching = !isSearching;
+            keyCodes = 0;
+        }
+        if (keyCodes == VirtualKey::R + VirtualKey::M + VirtualKey::C) {
+            log("Called RMC website through konami code");
+            OpenBrowserURL("https://flinkblog.de/RMC/");
+            keyCodes = 0;
+        }
+    }
+    return false;
+}

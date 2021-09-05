@@ -6,6 +6,7 @@ bool menu_visibility = false;
 Json::Value RecentlyPlayedMaps;
 
 int loadMapId = 0;
+int keyCodes = 0;
 
 void RenderMenu()
 {
@@ -27,7 +28,6 @@ void Main()
             DownloadAndLoadMap(loadMapId);
             loadMapId = 0;
         }
-        
     }
 }
 
