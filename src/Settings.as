@@ -28,7 +28,7 @@ enum MapType
 	Fullspeed = 2,
 	Tech = 3,
 	RPG = 4,
-	LOL = 5
+	LOL = 5,
 	Press_Forward = 6,
 	Speedtech = 7,
 	Multilap = 8,
