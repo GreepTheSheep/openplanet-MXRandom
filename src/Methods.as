@@ -254,7 +254,8 @@ void CreatePlayedMapJson(Json::Value mapData) {
     string mapAuthor = mapData["Username"];
     string mapUid = mapData["TrackUID"];
     string titlepack = mapData["TitlePack"];
-    string style = mapData["StyleName"];
+    string style = "";
+    if (mapData["Style"].GetType() == Json::Type::String) style = mapData["StyleName"];
     int awards = mapData["AwardCount"];
 
     Json::Value playedAt = Json::Object();
