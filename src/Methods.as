@@ -19,7 +19,11 @@ void error(string msg, string log = "")
 // ----------- Utility -----------
 
 string changeEnumStyle(string enumName){
+#if MP4
     string str = enumName.SubStr(enumName.IndexOf(":") + 2);
+#elif TMNEXT
+    string str = enumName.SubStr(enumName.IndexOf(":") + 1);
+#endif
     //replace "_" with " "
     str = str.Replace("_", " ");
     return str;
@@ -273,22 +277,4 @@ void CreatePlayedMapJson(Json::Value mapData) {
     mapJson["playedAt"] = playedAt;
 
     addToRecentlyPlayed(mapJson);
-}
-
-// ---------- Inputs ----------
-
-bool OnKeyPress(bool down, VirtualKey key) {
-    if (down) {
-        keyCodes += key;
-        if (key == VirtualKey::Back) {
-            keyCodes = 0;
-        }
-        if (keyCodes == VirtualKey::R + VirtualKey::A + VirtualKey::N + VirtualKey::D + VirtualKey::O + VirtualKey::M + VirtualKey::M + VirtualKey::A + VirtualKey::P) {
-            log("Called random map through konami code");
-            RandomMapProcess = true;
-            isSearching = !isSearching;
-            keyCodes = 0;
-        }
-    }
-    return false;
 }
