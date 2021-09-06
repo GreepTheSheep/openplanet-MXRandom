@@ -19,7 +19,11 @@ void error(string msg, string log = "")
 // ----------- Utility -----------
 
 string changeEnumStyle(string enumName){
+#if MP4
     string str = enumName.SubStr(enumName.IndexOf(":") + 2);
+#elif TMNEXT
+    string str = enumName.SubStr(enumName.IndexOf(":") + 1);
+#endif
     //replace "_" with " "
     str = str.Replace("_", " ");
     return str;
