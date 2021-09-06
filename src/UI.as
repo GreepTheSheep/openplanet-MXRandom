@@ -99,11 +99,13 @@ void RenderBody() {
     if (RecentlyPlayedMaps.get_Length() > 0) RenderClearPlayedMapsButton();
 
     UI::BeginChild("RecentlyPlayedMapsChild", vec2(UI::GetWindowSize().x, (UI::GetWindowSize().y - UI::GetCursorPos().y) - 30 ));
-    if (RecentlyPlayedMaps.get_Length() > 0 && UI::BeginTable("RecentlyPlayedMaps", 4)) {
+    if (RecentlyPlayedMaps.get_Length() > 0 && UI::BeginTable("RecentlyPlayedMaps", 6)) {
         UI::TableSetupScrollFreeze(0, 1);
         UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
         UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
         UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthStretch);
+        UI::TableSetupColumn("Style", UI::TableColumnFlags::WidthStretch);
+        UI::TableSetupColumn(Icons::Trophy, UI::TableColumnFlags::WidthFixed, 40);
         UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 80);
         UI::TableHeadersRow();
         for (uint i = 0; i < RecentlyPlayedMaps.get_Length(); i++) {
@@ -114,6 +116,8 @@ void RenderBody() {
             string mapName = RecentlyPlayedMaps[i]["name"];
             string mapAuthor = RecentlyPlayedMaps[i]["author"];
             string mapTitlepack = RecentlyPlayedMaps[i]["titlepack"];
+            string mapStyle = RecentlyPlayedMaps[i]["style"];
+            string mapAwards = tostring(RecentlyPlayedMaps[i]["awards"]);
 
             Json::Value playedAt = RecentlyPlayedMaps[i]["playedAt"];
             int playedAtYear = playedAt["Year"];
@@ -130,8 +134,11 @@ void RenderBody() {
             UI::Text(mapAuthor);
             UI::TableSetColumnIndex(2);
             UI::Text(playedAtString);
-
             UI::TableSetColumnIndex(3);
+            UI::Text(mapStyle);
+            UI::TableSetColumnIndex(4);
+            UI::Text(mapAwards);
+            UI::TableSetColumnIndex(5);
 
             vec2 pos_orig = UI::GetCursorPos();
             UI::PushStyleColor(UI::Col::Button, vec4(0, 0, 0.443, 0.8));

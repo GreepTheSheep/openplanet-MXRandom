@@ -237,6 +237,8 @@ void CreatePlayedMapJson(Json::Value mapData) {
     string mapAuthor = mapData["Username"];
     string mapUid = mapData["TrackUID"];
     string titlepack = mapData["TitlePack"];
+    string style = mapData["StyleName"];
+    int awards = mapData["AwardCount"];
 
     Json::Value playedAt = Json::Object();
     Time::Info date = Time::Parse();
@@ -253,6 +255,8 @@ void CreatePlayedMapJson(Json::Value mapData) {
     mapJson["author"] = mapAuthor;
     mapJson["UID"] = mapUid;
     mapJson["titlepack"] = titlepack;
+    mapJson["style"] = style;
+    mapJson["awards"] = awards;
     mapJson["playedAt"] = playedAt;
 
     addToRecentlyPlayed(mapJson);
