@@ -1,7 +1,7 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = true;
+bool menu_visibility = false;
 
 Json::Value RecentlyPlayedMaps;
 
@@ -17,6 +17,32 @@ void RenderMenu()
     if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
 		OpenBrowserURL("https://flinkblog.de/RMC/");
 	}
+}
+
+void RenderMenuMain()
+{
+    if(UI::BeginMenu(MXColor + Icons::Random + " \\$z"+shortMXName+" Quick menu")) {
+        if (UI::MenuItem(MXColor + Icons::Random + " \\$zStart searching", "", isSearching)) {
+            if (!isTitePackLoaded()) {
+                vec4 color = UI::HSV(0.0, 0.5, 1.0);
+                UI::ShowNotification(Icons::Kenney::ButtonTimes + " No titlepack loaded", "Please enter in a titlepack.", color, 5000);
+            } else {
+                RandomMapProcess = true;
+                isSearching = !isSearching;
+            }
+		}
+        
+        UI::Separator();
+
+        if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer Menu", "", menu_visibility)) {
+            menu_visibility = !menu_visibility;	
+        }
+        if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
+            OpenBrowserURL("https://flinkblog.de/RMC/");
+        }
+
+        UI::EndMenu();
+    }
 }
 
 void Main()
