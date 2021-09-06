@@ -117,7 +117,7 @@ void RenderBody() {
             string mapAuthor = RecentlyPlayedMaps[i]["author"];
             string mapTitlepack = RecentlyPlayedMaps[i]["titlepack"];
             string mapStyle = RecentlyPlayedMaps[i]["style"];
-            string mapAwards = tostring(RecentlyPlayedMaps[i]["awards"]);
+            int mapAwards = RecentlyPlayedMaps[i]["awards"];
 
             Json::Value playedAt = RecentlyPlayedMaps[i]["playedAt"];
             int playedAtYear = playedAt["Year"];
@@ -137,7 +137,7 @@ void RenderBody() {
             UI::TableSetColumnIndex(3);
             UI::Text(mapStyle);
             UI::TableSetColumnIndex(4);
-            UI::Text(mapAwards);
+            UI::Text(tostring(mapAwards));
             UI::TableSetColumnIndex(5);
 
             vec2 pos_orig = UI::GetCursorPos();

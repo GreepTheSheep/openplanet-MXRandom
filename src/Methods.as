@@ -209,9 +209,22 @@ Json::Value loadRecentlyPlayed() {
         saveRecentlyPlayed(Json::Array());
         return Json::Array();
     } else if (FileData.GetType() != Json::Type::Array) {
-        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data file: " + RecentlyPlayedJSON);
+        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
         return Json::Array();
-    } else return FileData;
+    } else {
+        if (FileData.get_Length() > 0) {
+            if (FileData[0].GetType() != Json::Type::Object) {
+                error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData[0].GetType())));
+                return Json::Array();
+            }
+            if (FileData[0]["awards"].GetType() != Json::Type::Number || FileData[0]["style"].GetType() != Json::Type::String) {
+                error("The data file is outdated. It has been reseted.", "Awards or style is missing (JSON v1.1)");
+                saveRecentlyPlayed(Json::Array());
+                return Json::Array();
+            }
+            return FileData;
+        } else return FileData;
+    }
 }
 
 void saveRecentlyPlayed(Json::Value data) {
