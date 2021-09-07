@@ -239,7 +239,7 @@ void RenderFooter() {
 #endif
                 int timestamps = (Time::Stamp / 25) % 2;
                 if (oldTimestamp != timestamps) {
-                    rand = Math::Rand(0,5);
+                    rand = Math::Rand(0,8);
                     oldTimestamp = timestamps;
                 }
                 // int timestamps = Math::Rand(0,4);
@@ -250,7 +250,10 @@ void RenderFooter() {
                     case 2: readyTxt = "You can checkout the recently played maps list!"; break;
                     case 3: readyTxt = "You can participate at Flink's Random Map Challenge at flinkblog.de/RMC"; break;
                     case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
-                    case 5: readyTxt = "You can change the map length and style in the plugin's settings."; break;
+                    case 5: readyTxt = "You can change the window type in the plugin's settings! uwu"; break;
+                    case 6: readyTxt = "You can change the map length and style in the plugin's settings."; break;
+                    case 7: readyTxt = "Sorry for the crashes on the version befors :/"; break;
+                    case 8: readyTxt = "Thanks for testing my plugin lol"; break;
                 }
                 UI::Text("\\$666"+readyTxt);
 #if TMNEXT
