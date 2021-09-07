@@ -4,6 +4,7 @@ bool isSearching = false;
 Json::Value RecentlyPlayedMaps;
 
 int loadMapId = 0;
+int loadMapIdWithJson = 0;
 int keyCodes = 0;
 int inputMapID;
 
@@ -29,6 +30,20 @@ void Main()
         if (loadMapId != 0) {
             DownloadAndLoadMap(loadMapId);
             loadMapId = 0;
+        }
+        if (loadMapIdWithJson != 0) {
+            Json::Value mapInfo = GetMap(loadMapIdWithJson);
+            if (mapInfo.GetType() == Json::Type::Object) {
+#if MP4
+                if (mapInfo["TitlePack"] == getTitlePack()) {
+#endif
+                    CreatePlayedMapJson(mapInfo);
+                    loadMapId = loadMapIdWithJson;
+#if MP4
+                } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+#endif
+            } else error("Returned data is not valid", "Returned type is " + changeEnumStyle(tostring(mapInfo.GetType())));
+            loadMapIdWithJson = 0;
         }
     }
 }

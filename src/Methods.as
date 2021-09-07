@@ -134,6 +134,9 @@ Json::Value GetMap(int mapId) {
     Json::Value json;
     while (returnedType != Json::Type::Array) {
         req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
         if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
