@@ -3,8 +3,9 @@ int rand = 0;
 
 void RenderInterface() {
     Dialogs::RenderInterface();
-	if (Setting_Window_Minimal) {
-        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Minimal, 2097154+32+64)) {
+    if (!Setting_Window_Show) return;
+    if (Setting_Window_Type == WindowType::Minimal){
+        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Show, 2097154+32+64)) {
 #if TMNEXT
             if (!Permissions::PlayLocalMap()) UI::Text("\\$f00"+Icons::Times+" Missing permissions!");
             else {
@@ -33,10 +34,9 @@ void RenderInterface() {
             }
             UI::End();
         }
-    }
-    if (Setting_Window_Show) {
+    } else if (Setting_Window_Type == WindowType::Full) {
         if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", Setting_Window_Show, 2097154)) {
-            UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
+            UI::SetWindowSize(vec2(Setting_WindowSize_w, Setting_WindowSize_h));
             RenderHeader();
             RenderBody();
             RenderFooter();

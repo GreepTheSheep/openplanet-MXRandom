@@ -13,9 +13,6 @@ void RenderMenu()
     if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", Setting_Window_Show)) {
 		Setting_Window_Show = !Setting_Window_Show;	
 	}
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer (Minimal Window)", "", Setting_Window_Minimal)) {
-		Setting_Window_Minimal = !Setting_Window_Minimal;	
-	}
     if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
 		OpenBrowserURL("https://flinkblog.de/RMC/");
 	}

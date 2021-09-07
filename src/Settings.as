@@ -1,3 +1,20 @@
+[Setting name="Show window" category="Menu"]
+bool Setting_Window_Show = true;
+
+enum WindowType {
+    Full,
+    Minimal
+}
+
+[Setting name="Window type" category="Menu" description="The minimal window only shows a 'Start searching' button and nothing else."]
+WindowType Setting_Window_Type = WindowType::Full;
+
+[Setting name="Window default width" category="Menu" description="The default width of the main window" drag min=550 max=2000]
+int Setting_WindowSize_w = 650;
+
+[Setting name="Window default height" category="Menu" description="The default height of the main window" drag min=140 max=2000]
+int Setting_WindowSize_h = 450;
+
 enum MapLength
 {
     Anything = -1,
@@ -38,12 +55,3 @@ enum MapType
 
 [Setting name="Map type" category="Searching"]
 MapType Setting_MapType = MapType::Anything;
-
-[Setting name="Show window" category="Menu"]
-bool Setting_Window_Show = false;
-
-[Setting name="Minimal window" category="Menu" description="The minimal window only shows a 'Start searching' button and nothing else. To adjust the position of the window, click and drag the window border (not the button)."]
-bool Setting_Window_Minimal = false;
-
-[Setting name="Window default height" category="Menu" description="The default height of the main window"]
-int Setting_WindowSize_h = 450;
