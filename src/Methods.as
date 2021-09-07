@@ -138,7 +138,8 @@ Json::Value GetMap(int mapId) {
         returnedType = json.GetType();
         if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
-    return json[0];
+    if (json.get_Length() < 1) return error("Map not found with this ID", "Empty array returned");
+    else return json[0];
 }
 
 Json::Value ResponseToJSON(const string &in HTTPResponse) {

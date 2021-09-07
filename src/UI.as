@@ -29,10 +29,16 @@ void RenderHeader() {
                     isSearching = !isSearching;
                 } else {
                     Json::Value mapInfo = GetMap(inputMapID);
-                    if (mapInfo["TitlePack"] == getTitlePack()) {
-                        CreatePlayedMapJson(mapInfo);
-                        loadMapId = inputMapID;
-                    } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+                    if (mapInfo.GetType() == Json::Type::Object) {
+#if MP4
+                        if (mapInfo["TitlePack"] == getTitlePack()) {
+#endif
+                            CreatePlayedMapJson(mapInfo);
+                            loadMapId = inputMapID;
+#if MP4
+                        } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+#endif
+                    } else error("Returned data is not valid", "Returned type is " + changeEnumStyle(tostring(mapInfo.GetType())));
                 }
             }
 
