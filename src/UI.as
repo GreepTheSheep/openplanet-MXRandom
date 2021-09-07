@@ -4,7 +4,7 @@ int rand = 0;
 void RenderInterface() {
     Dialogs::RenderInterface();
 	if (Setting_Window_Minimal) {
-        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Minimal, 2097154+32+64+1)) {
+        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Minimal, 2097154+32+64)) {
 #if TMNEXT
             if (!Permissions::PlayLocalMap()) UI::Text("\\$f00"+Icons::Times+" Missing permissions!");
             else {
