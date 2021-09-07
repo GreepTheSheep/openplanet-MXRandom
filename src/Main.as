@@ -1,8 +1,6 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = false;
-
 Json::Value RecentlyPlayedMaps;
 
 int loadMapId = 0;
@@ -11,8 +9,11 @@ int inputMapID;
 
 void RenderMenu()
 {
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", menu_visibility)) {
-		menu_visibility = !menu_visibility;	
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", Setting_Window_Show)) {
+		Setting_Window_Show = !Setting_Window_Show;	
+	}
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer (Minimal Window)", "", Setting_Window_Minimal)) {
+		Setting_Window_Minimal = !Setting_Window_Minimal;	
 	}
     if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
 		OpenBrowserURL("https://flinkblog.de/RMC/");

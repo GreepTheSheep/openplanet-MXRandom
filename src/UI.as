@@ -3,24 +3,20 @@ int rand = 0;
 
 void RenderInterface() {
     Dialogs::RenderInterface();
-	if (!menu_visibility) {
-		return;
-	}
-    if (Setting_Window_Minimal) {
-        if (UI::Begin(MXColor + Icons::Random, menu_visibility, 2097186)) {
-            UI::SetWindowSize(vec2(200, 100));
+	if (Setting_Window_Minimal) {
+        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Minimal, 2097154+32+64+1)) {
 #if TMNEXT
             if (!Permissions::PlayLocalMap()) UI::Text("\\$f00"+Icons::Times+" Missing permissions!");
             else {
 #elif MP4
-            if (!isTitePackLoaded()) UI::Text("\\$f00"+Icons::Times+" \\zNo titlepack loaded!");
+            if (!isTitePackLoaded()) UI::Text("\\$f00"+Icons::Times+" \\$zNo titlepack loaded!");
             else {
 #endif
                 if (!isSearching) {
                     UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
                     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
                     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
-                    if (UI::Button(Icons::Random+" Start")) {
+                    if (UI::Button(Icons::Random+" Start " + shortMXName + " random map")) {
                         RandomMapProcess = true;
                         isSearching = !isSearching;
                     }
@@ -28,7 +24,7 @@ void RenderInterface() {
                     UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
                     UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
                     UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
-                    if(UI::Button(Icons::Times + " Stop")){
+                    if(UI::Button(Icons::Times + " Stop searching")){
                         RandomMapProcess = true;
                         isSearching = !isSearching;
                     }
@@ -37,8 +33,9 @@ void RenderInterface() {
             }
             UI::End();
         }
-    } else {
-        if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
+    }
+    if (Setting_Window_Show) {
+        if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", Setting_Window_Show, 2097154)) {
             UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
             RenderHeader();
             RenderBody();
