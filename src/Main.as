@@ -1,18 +1,17 @@
 bool RandomMapProcess = false;
 bool isSearching = false;
 
-bool menu_visibility = true;
-
 Json::Value RecentlyPlayedMaps;
 
 int loadMapId = 0;
+int loadMapIdWithJson = 0;
 int keyCodes = 0;
 int inputMapID;
 
 void RenderMenu()
 {
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", menu_visibility)) {
-		menu_visibility = !menu_visibility;	
+    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", Setting_Window_Show)) {
+		Setting_Window_Show = !Setting_Window_Show;	
 	}
     if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
 		OpenBrowserURL("https://flinkblog.de/RMC/");
@@ -28,6 +27,20 @@ void Main()
         if (loadMapId != 0) {
             DownloadAndLoadMap(loadMapId);
             loadMapId = 0;
+        }
+        if (loadMapIdWithJson != 0) {
+            Json::Value mapInfo = GetMap(loadMapIdWithJson);
+            if (mapInfo.GetType() == Json::Type::Object) {
+#if MP4
+                if (mapInfo["TitlePack"] == getTitlePack()) {
+#endif
+                    CreatePlayedMapJson(mapInfo);
+                    loadMapId = loadMapIdWithJson;
+#if MP4
+                } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+#endif
+            } else error("Returned data is not valid", "Returned type is " + changeEnumStyle(tostring(mapInfo.GetType())));
+            loadMapIdWithJson = 0;
         }
     }
 }

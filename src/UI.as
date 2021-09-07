@@ -3,16 +3,46 @@ int rand = 0;
 
 void RenderInterface() {
     Dialogs::RenderInterface();
-	if (!menu_visibility) {
-		return;
-	}
-	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
-        UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
-        RenderHeader();
-        RenderBody();
-        RenderFooter();
-	}
-	UI::End();
+    if (!Setting_Window_Show) return;
+    if (Setting_Window_Type == WindowType::Minimal){
+        if (UI::Begin(MXColor + Icons::Random, Setting_Window_Show, 2097154+32+64)) {
+#if TMNEXT
+            if (!Permissions::PlayLocalMap()) UI::Text("\\$f00"+Icons::Times+" Missing permissions!");
+            else {
+#elif MP4
+            if (!isTitePackLoaded()) UI::Text("\\$f00"+Icons::Times+" \\$zNo titlepack loaded!");
+            else {
+#endif
+                if (!isSearching) {
+                    UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
+                    UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
+                    UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
+                    if (UI::Button(Icons::Random+" Start " + shortMXName + " random map")) {
+                        RandomMapProcess = true;
+                        isSearching = !isSearching;
+                    }
+                } else {
+                    UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
+                    UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
+                    UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
+                    if(UI::Button(Icons::Times + " Stop searching")){
+                        RandomMapProcess = true;
+                        isSearching = !isSearching;
+                    }
+                }
+                UI::PopStyleColor(3);
+            }
+            UI::End();
+        }
+    } else if (Setting_Window_Type == WindowType::Full) {
+        if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", Setting_Window_Show, 2097154)) {
+            UI::SetWindowSize(vec2(Setting_WindowSize_w, Setting_WindowSize_h));
+            RenderHeader();
+            RenderBody();
+            RenderFooter();
+        }
+        UI::End();
+    }
 }
 
 void RenderHeader() {
@@ -28,11 +58,7 @@ void RenderHeader() {
                     RandomMapProcess = true;
                     isSearching = !isSearching;
                 } else {
-                    Json::Value mapInfo = GetMap(inputMapID);
-                    if (mapInfo["TitlePack"] == getTitlePack()) {
-                        CreatePlayedMapJson(mapInfo);
-                        loadMapId = inputMapID;
-                    } else error("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
+                    loadMapIdWithJson = inputMapID;
                 }
             }
 

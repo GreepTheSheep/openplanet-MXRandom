@@ -102,13 +102,21 @@ Json::Value GetRandomMap() {
     req.Body = "";
     Json::Type returnedType = Json::Type::Null;
     Json::Value json;
-    while (returnedType != Json::Type::Object) {
+    string mapType = "";
+    while (returnedType != Json::Type::Object ||
+#if MP4
+    mapType != "Race"
+#elif TMNEXT
+    mapType != "TM_Race"
+#endif
+    ) {
         req.Start();
         while (!req.Finished()) {
             yield();
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
+        mapType = json["results"][0]["MapType"];
         if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
     return json["results"][0];
@@ -126,11 +134,15 @@ Json::Value GetMap(int mapId) {
     Json::Value json;
     while (returnedType != Json::Type::Array) {
         req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
         if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
-    return json[0];
+    if (json.get_Length() < 1) return json;
+    else return json[0];
 }
 
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
@@ -254,7 +266,8 @@ void CreatePlayedMapJson(Json::Value mapData) {
     string mapAuthor = mapData["Username"];
     string mapUid = mapData["TrackUID"];
     string titlepack = mapData["TitlePack"];
-    string style = mapData["StyleName"];
+    string style = "Unknown";
+    if (mapData["StyleName"].GetType() == Json::Type::String) style = mapData["StyleName"];
     int awards = mapData["AwardCount"];
 
     Json::Value playedAt = Json::Object();
