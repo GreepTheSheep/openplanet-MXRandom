@@ -6,13 +6,45 @@ void RenderInterface() {
 	if (!menu_visibility) {
 		return;
 	}
-	if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
-        UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
-        RenderHeader();
-        RenderBody();
-        RenderFooter();
-	}
-	UI::End();
+    if (Setting_Window_Minimal) {
+        if (UI::Begin(MXColor + Icons::Random, menu_visibility, 2097186)) {
+            UI::SetWindowSize(vec2(200, 100));
+#if TMNEXT
+            if (!Permissions::PlayLocalMap()) UI::Text("\\$f00"+Icons::Times+" Missing permissions!");
+            else {
+#elif MP4
+            if (!isTitePackLoaded()) UI::Text("\\$f00"+Icons::Times+" \\zNo titlepack loaded!");
+            else {
+#endif
+                if (!isSearching) {
+                    UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
+                    UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
+                    UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
+                    if (UI::Button(Icons::Random+" Start")) {
+                        RandomMapProcess = true;
+                        isSearching = !isSearching;
+                    }
+                } else {
+                    UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
+                    UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
+                    UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
+                    if(UI::Button(Icons::Times + " Stop")){
+                        RandomMapProcess = true;
+                        isSearching = !isSearching;
+                    }
+                }
+                UI::PopStyleColor(3);
+            }
+        UI::End();
+    } else {
+        if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
+            UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
+            RenderHeader();
+            RenderBody();
+            RenderFooter();
+        }
+        UI::End();
+    }
 }
 
 void RenderHeader() {

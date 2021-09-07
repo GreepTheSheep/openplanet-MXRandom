@@ -39,5 +39,8 @@ enum MapType
 [Setting name="Map type" category="Searching"]
 MapType Setting_MapType = MapType::Anything;
 
-[Setting name="Window default height" category="Menu"]
+[Setting name="Minimal mode" category="Menu" description="In minimal mode, the window only shows a 'Start searching' button and nothing else. It also always shows even if the Openplanet overlay is closed"]
+bool Setting_Window_Minimal = false;
+
+[Setting name="Window default height" category="Menu" description="The default height of the window (does not affect in minimal mode)"]
 int Setting_WindowSize_h = 450;
