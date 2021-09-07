@@ -263,7 +263,7 @@ void CreatePlayedMapJson(Json::Value mapData) {
     string mapUid = mapData["TrackUID"];
     string titlepack = mapData["TitlePack"];
     string style = "Unknown";
-    if (mapData["Style"].GetType() == Json::Type::String) style = mapData["StyleName"];
+    if (mapData["StyleName"].GetType() == Json::Type::String) style = mapData["StyleName"];
     int awards = mapData["AwardCount"];
 
     Json::Value playedAt = Json::Object();
