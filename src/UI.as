@@ -35,7 +35,8 @@ void RenderInterface() {
                 }
                 UI::PopStyleColor(3);
             }
-        UI::End();
+            UI::End();
+        }
     } else {
         if (UI::Begin(MXColor + Icons::Random + " \\$z"+name+"\\$555 (v"+Meta::ExecutingPlugin().get_Version()+" by "+Meta::ExecutingPlugin().get_Author()+")", menu_visibility, 2097154)) {
             UI::SetWindowSize(vec2(650, Setting_WindowSize_h));
