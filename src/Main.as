@@ -25,6 +25,9 @@ void Main()
     while (true){
         yield();
         if (loadMapId != 0) {
+#if TMNEXT
+            ClosePauseMenu();
+#endif
             DownloadAndLoadMap(loadMapId);
             loadMapId = 0;
         }

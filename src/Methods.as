@@ -81,6 +81,18 @@ bool isMapMP4Compatible(Json::Value MapMX)
     return isMP4;
 }
 
+// ------------ Game utilities -----------
+
+void ClosePauseMenu() {		
+	CTrackMania@ app = cast<CTrackMania>(GetApp());		
+	if(app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed) {
+		CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
+		if(playground != null) {
+			playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
+		}
+	}
+}
+
 // ------------NET--------------
 
 Json::Value GetRandomMap() {
