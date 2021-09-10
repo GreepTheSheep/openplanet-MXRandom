@@ -55,3 +55,14 @@ enum MapType
 
 [Setting name="Map type" category="Searching"]
 MapType Setting_MapType = MapType::Anything;
+
+[Setting name="Display RMC Timer" category="Random Map Challenge" description="In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour! More infos at the Random Map Challenge button on 'Scripts' menu"]
+bool Setting_RMC_DisplayTimer = true;
+
+enum RMCMode {
+    Challenge,
+    Survival,
+}
+
+[Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
+RMCMode Setting_RMC_Mode = RMCMode::Challenge;

@@ -41,6 +41,12 @@ void DownloadAndLoadMap(int mapId)
     app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
 }
 
+bool IsMapLoaded(){
+    CTrackMania@ app = cast<CTrackMania>(GetApp());
+    if (app.RootMap is null) return false;
+    else return true;
+}
+
 // -----------MP4-----------
 
 bool isTitePackLoaded()
@@ -91,6 +97,42 @@ void ClosePauseMenu() {
 			playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
 		}
 	}
+}
+
+uint GetCurrentMapMedal(){
+    auto app = cast<CTrackMania>(GetApp());
+    auto network = cast<CTrackManiaNetwork>(app.Network);
+    auto map = app.RootMap;
+    uint medal = 0;
+    if (map !is null){
+        int authorTime = map.TMObjective_AuthorTime;
+        int goldTime = map.TMObjective_GoldTime;
+        int silverTime = map.TMObjective_SilverTime;
+        int bronzeTime = map.TMObjective_BronzeTime;
+        int time;
+#if TMNEXT
+        if(network.ClientManiaAppPlayground !is null) {
+            auto scoreMgr = network.ClientManiaAppPlayground.ScoreMgr;
+            time = scoreMgr.Map_GetRecord_v2(network.PlayerInfo.Id, map.MapInfo.MapUid, "PersonalBest", "", "TimeAttack", "");
+            medal = scoreMgr.Map_GetMedal(network.PlayerInfo.Id, map.MapInfo.MapUid, "PersonalBest", "", "TimeAttack", "");
+        }
+#elif MP4
+        if(network.TmRaceRules !is null) {
+            auto scoreMgr = network.TmRaceRules.ScoreMgr;
+            time = scoreMgr.Map_GetRecord(network.PlayerInfo.Id, map.MapInfo.MapUid, "");
+            medal = 0;
+            print("pb: " + time);
+            print("author: " + authorTime);
+            print("gold: " + goldTime);
+            if(time >= authorTime) medal = 4;
+            else if(time >= goldTime) medal = 3;
+            else if(time >= silverTime) medal = 3;
+            else if(time >= bronzeTime) medal = 3;
+            else medal = 0;
+        }
+#endif
+    }
+    return medal;
 }
 
 // ------------NET--------------

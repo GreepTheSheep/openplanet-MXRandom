@@ -13,13 +13,14 @@ void RenderMenu()
     if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", Setting_Window_Show)) {
 		Setting_Window_Show = !Setting_Window_Show;	
 	}
-    if(UI::MenuItem(MXColor + Icons::ExternalLink + " \\$zRandom Map Challenge")) {
-		OpenBrowserURL("https://flinkblog.de/RMC/");
+    if(UI::MenuItem(MXColor + Icons::HourglassO + " \\$zRandom Map Challenge", "", Setting_RMC_DisplayTimer)) {
+		Setting_RMC_DisplayTimer = !Setting_RMC_DisplayTimer;	
 	}
 }
 
 void Main()
 {
+    startnew(test);
     startnew(SearchCoroutine);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
@@ -54,7 +55,6 @@ void SearchCoroutine() {
         if (RandomMapProcess && isSearching) {
             RandomMapProcess = false;
 
-            UI::ShowNotification(Icons::Kenney::Reload + " Please Wait", "Looking for a map that matches your settings...");
             string savedMPTitlePack = getTitlePack(true);
             Json::Value mapRes;
             if (isTitePackLoaded()) {
@@ -79,8 +79,9 @@ void SearchCoroutine() {
         if (RandomMapProcess && !isSearching)
         {
             RandomMapProcess = false;
-            UI::ShowNotification(Icons::Check + " Stopped searching", "You have canceled the search");
+            RMCStarted = false;
             log("Stopped searching");
         }
     }
 }
+
