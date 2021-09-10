@@ -1,20 +1,21 @@
 bool RMCStarted = false;
 bool timerStarted = false;
 bool countdownStarted = false;
+bool gotMedalOnceNotif = false;
+bool gotAuthor = false;
 int countdownCompare = -1;
 int startTime = -1;
 int endTime = -1;
-uint compareMedal = 0;
 int authorCount = 0;
 int goldCount = 0;
 Resources::Font@ timerFont = Resources::GetFont("src/Assets/Fonts/digital-7.regular.ttf", 20);
 int TimerWindowFlags = 2097154+32+64;
-string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC \\$666(Part of MXRandom)";
+string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
 
 void Render(){
     if (!Setting_RMC_DisplayTimer) return;
 
-    if (!UI::IsOverlayShown()) TimerWindowFlags = 2097154+32+64+1;
+    if (!UI::IsOverlayShown()) TimerWindowFlags = 2097154+32+1;
     else TimerWindowFlags = 2097154+32+64;
 
     if (!timerStarted){
@@ -45,6 +46,7 @@ void Render(){
                 }
                 if (authorCount > 0 || goldCount > 0){
                     UI::Separator();
+                    UI::Text("Last run stats:");
                     RenderMedals();
                 }
                 UI::End();
@@ -52,6 +54,9 @@ void Render(){
         }
     } else {
         if (UI::Begin(windowTitle, Setting_RMC_DisplayTimer, TimerWindowFlags)){
+            if (!UI::IsOverlayShown()){
+                UI::SetWindowSize(vec2(150, 110));
+            }
             if (UI::IsOverlayShown()){
                 UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
                 UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
@@ -67,6 +72,14 @@ void Render(){
             UI::Dummy(vec2(0, 10));
             UI::Separator();
             RenderMedals();
+            if(UI::IsOverlayShown() && UI::Button("Skip" + (GetCurrentMapMedal() == 3 ? " and take gold medal": ""))) {
+                if (GetCurrentMapMedal() == 3) {
+                    goldCount += 1;
+                    if (Setting_RMC_Mode == RMCMode::Survival) endTime -= (2*60*1000);
+                }
+                UI::ShowNotification("Please wait...", "Looking for another map");
+                startnew(loadMapRMC);
+            }
             UI::End();
         }
     }
@@ -116,16 +129,17 @@ void Update(float dt) {
     }
 
     if (timerStarted && !countdownStarted){
-        if (compareMedal != 99) compareMedal = GetCurrentMapMedal();
-        if (compareMedal == 4){
+        if (GetCurrentMapMedal() == 4 && !gotAuthor){
+            gotAuthor = true;
             UI::ShowNotification("\\$0f0" + Icons::Trophy + " You got author time!", "We're searching for another map...");
-            compareMedal = 99;
+            if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
+            authorCount += 1;
             startnew(loadMapRMC);
-        } else if (compareMedal == 3){
-            UI::ShowNotification(Icons::Trophy + "You got gold medal", "You can skip the map to get another one");
-            compareMedal == 99;
         }
-        if (compareMedal != 99) compareMedal = 0;
+        if (GetCurrentMapMedal() == 3 && !gotMedalOnceNotif){
+            UI::ShowNotification(Icons::Trophy + "You got gold medal", "You can skip the map to get another one");
+            gotMedalOnceNotif = true;
+        }
     }
 }
 
@@ -160,7 +174,7 @@ string FormatSeconds(int time) {
 }
 
 void RenderMedals(){
-    if(UI::BeginTable("##medals", 3, UI::TableFlags::SizingFixedFit)) {
+    if(UI::BeginTable("##medals", 2, UI::TableFlags::SizingFixedFit)) {
         // Author
         UI::TableNextRow();
         UI::TableNextColumn();
@@ -174,16 +188,6 @@ void RenderMedals(){
         UI::Text("\\$db4"+ Icons::Circle + "\\$z Gold");
         UI::TableNextColumn();
         UI::Text("" + goldCount);
-
-        UI::TableNextColumn();
-        if(UI::IsOverlayShown() && GetCurrentMapMedal() == 3 && UI::Button("Skip")) {
-            goldCount += 1;
-            if (goldCount < 0) {
-                goldCount = 0;
-            }
-            UI::ShowNotification("Please wait...", "Looking for another map");
-            startnew(loadMapRMC);
-        }
 
         UI::EndTable();
     }
@@ -201,7 +205,10 @@ void loadFirstMapRMC(){
         sleep(100);
         if (IsMapLoaded()){
             startCountdown();
-            compareMedal = 0;
+            goldCount = 0;
+            authorCount = 0;
+            gotAuthor = false;
+            gotMedalOnceNotif = false;
             break;
         }
     }
@@ -218,16 +225,11 @@ void loadMapRMC(){
     while (true){
         sleep(100);
         if (IsMapLoaded()){
-            compareMedal = 0;
+            gotMedalOnceNotif = false;
+            gotAuthor = false;
             break;
         }
     }
 }
 
-
-void test(){
-    while (true){
-        yield(); 
-        // print(GetCurrentMapMedal());
-    }
-}
+// auto playgroundInterface = cast<CTrackManiaRaceInterface>(GetApp().CurrentPlayground.Interface);

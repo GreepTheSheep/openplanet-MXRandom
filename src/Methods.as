@@ -121,14 +121,13 @@ uint GetCurrentMapMedal(){
             auto scoreMgr = network.TmRaceRules.ScoreMgr;
             time = scoreMgr.Map_GetRecord(network.PlayerInfo.Id, map.MapInfo.MapUid, "");
             medal = 0;
-            print("pb: " + time);
-            print("author: " + authorTime);
-            print("gold: " + goldTime);
-            if(time >= authorTime) medal = 4;
-            else if(time >= goldTime) medal = 3;
-            else if(time >= silverTime) medal = 3;
-            else if(time >= bronzeTime) medal = 3;
-            else medal = 0;
+            if (time != -1){
+                if(time <= authorTime) medal = 4;
+                else if(time <= goldTime) medal = 3;
+                else if(time <= silverTime) medal = 2;
+                else if(time <= bronzeTime) medal = 1;
+                else medal = 0;
+            }
         }
 #endif
     }

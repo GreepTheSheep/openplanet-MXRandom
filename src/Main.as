@@ -20,7 +20,6 @@ void RenderMenu()
 
 void Main()
 {
-    startnew(test);
     startnew(SearchCoroutine);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
