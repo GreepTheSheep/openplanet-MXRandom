@@ -52,7 +52,7 @@ bool IsMapLoaded(){
 bool isTitePackLoaded()
 {
     auto appMP = cast<CGameManiaPlanet>(GetApp());
-    if (appMP.LoadedManiaTitle == null){
+    if (appMP.LoadedManiaTitle is null){
         return false;
     } else {
         return true;
@@ -93,7 +93,7 @@ void ClosePauseMenu() {
 	CTrackMania@ app = cast<CTrackMania>(GetApp());		
 	if(app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed) {
 		CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
-		if(playground != null) {
+		if(playground !is null) {
 			playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
 		}
 	}
@@ -170,8 +170,8 @@ Json::Value GetRandomMap() {
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
-        mapType = json["results"][0]["MapType"];
         if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+        else mapType = json["results"][0]["MapType"];
     }
     return json["results"][0];
 }
