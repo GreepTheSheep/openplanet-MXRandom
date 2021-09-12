@@ -101,25 +101,24 @@ void ClosePauseMenu() {
 
 uint GetCurrentMapMedal(){
     auto app = cast<CTrackMania>(GetApp());
-    auto network = cast<CTrackManiaNetwork>(app.Network);
     auto map = app.RootMap;
+    CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
     uint medal = 0;
-    if (map !is null){
+    if (map !is null && GamePlayground !is null){
         int authorTime = map.TMObjective_AuthorTime;
         int goldTime = map.TMObjective_GoldTime;
         int silverTime = map.TMObjective_SilverTime;
         int bronzeTime = map.TMObjective_BronzeTime;
-        int time;
-#if TMNEXT
-        if(network.ClientManiaAppPlayground !is null) {
-            auto scoreMgr = network.ClientManiaAppPlayground.ScoreMgr;
-            time = scoreMgr.Map_GetRecord_v2(network.PlayerInfo.Id, map.MapInfo.MapUid, "PersonalBest", "", "TimeAttack", "");
-            medal = scoreMgr.Map_GetMedal(network.PlayerInfo.Id, map.MapInfo.MapUid, "PersonalBest", "", "TimeAttack", "");
-        }
-#elif MP4
-        if(network.TmRaceRules !is null) {
-            auto scoreMgr = network.TmRaceRules.ScoreMgr;
-            time = scoreMgr.Map_GetRecord(network.PlayerInfo.Id, map.MapInfo.MapUid, "");
+        int time = -1;
+
+        if (GamePlayground.GameTerminals.get_Length() > 0){
+#if MP4
+            CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+#elif TMNEXT
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+#endif
+            if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
+            else time = -1;
             medal = 0;
             if (time != -1){
                 if(time <= authorTime) medal = 4;
@@ -129,7 +128,6 @@ uint GetCurrentMapMedal(){
                 else medal = 0;
             }
         }
-#endif
     }
     return medal;
 }
@@ -140,12 +138,20 @@ Json::Value GetRandomMap() {
     Net::HttpRequest req;
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
-    if (Setting_MapLength != MapLength::Anything){
-        req.Url += "&length=" + Setting_MapLength;
+    if (RMCStarted){
+        req.Url += "&etags=23%2C37";
+        req.Url += "&lengthop=1";
+        req.Url += "&length=13";
+    } else {
+        req.Url += "&etags=37";
+        if (Setting_MapLength != MapLength::Anything){
+            req.Url += "&length=" + Setting_MapLength;
+        }
+        if (Setting_MapType != MapType::Anything){
+            req.Url += "&style=" + Setting_MapType;
+        }
     }
-    if (Setting_MapType != MapType::Anything){
-        req.Url += "&style=" + Setting_MapType;
-    }
+    
 #if MP4
     req.Url += "&tpack=" + getTitlePack() + "&gv=1";
 #endif

@@ -252,7 +252,7 @@ void RenderFooter() {
                     case 4: readyTxt = "In the Random Map Challenge, you have to grab the maximum number of gold or author medals in 1 hour!"; break;
                     case 5: readyTxt = "You can change the window type in the plugin's settings!"; break;
                     case 6: readyTxt = "You can change the map length and style in the plugin's settings."; break;
-                    case 7: readyTxt = "Thanks for testing my plugin"; break;
+                    case 7: readyTxt = "If you use this plugin exclusively for the RMC, try the RMC window ;)"; break;
                 }
                 UI::Text("\\$666"+readyTxt);
 #if TMNEXT

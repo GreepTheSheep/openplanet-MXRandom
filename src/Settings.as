@@ -1,5 +1,5 @@
 [Setting name="Show window" category="Menu"]
-bool Setting_Window_Show = true;
+bool Setting_Window_Show = false;
 
 enum WindowType {
     Full,
@@ -66,3 +66,9 @@ enum RMCMode {
 
 [Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
 RMCMode Setting_RMC_Mode = RMCMode::Challenge;
+
+[Setting name="Automatically switch map when got author medal" category="Random Map Challenge"]
+bool Setting_RMC_AutoSwitch = true;
+
+[Setting name="Automatically quits the map when the timer is up" category="Random Map Challenge"]
+bool Setting_RMC_ExitMapOnEndTime = false;
