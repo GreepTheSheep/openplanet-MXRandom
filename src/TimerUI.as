@@ -77,8 +77,10 @@ void Render(){
             UI::Dummy(vec2(0, 10));
             UI::Separator();
             RenderMedals();
-            UI::Separator();
-            RenderCurrentMap();
+            if (Setting_RMC_DisplayCurrentMap){
+                UI::Separator();
+                RenderCurrentMap();
+            }
             if(UI::IsOverlayShown() && UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif ? " and take gold medal": ""))) {
                 if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                     goldCount += 1;

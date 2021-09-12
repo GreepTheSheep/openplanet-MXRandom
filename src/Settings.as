@@ -67,6 +67,9 @@ enum RMCMode {
 [Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
 RMCMode Setting_RMC_Mode = RMCMode::Challenge;
 
+[Setting name="Display the current map name, author and style (according to MX) on the RMC timer" category="Random Map Challenge"]
+bool Setting_RMC_DisplayCurrentMap = true;
+
 [Setting name="Automatically switch map when got author medal" category="Random Map Challenge"]
 bool Setting_RMC_AutoSwitch = true;
 
