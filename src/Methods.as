@@ -112,11 +112,7 @@ uint GetCurrentMapMedal(){
         int time = -1;
 
         if (GamePlayground.GameTerminals.get_Length() > 0){
-#if MP4
             CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#elif TMNEXT
-            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#endif
             if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
             else time = -1;
             medal = 0;
