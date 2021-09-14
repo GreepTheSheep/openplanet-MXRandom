@@ -115,7 +115,7 @@ void Render(){
 
 void startTimer() {
     timerStarted = true;
-    int timer = 1;
+    int timer = 60;
     if (Setting_RMC_Mode == RMCMode::Survival) timer = 15;
     startTime = Time::get_Now();
     endTime = startTime + (timer*60*1000);
