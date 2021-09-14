@@ -112,12 +112,12 @@ uint GetCurrentMapMedal(){
         int time = -1;
 
         if (GamePlayground.GameTerminals.get_Length() > 0){
-#if MP4
             CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+#if MP4
             if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
             else time = -1;
 #elif TMNEXT
-            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.CurCheckpointRaceTime;
+            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.ScriptAPI.CurrentRaceTime;
             else time = -1;
 #endif
             medal = 0;
