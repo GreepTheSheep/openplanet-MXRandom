@@ -285,10 +285,16 @@ void loadFirstMapRMC(){
             gotMedalOnceNotif = false;
             UI::ShowNotification("\\$080Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)) + " started!", "Good Luck!");
             displayTimer = true;
+#if MP4
             CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
             while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
                 yield();
             }
+#elif TMNEXT
+            while (GamePlayground.GameTerminals[0].UISequence_Current != CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Playing){
+                yield();
+            }
+#endif
             startTimer();
             break;
         }
