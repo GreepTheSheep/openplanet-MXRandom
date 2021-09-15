@@ -41,12 +41,18 @@ void DownloadAndLoadMap(int mapId)
     app.ManiaTitleControlScriptAPI.PlayMap("https://"+TMXURL+"/maps/download/"+mapId, "", "");
 }
 
+bool IsMapLoaded(){
+    CTrackMania@ app = cast<CTrackMania>(GetApp());
+    if (app.RootMap is null) return false;
+    else return true;
+}
+
 // -----------MP4-----------
 
 bool isTitePackLoaded()
 {
     auto appMP = cast<CGameManiaPlanet>(GetApp());
-    if (appMP.LoadedManiaTitle == null){
+    if (appMP.LoadedManiaTitle is null){
         return false;
     } else {
         return true;
@@ -81,18 +87,73 @@ bool isMapMP4Compatible(Json::Value MapMX)
     return isMP4;
 }
 
+// ------------ Game utilities -----------
+
+void ClosePauseMenu() {		
+	CTrackMania@ app = cast<CTrackMania>(GetApp());		
+	if(app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed) {
+		CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
+		if(playground !is null) {
+			playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
+		}
+	}
+}
+
+uint GetCurrentMapMedal(){
+    auto app = cast<CTrackMania>(GetApp());
+    auto map = app.RootMap;
+    CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
+    uint medal = 0;
+    if (map !is null && GamePlayground !is null){
+        int authorTime = map.TMObjective_AuthorTime;
+        int goldTime = map.TMObjective_GoldTime;
+        int silverTime = map.TMObjective_SilverTime;
+        int bronzeTime = map.TMObjective_BronzeTime;
+        int time = -1;
+
+        if (GamePlayground.GameTerminals.get_Length() > 0){
+#if MP4
+            CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+            if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
+            else time = -1;
+#elif TMNEXT
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.ScriptAPI.CurrentRaceTime;
+            else time = -1;
+#endif
+            medal = 0;
+            if (time != -1){
+                if(time <= authorTime) medal = 4;
+                else if(time <= goldTime) medal = 3;
+                else if(time <= silverTime) medal = 2;
+                else if(time <= bronzeTime) medal = 1;
+                else medal = 0;
+            }
+        }
+    }
+    return medal;
+}
+
 // ------------NET--------------
 
 Json::Value GetRandomMap() {
     Net::HttpRequest req;
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
-    if (Setting_MapLength != MapLength::Anything){
-        req.Url += "&length=" + Setting_MapLength;
+    if (RMCStarted){
+        req.Url += "&etags=23%2C37";
+        req.Url += "&lengthop=1";
+        req.Url += "&length=13";
+    } else {
+        req.Url += "&etags=37";
+        if (Setting_MapLength != MapLength::Anything){
+            req.Url += "&length=" + Setting_MapLength;
+        }
+        if (Setting_MapType != MapType::Anything){
+            req.Url += "&style=" + Setting_MapType;
+        }
     }
-    if (Setting_MapType != MapType::Anything){
-        req.Url += "&style=" + Setting_MapType;
-    }
+    
 #if MP4
     req.Url += "&tpack=" + getTitlePack() + "&gv=1";
 #endif
@@ -116,8 +177,8 @@ Json::Value GetRandomMap() {
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
-        mapType = json["results"][0]["MapType"];
         if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+        else mapType = json["results"][0]["MapType"];
     }
     return json["results"][0];
 }
