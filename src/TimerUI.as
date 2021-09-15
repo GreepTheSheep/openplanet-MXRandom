@@ -142,7 +142,7 @@ void Update(float dt) {
     }
 
     if (timerStarted){
-        if (GetCurrentMapMedal() == 4 && !gotAuthor){
+        if (GetCurrentMapMedal(dt) == 4 && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
@@ -154,7 +154,7 @@ void Update(float dt) {
                 else UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "Select 'Next map' to change the map");
             }
         }
-        if (GetCurrentMapMedal() == 3 && !gotMedalOnceNotif){
+        if (GetCurrentMapMedal(dt) == 3 && !gotMedalOnceNotif){
             UI::ShowNotification("\\$db4" + Icons::Trophy + " \\$sYou got gold medal", "You can skip the map to get another one");
             gotMedalOnceNotif = true;
         }
