@@ -11,4 +11,7 @@
 
 Select "MX Random" on the "Scripts" pannel.
 
-![Screenshot 2021-09-04 161140](https://user-images.githubusercontent.com/42576124/132097485-366ea819-f8f8-4580-aaf4-6a47f64e7b50.png)
+![image](https://user-images.githubusercontent.com/42576124/133384757-4e02ef86-391d-4bfc-8506-85d36384278d.png)
+
+
+![image](https://user-images.githubusercontent.com/42576124/133384980-daac0475-9259-414d-bd04-5041a8a73452.png)
