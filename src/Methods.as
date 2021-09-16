@@ -99,7 +99,7 @@ void ClosePauseMenu() {
 	}
 }
 
-uint GetCurrentMapMedal(float dt = 0.0f)){
+uint GetCurrentMapMedal(int dt = 0){
     auto app = cast<CTrackMania>(GetApp());
     auto map = app.RootMap;
     CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
