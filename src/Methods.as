@@ -118,7 +118,7 @@ uint GetCurrentMapMedal(int dt = 0){
             else time = -1;
 #elif TMNEXT
             CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.CurCheckpointRaceTime - dt;
+            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.ScriptAPI.CurrentRaceTime - dt;
             else time = -1;
 #endif
             medal = 0;
