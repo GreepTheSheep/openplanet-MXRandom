@@ -82,33 +82,7 @@ void Render(){
                 UI::Separator();
                 RenderCurrentMap();
             }
-            if(UI::IsOverlayShown() && UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif ? " and take gold medal": ""))) {
-                if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
-                    goldCount += 1;
-                }
-                if (Setting_RMC_Mode == RMCMode::Survival) {
-                    endTime -= (2*60*1000);
-                    survivalSkips += 1;
-                }
-                UI::ShowNotification("Please wait...", "Looking for another map");
-                startnew(loadMapRMC);
-            }
-            if (Setting_RMC_Mode == RMCMode::Survival && UI::IsOverlayShown()){
-                UI::SameLine();
-                if(UI::Button("Survival Free Skip")) {
-                    Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
-                        UI::ShowNotification("Please wait...", "Looking for another map");
-                        startnew(loadMapRMC);
-                    }, function(){});
-                }
-            }
-            if (!Setting_RMC_AutoSwitch && gotAuthor && UI::IsOverlayShown()){
-                UI::SameLine();
-                if(UI::Button("Next map")) {
-                    if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
-                    startnew(loadMapRMC);
-                }
-            }
+            if (UI::IsOverlayShown()) RenderPlayingButtons();
             UI::End();
         }
     }
@@ -226,7 +200,46 @@ void RenderCurrentMap(){
         UI::Text("'" + mapName + "' by " + mapAuthor);
         UI::Text("(Style: " + mapStyle + ")");
     } else {
-        UI::Text(":( Error while loading map info");
+        UI::Text(":( Map info unavailable");
+    }
+}
+
+void RenderPlayingButtons(){
+    if (timerStarted) {
+        if (UI::Button((isPaused ? "Resume" : "Pause") + " timer")) {
+            if (isPaused) endTime = endTime + (Time::get_Now() - startTime);
+            isPaused = !isPaused;
+        }
+        UI::SameLine();
+        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif ? " and take gold medal": ""))) {
+            if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
+                goldCount += 1;
+            }
+            if (Setting_RMC_Mode == RMCMode::Survival) {
+                endTime -= (2*60*1000);
+                survivalSkips += 1;
+            }
+            UI::ShowNotification("Please wait...", "Looking for another map");
+            startnew(loadMapRMC);
+        }
+
+        if (Setting_RMC_Mode == RMCMode::Survival){
+            UI::SameLine();
+            if(UI::Button("Survival Free Skip")) {
+                Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
+                    UI::ShowNotification("Please wait...", "Looking for another map");
+                    startnew(loadMapRMC);
+                }, function(){});
+            }
+        }
+        if (!Setting_RMC_AutoSwitch && gotAuthor){
+            UI::SameLine();
+            if(UI::Button("Next map")) {
+                if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
+                startnew(loadMapRMC);
+            }
+        }
+
     }
 }
 
