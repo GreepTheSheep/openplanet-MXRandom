@@ -1,6 +1,7 @@
 bool RMCStarted = false;
 bool timerStarted = false;
 bool displayTimer = false;
+bool isPaused = false;
 bool gotMedalOnceNotif = false;
 bool gotAuthor = false;
 int startTime = -1;
@@ -12,6 +13,8 @@ int mapsCount = 0;
 Resources::Font@ timerFont = Resources::GetFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
 Resources::Texture@ AuthorTex = Resources::GetTexture("src/Assets/Images/Author.png");
 Resources::Texture@ GoldTex = Resources::GetTexture("src/Assets/Images/Gold.png");
+Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.png");
+Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
 int TimerWindowFlags = 2097154+32+64;
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
@@ -81,33 +84,7 @@ void Render(){
                 UI::Separator();
                 RenderCurrentMap();
             }
-            if(UI::IsOverlayShown() && UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif ? " and take gold medal": ""))) {
-                if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
-                    goldCount += 1;
-                }
-                if (Setting_RMC_Mode == RMCMode::Survival) {
-                    endTime -= (2*60*1000);
-                    survivalSkips += 1;
-                }
-                UI::ShowNotification("Please wait...", "Looking for another map");
-                startnew(loadMapRMC);
-            }
-            if (Setting_RMC_Mode == RMCMode::Survival && UI::IsOverlayShown()){
-                UI::SameLine();
-                if(UI::Button("Survival Free Skip")) {
-                    Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
-                        UI::ShowNotification("Please wait...", "Looking for another map");
-                        startnew(loadMapRMC);
-                    }, function(){});
-                }
-            }
-            if (!Setting_RMC_AutoSwitch && gotAuthor && UI::IsOverlayShown()){
-                UI::SameLine();
-                if(UI::Button("Next map")) {
-                    if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
-                    startnew(loadMapRMC);
-                }
-            }
+            if (UI::IsOverlayShown()) RenderPlayingButtons();
             UI::End();
         }
     }
@@ -125,50 +102,55 @@ void Update(float dt) {
     if (startTime < 0 || !timerStarted) {
         return;
     }
-    startTime = Time::get_Now();
 
-    if (startTime > endTime) {
-        startTime = -1;
-        timerStarted = false;
-        RMCStarted = false;
-        displayTimer = false;
-        startnew(RMCPlaySoundTimerEnd);
-        if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-        else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
-        if (Setting_RMC_ExitMapOnEndTime){
-            CTrackMania@ app = cast<CTrackMania>(GetApp());
-            app.BackToMainMenu();
+    if (timerStarted && !isPaused){
+        startTime = Time::get_Now();
+
+        if (startTime > endTime) {
+            startTime = -1;
+            timerStarted = false;
+            RMCStarted = false;
+            displayTimer = false;
+            if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
+            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+            if (Setting_RMC_ExitMapOnEndTime){
+                CTrackMania@ app = cast<CTrackMania>(GetApp());
+                app.BackToMainMenu();
+            }
         }
+    } else if (timerStarted && isPaused) {
+        startTime = Time::get_Now() - (Time::get_Now() - startTime);
     }
 
     if (timerStarted){
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) == 4 && !gotAuthor){
+        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
-                UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "We're searching for another map...");
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "We're searching for another map...");
+                
                 if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
                 startnew(loadMapRMC);
             } else {
-                if (!UI::IsOverlayShown()) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "Open the overlay and select 'Next map' to change the map");
-                else UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "Select 'Next map' to change the map");
+                string descTxt = "Select 'Next map' to change the map";
+                if (!UI::IsOverlayShown()) descTxt = "Open the overlay and select 'Next map' to change the map";
+
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) == 3 && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge){
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " \\$sYou got gold medal", "You can skip the map to get another one");
+        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
+            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
     }
 }
 
-void RMCPlaySoundTimerEnd(){
-    PlaySound("RaceGo.wav");
-}
-
 void RenderTimer(){
     UI::PushFont(timerFont);
-    if (timerStarted) UI::Text(FormatTimer(endTime - startTime));
-    else {
+    if (timerStarted) {
+        if (!isPaused) UI::Text(FormatTimer(endTime - startTime));
+        else UI::Text("\\$555" + FormatTimer(endTime - startTime));
+    } else {
         int timer = 60;
         if (Setting_RMC_Mode == RMCMode::Survival) timer = 15;
         timer = timer*60*60*1000;
@@ -176,7 +158,6 @@ void RenderTimer(){
     }
     UI::PopFont();
 }
-
 
 string FormatTimer(int time) {
     int hundreths = time % 1000 / 10;
@@ -193,34 +174,94 @@ string FormatSeconds(int time) {
     return Text::Format("%02d", seconds);
 }
 
-void RenderMedals(){
-    UI::Image(AuthorTex, vec2(50,50));
+void RenderMedals() {
+    if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(AuthorTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(GoldTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(SilverTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Bronze) UI::Image(BronzeTex, vec2(50,50));
     UI::SameLine();
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+15));
+    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+    UI::PushFont(timerFont);
     UI::Text("" + authorCount);
-    UI::SetCursorPos(vec2(pos_orig.x+20, pos_orig.y));
+    UI::PopFont();
 
-    if (Setting_RMC_Mode == RMCMode::Challenge) UI::Image(GoldTex, vec2(50,50));
-    else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
-    UI::SameLine();
-    pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+15));
-    if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
-    else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
+    if (Setting_RMC_Goal != RMCGoal::Bronze){
+        UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
+        if (Setting_RMC_Mode == RMCMode::Challenge) {
+            if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
+            else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
+            else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(BronzeTex, vec2(50,50));
+        }
+        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
+        UI::SameLine();
+        pos_orig = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+        UI::PushFont(timerFont);
+        if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
+        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
+        UI::PopFont();
+    }
 }
 
 void RenderCurrentMap(){
-    UI::Text("Current Map:");
-    Json::Value RecentlyPlayedMaps = loadRecentlyPlayed();
-    if (RecentlyPlayedMaps.get_Length() > 0){
-        string mapName = RecentlyPlayedMaps[0]["name"];
-        string mapAuthor = RecentlyPlayedMaps[0]["author"];
-        string mapStyle = RecentlyPlayedMaps[0]["style"];
-        UI::Text("'" + mapName + "' by " + mapAuthor);
-        UI::Text("(Style: " + mapStyle + ")");
+    CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+    if (currentMap !is null) {
+        CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+        if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+            UI::Text("Current Map:");
+            if (RecentlyPlayedMaps.get_Length() > 0){
+                string mapName = RecentlyPlayedMaps[0]["name"];
+                string mapAuthor = RecentlyPlayedMaps[0]["author"];
+                string mapStyle = RecentlyPlayedMaps[0]["style"];
+                UI::Text("'" + mapName + "' by " + mapAuthor);
+                UI::Text("(Style: " + mapStyle + ")");
+            } else {
+                UI::Text(":( Map info unavailable");
+            }
+        } else RecentlyPlayedMaps = loadRecentlyPlayed();
     } else {
-        UI::Text(":( Error while loading map info");
+        if (isPaused) UI::Text("Switching map...");
+        else isPaused = true;
+    } 
+}
+
+void RenderPlayingButtons(){
+    if (timerStarted) {
+        if (UI::Button((isPaused ? "Resume" : "Pause") + " timer")) {
+            if (isPaused) endTime = endTime + (Time::get_Now() - startTime);
+            isPaused = !isPaused;
+        }
+        UI::SameLine();
+        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal": ""))) {
+            if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
+                goldCount += 1;
+            }
+            if (Setting_RMC_Mode == RMCMode::Survival) {
+                endTime -= (2*60*1000);
+                survivalSkips += 1;
+            }
+            UI::ShowNotification("Please wait...", "Looking for another map");
+            startnew(loadMapRMC);
+        }
+
+        if (Setting_RMC_Mode == RMCMode::Survival){
+            UI::SameLine();
+            if(UI::Button("Survival Free Skip")) {
+                Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
+                    UI::ShowNotification("Please wait...", "Looking for another map");
+                    startnew(loadMapRMC);
+                }, function(){});
+            }
+        }
+        if (!Setting_RMC_AutoSwitch && gotAuthor){
+            UI::SameLine();
+            if(UI::Button("Next map")) {
+                if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
+                startnew(loadMapRMC);
+            }
+        }
+
     }
 }
 
@@ -302,6 +343,7 @@ void loadFirstMapRMC(){
 }
 
 void loadMapRMC(){
+    isPaused = true;
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
@@ -312,6 +354,8 @@ void loadMapRMC(){
     while (!IsMapLoaded()){
         sleep(100);
     }
+    endTime = endTime + (Time::get_Now() - startTime);
+    isPaused = false;
     gotMedalOnceNotif = false;
     gotAuthor = false;
     mapsCount += 1;
