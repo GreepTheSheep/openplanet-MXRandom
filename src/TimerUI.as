@@ -1,6 +1,7 @@
 bool RMCStarted = false;
 bool timerStarted = false;
 bool displayTimer = false;
+bool isPaused = false;
 bool gotMedalOnceNotif = false;
 bool gotAuthor = false;
 int startTime = -1;
@@ -125,20 +126,24 @@ void Update(float dt) {
     if (startTime < 0 || !timerStarted) {
         return;
     }
-    startTime = Time::get_Now();
 
-    if (startTime > endTime) {
-        startTime = -1;
-        timerStarted = false;
-        RMCStarted = false;
-        displayTimer = false;
-        startnew(RMCPlaySoundTimerEnd);
-        if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-        else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
-        if (Setting_RMC_ExitMapOnEndTime){
-            CTrackMania@ app = cast<CTrackMania>(GetApp());
-            app.BackToMainMenu();
+    if (timerStarted && !isPaused){
+        startTime = Time::get_Now();
+
+        if (startTime > endTime) {
+            startTime = -1;
+            timerStarted = false;
+            RMCStarted = false;
+            displayTimer = false;
+            if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
+            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+            if (Setting_RMC_ExitMapOnEndTime){
+                CTrackMania@ app = cast<CTrackMania>(GetApp());
+                app.BackToMainMenu();
+            }
         }
+    } else if (timerStarted && isPaused) {
+        startTime = Time::get_Now() - (Time::get_Now() - startTime);
     }
 
     if (timerStarted){
@@ -167,8 +172,10 @@ void RMCPlaySoundTimerEnd(){
 
 void RenderTimer(){
     UI::PushFont(timerFont);
-    if (timerStarted) UI::Text(FormatTimer(endTime - startTime));
-    else {
+    if (timerStarted) {
+        if (!isPaused) UI::Text(FormatTimer(endTime - startTime));
+        else UI::Text("\\$555" + FormatTimer(endTime - startTime));
+    } else {
         int timer = 60;
         if (Setting_RMC_Mode == RMCMode::Survival) timer = 15;
         timer = timer*60*60*1000;
@@ -176,7 +183,6 @@ void RenderTimer(){
     }
     UI::PopFont();
 }
-
 
 string FormatTimer(int time) {
     int hundreths = time % 1000 / 10;
@@ -302,6 +308,7 @@ void loadFirstMapRMC(){
 }
 
 void loadMapRMC(){
+    isPaused = true;
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
@@ -312,6 +319,8 @@ void loadMapRMC(){
     while (!IsMapLoaded()){
         sleep(100);
     }
+    endTime = endTime + (Time::get_Now() - startTime);
+    isPaused = false;
     gotMedalOnceNotif = false;
     gotAuthor = false;
     mapsCount += 1;
