@@ -191,17 +191,25 @@ void RenderMedals(){
 }
 
 void RenderCurrentMap(){
-    UI::Text("Current Map:");
-    Json::Value RecentlyPlayedMaps = loadRecentlyPlayed();
-    if (RecentlyPlayedMaps.get_Length() > 0){
-        string mapName = RecentlyPlayedMaps[0]["name"];
-        string mapAuthor = RecentlyPlayedMaps[0]["author"];
-        string mapStyle = RecentlyPlayedMaps[0]["style"];
-        UI::Text("'" + mapName + "' by " + mapAuthor);
-        UI::Text("(Style: " + mapStyle + ")");
+    CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+    if (currentMap !is null) {
+        CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+        if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+            UI::Text("Current Map:");
+            if (RecentlyPlayedMaps.get_Length() > 0){
+                string mapName = RecentlyPlayedMaps[0]["name"];
+                string mapAuthor = RecentlyPlayedMaps[0]["author"];
+                string mapStyle = RecentlyPlayedMaps[0]["style"];
+                UI::Text("'" + mapName + "' by " + mapAuthor);
+                UI::Text("(Style: " + mapStyle + ")");
+            } else {
+                UI::Text(":( Map info unavailable");
+            }
+        } else RecentlyPlayedMaps = loadRecentlyPlayed();
     } else {
-        UI::Text(":( Map info unavailable");
-    }
+        if (isPaused) UI::Text("Switching map...");
+        else isPaused = true;
+    } 
 }
 
 void RenderPlayingButtons(){
