@@ -140,10 +140,6 @@ void Update(float dt) {
     }
 }
 
-void RMCPlaySoundTimerEnd(){
-    PlaySound("RaceGo.wav");
-}
-
 void RenderTimer(){
     UI::PushFont(timerFont);
     if (timerStarted) {
