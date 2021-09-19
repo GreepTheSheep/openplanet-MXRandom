@@ -99,11 +99,11 @@ void ClosePauseMenu() {
 	}
 }
 
-uint GetCurrentMapMedal(int dt = 0){
+int GetCurrentMapMedal(int dt = 0){
     auto app = cast<CTrackMania>(GetApp());
     auto map = app.RootMap;
     CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
-    uint medal = 0;
+    int medal = 0;
     if (map !is null && GamePlayground !is null){
         int authorTime = map.TMObjective_AuthorTime;
         int goldTime = map.TMObjective_GoldTime;

@@ -13,6 +13,8 @@ int mapsCount = 0;
 Resources::Font@ timerFont = Resources::GetFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
 Resources::Texture@ AuthorTex = Resources::GetTexture("src/Assets/Images/Author.png");
 Resources::Texture@ GoldTex = Resources::GetTexture("src/Assets/Images/Gold.png");
+Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.png");
+Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
 int TimerWindowFlags = 2097154+32+64;
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
@@ -121,20 +123,23 @@ void Update(float dt) {
     }
 
     if (timerStarted){
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) == 4 && !gotAuthor){
+        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
-                UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "We're searching for another map...");
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "We're searching for another map...");
+                
                 if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
                 startnew(loadMapRMC);
             } else {
-                if (!UI::IsOverlayShown()) UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "Open the overlay and select 'Next map' to change the map");
-                else UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "Select 'Next map' to change the map");
+                string descTxt = "Select 'Next map' to change the map";
+                if (!UI::IsOverlayShown()) descTxt = "Open the overlay and select 'Next map' to change the map";
+
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) == 3 && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge){
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got gold medal", "You can take gold and skip the map");
+        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
+            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
     }
@@ -169,25 +174,34 @@ string FormatSeconds(int time) {
     return Text::Format("%02d", seconds);
 }
 
-void RenderMedals(){
-    UI::Image(AuthorTex, vec2(50,50));
+void RenderMedals() {
+    if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(AuthorTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(GoldTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(SilverTex, vec2(50,50));
+    else if (Setting_RMC_Goal == RMCGoal::Bronze) UI::Image(BronzeTex, vec2(50,50));
     UI::SameLine();
     vec2 pos_orig = UI::GetCursorPos();
     UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
     UI::PushFont(timerFont);
     UI::Text("" + authorCount);
     UI::PopFont();
-    UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
 
-    if (Setting_RMC_Mode == RMCMode::Challenge) UI::Image(GoldTex, vec2(50,50));
-    else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
-    UI::SameLine();
-    pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
-    UI::PushFont(timerFont);
-    if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
-    else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
-    UI::PopFont();
+    if (Setting_RMC_Goal != RMCGoal::Bronze){
+        UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
+        if (Setting_RMC_Mode == RMCMode::Challenge) {
+            if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
+            else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
+            else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(BronzeTex, vec2(50,50));
+        }
+        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
+        UI::SameLine();
+        pos_orig = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+        UI::PushFont(timerFont);
+        if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
+        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
+        UI::PopFont();
+    }
 }
 
 void RenderCurrentMap(){
@@ -219,7 +233,7 @@ void RenderPlayingButtons(){
             isPaused = !isPaused;
         }
         UI::SameLine();
-        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif ? " and take gold medal": ""))) {
+        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal": ""))) {
             if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                 goldCount += 1;
             }

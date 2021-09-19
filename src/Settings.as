@@ -67,6 +67,16 @@ enum RMCMode {
 [Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
 RMCMode Setting_RMC_Mode = RMCMode::Challenge;
 
+enum RMCGoal {
+    Author = 4,
+    Gold = 3,
+    Silver = 2,
+    Bronze = 1,
+}
+
+[Setting name="Goal" category="Random Map Challenge" description="The goal to get in a map to be counted, keep in mind that RMC rules accepts only Author Times at the moment"]
+RMCGoal Setting_RMC_Goal = RMCGoal::Author;
+
 [Setting name="Display the current map name, author and style (according to MX) on the RMC timer" category="Random Map Challenge"]
 bool Setting_RMC_DisplayCurrentMap = true;
 
