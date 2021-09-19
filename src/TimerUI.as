@@ -125,16 +125,16 @@ void Update(float dt) {
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
-                UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "We're searching for another map...");
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "We're searching for another map...");
                 if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
                 startnew(loadMapRMC);
             } else {
-                if (!UI::IsOverlayShown()) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "Open the overlay and select 'Next map' to change the map");
-                else UI::ShowNotification("\\$db4" + Icons::Trophy + " You got author time!", "Select 'Next map' to change the map");
+                if (!UI::IsOverlayShown()) UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "Open the overlay and select 'Next map' to change the map");
+                else UI::ShowNotification("\\$071" + Icons::Trophy + " You got author time!", "Select 'Next map' to change the map");
             }
         }
         if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) == 3 && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge){
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " \\$sYou got gold medal", "You can skip the map to get another one");
+            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got gold medal", "You can take gold and skip the map");
             gotMedalOnceNotif = true;
         }
     }
