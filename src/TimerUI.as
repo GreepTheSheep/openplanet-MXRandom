@@ -177,17 +177,21 @@ void RenderMedals(){
     UI::Image(AuthorTex, vec2(50,50));
     UI::SameLine();
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+15));
+    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+    UI::PushFont(timerFont);
     UI::Text("" + authorCount);
-    UI::SetCursorPos(vec2(pos_orig.x+20, pos_orig.y));
+    UI::PopFont();
+    UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
 
     if (Setting_RMC_Mode == RMCMode::Challenge) UI::Image(GoldTex, vec2(50,50));
     else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
     UI::SameLine();
     pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+15));
+    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+    UI::PushFont(timerFont);
     if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
     else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
+    UI::PopFont();
 }
 
 void RenderCurrentMap(){
