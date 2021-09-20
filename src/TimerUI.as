@@ -194,13 +194,13 @@ void RenderMedals() {
     else if (Setting_RMC_Goal == RMCGoal::Bronze) UI::Image(BronzeTex, vec2(50,50));
     UI::SameLine();
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
     UI::PushFont(timerFont);
     UI::Text("" + authorCount);
     UI::PopFont();
 
     if (Setting_RMC_Goal != RMCGoal::Bronze){
-        UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
+        UI::SetCursorPos(vec2(pos_orig.x+35, pos_orig.y));
         if (Setting_RMC_Mode == RMCMode::Challenge) {
             if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
             else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
