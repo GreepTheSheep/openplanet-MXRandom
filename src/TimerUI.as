@@ -17,6 +17,7 @@ Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.
 Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
 int TimerWindowFlags = 2097154+32+64;
+string lowerMedalName = "";
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
 
 void Render(){
@@ -139,7 +140,19 @@ void Update(float dt) {
             }
         }
         if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal", "You can take the medal and skip the map");
+            switch (Setting_RMC_Goal) {
+                case RMCGoal::Author:
+                    lowerMedalName = "Gold";
+                break;
+                case RMCGoal::Gold:
+                    lowerMedalName = "Silver";
+                break;
+                case RMCGoal::Silver:
+                    lowerMedalName = "Bronze";
+                break;
+            }
+            
+            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
     }
@@ -233,7 +246,7 @@ void RenderPlayingButtons(){
             isPaused = !isPaused;
         }
         UI::SameLine();
-        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal": ""))) {
+        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
             if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                 goldCount += 1;
             }
