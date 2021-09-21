@@ -17,6 +17,9 @@ Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.
 Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
 int TimerWindowFlags = 2097154+32+64;
+string actualMedalName = "";
+int lowerMedalInt = 0;
+string lowerMedalName = "";
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
 
 void Render(){
@@ -104,26 +107,56 @@ void Update(float dt) {
     }
 
     if (timerStarted && !isPaused){
-        startTime = Time::get_Now();
+        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+        if (currentMap !is null) {
+            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+            if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+                startTime = Time::get_Now();
 
-        if (startTime > endTime) {
-            startTime = -1;
-            timerStarted = false;
-            RMCStarted = false;
-            displayTimer = false;
-            if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
-            if (Setting_RMC_ExitMapOnEndTime){
-                CTrackMania@ app = cast<CTrackMania>(GetApp());
-                app.BackToMainMenu();
-            }
+                if (startTime > endTime) {
+                    startTime = -1;
+                    timerStarted = false;
+                    RMCStarted = false;
+                    displayTimer = false;
+                    if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
+                    else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+                    if (Setting_RMC_ExitMapOnEndTime){
+                        CTrackMania@ app = cast<CTrackMania>(GetApp());
+                        app.BackToMainMenu();
+                    }
+                }
+            } else RecentlyPlayedMaps = loadRecentlyPlayed();
         }
     } else if (timerStarted && isPaused) {
         startTime = Time::get_Now() - (Time::get_Now() - startTime);
     }
 
     if (timerStarted){
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= Setting_RMC_Goal && !gotAuthor){
+        switch (Setting_RMC_Goal) {
+            case RMCGoal::Author:
+                actualMedalName = "Author";
+                lowerMedalName = "Gold";
+                lowerMedalInt = 3;
+            break;
+            case RMCGoal::Gold:
+                actualMedalName = "Gold";
+                lowerMedalName = "Silver";
+                lowerMedalInt = 2;
+            break;
+            case RMCGoal::Silver:
+                actualMedalName = "Silver"
+                lowerMedalName = "Bronze";
+                lowerMedalInt = 1;
+            break;
+            case RMCGoal::Bronze:
+                actualMedalName = "Bronze";
+            break;
+            default:
+                actualMedalName = "";
+                lowerMedalInt = 0;
+                lowerMedalName = "";
+        }
+        if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
@@ -138,8 +171,8 @@ void Update(float dt) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal", "You can take the medal and skip the map");
+        if (GetCurrentMapMedal() >= lowerMedalInt && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
+            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
     }
@@ -181,13 +214,13 @@ void RenderMedals() {
     else if (Setting_RMC_Goal == RMCGoal::Bronze) UI::Image(BronzeTex, vec2(50,50));
     UI::SameLine();
     vec2 pos_orig = UI::GetCursorPos();
-    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+    UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
     UI::PushFont(timerFont);
     UI::Text("" + authorCount);
     UI::PopFont();
 
     if (Setting_RMC_Goal != RMCGoal::Bronze){
-        UI::SetCursorPos(vec2(pos_orig.x+30, pos_orig.y));
+        UI::SetCursorPos(vec2(pos_orig.x+35, pos_orig.y));
         if (Setting_RMC_Mode == RMCMode::Challenge) {
             if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
             else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
@@ -219,7 +252,7 @@ void RenderCurrentMap(){
             } else {
                 UI::Text(":( Map info unavailable");
             }
-        } else RecentlyPlayedMaps = loadRecentlyPlayed();
+        }
     } else {
         if (isPaused) UI::Text("Switching map...");
         else isPaused = true;
@@ -233,7 +266,7 @@ void RenderPlayingButtons(){
             isPaused = !isPaused;
         }
         UI::SameLine();
-        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+changeEnumStyle(tostring(Setting_RMC_Goal-1))+" medal": ""))) {
+        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
             if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                 goldCount += 1;
             }
