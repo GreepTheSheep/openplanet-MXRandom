@@ -144,7 +144,7 @@ void Update(float dt) {
                 lowerMedalInt = 2;
             break;
             case RMCGoal::Silver:
-                actualMedalName = "Silver"
+                actualMedalName = "Silver";
                 lowerMedalName = "Bronze";
                 lowerMedalInt = 1;
             break;
