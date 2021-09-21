@@ -121,7 +121,7 @@ int GetCurrentMapMedal(){
             CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
             auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
             if (ghost !is null) {
-                if (ghose.Result.Time != 4294967295) time = ghost.Result.Time;
+                if (ghost.Result.Time != 4294967295) time = ghost.Result.Time;
                 else time = -1;
                 PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
             }
