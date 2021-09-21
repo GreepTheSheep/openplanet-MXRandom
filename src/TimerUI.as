@@ -17,6 +17,8 @@ Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.
 Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
 int TimerWindowFlags = 2097154+32+64;
+string actualMedalName = "";
+int lowerMedalInt = 0;
 string lowerMedalName = "";
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
 
@@ -130,6 +132,30 @@ void Update(float dt) {
     }
 
     if (timerStarted){
+        switch (Setting_RMC_Goal) {
+            case RMCGoal::Author:
+                actualMedalName = "Author";
+                lowerMedalName = "Gold";
+                lowerMedalInt = 3;
+            break;
+            case RMCGoal::Gold:
+                actualMedalName = "Gold";
+                lowerMedalName = "Silver";
+                lowerMedalInt = 2;
+            break;
+            case RMCGoal::Silver:
+                actualMedalName = "Silver"
+                lowerMedalName = "Bronze";
+                lowerMedalInt = 1;
+            break;
+            case RMCGoal::Bronze:
+                actualMedalName = "Bronze";
+            break;
+            default:
+                actualMedalName = "";
+                lowerMedalInt = 0;
+                lowerMedalName = "";
+        }
         if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
@@ -145,19 +171,7 @@ void Update(float dt) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal() >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
-            switch (Setting_RMC_Goal) {
-                case RMCGoal::Author:
-                    lowerMedalName = "Gold";
-                break;
-                case RMCGoal::Gold:
-                    lowerMedalName = "Silver";
-                break;
-                case RMCGoal::Silver:
-                    lowerMedalName = "Bronze";
-                break;
-            }
-            
+        if (GetCurrentMapMedal() >= lowerMedalInt && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
             UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
