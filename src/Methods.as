@@ -99,7 +99,7 @@ void ClosePauseMenu() {
 	}
 }
 
-int GetCurrentMapMedal(int dt = 0){
+int GetCurrentMapMedal(){
     auto app = cast<CTrackMania>(GetApp());
     auto map = app.RootMap;
     CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
@@ -117,8 +117,14 @@ int GetCurrentMapMedal(int dt = 0){
             if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
             else time = -1;
 #elif TMNEXT
-            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish) time = player.ScriptAPI.CurrentRaceTime - dt;
+            CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(GetApp().PlaygroundScript);
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
+            auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
+            if (ghost !is null) {
+                if (ghose.Result.Time != 4294967295) time = ghost.Result.Time;
+                else time = -1;
+                PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
+            }
             else time = -1;
 #endif
             medal = 0;

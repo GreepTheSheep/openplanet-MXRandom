@@ -130,7 +130,7 @@ void Update(float dt) {
     }
 
     if (timerStarted){
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= Setting_RMC_Goal && !gotAuthor){
+        if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
@@ -145,7 +145,7 @@ void Update(float dt) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal(Text::ParseInt(Text::Format("%.0f", dt))) >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
+        if (GetCurrentMapMedal() >= (Setting_RMC_Goal-1) && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
             switch (Setting_RMC_Goal) {
                 case RMCGoal::Author:
                     lowerMedalName = "Gold";
