@@ -105,19 +105,25 @@ void Update(float dt) {
     }
 
     if (timerStarted && !isPaused){
-        startTime = Time::get_Now();
+        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+        if (currentMap !is null) {
+            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+            if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+                startTime = Time::get_Now();
 
-        if (startTime > endTime) {
-            startTime = -1;
-            timerStarted = false;
-            RMCStarted = false;
-            displayTimer = false;
-            if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
-            if (Setting_RMC_ExitMapOnEndTime){
-                CTrackMania@ app = cast<CTrackMania>(GetApp());
-                app.BackToMainMenu();
-            }
+                if (startTime > endTime) {
+                    startTime = -1;
+                    timerStarted = false;
+                    RMCStarted = false;
+                    displayTimer = false;
+                    if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
+                    else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+                    if (Setting_RMC_ExitMapOnEndTime){
+                        CTrackMania@ app = cast<CTrackMania>(GetApp());
+                        app.BackToMainMenu();
+                    }
+                }
+            } else RecentlyPlayedMaps = loadRecentlyPlayed();
         }
     } else if (timerStarted && isPaused) {
         startTime = Time::get_Now() - (Time::get_Now() - startTime);
@@ -232,7 +238,7 @@ void RenderCurrentMap(){
             } else {
                 UI::Text(":( Map info unavailable");
             }
-        } else RecentlyPlayedMaps = loadRecentlyPlayed();
+        }
     } else {
         if (isPaused) UI::Text("Switching map...");
         else isPaused = true;
