@@ -122,7 +122,7 @@ int GetCurrentMapMedal(){
             if (PlaygroundScript !is null && player !is null) {
                 auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
                 if (ghost !is null) {
-                    if (ghost.Result.Time > 0 && ghost.Result.Time != 4294967295) time = Text::ParseInt(Text::Format("%", ghost.Result.Time));
+                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = Text::ParseInt(Text::Format("%", ghost.Result.Time));
                     PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
                 }
             }
