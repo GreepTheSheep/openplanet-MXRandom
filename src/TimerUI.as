@@ -132,30 +132,24 @@ void Update(float dt) {
     }
 
     if (timerStarted){
-        switch (Setting_RMC_Goal) {
-            case RMCGoal::Author:
-                actualMedalName = "Author";
-                lowerMedalName = "Gold";
-                lowerMedalInt = 3;
-            break;
-            case RMCGoal::Gold:
-                actualMedalName = "Gold";
-                lowerMedalName = "Silver";
-                lowerMedalInt = 2;
-            break;
-            case RMCGoal::Silver:
-                actualMedalName = "Silver";
-                lowerMedalName = "Bronze";
-                lowerMedalInt = 1;
-            break;
-            case RMCGoal::Bronze:
-                actualMedalName = "Bronze";
-            break;
-            default:
-                actualMedalName = "";
-                lowerMedalInt = 0;
-                lowerMedalName = "";
+        if (Setting_RMC_Goal ==  RMCGoal::Author) {
+            actualMedalName = "Author";
+            lowerMedalName = "Gold";
+            lowerMedalInt = 3;
+        } else if (Setting_RMC_Goal ==  RMCGoal::Gold) {
+            actualMedalName = "Gold";
+            lowerMedalName = "Silver";
+            lowerMedalInt = 2;
+        } else if (Setting_RMC_Goal ==  RMCGoal::Silver) {
+            actualMedalName = "Silver";
+            lowerMedalName = "Bronze";
+            lowerMedalInt = 1;
+        } else if (Setting_RMC_Goal ==  RMCGoal::Bronze) {
+            actualMedalName = "Bronze";
+            lowerMedalName = "";
+            lowerMedalInt = 0;
         }
+        
         if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
             gotAuthor = true;
             authorCount += 1;
