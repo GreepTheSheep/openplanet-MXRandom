@@ -113,16 +113,17 @@ int GetCurrentMapMedal(){
 
         if (GamePlayground.GameTerminals.get_Length() > 0){
 #if MP4
-            CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-            if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
-            else time = -1;
+            CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
+            if (GameCtnPlayground.PlayerRecordedGhost !is null){
+                time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+            } else time = -1;
 #elif TMNEXT
             CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(GetApp().PlaygroundScript);
             CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
             if (PlaygroundScript !is null && player !is null) {
                 auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
                 if (ghost !is null) {
-                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = Text::ParseInt(Text::Format("%", ghost.Result.Time));
+                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
                     PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
                 }
             }
