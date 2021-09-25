@@ -258,6 +258,7 @@ void RenderPlayingButtons(){
         }
         UI::SameLine();
         if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
+            if (isPaused) isPaused = false;
             if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                 goldCount += 1;
             }
@@ -273,14 +274,16 @@ void RenderPlayingButtons(){
             UI::SameLine();
             if(UI::Button("Survival Free Skip")) {
                 Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
+                    isPaused = false;
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
-                }, function(){});
+                }, function(){isPaused = false;});
             }
         }
         if (!Setting_RMC_AutoSwitch && gotAuthor){
             UI::SameLine();
             if(UI::Button("Next map")) {
+                if (isPaused) isPaused = false;
                 if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
                 startnew(loadMapRMC);
             }
