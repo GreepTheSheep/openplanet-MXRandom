@@ -273,7 +273,8 @@ void RenderPlayingButtons(){
         if (Setting_RMC_Mode == RMCMode::Survival){
             UI::SameLine();
             if(UI::Button("Survival Free Skip")) {
-                Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible\nor the author time is over 5 minutes!\n\nAre you sure to skip?", function() {
+                isPaused = true;
+                Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
                     isPaused = false;
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
