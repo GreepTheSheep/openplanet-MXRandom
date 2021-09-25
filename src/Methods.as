@@ -147,15 +147,14 @@ Json::Value GetRandomMap() {
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
 
-#if TMNEXT
-    // prevent loading shootmania maps
-    req.Url += "&vehicles=1";
-#endif
-
     if (RMCStarted){
         req.Url += "&etags=23%2C37";
         req.Url += "&lengthop=1";
         req.Url += "&length=13";
+#if TMNEXT
+        // prevent loading shootmania maps
+        req.Url += "&vehicles=1";
+#endif
     } else {
         req.Url += "&etags=37";
         if (Setting_MapLength != MapLength::Anything){
