@@ -64,9 +64,6 @@ void Render(){
         }
     } else {
         if (UI::Begin(windowTitle, Setting_RMC_DisplayTimer, TimerWindowFlags)){
-            if (!UI::IsOverlayShown()){
-                // UI::SetWindowSize(vec2(200, 180));
-            }
             if (UI::IsOverlayShown()){
                 UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
                 UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
