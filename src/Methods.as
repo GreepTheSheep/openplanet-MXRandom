@@ -111,31 +111,29 @@ int GetCurrentMapMedal(){
         int bronzeTime = map.TMObjective_BronzeTime;
         int time = -1;
 
-        if (GamePlayground.GameTerminals.get_Length() > 0){
 #if MP4
-            CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
-            if (GameCtnPlayground.PlayerRecordedGhost !is null){
-                time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
-            } else time = -1;
+        CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
+        if (GameCtnPlayground.PlayerRecordedGhost !is null){
+            time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+        } else time = -1;
 #elif TMNEXT
-            CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(GetApp().PlaygroundScript);
-            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-            if (PlaygroundScript !is null && player !is null) {
-                auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
-                if (ghost !is null) {
-                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
-                    PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
-                }
+        CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
+        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
+        if (PlaygroundScript !is null && player !is null) {
+            auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
+            if (ghost !is null) {
+                if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
+                PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
             }
+        } else time = -1;
 #endif
-            medal = 0;
-            if (time != -1){
-                if(time <= authorTime) medal = 4;
-                else if(time <= goldTime) medal = 3;
-                else if(time <= silverTime) medal = 2;
-                else if(time <= bronzeTime) medal = 1;
-                else medal = 0;
-            }
+        medal = 0;
+        if (time != -1){
+            if(time <= authorTime) medal = 4;
+            else if(time <= goldTime) medal = 3;
+            else if(time <= silverTime) medal = 2;
+            else if(time <= bronzeTime) medal = 1;
+            else medal = 0;
         }
     }
     return medal;
