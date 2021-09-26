@@ -63,7 +63,7 @@ string getTitlePack(bool full = false)
 {
     if (isTitePackLoaded()){
         auto appMP = cast<CGameManiaPlanet>(GetApp());
-        if (full) return appMP.LoadedManiaTitle.TitleId;
+        if (full) return appMP.LoadedManiaTitle.TitleId.SubStr(0, appMP.LoadedManiaTitle.TitleId.IndexOf("@"));
         else return appMP.LoadedManiaTitle.BaseTitleId;
     } else {
         return "";
@@ -167,7 +167,7 @@ Json::Value GetRandomMap() {
     }
     
 #if MP4
-    req.Url += "&tpack=" + getTitlePack() + "&gv=1";
+    req.Url += "&tpack=" + getTitlePack(true) + "&gv=1";
 #endif
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
