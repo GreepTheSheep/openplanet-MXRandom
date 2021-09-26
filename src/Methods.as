@@ -169,6 +169,7 @@ Json::Value GetRandomMap() {
 #if MP4
     req.Url += "&tpack=" + getTitlePack(true) + "&gv=1";
 #endif
+    log("Request URL: " + req.Url);
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
