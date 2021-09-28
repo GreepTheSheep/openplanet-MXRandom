@@ -80,7 +80,7 @@ RMCGoal Setting_RMC_Goal = RMCGoal::Author;
 [Setting name="Display the current map name, author and style (according to MX) on the RMC timer" category="Random Map Challenge"]
 bool Setting_RMC_DisplayCurrentMap = true;
 
-[Setting name="Automatically switch map when got author medal" category="Random Map Challenge"]
+[Setting name="Automatically switch map when got goal time" category="Random Map Challenge"]
 bool Setting_RMC_AutoSwitch = true;
 
 [Setting name="Automatically quits the map when the timer is up" category="Random Map Challenge"]

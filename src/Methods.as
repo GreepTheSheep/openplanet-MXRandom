@@ -63,7 +63,7 @@ string getTitlePack(bool full = false)
 {
     if (isTitePackLoaded()){
         auto appMP = cast<CGameManiaPlanet>(GetApp());
-        if (full) return appMP.LoadedManiaTitle.TitleId;
+        if (full) return appMP.LoadedManiaTitle.TitleId.SubStr(0, appMP.LoadedManiaTitle.TitleId.IndexOf("@"));
         else return appMP.LoadedManiaTitle.BaseTitleId;
     } else {
         return "";
@@ -111,33 +111,31 @@ int GetCurrentMapMedal(){
         int bronzeTime = map.TMObjective_BronzeTime;
         int time = -1;
 
-        if (GamePlayground.GameTerminals.get_Length() > 0){
 #if MP4
-            CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-            if (player.RaceState == CTrackManiaPlayer::ERaceState::Finished) time = player.CurCheckpointRaceTime;
-            else time = -1;
+        CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
+        if (GameCtnPlayground.PlayerRecordedGhost !is null){
+            time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+        } else time = -1;
 #elif TMNEXT
-            CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(GetApp().PlaygroundScript);
-            if (PlaygroundScript !is null) {
-                CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-                if (player !is null) {
-                    auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
-                    if (ghost !is null) {
-                        if (ghost.Result.Time != 4294967295) time = ghost.Result.Time;
-                        else time = -1;
-                        PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
-                    } else time = -1;
+        CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
+        if (PlaygroundScript !is null && GamePlayground.GameTerminals.get_Length() > 0) {
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
+            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish && player !is null) {
+                auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
+                if (ghost !is null) {
+                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
+                    PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
                 } else time = -1;
             } else time = -1;
+        } else time = -1;
 #endif
-            medal = 0;
-            if (time != -1){
-                if(time <= authorTime) medal = 4;
-                else if(time <= goldTime) medal = 3;
-                else if(time <= silverTime) medal = 2;
-                else if(time <= bronzeTime) medal = 1;
-                else medal = 0;
-            }
+        medal = 0;
+        if (time != -1){
+            if(time <= authorTime) medal = 4;
+            else if(time <= goldTime) medal = 3;
+            else if(time <= silverTime) medal = 2;
+            else if(time <= bronzeTime) medal = 1;
+            else medal = 0;
         }
     }
     return medal;
@@ -150,15 +148,14 @@ Json::Value GetRandomMap() {
     req.Method = Net::HttpMethod::Get;
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
 
-#if TMNEXT
-    // prevent loading shootmania maps
-    req.Url += "&vehicles=1";
-#endif
-
     if (RMCStarted){
         req.Url += "&etags=23%2C37";
         req.Url += "&lengthop=1";
         req.Url += "&length=13";
+#if TMNEXT
+        // prevent loading shootmania maps
+        req.Url += "&vehicles=1";
+#endif
     } else {
         req.Url += "&etags=37";
         if (Setting_MapLength != MapLength::Anything){
@@ -170,8 +167,9 @@ Json::Value GetRandomMap() {
     }
     
 #if MP4
-    req.Url += "&tpack=" + getTitlePack() + "&gv=1";
+    req.Url += "&tpack=" + getTitlePack(true) + "&gv=1";
 #endif
+    log("Request URL: " + req.Url);
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
