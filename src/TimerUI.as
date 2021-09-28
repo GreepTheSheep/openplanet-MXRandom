@@ -106,16 +106,14 @@ void startTimer() {
     endTime = startTime + (timer*60*1000);
 }
 
-void Update(float dt) {
-    if (startTime < 0 || !timerStarted) {
-        return;
-    } else {
+void TimerYield() {
+    if (startTime > 0 || timerStarted) {
         if (!isPaused){
             CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
             if (currentMap !is null) {
                 CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
                 if (currentMapInfo !is null) {
-                    if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+                    if (RecentlyPlayedMaps.Length > 0 && currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
                         startTime = Time::get_Now();
 
                         if (startTime > endTime) {
@@ -170,7 +168,7 @@ void Update(float dt) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
             }
         }
-        if (GetCurrentMapMedal() >= lowerMedalInt && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
+        if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
             UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
@@ -241,7 +239,7 @@ void RenderCurrentMap(){
     if (currentMap !is null) {
         CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
         if (currentMapInfo !is null) {
-            if (currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
+            if (RecentlyPlayedMaps.Length > 0 && currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
                 UI::Text("Current Map:");
                 if (RecentlyPlayedMaps.get_Length() > 0){
                     string mapName = RecentlyPlayedMaps[0]["name"];

@@ -118,13 +118,15 @@ int GetCurrentMapMedal(){
         } else time = -1;
 #elif TMNEXT
         CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
-        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-        if (PlaygroundScript !is null && player !is null) {
-            auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
-            if (ghost !is null) {
-                if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
-                PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
-            }
+        if (PlaygroundScript !is null && GamePlayground.GameTerminals.get_Length() > 0) {
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
+            if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish && player !is null) {
+                auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
+                if (ghost !is null) {
+                    if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
+                    PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
+                } else time = -1;
+            } else time = -1;
         } else time = -1;
 #endif
         medal = 0;
