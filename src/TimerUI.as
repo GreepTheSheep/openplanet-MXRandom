@@ -23,7 +23,15 @@ string lowerMedalName = "";
 string windowTitle = MXColor+Icons::HourglassO + " \\$zRMC";
 
 void Render(){
-    if (!Setting_RMC_DisplayTimer) return;
+    if (!Setting_RMC_DisplayTimer) {
+        // check if the timer is running
+        if (RMCStarted){
+            RMCStarted = false;
+            timerStarted = false;
+            displayTimer = false;
+        }
+        return;
+    }
 
     if (!UI::IsOverlayShown()) TimerWindowFlags = 2097154+32+64+8+1;
     else TimerWindowFlags = 2097154+32+64;
