@@ -24,6 +24,7 @@ void Main()
     while (true){
         yield();
         startnew(SearchCoroutine);
+        startnew(TimerYield);
         if (loadMapId != 0) {
 #if TMNEXT
             ClosePauseMenu();

@@ -4,6 +4,7 @@ bool displayTimer = false;
 bool isPaused = false;
 bool gotMedalOnceNotif = false;
 bool gotAuthor = false;
+int realStartTime = -1;
 int startTime = -1;
 int endTime = -1;
 int authorCount = 0;
@@ -99,9 +100,11 @@ void Render(){
 }
 
 void startTimer() {
+    isPaused = false;
     timerStarted = true;
     int timer = 60;
     if (Setting_RMC_Mode == RMCMode::Survival) timer = 15;
+    realStartTime = Time::get_Now();
     startTime = Time::get_Now();
     endTime = startTime + (timer*60*1000);
 }
@@ -122,7 +125,7 @@ void TimerYield() {
                             RMCStarted = false;
                             displayTimer = false;
                             if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-                            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+                            else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(realStartTime - startTime) + ".\nYou got "+ authorCount + " author medals and " + survivalSkips + " skips.");
                             if (Setting_RMC_ExitMapOnEndTime){
                                 CTrackMania@ app = cast<CTrackMania>(GetApp());
                                 app.BackToMainMenu();
