@@ -263,27 +263,38 @@ void RenderCurrentMap(){
 
 void RenderPlayingButtons(){
     if (timerStarted) {
-        if (UI::Button((isPaused ? "Resume" : "Pause") + " timer")) {
+        int HourGlassValue = Time::Stamp % 3;
+        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+        if (UI::Button((isPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
             if (isPaused) endTime = endTime + (Time::get_Now() - startTime);
             isPaused = !isPaused;
         }
         UI::SameLine();
-        if(UI::Button("Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
-            if (isPaused) isPaused = false;
-            if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
-                goldCount += 1;
+        if (mapsCount == 0 && !gotMedalOnceNotif) {
+            if (UI::Button(Icons::Repeat + " Restart")) {
+                if (isPaused) isPaused = false;
+                timerStarted = false;
+                displayTimer = false;
+                startnew(loadFirstMapRMC);
             }
-            if (Setting_RMC_Mode == RMCMode::Survival) {
-                endTime -= (2*60*1000);
-                survivalSkips += 1;
+        } else {
+            if(UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
+                if (isPaused) isPaused = false;
+                if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
+                    goldCount += 1;
+                }
+                if (Setting_RMC_Mode == RMCMode::Survival) {
+                    endTime -= (2*60*1000);
+                    survivalSkips += 1;
+                }
+                UI::ShowNotification("Please wait...", "Looking for another map");
+                startnew(loadMapRMC);
             }
-            UI::ShowNotification("Please wait...", "Looking for another map");
-            startnew(loadMapRMC);
         }
 
         if (Setting_RMC_Mode == RMCMode::Survival){
             UI::SameLine();
-            if(UI::Button("Survival Free Skip")) {
+            if(UI::Button(Icons::PlayCircleO + " Survival Free Skip")) {
                 isPaused = true;
                 Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
                     isPaused = false;
@@ -294,7 +305,7 @@ void RenderPlayingButtons(){
         }
         if (!Setting_RMC_AutoSwitch && gotAuthor){
             UI::SameLine();
-            if(UI::Button("Next map")) {
+            if(UI::Button(Icons::Play + " Next map")) {
                 if (isPaused) isPaused = false;
                 if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
                 startnew(loadMapRMC);
