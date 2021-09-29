@@ -375,6 +375,7 @@ void RenderMedalsTable(){
 }
 
 void loadFirstMapRMC(){
+    log("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
@@ -414,6 +415,7 @@ void loadFirstMapRMC(){
 }
 
 void loadMapRMC(){
+    log("RMC: Switching map.");
     isPaused = true;
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
