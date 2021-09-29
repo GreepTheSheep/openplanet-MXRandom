@@ -67,6 +67,10 @@ void Render(){
                         if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
                             OpenBrowserURL("https://flinkblog.de/RMC");
                         }
+                        UI::SameLine();
+                        if (UI::Button(Icons::Bullhorn)) {
+                            error("This feature is not implemented", "Announcements API");
+                        }
                     }
                 }
                 if (authorCount > 0 || goldCount > 0 || survivalSkips > 0 || mapsCount > 0){
