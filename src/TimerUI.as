@@ -50,11 +50,16 @@ void Render(){
                     if (RMCStarted){
                         UI::Text("Please wait until the map is found and loaded.");
                     } else {
-                        if (UI::Button(Icons::Play+" Start Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)))) {
                         UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
                         UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
                         UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
+                        if (UI::Button(Icons::Play+" Start Random Map Challenge")) {
                             Setting_RMC_Mode = RMCMode::Challenge;
+                            RMCStarted = true;
+                            startnew(loadFirstMapRMC);
+                        }
+                        if (UI::Button(Icons::Play+" Start Random Map Survival")) {
+                            Setting_RMC_Mode = RMCMode::Survival;
                             RMCStarted = true;
                             startnew(loadFirstMapRMC);
                         }
