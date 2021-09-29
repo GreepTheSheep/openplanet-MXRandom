@@ -172,7 +172,7 @@ void TimerYield() {
                     endTime += (3*60*1000);
 
                     // Cap at 20 minutes max
-                    if (endTime > (20*60*1000)) endTime = (20*60*1000);
+                    if ((endTime - startTime) > (20*60*1000)) endTime = (20*60*1000);
                 }
                 startnew(loadMapRMC);
             } else {
@@ -298,8 +298,8 @@ void RenderPlayingButtons(){
                     goldCount += 1;
                 }
                 if (Setting_RMC_Mode == RMCMode::Survival) {
-                    if (endTime < (1*60*1000)) endTime = (1*60*1000);
-                    else if (endTime < (2*60*1000)) endTime = (2*60*1000);
+                    if ((endTime - startTime) < (1*60*1000)) endTime = (1*60*1000);
+                    else if ((endTime - startTime) < (2*60*1000)) endTime = (2*60*1000);
                     else endTime -= (2*60*1000);
                     survivalSkips += 1;                    
                 }
@@ -327,7 +327,7 @@ void RenderPlayingButtons(){
                     endTime += (3*60*1000);
 
                     // Cap at 20 minutes max
-                    if (endTime > (20*60*1000)) endTime = (20*60*1000);
+                    if ((endTime - startTime) > (20*60*1000)) endTime = (20*60*1000);
                 }
                 startnew(loadMapRMC);
             }
