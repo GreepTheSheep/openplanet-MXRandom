@@ -23,6 +23,7 @@ void Main()
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
+        startnew(settingsCheckCoroutine);
         startnew(SearchCoroutine);
         startnew(TimerYield);
         if (loadMapId != 0) {

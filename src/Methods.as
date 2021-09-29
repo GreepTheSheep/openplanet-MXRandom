@@ -1,3 +1,9 @@
+// ---------Openplanet utilities--------
+int OpenplanetVersionInt(){
+    return Text::ParseInt(Meta::OpenplanetVersion().Replace(".", ""));
+}
+
+
 // -----------Logging-----------
 
 void log(string msg)
