@@ -270,11 +270,14 @@ void RenderPlayingButtons(){
     if (timerStarted) {
         int HourGlassValue = Time::Stamp % 3;
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-        if (UI::Button((isPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
-            if (isPaused) endTime = endTime + (Time::get_Now() - startTime);
-            isPaused = !isPaused;
+        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+        if (currentMap !is null) {
+            if (UI::Button((isPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
+                if (isPaused) endTime = endTime + (Time::get_Now() - startTime);
+                isPaused = !isPaused;
+            }
+            UI::SameLine();
         }
-        UI::SameLine();
         if (mapsCount == 0 && !gotMedalOnceNotif) {
             if (UI::Button(Icons::Repeat + " Restart")) {
                 if (isPaused) isPaused = false;
