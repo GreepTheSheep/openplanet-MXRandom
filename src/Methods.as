@@ -151,7 +151,7 @@ Json::Value GetRandomMap() {
     if (RMCStarted){
         req.Url += "&etags=23%2C37";
         req.Url += "&lengthop=1";
-        req.Url += "&length=13";
+        req.Url += "&length=9";
 #if TMNEXT
         // prevent loading shootmania maps
         req.Url += "&vehicles=1";
