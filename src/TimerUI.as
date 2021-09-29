@@ -17,7 +17,7 @@ Resources::Texture@ GoldTex = Resources::GetTexture("src/Assets/Images/Gold.png"
 Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.png");
 Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
 Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
-int TimerWindowFlags = 2097154+32+64;
+int TimerWindowFlags = UI::WindowFlags::NoDocking + UI::WindowFlags::NoResize + UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
 string actualMedalName = "";
 int lowerMedalInt = 0;
 string lowerMedalName = "";
@@ -34,8 +34,8 @@ void Render(){
         return;
     }
 
-    if (!UI::IsOverlayShown()) TimerWindowFlags = 2097154+32+64+8+1;
-    else TimerWindowFlags = 2097154+32+64;
+    if (!UI::IsOverlayShown()) TimerWindowFlags = UI::WindowFlags::NoDocking + UI::WindowFlags::NoResize + UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize + UI::WindowFlags::NoScrollbar + UI::WindowFlags::NoTitleBar;
+    else TimerWindowFlags = UI::WindowFlags::NoDocking + UI::WindowFlags::NoResize + UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
 
     if (!displayTimer){
         if (UI::IsOverlayShown()){
@@ -79,7 +79,7 @@ void Render(){
         }
     } else {
         if (UI::Begin(windowTitle, Setting_RMC_DisplayTimer, TimerWindowFlags)){
-            if (UI::IsOverlayShown()){
+            if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && Setting_RMC_ShowBtns)){
                 UI::PushStyleColor(UI::Col::Button, vec4(0.443, 0, 0, 0.8));
                 UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0.443, 0, 0, 1));
                 UI::PushStyleColor(UI::Col::ButtonActive, vec4(0.443, 0, 0, 0.6));
@@ -99,7 +99,7 @@ void Render(){
                 UI::Separator();
                 RenderCurrentMap();
             }
-            if (UI::IsOverlayShown()) RenderPlayingButtons();
+            if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && Setting_RMC_ShowBtns)) RenderPlayingButtons();
             UI::End();
         }
     }
