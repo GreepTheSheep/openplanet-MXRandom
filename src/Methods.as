@@ -158,6 +158,9 @@ Json::Value GetRandomMap() {
 #endif
     } else {
         req.Url += "&etags=37";
+        if (Setting_MapLengthOperator != MapLengthOp::Equals){
+            req.Url += "&lengthop=" + Setting_MapLengthOperator;
+        }
         if (Setting_MapLength != MapLength::Anything){
             req.Url += "&length=" + Setting_MapLength;
         }

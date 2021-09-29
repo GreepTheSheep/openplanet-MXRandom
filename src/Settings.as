@@ -15,6 +15,18 @@ int Setting_WindowSize_w = 650;
 [Setting name="Window default height" category="Menu" description="The default height of the main window" drag min=140 max=2000]
 int Setting_WindowSize_h = 450;
 
+enum MapLengthOp
+{
+    Equals = 0,
+    LessThan = 1,
+    GreaterThan = 2,
+    LessThanOrEqual = 3,
+    GreaterThanOrEqual = 4
+}
+
+[Setting name="Map length operator" category="Searching" description="The operator to use when comparing the map length to the value in the 'Map length' field."]
+MapLengthOp Setting_MapLengthOperator = MapLengthOp::Equals;
+
 enum MapLength
 {
     Anything = -1,
