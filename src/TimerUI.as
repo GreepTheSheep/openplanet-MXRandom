@@ -163,10 +163,11 @@ void TimerYield() {
         }
         
         if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
+            log("RMC: Got "+ actualMedalName + " medal!");
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
-                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "We're searching for another map...");
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+actualMedalName+" time!", "We're searching for another map...");
                 
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     endTime += (3*60*1000);
@@ -183,6 +184,7 @@ void TimerYield() {
             }
         }
         if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
+            log("RMC: Got "+ lowerMedalName + " medal!");
             UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
@@ -303,6 +305,7 @@ void RenderPlayingButtons(){
                     else endTime -= (2*60*1000);
                     survivalSkips += 1;                    
                 }
+                log("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
             }
@@ -314,6 +317,7 @@ void RenderPlayingButtons(){
                 isPaused = true;
                 Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
                     isPaused = false;
+                    log("RMC: Survival Free Skip");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
                 }, function(){isPaused = false;});
