@@ -162,7 +162,12 @@ void TimerYield() {
             if (Setting_RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "We're searching for another map...");
                 
-                if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
+                if (Setting_RMC_Mode == RMCMode::Survival) {
+                    endTime += (3*60*1000);
+
+                    // Cap at 20 minutes max
+                    if (endTime > (20*60*1000)) endTime = (20*60*1000);
+                }
                 startnew(loadMapRMC);
             } else {
                 string descTxt = "Select 'Next map' to change the map";
@@ -284,8 +289,10 @@ void RenderPlayingButtons(){
                     goldCount += 1;
                 }
                 if (Setting_RMC_Mode == RMCMode::Survival) {
-                    endTime -= (2*60*1000);
-                    survivalSkips += 1;
+                    if (endTime < (1*60*1000)) endTime = (1*60*1000);
+                    else if (endTime < (2*60*1000)) endTime = (2*60*1000);
+                    else endTime -= (2*60*1000);
+                    survivalSkips += 1;                    
                 }
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
@@ -307,7 +314,12 @@ void RenderPlayingButtons(){
             UI::SameLine();
             if(UI::Button(Icons::Play + " Next map")) {
                 if (isPaused) isPaused = false;
-                if (Setting_RMC_Mode == RMCMode::Survival) endTime += (3*60*1000);
+                if (Setting_RMC_Mode == RMCMode::Survival) {
+                    endTime += (3*60*1000);
+
+                    // Cap at 20 minutes max
+                    if (endTime > (20*60*1000)) endTime = (20*60*1000);
+                }
                 startnew(loadMapRMC);
             }
         }
