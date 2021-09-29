@@ -76,7 +76,7 @@ enum RMCMode {
     Survival,
 }
 
-[Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
+//[Setting hide name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
 RMCMode Setting_RMC_Mode = RMCMode::Challenge;
 
 enum RMCGoal {
