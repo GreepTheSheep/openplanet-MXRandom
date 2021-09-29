@@ -47,21 +47,22 @@ void Render(){
             if (!isTitePackLoaded()) UI::Text("\\$f00"+Icons::Times+" \\$zNo titlepack loaded");
             else {
 #endif
-                    UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
-                    UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
-                    UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
                     if (RMCStarted){
                         UI::Text("Please wait until the map is found and loaded.");
                     } else {
                         if (UI::Button(Icons::Play+" Start Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)))) {
+                        UI::PushStyleColor(UI::Col::Button, vec4(0, 0.443, 0, 0.8));
+                        UI::PushStyleColor(UI::Col::ButtonHovered, vec4(0, 0.443, 0, 1));
+                        UI::PushStyleColor(UI::Col::ButtonActive, vec4(0, 0.443, 0, 0.6));
+                            Setting_RMC_Mode = RMCMode::Challenge;
                             RMCStarted = true;
                             startnew(loadFirstMapRMC);
                         }
+                        UI::PopStyleColor(3);
+                        if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
+                            OpenBrowserURL("https://flinkblog.de/RMC");
+                        }
                     }
-                    UI::PopStyleColor(3);
-                }
-                if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
-                    OpenBrowserURL("https://flinkblog.de/RMC");
                 }
                 if (authorCount > 0 || goldCount > 0 || survivalSkips > 0 || mapsCount > 0){
                     UI::Separator();
