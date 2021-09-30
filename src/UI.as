@@ -2,6 +2,7 @@ int oldTimestamp = 0;
 int rand = 0;
 
 void RenderInterface() {
+    RenderPluginInfoInterface();
     Dialogs::RenderInterface();
     if (!Setting_Window_Show) return;
     if (Setting_Window_Type == WindowType::Minimal){
