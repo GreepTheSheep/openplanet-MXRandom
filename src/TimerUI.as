@@ -238,20 +238,27 @@ void RenderMedals() {
     UI::Text("" + authorCount);
     UI::PopFont();
 
-    if (Setting_RMC_Goal != RMCGoal::Bronze){
+    if (Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
         UI::SetCursorPos(vec2(pos_orig.x+35, pos_orig.y));
-        if (Setting_RMC_Mode == RMCMode::Challenge) {
-            if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
-            else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
-            else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(BronzeTex, vec2(50,50));
-        }
-        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Image(SkipTex, vec2(50,50));
+        if (Setting_RMC_Goal == RMCGoal::Author) UI::Image(GoldTex, vec2(50,50));
+        else if (Setting_RMC_Goal == RMCGoal::Gold) UI::Image(SilverTex, vec2(50,50));
+        else if (Setting_RMC_Goal == RMCGoal::Silver) UI::Image(BronzeTex, vec2(50,50));
         UI::SameLine();
         pos_orig = UI::GetCursorPos();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
         UI::PushFont(timerFont);
-        if (Setting_RMC_Mode == RMCMode::Challenge) UI::Text("" + goldCount);
-        else if (Setting_RMC_Mode == RMCMode::Survival) UI::Text("" + survivalSkips);
+        UI::Text("" + goldCount);
+        UI::PopFont();
+    }
+
+    if (Setting_RMC_Mode == RMCMode::Survival){
+        UI::SetCursorPos(vec2(pos_orig.x+35, pos_orig.y));
+        UI::Image(SkipTex, vec2(50,50));
+        UI::SameLine();
+        pos_orig = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+10));
+        UI::PushFont(timerFont);
+        UI::Text("" + survivalSkips);
         UI::PopFont();
     }
 }
