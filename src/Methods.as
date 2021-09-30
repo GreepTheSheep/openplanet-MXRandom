@@ -228,6 +228,28 @@ Json::Value GetMap(int mapId) {
     else return json[0];
 }
 
+Json::Value GetInfoAPI(){
+    Net::HttpRequest req;
+    req.Method = Net::HttpMethod::Get;
+    req.Url = Setting_API_URL;
+    dictionary@ Headers = dictionary();
+    Headers["Accept"] = "application/json";
+    Headers["Content-Type"] = "application/json";
+    req.Body = "";
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Object) {
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+        if (returnedType != Json::Type::Object) error("Warn: returned Info API JSON is not valid, retrying", "Info API, Returned type is " + changeEnumStyle(tostring(returnedType)));
+    }
+    return json;
+}
+
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
     Json::Value ReturnedObject;
     try {

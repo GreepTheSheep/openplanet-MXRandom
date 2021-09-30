@@ -101,6 +101,9 @@ bool Setting_RMC_ExitMapOnEndTime = false;
 [Setting name="Show the buttons when the Openplanet overlay is hidden (requires Openplanet version 1.19.7)" category="Random Map Challenge"]
 bool Setting_RMC_ShowBtns = true;
 
+[Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
+string Setting_API_URL = "https://greep.gq/api/rmc.json";
+
 void settingsCheckCoroutine(){
     if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
         error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
