@@ -67,9 +67,12 @@ void Render(){
                         if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
                             OpenBrowserURL("https://flinkblog.de/RMC");
                         }
-                        UI::SameLine();
-                        if (UI::Button(Icons::Bullhorn)) {
-                            error("This feature is not implemented", "Announcements API");
+                        if (IsPluginInfoAPILoaded()){
+                            UI::SameLine();
+                            int announcementsLength = PluginInfoNet["announcements"].get_Length();
+                            if (announcementsLength > 0 && UI::Button(Icons::Bullhorn+" "+announcementsLength)) {
+                                error("This feature is not implemented", "Announcements API");
+                            }
                         }
                     }
                 }

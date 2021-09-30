@@ -250,6 +250,10 @@ Json::Value GetInfoAPI(){
     return json;
 }
 
+bool IsPluginInfoAPILoaded(){
+    return PluginInfoNet.GetType() == Json::Type::Object;
+}
+
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
     Json::Value ReturnedObject;
     try {
