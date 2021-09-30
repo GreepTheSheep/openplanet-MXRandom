@@ -46,7 +46,7 @@ void RenderPluginInfoAbout() {
     UI::PushFont(Header1);
     UI::Text(name);
     UI::PopFont();
-    UI::Text("Made by \\$777" + Meta::ExecutingPlugin().get_Author());
+    UI::Text("Made by \\$777" + Meta::ExecutingPlugin().get_Author() + " \\$aaaand its contributors");
     UI::Text("Version \\$777" + Meta::ExecutingPlugin().get_Version());
     UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().get_ID());
     UI::Text("Site ID \\$777" + Meta::ExecutingPlugin().get_SiteID());
