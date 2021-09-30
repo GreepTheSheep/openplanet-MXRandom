@@ -1,11 +1,11 @@
-// All texts are
+// All texts are fetched from the API set in Setting_API_URL (default: https://greep.gq/api/rmc.json)
 
 bool WindowInfo_Show = false;
 
 Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 22);
 Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 
-int WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
+int WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
 
 void RenderPluginInfoInterface() {
     if (!WindowInfo_Show) return;
@@ -20,12 +20,12 @@ void RenderPluginInfoInterface() {
             }
             int announcementsLength = PluginInfoNet["announcements"].get_Length();
             if (announcementsLength > 0 && UI::BeginTabItem(Icons::Bullhorn + " Announcements ("+announcementsLength+")")) {
-                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
                 RenderPluginInfoAnnouncements();
                 UI::EndTabItem();
             }
             if (UI::BeginTabItem(Icons::Tag + " Changelog")) {
-                WindowInfo_Flags = UI::WindowFlags::NoCollapse;
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
                 RenderPluginInfoChangelog();
                 UI::EndTabItem();
             }
@@ -60,6 +60,16 @@ void RenderPluginInfoAbout() {
     UI::Text("Openplanet");
     UI::PopFont();
     UI::Text("Version \\$777" + Meta::OpenplanetBuildInfo());
+
+    UI::Separator();
+
+    UI::Text(MXColor + Icons::Exchange);
+    UI::SameLine();
+    UI::PushFont(Header2);
+    UI::Text("ManiaExchange");
+    UI::PopFont();
+    UI::Text("Base URL \\$777" + TMXURL);
+    UI::Text("Game Name \\$777" + gameName);
 
     UI::Separator();
 
@@ -107,6 +117,7 @@ void RenderPluginInfoAnnouncements() {
         UI::PushFont(Header1);
         UI::Text(PluginInfoNet["announcements"][i]["title"]);
         UI::PopFont();
+        UI::Text("");
         UI::Text(PluginInfoNet["announcements"][i]["description"]);
         if (i != PluginInfoNet["announcements"].get_Length() - 1) UI::Separator();
     }
@@ -115,7 +126,14 @@ void RenderPluginInfoAnnouncements() {
 void RenderPluginInfoChangelog() {
     UI::BeginTabBar("MXInfoChangelogTabBar", UI::TabBarFlags::FittingPolicyScroll);
     for (uint i = 0; i < PluginInfoNet["changelog"].get_Length(); i++) {
-        if (UI::BeginTabItem(PluginInfoNet["changelog"][i]["title"])) {
+        string tabTitle = PluginInfoNet["changelog"][i]["title"];
+        if (PluginInfoNet["changelog"][i]["version"] == Meta::ExecutingPlugin().get_Version()) tabTitle += " \\$af0(Installed)";
+        if (UI::BeginTabItem(tabTitle)) {
+            string tabVersion = PluginInfoNet["changelog"][i]["version"];
+            if (OpenplanetHasFullPermissions() && VersionToInt(tabVersion) > PluginVersionInt() && UI::Button(Icons::Wrench + " Help contributing!")) {
+                OpenBrowserURL(repoURL+"/blob/main/CONTRIBUTING.md");
+            }
+
             for (uint j = 0; j < PluginInfoNet["changelog"][i]["changes"].get_Length(); j++) {
                 UI::Text("●");
                 UI::SameLine();
