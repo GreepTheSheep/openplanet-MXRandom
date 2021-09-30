@@ -53,6 +53,11 @@ void RenderHeader() {
     // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
     if (isTitePackLoaded()) {
 #endif
+        int announcementsLength = 0;
+        if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length();
+        if (UI::Button(announcementsLength > 0 ? "\\$f0a" + Icons::Bullhorn+" \\$z"+announcementsLength : Icons::Kenney::InfoCircle)) {
+            WindowInfo_Show = true;
+        }
         if (!isSearching) {
             if (RenderPlayRandomButton()) {
                 if (inputMapID == 0) {
