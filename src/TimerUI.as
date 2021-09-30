@@ -65,7 +65,11 @@ void Render(){
                         }
                         UI::PopStyleColor(3);
                         if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
-                            OpenBrowserURL("https://flinkblog.de/RMC");
+                            if (IsPluginInfoAPILoaded()){
+                                error("This feature is not implemented", "Rules API");
+                            } else {
+                                OpenBrowserURL("https://flinkblog.de/RMC");
+                            }
                         }
                         if (IsPluginInfoAPILoaded()){
                             UI::SameLine();
