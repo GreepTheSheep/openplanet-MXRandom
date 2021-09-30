@@ -3,6 +3,13 @@ int OpenplanetVersionInt(){
     return Text::ParseInt(Meta::OpenplanetVersion().Replace(".", ""));
 }
 
+int PluginVersionInt(){
+    return Text::ParseInt(Meta::ExecutingPlugin().get_Version().Replace(".", ""));
+}
+
+int VersionToInt(string version){
+    return Text::ParseInt(version.Replace(".", ""));
+}
 
 // -----------Logging-----------
 
