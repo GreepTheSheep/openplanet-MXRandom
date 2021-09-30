@@ -74,8 +74,8 @@ void Render(){
                     UI::Text("Last run stats:");
                     RenderMedalsTable();
                 }
-                UI::End();
             }
+            UI::End();
         }
     } else {
         if (UI::Begin(windowTitle, Setting_RMC_DisplayTimer, TimerWindowFlags)){
