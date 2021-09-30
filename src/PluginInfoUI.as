@@ -13,7 +13,7 @@ Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 
 void RenderPluginInfoInterface() {
     if (!WindowInfo_Show) return;
-    if (UI::Begin(MXColor + Icons::InfoCircle + " " + name, WindowInfo_Show)) {
+    if (UI::Begin(MXColor + Icons::InfoCircle + " \\$z" + name, WindowInfo_Show)) {
         switch (ActualWindowInfo_State) {
             case WINDOW_INFO_STATE_ABOUT:
                 RenderPluginInfoAbout();
