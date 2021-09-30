@@ -1,39 +1,31 @@
 bool WindowInfo_Show = true;
 
-enum WindowInfoState {
-    WINDOW_INFO_STATE_NONE,
-    WINDOW_INFO_STATE_ABOUT,
-    WINDOW_INFO_STATE_RULES,
-    WINDOW_INFO_STATE_ANNOUNCEMENTS,
-    WINDOW_INFO_STATE_CHANGELOG
-}
-WindowInfoState ActualWindowInfo_State = WINDOW_INFO_STATE_ABOUT;
 Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 22);
 Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 
 void RenderPluginInfoInterface() {
     if (!WindowInfo_Show) return;
     if (UI::Begin(MXColor + Icons::InfoCircle + " \\$z" + name, WindowInfo_Show)) {
-        switch (ActualWindowInfo_State) {
-            case WINDOW_INFO_STATE_ABOUT:
-                RenderPluginInfoAbout();
-            break;
-            case WINDOW_INFO_STATE_RULES:
-                UI::Text("Rules");
-                // RenderPluginInfoRules();
-            break;
-            case WINDOW_INFO_STATE_ANNOUNCEMENTS:
-                UI::Text("Announcements");
-                // RenderPluginInfoAnnouncements();
-            break;
-            case WINDOW_INFO_STATE_CHANGELOG:
-                UI::Text("Changelog");
-                // RenderPluginInfoChangelog();
-            break;
-            default:
-                UI::Text("\\$f00Error: No Window State!");
-            break;
+        UI::BeginTabBar("MXInfoTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
+        if (IsPluginInfoAPILoaded()) {
+            if (UI::BeginTabItem("Rules")) {
+                RenderPluginInfoRules();
+                UI::EndTabItem();
+            }
+            if (UI::BeginTabItem("Announcements")) {
+                RenderPluginInfoAnnouncements();
+                UI::EndTabItem();
+            }
+            if (UI::BeginTabItem("Changelog")) {
+                RenderPluginInfoChangelog();
+                UI::EndTabItem();
+            }
         }
+        if (UI::BeginTabItem("About")) {
+            RenderPluginInfoAbout();
+            UI::EndTabItem();
+        }
+        UI::EndTabBar();
     }
     UI::End();
 }
@@ -77,4 +69,16 @@ void RenderPluginInfoAbout() {
         OpenBrowserURL("https://openplanet.nl/files/" + Meta::ExecutingPlugin().get_SiteID());
     }
     UI::SameLine();
+}
+
+void RenderPluginInfoRules() {
+    UI::Text("Coming soon");
+}
+
+void RenderPluginInfoAnnouncements() {
+    UI::Text("Coming soon");
+}
+
+void RenderPluginInfoChangelog() {
+    UI::Text("Coming soon");
 }
