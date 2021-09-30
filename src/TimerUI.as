@@ -64,18 +64,13 @@ void Render(){
                             startnew(loadFirstMapRMC);
                         }
                         UI::PopStyleColor(3);
-                        if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
+                        int announcementsLength = 0;
+                        if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length();
+                        if (UI::Button(Icons::Kenney::InfoCircle+" Help" + (announcementsLength > 0 ? " ("+Icons::Bullhorn+" "+announcementsLength+")" : ""))) {
                             if (IsPluginInfoAPILoaded()){
-                                error("This feature is not implemented", "Rules API");
+                                WindowInfo_Show = true;
                             } else {
                                 OpenBrowserURL("https://flinkblog.de/RMC");
-                            }
-                        }
-                        if (IsPluginInfoAPILoaded()){
-                            UI::SameLine();
-                            int announcementsLength = PluginInfoNet["announcements"].get_Length();
-                            if (announcementsLength > 0 && UI::Button(Icons::Bullhorn+" "+announcementsLength)) {
-                                error("This feature is not implemented", "Announcements API");
                             }
                         }
                     }

@@ -1,27 +1,37 @@
-bool WindowInfo_Show = true;
+// All texts are
+
+bool WindowInfo_Show = false;
 
 Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 22);
 Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 
+int WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
+
 void RenderPluginInfoInterface() {
     if (!WindowInfo_Show) return;
-    if (UI::Begin(MXColor + Icons::InfoCircle + " \\$z" + name, WindowInfo_Show)) {
+    
+    if (UI::Begin(MXColor + Icons::InfoCircle + " \\$z" + name, WindowInfo_Show, WindowInfo_Flags)) {
         UI::BeginTabBar("MXInfoTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
         if (IsPluginInfoAPILoaded()) {
-            if (UI::BeginTabItem("Rules")) {
+            if (UI::BeginTabItem(Icons::Book + " Rules")) {
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
                 RenderPluginInfoRules();
                 UI::EndTabItem();
             }
-            if (UI::BeginTabItem("Announcements")) {
+            int announcementsLength = PluginInfoNet["announcements"].get_Length();
+            if (announcementsLength > 0 && UI::BeginTabItem(Icons::Bullhorn + " Announcements ("+announcementsLength+")")) {
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
                 RenderPluginInfoAnnouncements();
                 UI::EndTabItem();
             }
-            if (UI::BeginTabItem("Changelog")) {
+            if (UI::BeginTabItem(Icons::Tag + " Changelog")) {
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse;
                 RenderPluginInfoChangelog();
                 UI::EndTabItem();
             }
         }
-        if (UI::BeginTabItem("About")) {
+        if (UI::BeginTabItem(Icons::Kenney::InfoCircle+" About")) {
+            WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
             RenderPluginInfoAbout();
             UI::EndTabItem();
         }
@@ -58,7 +68,7 @@ void RenderPluginInfoAbout() {
     }
     UI::SameLine();
     if (UI::Button(Icons::Kenney::GithubAlt + " Github")){
-        OpenBrowserURL("https://github.com/GreepTheSheep/openplanet-mx-random");
+        OpenBrowserURL(repoURL);
     }
     UI::SameLine();
     if (UI::Button(Icons::DiscordAlt + " Discord")){
@@ -72,13 +82,58 @@ void RenderPluginInfoAbout() {
 }
 
 void RenderPluginInfoRules() {
-    UI::Text("Coming soon");
+    UI::BeginTabBar("MXInfoRulesTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
+    if (UI::BeginTabItem("Random Map Challenge")) {
+        for (uint i = 0; i < PluginInfoNet["rules"]["challenge"].get_Length(); i++) {
+            UI::Text("●");
+            UI::SameLine();
+            UI::Text(PluginInfoNet["rules"]["challenge"][i]);
+        }
+        UI::EndTabItem();
+    }
+    if (UI::BeginTabItem("Random Map Survival")) {
+        for (uint i = 0; i < PluginInfoNet["rules"]["survival"].get_Length(); i++) {
+            UI::Text("●");
+            UI::SameLine();
+            UI::Text(PluginInfoNet["rules"]["survival"][i]);
+        }
+        UI::EndTabItem();
+    }
+    UI::EndTabBar();
 }
 
 void RenderPluginInfoAnnouncements() {
-    UI::Text("Coming soon");
+    for (uint i = 0; i < PluginInfoNet["announcements"].get_Length(); i++) {
+        UI::PushFont(Header1);
+        UI::Text(PluginInfoNet["announcements"][i]["title"]);
+        UI::PopFont();
+        UI::Text(PluginInfoNet["announcements"][i]["description"]);
+        if (i != PluginInfoNet["announcements"].get_Length() - 1) UI::Separator();
+    }
 }
 
 void RenderPluginInfoChangelog() {
-    UI::Text("Coming soon");
+    UI::BeginTabBar("MXInfoChangelogTabBar", UI::TabBarFlags::FittingPolicyScroll);
+    for (uint i = 0; i < PluginInfoNet["changelog"].get_Length(); i++) {
+        if (UI::BeginTabItem(PluginInfoNet["changelog"][i]["title"])) {
+            for (uint j = 0; j < PluginInfoNet["changelog"][i]["changes"].get_Length(); j++) {
+                UI::Text("●");
+                UI::SameLine();
+                UI::Text(PluginInfoNet["changelog"][i]["changes"][j]["title"]);
+                if (PluginInfoNet["changelog"][i]["changes"][j]["type"].GetType() != Json::Type::Null && PluginInfoNet["changelog"][i]["changes"][j]["githubIssueId"].GetType() != Json::Type::Null) {
+                    UI::SameLine();
+                    int issueID = PluginInfoNet["changelog"][i]["changes"][j]["githubIssueId"];
+                    if (UI::Button("#"+issueID)) {
+                        if (PluginInfoNet["changelog"][i]["changes"][j]["type"] == "issue") {
+                            OpenBrowserURL(repoURL + "/issues/" + issueID);
+                        } else if (PluginInfoNet["changelog"][i]["changes"][j]["type"] == "pull") {
+                            OpenBrowserURL(repoURL + "/pull/" + issueID);
+                        }
+                    }
+                }
+            }
+            UI::EndTabItem();
+        }
+    }
+    UI::EndTabBar();
 }
