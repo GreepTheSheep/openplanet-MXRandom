@@ -10,6 +10,7 @@ int WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::Horizontal
 void RenderPluginInfoInterface() {
     if (!WindowInfo_Show) return;
     
+    UI::SetNextWindowSize(600, 370);
     if (UI::Begin(MXColor + Icons::InfoCircle + " \\$z" + name, WindowInfo_Show, WindowInfo_Flags)) {
         UI::BeginTabBar("MXInfoTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
         if (IsPluginInfoAPILoaded()) {
