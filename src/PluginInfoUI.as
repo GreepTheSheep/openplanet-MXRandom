@@ -95,17 +95,15 @@ void RenderPluginInfoRules() {
     UI::BeginTabBar("MXInfoRulesTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
     if (UI::BeginTabItem("Random Map Challenge")) {
         for (uint i = 0; i < PluginInfoNet["rules"]["challenge"].get_Length(); i++) {
-            UI::Text("●");
-            UI::SameLine();
-            UI::Text(PluginInfoNet["rules"]["challenge"][i]);
+            string rule = PluginInfoNet["rules"]["challenge"][i];
+            UI::Markdown("- " + rule);
         }
         UI::EndTabItem();
     }
     if (UI::BeginTabItem("Random Map Survival")) {
         for (uint i = 0; i < PluginInfoNet["rules"]["survival"].get_Length(); i++) {
-            UI::Text("●");
-            UI::SameLine();
-            UI::Text(PluginInfoNet["rules"]["survival"][i]);
+            string rule = PluginInfoNet["rules"]["survival"][i];
+            UI::Markdown("- " + rule);
         }
         UI::EndTabItem();
     }
@@ -117,9 +115,7 @@ void RenderPluginInfoAnnouncements() {
     for (uint i = 0; i < PluginInfoNet["announcements"].get_Length(); i++) {
         string title = PluginInfoNet["announcements"][i]["title"];
         if (UI::BeginTabItem(title)) {
-            UI::PushFont(Header1);
-            UI::Text(title);
-            UI::PopFont();
+            UI::Markdown("# " + title);
             UI::Text("");
             UI::Markdown(PluginInfoNet["announcements"][i]["description"]);
             UI::EndTabItem();
@@ -135,9 +131,8 @@ void RenderPluginInfoChangelog() {
         if (PluginInfoNet["changelog"][i]["version"] == Meta::ExecutingPlugin().get_Version()) tabTitle += " \\$af0(Installed)";
         if (UI::BeginTabItem(tabTitle)) {
             for (uint j = 0; j < PluginInfoNet["changelog"][i]["changes"].get_Length(); j++) {
-                UI::Text("●");
-                UI::SameLine();
-                UI::Text(PluginInfoNet["changelog"][i]["changes"][j]["title"]);
+                string change = PluginInfoNet["changelog"][i]["changes"][j]["title"];
+                UI::Markdown("- " + change);
                 if (PluginInfoNet["changelog"][i]["changes"][j]["type"].GetType() != Json::Type::Null && PluginInfoNet["changelog"][i]["changes"][j]["githubIssueId"].GetType() != Json::Type::Null) {
                     UI::SameLine();
                     int issueID = PluginInfoNet["changelog"][i]["changes"][j]["githubIssueId"];
