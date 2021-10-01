@@ -125,6 +125,13 @@ void TimerYield() {
                     if (RecentlyPlayedMaps.Length > 0 && currentMapInfo.MapUid == RecentlyPlayedMaps[0]["UID"]) {
                         startTime = Time::get_Now();
 
+                        if (Setting_RMC_Mode == RMCMode::Survival){
+                            // Cap timer at 20 minutes max
+                            if ((endTime - startTime) > (20*60*1000)) {
+                                endTime = startTime + (20*60*1000);
+                            }
+                        }                        
+
                         if (startTime > endTime) {
                             startTime = -1;
                             timerStarted = false;
@@ -171,9 +178,6 @@ void TimerYield() {
                 
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     endTime += (3*60*1000);
-
-                    // Cap at 20 minutes max
-                    if ((endTime - startTime) > (20*60*1000)) endTime = (20*60*1000);
                 }
                 startnew(loadMapRMC);
             } else {
@@ -293,12 +297,31 @@ void RenderPlayingButtons(){
             }
             UI::SameLine();
         }
-        if (mapsCount == 0 && !gotMedalOnceNotif) {
-            if (UI::Button(Icons::Repeat + " Restart")) {
-                if (isPaused) isPaused = false;
-                timerStarted = false;
-                displayTimer = false;
-                startnew(loadFirstMapRMC);
+        if (!Setting_RMC_OnlySkip) {
+            if (mapsCount == 0) {
+                if (UI::Button(Icons::Repeat + " Restart")) {
+                    if (isPaused) isPaused = false;
+                    timerStarted = false;
+                    displayTimer = false;
+                    startnew(loadFirstMapRMC);
+                }
+            } else {
+                if(UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
+                    if (isPaused) isPaused = false;
+                    if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
+                        goldCount += 1;
+                    }
+                    if (Setting_RMC_Mode == RMCMode::Survival) {
+                        endTime -= (2*60*1000);
+                        survivalSkips += 1;
+
+                        if ((endTime - startTime) < (1*60*1000)) endTime = startTime + (1*60*1000);
+                        else if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
+                    }
+                    log("RMC: Skipping map");
+                    UI::ShowNotification("Please wait...", "Looking for another map");
+                    startnew(loadMapRMC);
+                }
             }
         } else {
             if(UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
@@ -307,10 +330,11 @@ void RenderPlayingButtons(){
                     goldCount += 1;
                 }
                 if (Setting_RMC_Mode == RMCMode::Survival) {
-                    if ((endTime - startTime) < (1*60*1000)) endTime = (1*60*1000);
-                    else if ((endTime - startTime) < (2*60*1000)) endTime = (2*60*1000);
-                    else endTime -= (2*60*1000);
-                    survivalSkips += 1;                    
+                    endTime -= (2*60*1000);
+                    survivalSkips += 1;
+
+                    if ((endTime - startTime) < (1*60*1000)) endTime = startTime + (1*60*1000);
+                    else if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                 }
                 log("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
@@ -336,9 +360,6 @@ void RenderPlayingButtons(){
                 if (isPaused) isPaused = false;
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     endTime += (3*60*1000);
-
-                    // Cap at 20 minutes max
-                    if ((endTime - startTime) > (20*60*1000)) endTime = (20*60*1000);
                 }
                 startnew(loadMapRMC);
             }
