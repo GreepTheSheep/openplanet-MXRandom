@@ -113,14 +113,19 @@ void RenderPluginInfoRules() {
 }
 
 void RenderPluginInfoAnnouncements() {
+    UI::BeginTabBar("MXInfoAnnounceTabBar", UI::TabBarFlags::FittingPolicyScroll);
     for (uint i = 0; i < PluginInfoNet["announcements"].get_Length(); i++) {
-        UI::PushFont(Header1);
-        UI::Text(PluginInfoNet["announcements"][i]["title"]);
-        UI::PopFont();
-        UI::Text("");
-        UI::Text(PluginInfoNet["announcements"][i]["description"]);
-        if (i != PluginInfoNet["announcements"].get_Length() - 1) UI::Separator();
+        string title = PluginInfoNet["announcements"][i]["title"];
+        if (UI::BeginTabItem(title)) {
+            UI::PushFont(Header1);
+            UI::Text(title);
+            UI::PopFont();
+            UI::Text("");
+            UI::Markdown(PluginInfoNet["announcements"][i]["description"]);
+            UI::EndTabItem();
+        }
     }
+    UI::EndTabBar();
 }
 
 void RenderPluginInfoChangelog() {
@@ -129,11 +134,6 @@ void RenderPluginInfoChangelog() {
         string tabTitle = PluginInfoNet["changelog"][i]["title"];
         if (PluginInfoNet["changelog"][i]["version"] == Meta::ExecutingPlugin().get_Version()) tabTitle += " \\$af0(Installed)";
         if (UI::BeginTabItem(tabTitle)) {
-            string tabVersion = PluginInfoNet["changelog"][i]["version"];
-            if (OpenplanetHasFullPermissions() && VersionToInt(tabVersion) > PluginVersionInt() && UI::Button(Icons::Wrench + " Help contributing!")) {
-                OpenBrowserURL(repoURL+"/blob/main/CONTRIBUTING.md");
-            }
-
             for (uint j = 0; j < PluginInfoNet["changelog"][i]["changes"].get_Length(); j++) {
                 UI::Text("●");
                 UI::SameLine();
