@@ -51,6 +51,10 @@ void RenderPluginInfoAbout() {
     UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().get_ID());
     UI::Text("Site ID \\$777" + Meta::ExecutingPlugin().get_SiteID());
     UI::Text("Type \\$777" + changeEnumStyle(tostring(Meta::ExecutingPlugin().get_Type())));
+    if (isDevMode()) {
+        UI::SameLine();
+        UI::Text("\\$777(\\$f39"+Icons::Code+" \\$777Dev mode)");
+    }
     
     UI::Separator();
 
