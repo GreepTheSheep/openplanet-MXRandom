@@ -98,6 +98,9 @@ bool Setting_RMC_AutoSwitch = true;
 [Setting name="Automatically quits the map when the timer is up" category="Random Map Challenge"]
 bool Setting_RMC_ExitMapOnEndTime = false;
 
+[Setting name="Show Skip button on first map" category="Random Map Challenge"]
+bool Setting_RMC_OnlySkip = false;
+
 [Setting name="Show the buttons when the Openplanet overlay is hidden (requires Openplanet version 1.19.7)" category="Random Map Challenge"]
 bool Setting_RMC_ShowBtns = true;
 
