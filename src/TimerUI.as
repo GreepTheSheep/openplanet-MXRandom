@@ -365,6 +365,21 @@ void RenderPlayingButtons(){
             }
         }
 
+
+        // Dev
+        if (isDevMode()) {
+            if (UI::Button("+1min")) {
+                if (isPaused) isPaused = false;
+                endTime += (1*60*1000);
+            }
+            UI::SameLine();
+            if (UI::Button("-1min")) {
+                if (isPaused) isPaused = false;
+                endTime -= (1*60*1000);
+
+                if ((endTime - startTime) < (1*60*1000)) endTime = startTime + (1*60*1000);
+            }
+        }
     }
 }
 
