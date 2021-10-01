@@ -11,6 +11,10 @@ int VersionToInt(string version){
     return Text::ParseInt(version.Replace(".", ""));
 }
 
+bool isDevMode(){
+    return Meta::ExecutingPlugin().get_Type() == Meta::PluginType::Folder;
+}
+
 // -----------Logging-----------
 
 void log(string msg)
