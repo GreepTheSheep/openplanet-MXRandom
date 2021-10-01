@@ -15,24 +15,21 @@ void RenderPluginInfoInterface() {
         UI::BeginTabBar("MXInfoTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
         if (IsPluginInfoAPILoaded()) {
             if (UI::BeginTabItem(Icons::Book + " Rules")) {
-                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
                 RenderPluginInfoRules();
                 UI::EndTabItem();
             }
             int announcementsLength = PluginInfoNet["announcements"].get_Length();
             if (announcementsLength > 0 && UI::BeginTabItem(Icons::Bullhorn + " Announcements ("+announcementsLength+")")) {
-                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
                 RenderPluginInfoAnnouncements();
                 UI::EndTabItem();
             }
             if (UI::BeginTabItem(Icons::Tag + " Changelog")) {
-                WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::HorizontalScrollbar;
+                WindowInfo_Flags = UI::WindowFlags::NoCollapse;
                 RenderPluginInfoChangelog();
                 UI::EndTabItem();
             }
         }
         if (UI::BeginTabItem(Icons::Kenney::InfoCircle+" About")) {
-            WindowInfo_Flags = UI::WindowFlags::NoCollapse + UI::WindowFlags::AlwaysAutoResize;
             RenderPluginInfoAbout();
             UI::EndTabItem();
         }
