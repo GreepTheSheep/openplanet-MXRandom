@@ -105,7 +105,7 @@ bool Setting_RMC_OnlySkip = false;
 bool Setting_RMC_ShowBtns = true;
 
 [Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
-string Setting_API_URL = "https://greep.gq/api/rmc.json";
+string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
 
 void settingsCheckCoroutine(){
     if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
