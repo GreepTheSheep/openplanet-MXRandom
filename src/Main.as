@@ -3,6 +3,7 @@ bool isSearching = false;
 
 Json::Value RecentlyPlayedMaps;
 Json::Value PluginInfoNet;
+Json::Value PluginData;
 
 int loadMapId = 0;
 int loadMapIdWithJson = 0;
@@ -22,6 +23,8 @@ void RenderMenu()
 void Main()
 {
     startnew(GetInfoAPILoop);
+    PluginData = loadPluginData();
+    startnew(SaveDataLoop);
     RecentlyPlayedMaps = loadRecentlyPlayed();
     while (true){
         yield();
@@ -97,4 +100,16 @@ void GetInfoAPILoop(){
         }
         sleep(30 * 60 * 1000); // 30 minutes
     }
+}
+
+void SaveDataLoop() {
+    while (true) {
+        sleep(10 * 60 * 1000); // 10 minutes
+        log("Saving data...");
+        Json::ToFile(PluginDataJSON, PluginData);
+    }
+}
+
+void OnDestroyed() {
+    Json::ToFile(PluginDataJSON, PluginData);
 }

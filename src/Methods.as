@@ -380,6 +380,19 @@ void addToRecentlyPlayed(Json::Value data) {
     saveRecentlyPlayed(arr);
 }
 
+Json::Value loadPluginData(){
+    Json::Value FileData = Json::FromFile(PluginDataJSON);
+    if (FileData.GetType() == Json::Type::Null) {
+        Json::ToFile(PluginDataJSON, Json::Object());
+        return Json::Object();
+    } else if (FileData.GetType() != Json::Type::Object) {
+        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + PluginDataJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
+        return Json::Object();
+    } else {
+        return FileData;
+    }
+}
+
 void CreatePlayedMapJson(Json::Value mapData) {
     int mxMapId = mapData["TrackID"];
     string mapName = mapData["Name"];

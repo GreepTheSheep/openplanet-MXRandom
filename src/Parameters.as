@@ -13,4 +13,5 @@ string TMXURL = "trackmania.exchange";
 #endif
 
 string RecentlyPlayedJSON = IO::FromDataFolder("TMXRandom_PlayedMaps.json");
+string PluginDataJSON = IO::FromDataFolder("TMXRandom_Data.json");
 string repoURL = "https://github.com/GreepTheSheep/openplanet-mx-random";
