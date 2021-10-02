@@ -104,8 +104,12 @@ void GetInfoAPILoop(){
 
 void SaveDataLoop() {
     while (true) {
-        sleep(10 * 60 * 1000); // 10 minutes
-        log("Saving data...");
+        if (isDevMode()) {
+            yield();
+        } else {
+            sleep(10 * 60 * 1000); // 10 minutes
+            log("Saving data");
+        }
         Json::ToFile(PluginDataJSON, PluginData);
     }
 }
