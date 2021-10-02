@@ -104,9 +104,21 @@ bool Setting_RMC_OnlySkip = false;
 [Setting name="Show the buttons when the Openplanet overlay is hidden (requires Openplanet version 1.19.7)" category="Random Map Challenge"]
 bool Setting_RMC_ShowBtns = true;
 
-void settingsCheckCoroutine(){
-    if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
-        error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
+void OnSettingsLoad(Settings::Section& section){
+    if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns){
+        section.SetBool("Setting_RMC_ShowBtns", true);
         Setting_RMC_ShowBtns = false;
+    }
+
+    startnew(settingsCheckCoroutine);
+}
+
+void settingsCheckCoroutine(){
+    while (true){
+        yield();
+        if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
+            error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
+            Setting_RMC_ShowBtns = false;
+        }
     }
 }
