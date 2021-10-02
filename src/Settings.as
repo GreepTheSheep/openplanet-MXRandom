@@ -109,7 +109,7 @@ string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
 
 void OnSettingsLoad(Settings::Section& section){
     if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns){
-        section.SetBool("Setting_RMC_ShowBtns", true);
+        section.SetBool("Setting_RMC_ShowBtns", false);
         Setting_RMC_ShowBtns = false;
     }
 
