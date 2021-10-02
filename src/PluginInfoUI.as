@@ -19,7 +19,8 @@ void RenderPluginInfoInterface() {
                 UI::EndTabItem();
             }
             int announcementsLength = PluginInfoNet["announcements"].get_Length();
-            if (announcementsLength > 0 && UI::BeginTabItem(Icons::Bullhorn + " Announcements ("+announcementsLength+")")) {
+            int unreadAnnouncements = announcementsLength - PluginData["announcements"]["read"].get_Length();
+            if (announcementsLength > 0 && UI::BeginTabItem((unreadAnnouncements > 0 ? "\\$f39":"") + Icons::Bullhorn + " \\$zAnnouncements"+(unreadAnnouncements > 0 ? " \\$f39("+unreadAnnouncements+")":""))){
                 RenderPluginInfoAnnouncements();
                 UI::EndTabItem();
             }
@@ -115,9 +116,25 @@ void RenderPluginInfoRules() {
 void RenderPluginInfoAnnouncements() {
     UI::BeginTabBar("MXInfoAnnounceTabBar", UI::TabBarFlags::FittingPolicyScroll);
     for (uint i = 0; i < PluginInfoNet["announcements"].get_Length(); i++) {
+        int announcementId = PluginInfoNet["announcements"][i]["id"];
         string title = PluginInfoNet["announcements"][i]["title"];
+
+        bool alreadyRead = false;
+        // Check if announcement is already read by its ID
+        for (uint j = 0; j < PluginData["announcements"]["read"].get_Length(); j++) {
+            int localId = PluginData["announcements"]["read"][j];
+            if (localId == announcementId) {
+                alreadyRead = true;
+            }
+        }
+        
+        if (!alreadyRead) title = "\\$f39" + Icons::Bullhorn + "\\$z  " + title;
+
         if (UI::BeginTabItem(title)) {
             UI::Markdown("# " + title);
+            if (!alreadyRead && UI::Button(Icons::Check + " Mark as read")){
+                PluginData["announcements"]["read"].Add(announcementId);
+            }
             UI::Text("");
             UI::Markdown(PluginInfoNet["announcements"][i]["description"]);
             UI::EndTabItem();
