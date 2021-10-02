@@ -112,16 +112,4 @@ void settingsCheckCoroutine(){
         error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
         Setting_RMC_ShowBtns = false;
     }
-
-    startnew(settingsCheckCoroutine);
-}
-
-void settingsCheckCoroutine(){
-    while (true){
-        yield();
-        if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
-            error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
-            Setting_RMC_ShowBtns = false;
-        }
-    }
 }
