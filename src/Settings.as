@@ -107,9 +107,9 @@ bool Setting_RMC_ShowBtns = true;
 [Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
 string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
 
-void settingsCheckCoroutine(){
-    if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
-        error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
+void OnSettingsLoad(Settings::Section& section){
+    if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns){
+        section.SetBool("Setting_RMC_ShowBtns", true);
         Setting_RMC_ShowBtns = false;
     }
 
