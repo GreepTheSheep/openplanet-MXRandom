@@ -166,7 +166,7 @@ Json::Value GetRandomMap() {
     req.Url = "https://"+TMXURL+"/mapsearch2/search?api=on&random=1";
 
     if (RMCStarted){
-        req.Url += "&etags=23%2C37";
+        req.Url += "&etags=23%2C37%2C40";
         req.Url += "&lengthop=1";
         req.Url += "&length=9";
 #if TMNEXT
@@ -174,7 +174,7 @@ Json::Value GetRandomMap() {
         req.Url += "&vehicles=1";
 #endif
     } else {
-        req.Url += "&etags=37";
+        req.Url += "&etags=37%2C40";
         if (Setting_MapLengthOperator != MapLengthOp::Equals){
             req.Url += "&lengthop=" + Setting_MapLengthOperator;
         }
