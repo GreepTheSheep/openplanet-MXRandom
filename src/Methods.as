@@ -256,7 +256,6 @@ Json::Value GetInfoAPI(){
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
-        if (returnedType != Json::Type::Object) error("Warn: returned Info API JSON is not valid, retrying", "Info API, Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
     return json;
 }
