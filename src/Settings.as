@@ -1,5 +1,5 @@
 [Setting name="Show window" category="Menu"]
-bool Setting_Window_Show = false;
+bool Setting_Window_Show = true;
 
 enum WindowType {
     Full,
