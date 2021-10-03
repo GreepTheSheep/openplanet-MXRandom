@@ -3,6 +3,13 @@ int OpenplanetVersionInt(){
     return Text::ParseInt(Meta::OpenplanetVersion().Replace(".", ""));
 }
 
+int PluginVersionInt(){
+    return Text::ParseInt(Meta::ExecutingPlugin().get_Version().Replace(".", ""));
+}
+
+int VersionToInt(string version){
+    return Text::ParseInt(version.Replace(".", ""));
+}
 
 bool isDevMode(){
     return Meta::ExecutingPlugin().get_Type() == Meta::PluginType::Folder;
@@ -232,6 +239,31 @@ Json::Value GetMap(int mapId) {
     else return json[0];
 }
 
+Json::Value GetInfoAPI(){
+    Net::HttpRequest req;
+    req.Method = Net::HttpMethod::Get;
+    req.Url = Setting_API_URL;
+    dictionary@ Headers = dictionary();
+    Headers["Accept"] = "application/json";
+    Headers["Content-Type"] = "application/json";
+    req.Body = "";
+    Json::Type returnedType = Json::Type::Null;
+    Json::Value json;
+    while (returnedType != Json::Type::Object) {
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        json = ResponseToJSON(req.String());
+        returnedType = json.GetType();
+    }
+    return json;
+}
+
+bool IsPluginInfoAPILoaded(){
+    return PluginInfoNet.GetType() == Json::Type::Object;
+}
+
 Json::Value ResponseToJSON(const string &in HTTPResponse) {
     Json::Value ReturnedObject;
     try {
@@ -345,6 +377,30 @@ void addToRecentlyPlayed(Json::Value data) {
         }
     }
     saveRecentlyPlayed(arr);
+}
+
+Json::Value loadPluginData(){
+    Json::Value FileData = Json::FromFile(PluginDataJSON);
+    if (FileData.GetType() == Json::Type::Null) {
+        Json::ToFile(PluginDataJSON, Json::Object());
+        FileData = Json::Object();
+    } else if (FileData.GetType() != Json::Type::Object) {
+        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + PluginDataJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
+        FileData = Json::Object();
+    }
+    FileData["version"] = Meta::ExecutingPlugin().get_Version();
+    return CheckDataKeys(FileData);
+}
+
+Json::Value CheckDataKeys(Json::Value FileData){
+    if (!FileData.HasKey("announcements")) {
+        FileData["announcements"] = Json::Object();
+    }
+    if (!FileData["announcements"].HasKey("read")) {
+        FileData["announcements"]["read"] = Json::Array();
+    }
+
+    return FileData;
 }
 
 void CreatePlayedMapJson(Json::Value mapData) {

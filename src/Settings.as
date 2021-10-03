@@ -104,6 +104,9 @@ bool Setting_RMC_OnlySkip = false;
 [Setting name="Show the buttons when the Openplanet overlay is hidden (requires Openplanet version 1.19.7)" category="Random Map Challenge"]
 bool Setting_RMC_ShowBtns = true;
 
+[Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
+string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
+
 void OnSettingsLoad(Settings::Section& section){
     if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns){
         section.SetBool("Setting_RMC_ShowBtns", false);

@@ -2,6 +2,7 @@ int oldTimestamp = 0;
 int rand = 0;
 
 void RenderInterface() {
+    RenderPluginInfoInterface();
     Dialogs::RenderInterface();
     if (!Setting_Window_Show) return;
     if (Setting_Window_Type == WindowType::Minimal){
@@ -102,6 +103,13 @@ bool RenderPlayRandomButton() {
         pressed = UI::Button(Icons::Play + " Play specific map");
     }
     UI::PopStyleColor(3);
+    int announcementsLength = 0;
+    if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length() - PluginData["announcements"]["read"].get_Length();
+    if (inputMapID == 0) UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.4, 35));
+    else UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.3, 35));
+    if (UI::Button(announcementsLength > 0 ? "\\$f0a" + Icons::Bullhorn+" \\$z"+announcementsLength : Icons::Kenney::InfoCircle)) {
+        WindowInfo_Show = true;
+    }
     UI::SetCursorPos(pos_orig);
     return pressed;
 }

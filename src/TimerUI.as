@@ -64,8 +64,14 @@ void Render(){
                             startnew(loadFirstMapRMC);
                         }
                         UI::PopStyleColor(3);
-                        if (UI::Button(Icons::Kenney::InfoCircle+" Help")) {
-                            OpenBrowserURL("https://flinkblog.de/RMC");
+                        if (UI::Button(Icons::Table + " Standings")) {
+                            OpenBrowserURL("https://docs.google.com/spreadsheets/d/1hgjYu84s6RtQZTgDFS7ZeyqszALCH-5OpsmDtBNWK_U/edit?usp=sharing");
+                        }
+                        UI::SameLine();
+                        int announcementsLength = 0;
+                        if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length() - PluginData["announcements"]["read"].get_Length();
+                        if (UI::Button(announcementsLength > 0 ? "\\$f0a" + Icons::Bullhorn+" \\$z"+announcementsLength : Icons::Kenney::InfoCircle)) {
+                            WindowInfo_Show = true;
                         }
                     }
                 }
