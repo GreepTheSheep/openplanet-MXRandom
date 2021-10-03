@@ -15,6 +15,9 @@ int Setting_WindowSize_w = 650;
 [Setting name="Window default height" category="Menu" description="The default height of the main window" drag min=140 max=2000]
 int Setting_WindowSize_h = 450;
 
+[Setting name="Enable searching parameters" category="Searching" description="Keep in mind that searching parameters does not affect during Random Map Challenge, for the rules"]
+bool Setting_Searching_Enable = true;
+
 enum MapLengthOp
 {
     Equals = 0,

@@ -175,14 +175,16 @@ Json::Value GetRandomMap() {
 #endif
     } else {
         req.Url += "&etags=37%2C40";
-        if (Setting_MapLengthOperator != MapLengthOp::Equals){
-            req.Url += "&lengthop=" + Setting_MapLengthOperator;
-        }
-        if (Setting_MapLength != MapLength::Anything){
-            req.Url += "&length=" + Setting_MapLength;
-        }
-        if (Setting_MapType != MapType::Anything){
-            req.Url += "&style=" + Setting_MapType;
+        if (Setting_Searching_Enable){
+            if (Setting_MapLengthOperator != MapLengthOp::Equals){
+                req.Url += "&lengthop=" + Setting_MapLengthOperator;
+            }
+            if (Setting_MapLength != MapLength::Anything){
+                req.Url += "&length=" + Setting_MapLength;
+            }
+            if (Setting_MapType != MapType::Anything){
+                req.Url += "&style=" + Setting_MapType;
+            }
         }
     }
     
