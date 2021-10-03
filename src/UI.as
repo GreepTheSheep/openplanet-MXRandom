@@ -53,11 +53,6 @@ void RenderHeader() {
     // On MP4, we need to find if a titlepack is loaded before adding the start/stop button
     if (isTitePackLoaded()) {
 #endif
-        int announcementsLength = 0;
-        if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length() - PluginData["announcements"]["read"].get_Length();
-        if (UI::Button(announcementsLength > 0 ? "\\$f0a" + Icons::Bullhorn+" \\$z"+announcementsLength : Icons::Kenney::InfoCircle)) {
-            WindowInfo_Show = true;
-        }
         if (!isSearching) {
             if (RenderPlayRandomButton()) {
                 if (inputMapID == 0) {
@@ -108,6 +103,13 @@ bool RenderPlayRandomButton() {
         pressed = UI::Button(Icons::Play + " Play specific map");
     }
     UI::PopStyleColor(3);
+    int announcementsLength = 0;
+    if (IsPluginInfoAPILoaded()) announcementsLength = PluginInfoNet["announcements"].get_Length() - PluginData["announcements"]["read"].get_Length();
+    if (inputMapID == 0) UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.4, 35));
+    else UI::SetCursorPos(vec2(UI::GetWindowSize().x/2.3, 35));
+    if (UI::Button(announcementsLength > 0 ? "\\$f0a" + Icons::Bullhorn+" \\$z"+announcementsLength : Icons::Kenney::InfoCircle)) {
+        WindowInfo_Show = true;
+    }
     UI::SetCursorPos(pos_orig);
     return pressed;
 }
