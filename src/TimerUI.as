@@ -133,8 +133,8 @@ void TimerYield() {
 
                         if (Setting_RMC_Mode == RMCMode::Survival){
                             // Cap timer max
-                            if ((endTime - startTime) > (Setting_RMC_SurvivalMaxTime*60*1000)) {
-                                endTime = startTime + (Setting_RMC_SurvivalMaxTime*60*1000);
+                            if ((endTime - startTime) > ((Setting_RMC_SurvivalMaxTime-survivalSkips)*60*1000)) {
+                                endTime = startTime + ((Setting_RMC_SurvivalMaxTime-survivalSkips)*60*1000);
                             }
                         }                        
 
