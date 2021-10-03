@@ -1,5 +1,5 @@
 [Setting name="Show window" category="Menu"]
-bool Setting_Window_Show = false;
+bool Setting_Window_Show = true;
 
 enum WindowType {
     Full,
@@ -14,6 +14,21 @@ int Setting_WindowSize_w = 650;
 
 [Setting name="Window default height" category="Menu" description="The default height of the main window" drag min=140 max=2000]
 int Setting_WindowSize_h = 450;
+
+[Setting name="Enable searching parameters" category="Searching" description="Keep in mind that searching parameters does not affect during Random Map Challenge, for the rules"]
+bool Setting_Searching_Enable = true;
+
+enum MapLengthOp
+{
+    Equals = 0,
+    LessThan = 1,
+    GreaterThan = 2,
+    LessThanOrEqual = 3,
+    GreaterThanOrEqual = 4
+}
+
+[Setting name="Map length operator" category="Searching" description="The operator to use when comparing the map length to the value in the 'Map length' field."]
+MapLengthOp Setting_MapLengthOperator = MapLengthOp::Equals;
 
 enum MapLength
 {
@@ -64,7 +79,7 @@ enum RMCMode {
     Survival,
 }
 
-[Setting name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
+//[Setting hide name="Game Mode" category="Random Map Challenge" description="Challenge is the normal game mode, games modes are described in https://flinkblog.de/RMC"]
 RMCMode Setting_RMC_Mode = RMCMode::Challenge;
 
 enum RMCGoal {
@@ -77,6 +92,9 @@ enum RMCGoal {
 [Setting name="Goal" category="Random Map Challenge" description="The goal to get in a map to be counted, keep in mind that RMC rules accepts only Author Times at the moment"]
 RMCGoal Setting_RMC_Goal = RMCGoal::Author;
 
+[Setting name="Maximum timer on Survival mode (in minutes)" category="Random Map Challenge" min=2 max=60]
+int Setting_RMC_SurvivalMaxTime = 15;
+
 [Setting name="Display the current map name, author and style (according to MX) on the RMC timer" category="Random Map Challenge"]
 bool Setting_RMC_DisplayCurrentMap = true;
 
@@ -85,3 +103,31 @@ bool Setting_RMC_AutoSwitch = true;
 
 [Setting name="Automatically quits the map when the timer is up" category="Random Map Challenge"]
 bool Setting_RMC_ExitMapOnEndTime = false;
+
+[Setting name="Show Skip button on first map" category="Random Map Challenge"]
+bool Setting_RMC_OnlySkip = false;
+
+[Setting name="Show the buttons when the Openplanet overlay is hidden (requires Openplanet version 1.19.7)" category="Random Map Challenge"]
+bool Setting_RMC_ShowBtns = true;
+
+[Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
+string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
+
+void OnSettingsLoad(Settings::Section& section){
+    if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns){
+        section.SetBool("Setting_RMC_ShowBtns", false);
+        Setting_RMC_ShowBtns = false;
+    }
+
+    startnew(settingsCheckCoroutine);
+}
+
+void settingsCheckCoroutine(){
+    while (true){
+        yield();
+        if (OpenplanetVersionInt() < 1197 && Setting_RMC_ShowBtns) {
+            error("This setting requires at least Openplanet 1.19.7, please upgrade it!", "Setting_RMC_ShowBtns, OP version: " + Meta::OpenplanetVersion());
+            Setting_RMC_ShowBtns = false;
+        }
+    }
+}
