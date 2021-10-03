@@ -132,9 +132,9 @@ void TimerYield() {
                         startTime = Time::get_Now();
 
                         if (Setting_RMC_Mode == RMCMode::Survival){
-                            // Cap timer at 20 minutes max
-                            if ((endTime - startTime) > (20*60*1000)) {
-                                endTime = startTime + (20*60*1000);
+                            // Cap timer max
+                            if ((endTime - startTime) > (Setting_RMC_SurvivalMaxTime*60*1000)) {
+                                endTime = startTime + (Setting_RMC_SurvivalMaxTime*60*1000);
                             }
                         }                        
 
@@ -321,8 +321,7 @@ void RenderPlayingButtons(){
                         endTime -= (2*60*1000);
                         survivalSkips += 1;
 
-                        if ((endTime - startTime) < (1*60*1000)) endTime = startTime + (1*60*1000);
-                        else if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
+                        if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                     }
                     log("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
@@ -339,8 +338,7 @@ void RenderPlayingButtons(){
                     endTime -= (2*60*1000);
                     survivalSkips += 1;
 
-                    if ((endTime - startTime) < (1*60*1000)) endTime = startTime + (1*60*1000);
-                    else if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
+                    if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                 }
                 log("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");

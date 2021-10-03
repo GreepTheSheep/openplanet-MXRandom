@@ -89,6 +89,9 @@ enum RMCGoal {
 [Setting name="Goal" category="Random Map Challenge" description="The goal to get in a map to be counted, keep in mind that RMC rules accepts only Author Times at the moment"]
 RMCGoal Setting_RMC_Goal = RMCGoal::Author;
 
+[Setting name="Maximum timer on Survival mode (in minutes)" category="Random Map Challenge" min=2 max=60]
+int Setting_RMC_SurvivalMaxTime = 15;
+
 [Setting name="Display the current map name, author and style (according to MX) on the RMC timer" category="Random Map Challenge"]
 bool Setting_RMC_DisplayCurrentMap = true;
 
