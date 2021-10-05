@@ -9,9 +9,19 @@
 ---
 ### Usage:
 
-Select "MX Random" on the "Scripts" pannel.
+Select "MX Randomizer" on the "Scripts" pannel for the main menu.
 
-![image](https://user-images.githubusercontent.com/42576124/133384757-4e02ef86-391d-4bfc-8506-85d36384278d.png)
+![Main](https://imgur.com/L9knOvS.png)
 
 
-![image](https://user-images.githubusercontent.com/42576124/133384980-daac0475-9259-414d-bd04-5041a8a73452.png)
+Select "Random Map Challenge" for the RMC timer.
+
+![Timer Off](https://imgur.com/f5BibDd.png)
+
+
+![Timer](https://imgur.com/nzaIEX0.png)
+
+
+## About (1.7.1)
+
+![About](https://imgur.com/xuZTjfN.png)
