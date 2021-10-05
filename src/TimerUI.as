@@ -447,20 +447,26 @@ void loadFirstMapRMC(){
             mapsCount = 0;
             gotAuthor = false;
             gotMedalOnceNotif = false;
-            UI::ShowNotification("\\$080Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)) + " started!", "Good Luck!");
+            if (!displayTimer) UI::ShowNotification("\\$080Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)) + " started!", "Good Luck!");
             displayTimer = true;
 #if MP4
             CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-            while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
-                yield();
-            }
 #elif TMNEXT
-            while (GamePlayground.GameTerminals[0].UISequence_Current != CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Playing){
-                yield();
-            }
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
 #endif
-            startTimer();
-            break;
+            if (player !is null){
+#if MP4
+                while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
+                    yield();
+                }
+#elif TMNEXT
+                while (player.ScriptAPI.CurrentRaceTime < 0){
+                    yield();
+                }
+#endif
+                startTimer();
+                break;
+            }
         }
     }
 }
