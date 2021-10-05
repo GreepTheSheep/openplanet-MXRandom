@@ -440,31 +440,33 @@ void loadFirstMapRMC(){
     while (true){
         yield();
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
-#if MP4
-        CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#elif TMNEXT
-        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#endif
-        if (GamePlayground !is null && player !is null){
+        if (GamePlayground !is null){
             goldCount = 0;
             authorCount = 0;
             survivalSkips = 0;
             mapsCount = 0;
             gotAuthor = false;
             gotMedalOnceNotif = false;
-            UI::ShowNotification("\\$080Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)) + " started!", "Good Luck!");
+            if (!displayTimer) UI::ShowNotification("\\$080Random Map "+ changeEnumStyle(tostring(Setting_RMC_Mode)) + " started!", "Good Luck!");
             displayTimer = true;
 #if MP4
-            while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
-                yield();
-            }
+            CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
 #elif TMNEXT
-            while (player.ScriptAPI.CurrentRaceTime < 0){
-                yield();
-            }
+            CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
 #endif
-            startTimer();
-            break;
+            if (player !is null){
+#if MP4
+                while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
+                    yield();
+                }
+#elif TMNEXT
+                while (player.ScriptAPI.CurrentRaceTime < 0){
+                    yield();
+                }
+#endif
+                startTimer();
+                break;
+            }
         }
     }
 }
