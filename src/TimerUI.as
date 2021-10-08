@@ -317,8 +317,7 @@ void RenderPlayingButtons(){
                     if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                         goldCount += 1;
                     }
-                    if (Setting_RMC_Mode == RMCMode::Survival) {
-                        endTime -= (2*60*1000);
+                    if (Setting_RMC_Mode == RMCMode::Survival) {                        
                         survivalSkips += 1;
 
                         if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
@@ -334,8 +333,7 @@ void RenderPlayingButtons(){
                 if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                     goldCount += 1;
                 }
-                if (Setting_RMC_Mode == RMCMode::Survival) {
-                    endTime -= (2*60*1000);
+                if (Setting_RMC_Mode == RMCMode::Survival) {                    
                     survivalSkips += 1;
 
                     if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
