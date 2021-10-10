@@ -110,6 +110,9 @@ bool Setting_RMC_ShowBtns = true;
 [Setting name="Maximum timer on Survival mode (in minutes)" category="Random Map Challenge" min=2 max=60]
 int Setting_RMC_SurvivalMaxTime = 15;
 
+[Setting name="Enable Announcements, Changelog and Rules API" category="Advanced" description="Recommanded if you want RMC & Plugin announcements."]
+bool Setting_API_Enable = true;
+
 [Setting name="Announcements, Changelog and Rules API URL" category="Advanced" description="Change if you know what are you doing."]
 string Setting_API_URL = "https://greep.gq/api/mxrandom.json";
 

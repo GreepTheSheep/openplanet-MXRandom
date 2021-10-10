@@ -88,16 +88,22 @@ void SearchCoroutine() {
 
 void GetInfoAPILoop(){
     while (true) {
-        log("Getting Plugin info from API...");
-        PluginInfoNet = GetInfoAPI();
-        string version = PluginInfoNet["version"];
-        int announcementsLength = PluginInfoNet["announcements"].get_Length();
-        log("Plugin info received, version: " + version + " | " + announcementsLength + " announcements");
+        if (Setting_API_Enable){
+            log("Getting Plugin info from API...");
+            PluginInfoNet = GetInfoAPI();
+            string version = PluginInfoNet["version"];
+            int announcementsLength = PluginInfoNet["announcements"].get_Length();
+            log("Plugin info received, version: " + version + " | " + announcementsLength + " announcements");
 
-        if (version != Meta::ExecutingPlugin().get_Version()) {
-            log("Versions does not corresponds. Installed version: " + Meta::ExecutingPlugin().get_Version());
+            if (version != Meta::ExecutingPlugin().get_Version()) {
+                log("Versions does not corresponds. Installed version: " + Meta::ExecutingPlugin().get_Version());
+            }
+            sleep(30 * 60 * 1000); // 30 minutes
+        } else {
+            // empty the variable by adding a empty array
+            PluginInfoNet = Json::Array();
         }
-        sleep(30 * 60 * 1000); // 30 minutes
+        yield();
     }
 }
 
