@@ -122,7 +122,7 @@ void startTimer() {
 }
 
 void TimerYield() {
-    if (startTime > 0 || timerStarted) {
+    if (timerStarted) {
         if (!isPaused){
             CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
             if (currentMap !is null) {
