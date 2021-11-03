@@ -186,12 +186,7 @@ void TimerYield() {
                     endTime += (3*60*1000);
                 }
                 startnew(loadMapRMC);
-            } else {
-                string descTxt = "Select 'Next map' to change the map";
-                if (!UI::IsOverlayShown()) descTxt = "Open the overlay and select 'Next map' to change the map";
-
-                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
-            }
+            } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "Select 'Next map' to change the map");
         }
         if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
             log("RMC: Got "+ lowerMedalName + " medal!");
