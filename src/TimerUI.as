@@ -186,16 +186,11 @@ void TimerYield() {
                     endTime += (3*60*1000);
                 }
                 startnew(loadMapRMC);
-            } else {
-                string descTxt = "Select 'Next map' to change the map";
-                if (!UI::IsOverlayShown()) descTxt = "Open the overlay and select 'Next map' to change the map";
-
-                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", descTxt);
-            }
+            } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "Select 'Next map' to change the map");
         }
         if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
             log("RMC: Got "+ lowerMedalName + " medal!");
-            UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
+            if (!Setting_RMC_OnlySkip && mapsCount != 0) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
     }
@@ -312,7 +307,7 @@ void RenderPlayingButtons(){
                     startnew(loadFirstMapRMC);
                 }
             } else {
-                if(UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
+                if(!gotAuthor && UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
                     if (isPaused) isPaused = false;
                     if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                         goldCount += 1;
@@ -328,7 +323,7 @@ void RenderPlayingButtons(){
                 }
             }
         } else {
-            if(UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
+            if(!gotAuthor && UI::Button(Icons::PlayCircleO + " Skip" + (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif && Setting_RMC_Goal != RMCGoal::Bronze ? " and take "+lowerMedalName+" medal": ""))) {
                 if (isPaused) isPaused = false;
                 if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                     goldCount += 1;
