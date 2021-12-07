@@ -314,8 +314,6 @@ void RenderPlayingButtons(){
                     }
                     if (Setting_RMC_Mode == RMCMode::Survival) {                        
                         survivalSkips += 1;
-
-                        if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                     }
                     log("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
