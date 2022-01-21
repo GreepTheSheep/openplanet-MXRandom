@@ -5,7 +5,7 @@ category = "TMX"
 perms = "paid"
 siteid = 124
 
-version = "1.7.4"
+version = "1.7.5"
 
 [script]
 imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
