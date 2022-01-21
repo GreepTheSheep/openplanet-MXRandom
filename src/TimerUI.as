@@ -178,7 +178,7 @@ void TimerYield() {
         }
         
         if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
-            log("RMC: Got "+ actualMedalName + " medal!");
+            print("RMC: Got "+ actualMedalName + " medal!");
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
@@ -191,7 +191,7 @@ void TimerYield() {
             } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "Select 'Next map' to change the map");
         }
         if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
-            log("RMC: Got "+ lowerMedalName + " medal!");
+            print("RMC: Got "+ lowerMedalName + " medal!");
             if (!Setting_RMC_OnlySkip && mapsCount != 0) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
@@ -320,7 +320,7 @@ void RenderPlayingButtons(){
                     if (skipSavedTime > 0) {
                         endTime = skipSavedTime;
                     }
-                    log("RMC: Skipping map");
+                    print("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
                 }
@@ -337,7 +337,7 @@ void RenderPlayingButtons(){
                 if (skipSavedTime > 0) {
                     endTime = skipSavedTime;
                 }
-                log("RMC: Skipping map");
+                print("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
             }
@@ -349,7 +349,7 @@ void RenderPlayingButtons(){
                 isPaused = true;
                 Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
                     isPaused = false;
-                    log("RMC: Survival Free Skip");
+                    print("RMC: Survival Free Skip");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     if (skipSavedTime > 0) {
                         endTime = skipSavedTime;
@@ -426,7 +426,7 @@ void RenderMedalsTable(){
 }
 
 void loadFirstMapRMC(){
-    log("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
+    print("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
@@ -472,7 +472,7 @@ void loadFirstMapRMC(){
 }
 
 void loadMapRMC(){
-    log("RMC: Switching map.");
+    print("RMC: Switching map.");
     isPaused = true;
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map

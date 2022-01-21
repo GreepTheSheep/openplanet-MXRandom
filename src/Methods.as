@@ -17,19 +17,14 @@ bool isDevMode(){
 
 // -----------Logging-----------
 
-void log(string msg)
-{
-    print("\\$z[" + MXColor + name + "\\$z] " + msg);
-}
-
-void error(string msg, string log = "")
+void customError(string msg, string log = "")
 {
     vec4 color = UI::HSV(0.0, 0.5, 1.0);
     UI::ShowNotification(Icons::Kenney::ButtonTimes + " " + name + " - Error", msg, color, 5000);
-    print("\\$z[\\$f00Error: " + name + "\\$z] " + msg);
+    error(msg);
     if (log != "")
     {
-        print("\\$z[\\$f00Error: " + name + "\\$z] " + log);
+        trace(log);
     }
 }
 
@@ -106,8 +101,8 @@ bool isMapMP4Compatible(Json::Value MapMX)
 
 // ------------ Game utilities -----------
 
-void ClosePauseMenu() {		
-	CTrackMania@ app = cast<CTrackMania>(GetApp());		
+void ClosePauseMenu() {
+	CTrackMania@ app = cast<CTrackMania>(GetApp());
 	if(app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed) {
 		CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
 		if(playground !is null) {
@@ -192,7 +187,7 @@ Json::Value GetRandomMap() {
 #elif MP4
     req.Url += "&mtype=Race&tpack=" + getTitlePack(true) + "&gv=1";
 #endif
-    log("Request URL: " + req.Url);
+    print("Request URL: " + req.Url);
     dictionary@ Headers = dictionary();
     Headers["Accept"] = "application/json";
     Headers["Content-Type"] = "application/json";
@@ -231,7 +226,7 @@ Json::Value GetMap(int mapId) {
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
-        if (returnedType != Json::Type::Array) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+        if (returnedType != Json::Type::Array) customError("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
     }
     if (json.get_Length() < 1) return json;
     else return json[0];
@@ -267,7 +262,7 @@ Json::Value ResponseToJSON(const string &in HTTPResponse) {
     try {
         ReturnedObject = Json::Parse(HTTPResponse);
     } catch {
-        error("JSON Parsing of string failed!", HTTPResponse);
+        customError("JSON Parsing of string failed!", HTTPResponse);
     }
     return ReturnedObject;
 }
@@ -305,7 +300,7 @@ void PlaySound(string FileName = "Race3.wav", float Volume = 1, float Pitch = 1)
             return;
         }
     }
-    error("Couldn't find sound to play!", "Filename: " + FileName);
+    customError("Couldn't find sound to play!", "Filename: " + FileName);
 
     // Backup sound: "Race3.wav"
     for (uint i = 0; i < audioPort.Sources.Length; i++) {
@@ -330,7 +325,7 @@ void PlaySound(string FileName = "Race3.wav", float Volume = 1, float Pitch = 1)
             return;
         }
     }
-    error("Couldn't find backup Race3.wav", "Sources: " + audioPort.Sources.Length);
+    customError("Couldn't find backup Race3.wav", "Sources: " + audioPort.Sources.Length);
 }
 
 // ---------- JSON (Recently played maps) ----------
@@ -342,16 +337,16 @@ Json::Value loadRecentlyPlayed() {
         saveRecentlyPlayed(Json::Array());
         return Json::Array();
     } else if (FileData.GetType() != Json::Type::Array) {
-        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
+        customError("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
         return Json::Array();
     } else {
         if (FileData.get_Length() > 0) {
             if (FileData[0].GetType() != Json::Type::Object) {
-                error("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData[0].GetType())));
+                customError("The data file seems to yield invalid data. If it persists, consider deleting the file " + RecentlyPlayedJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData[0].GetType())));
                 return Json::Array();
             }
             if (FileData[0]["awards"].GetType() != Json::Type::Number || FileData[0]["style"].GetType() != Json::Type::String) {
-                error("The data file is outdated. It has been reseted.", "Awards or style is missing (JSON v1.1)");
+                customError("The data file is outdated. It has been reseted.", "Awards or style is missing (JSON v1.1)");
                 saveRecentlyPlayed(Json::Array());
                 return Json::Array();
             }
@@ -383,7 +378,7 @@ Json::Value loadPluginData(){
         Json::ToFile(PluginDataJSON, Json::Object());
         FileData = Json::Object();
     } else if (FileData.GetType() != Json::Type::Object) {
-        error("The data file seems to yield invalid data. If it persists, consider deleting the file " + PluginDataJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
+        customError("The data file seems to yield invalid data. If it persists, consider deleting the file " + PluginDataJSON, "(is not of the correct JSON type.) Data type: " + changeEnumStyle(tostring(FileData.GetType())));
         FileData = Json::Object();
     }
     FileData["version"] = Meta::ExecutingPlugin().get_Version();
