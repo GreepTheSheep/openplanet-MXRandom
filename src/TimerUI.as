@@ -7,6 +7,7 @@ bool gotAuthor = false;
 int realStartTime = -1;
 int startTime = -1;
 int endTime = -1;
+int skipSavedTime = -1;
 int authorCount = 0;
 int goldCount = 0;
 int survivalSkips = 0;
@@ -119,6 +120,7 @@ void startTimer() {
     realStartTime = Time::get_Now();
     startTime = Time::get_Now();
     endTime = startTime + (timer*60*1000);
+    skipSavedTime = endTime - startTime;
 }
 
 void TimerYield() {
@@ -136,7 +138,7 @@ void TimerYield() {
                             if ((endTime - startTime) > ((Setting_RMC_SurvivalMaxTime-survivalSkips)*60*1000)) {
                                 endTime = startTime + ((Setting_RMC_SurvivalMaxTime-survivalSkips)*60*1000);
                             }
-                        }                        
+                        }
 
                         if (startTime > endTime) {
                             startTime = -1;
@@ -174,22 +176,22 @@ void TimerYield() {
             lowerMedalName = "";
             lowerMedalInt = 0;
         }
-        
+
         if (GetCurrentMapMedal() >= Setting_RMC_Goal && !gotAuthor){
-            log("RMC: Got "+ actualMedalName + " medal!");
+            print("RMC: Got "+ actualMedalName + " medal!");
             gotAuthor = true;
             authorCount += 1;
             if (Setting_RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+actualMedalName+" time!", "We're searching for another map...");
-                
+
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     endTime += (3*60*1000);
                 }
                 startnew(loadMapRMC);
             } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+changeEnumStyle(tostring(Setting_RMC_Goal))+" time!", "Select 'Next map' to change the map");
         }
-        if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){            
-            log("RMC: Got "+ lowerMedalName + " medal!");
+        if (GetCurrentMapMedal() >= lowerMedalInt && GetCurrentMapMedal() < Setting_RMC_Goal && !gotMedalOnceNotif && Setting_RMC_Mode == RMCMode::Challenge && Setting_RMC_Goal != RMCGoal::Bronze){
+            print("RMC: Got "+ lowerMedalName + " medal!");
             if (!Setting_RMC_OnlySkip && mapsCount != 0) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+lowerMedalName+" medal", "You can take the medal and skip the map");
             gotMedalOnceNotif = true;
         }
@@ -283,7 +285,7 @@ void RenderCurrentMap(){
     } else {
         if (isPaused) UI::Text("Switching map...");
         else isPaused = true;
-    } 
+    }
 }
 
 void RenderPlayingButtons(){
@@ -312,12 +314,13 @@ void RenderPlayingButtons(){
                     if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                         goldCount += 1;
                     }
-                    if (Setting_RMC_Mode == RMCMode::Survival) {                        
+                    if (Setting_RMC_Mode == RMCMode::Survival) {
                         survivalSkips += 1;
-
-                        if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                     }
-                    log("RMC: Skipping map");
+                    if (skipSavedTime > 0) {
+                        endTime = skipSavedTime;
+                    }
+                    print("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
                 }
@@ -328,12 +331,13 @@ void RenderPlayingButtons(){
                 if (Setting_RMC_Mode == RMCMode::Challenge && gotMedalOnceNotif) {
                     goldCount += 1;
                 }
-                if (Setting_RMC_Mode == RMCMode::Survival) {                    
+                if (Setting_RMC_Mode == RMCMode::Survival) {
                     survivalSkips += 1;
-
-                    if ((endTime - startTime) < (2*60*1000)) endTime = startTime + (2*60*1000);
                 }
-                log("RMC: Skipping map");
+                if (skipSavedTime > 0) {
+                    endTime = skipSavedTime;
+                }
+                print("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
             }
@@ -345,8 +349,11 @@ void RenderPlayingButtons(){
                 isPaused = true;
                 Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
                     isPaused = false;
-                    log("RMC: Survival Free Skip");
+                    print("RMC: Survival Free Skip");
                     UI::ShowNotification("Please wait...", "Looking for another map");
+                    if (skipSavedTime > 0) {
+                        endTime = skipSavedTime;
+                    }
                     startnew(loadMapRMC);
                 }, function(){isPaused = false;});
             }
@@ -419,7 +426,7 @@ void RenderMedalsTable(){
 }
 
 void loadFirstMapRMC(){
-    log("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
+    print("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
@@ -465,7 +472,7 @@ void loadFirstMapRMC(){
 }
 
 void loadMapRMC(){
-    log("RMC: Switching map.");
+    print("RMC: Switching map.");
     isPaused = true;
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
@@ -482,4 +489,5 @@ void loadMapRMC(){
     gotMedalOnceNotif = false;
     gotAuthor = false;
     mapsCount += 1;
+    skipSavedTime = endTime - startTime;
 }
