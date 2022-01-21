@@ -8,7 +8,3 @@ If you're looking to help out contributing and adding your feature on it, fork f
 - `C:\Users\%username%\Openplanet4\Plugins\` for ManiaPlanet (Trackmania²)
 
 ⚠ If you're cloning on Trackmania Next, make sure that you're running the Club edition of the game. [Read more here](https://openplanet.nl/next/club)
-
-## Making PRs
-
-When you adding a feature and making a PR, please make it to the `develop` branch. The `main` branch will be the delivery branch to end users. Thanks!
