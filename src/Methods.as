@@ -187,9 +187,10 @@ Json::Value GetRandomMap() {
             }
         }
     }
-    
-#if MP4
-    req.Url += "&tpack=" + getTitlePack(true) + "&gv=1";
+#if TMNEXT
+    req.Url += "&mtype=TM_Race";
+#elif MP4
+    req.Url += "&mtype=Race&tpack=" + getTitlePack(true) + "&gv=1";
 #endif
     log("Request URL: " + req.Url);
     dictionary@ Headers = dictionary();
@@ -199,13 +200,7 @@ Json::Value GetRandomMap() {
     Json::Type returnedType = Json::Type::Null;
     Json::Value json;
     string mapType = "";
-    while (returnedType != Json::Type::Object ||
-#if MP4
-    mapType != "Race"
-#elif TMNEXT
-    mapType != "TM_Race"
-#endif
-    ) {
+    while (returnedType != Json::Type::Object) {
         req.Start();
         while (!req.Finished()) {
             yield();
