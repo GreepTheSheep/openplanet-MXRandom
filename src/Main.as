@@ -63,6 +63,11 @@ void SearchCoroutine() {
         if (isTitePackLoaded()) {
             log("Starting looking for a random map");
             mapRes = GetRandomMap();
+            if (mapRes.GetType() == Json::Type::Null){
+                customError("Returned data is not valid, API must be down", "Returned type is null");
+                isSearching = false;
+                return;
+            }
             if (isSearching && savedMPTitlePack == getTitlePack(true)) {
                 isSearching = false;
                 int mapId = mapRes["TrackID"];

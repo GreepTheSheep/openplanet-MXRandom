@@ -207,7 +207,8 @@ Json::Value GetRandomMap() {
         }
         json = ResponseToJSON(req.String());
         returnedType = json.GetType();
-        if (returnedType != Json::Type::Object) error("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
+        if (returnedType == Json::Type::Null) return json;
+        if (returnedType != Json::Type::Object) customError("Warn: returned JSON is not valid, retrying", "Returned type is " + changeEnumStyle(tostring(returnedType)));
         else mapType = json["results"][0]["MapType"];
     }
     return json["results"][0];
