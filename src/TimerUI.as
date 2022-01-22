@@ -93,6 +93,17 @@ void Render(){
                     timerStarted = false;
                     displayTimer = false;
                     RMCStarted = false;
+
+                    // Reenable unauthorised plugins
+                    for (uint i = 0; i < Meta::AllPlugins().Length; i++) {
+                        Meta::Plugin@ plugin = Meta::AllPlugins()[i];
+                        if (plugin.get_SiteID() == 146 || plugin.get_SiteID() == 160) {
+                            plugin.Enable();
+                        }
+                        if (plugin.get_ID() == "NoRespawnTimer" || plugin.get_ID() == "Predictor") {
+                            plugin.Enable();
+                        }
+                    }
                 }
                 UI::PopStyleColor(3);
                 UI::Separator();
@@ -145,6 +156,18 @@ void TimerYield() {
                             displayTimer = false;
                             if (Setting_RMC_Mode == RMCMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
                             else if (Setting_RMC_Mode == RMCMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(realStartTime - startTime) + ".\nYou got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+
+                            // Reenable unauthorised plugins
+                            for (uint i = 0; i < Meta::AllPlugins().Length; i++) {
+                                Meta::Plugin@ plugin = Meta::AllPlugins()[i];
+                                if (plugin.get_SiteID() == 146 || plugin.get_SiteID() == 160) {
+                                    plugin.Enable();
+                                }
+                                if (plugin.get_ID() == "NoRespawnTimer" || plugin.get_ID() == "Predictor") {
+                                    plugin.Enable();
+                                }
+                            }
+
                             if (Setting_RMC_ExitMapOnEndTime){
                                 CTrackMania@ app = cast<CTrackMania>(GetApp());
                                 app.BackToMainMenu();
@@ -416,6 +439,18 @@ void RenderMedalsTable(){
 
 void loadFirstMapRMC(){
     print("RMC started in " + changeEnumStyle(tostring(Setting_RMC_Mode)) + " mode.");
+
+    // Desativate unauthorised plugins
+    for (uint i = 0; i < Meta::AllPlugins().Length; i++) {
+        Meta::Plugin@ plugin = Meta::AllPlugins()[i];
+        if (plugin.get_SiteID() == 146 || plugin.get_SiteID() == 160) {
+            plugin.Disable();
+        }
+        if (plugin.get_ID() == "NoRespawnTimer" || plugin.get_ID() == "Predictor") {
+            plugin.Disable();
+        }
+    }
+
     CTrackMania@ app = cast<CTrackMania>(GetApp());
     app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
     while(!app.ManiaTitleControlScriptAPI.IsReady) {
