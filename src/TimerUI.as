@@ -315,7 +315,7 @@ void RenderPlayingButtons(){
                     if (Setting_RMC_Mode == RMCMode::Survival) {
                         survivalSkips += 1;
                     }
-                    log("RMC: Skipping map");
+                    print("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
                 }
@@ -329,7 +329,7 @@ void RenderPlayingButtons(){
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     survivalSkips += 1;
                 }
-                log("RMC: Skipping map");
+                print("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
             }
