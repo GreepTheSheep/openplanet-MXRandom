@@ -7,7 +7,6 @@ bool gotAuthor = false;
 int realStartTime = -1;
 int startTime = -1;
 int endTime = -1;
-int skipSavedTime = -1;
 int authorCount = 0;
 int goldCount = 0;
 int survivalSkips = 0;
@@ -120,7 +119,6 @@ void startTimer() {
     realStartTime = Time::get_Now();
     startTime = Time::get_Now();
     endTime = startTime + (timer*60*1000);
-    skipSavedTime = endTime - startTime;
 }
 
 void TimerYield() {
@@ -317,10 +315,7 @@ void RenderPlayingButtons(){
                     if (Setting_RMC_Mode == RMCMode::Survival) {
                         survivalSkips += 1;
                     }
-                    if (skipSavedTime > 0) {
-                        endTime = skipSavedTime;
-                    }
-                    print("RMC: Skipping map");
+                    log("RMC: Skipping map");
                     UI::ShowNotification("Please wait...", "Looking for another map");
                     startnew(loadMapRMC);
                 }
@@ -334,10 +329,7 @@ void RenderPlayingButtons(){
                 if (Setting_RMC_Mode == RMCMode::Survival) {
                     survivalSkips += 1;
                 }
-                if (skipSavedTime > 0) {
-                    endTime = skipSavedTime;
-                }
-                print("RMC: Skipping map");
+                log("RMC: Skipping map");
                 UI::ShowNotification("Please wait...", "Looking for another map");
                 startnew(loadMapRMC);
             }
@@ -351,9 +343,6 @@ void RenderPlayingButtons(){
                     isPaused = false;
                     print("RMC: Survival Free Skip");
                     UI::ShowNotification("Please wait...", "Looking for another map");
-                    if (skipSavedTime > 0) {
-                        endTime = skipSavedTime;
-                    }
                     startnew(loadMapRMC);
                 }, function(){isPaused = false;});
             }
@@ -489,5 +478,4 @@ void loadMapRMC(){
     gotMedalOnceNotif = false;
     gotAuthor = false;
     mapsCount += 1;
-    skipSavedTime = endTime - startTime;
 }
