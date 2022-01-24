@@ -93,7 +93,6 @@ void Render(){
                     timerStarted = false;
                     displayTimer = false;
                     RMCStarted = false;
-                    }
                 }
                 UI::PopStyleColor(3);
                 UI::Separator();
