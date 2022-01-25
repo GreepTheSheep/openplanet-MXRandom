@@ -4,10 +4,14 @@ namespace MX
     {
         try
         {
-            MX::MapInfo@ map = MX::MapInfo(API::GetAsync(CreateQueryURL())[0]);
+            string URL = CreateQueryURL();
+            Log::Trace("Querying Random Map: "+URL);
+            Json::Value res = API::GetAsync(URL)["results"][0];
+            Log::Trace("RandomMapRes: "+Json::Write(res));
+            MX::MapInfo@ map = MX::MapInfo(res);
 
             if (map is null){
-                Log::Warn("Error while loading map");
+                Log::Warn("Map is null");
                 Log::Error(MX_NAME + " API is not responding, it must be down.", true);
                 APIDown = true;
                 return;
@@ -19,7 +23,8 @@ namespace MX
                 yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
             }
             app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
-            }
+
+        }
         catch
         {
             Log::Warn("Error while loading map ");
@@ -56,6 +61,9 @@ namespace MX
             // prevent loading CharacterPilot maps
             url += "&vehicles=1";
         }
+
+        // prevent loading non-Race maps (Royal, flagrush etc...)
+        url += "&mtype="+SUPPORTED_MAP_TYPE;
 
         return url;
     }
