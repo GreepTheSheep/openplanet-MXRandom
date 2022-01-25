@@ -21,5 +21,7 @@ const string SUPPORTED_MAP_TYPE = "TM_Race";
 const string PLUGIN_NAME        = MX_NAME + " Random Map Picker";
 const string GITHUB_URL         = "https://github.com/GreepTheSheep/openplanet-mx-random";
 
+const bool IS_DEV_MODE          = Meta::ExecutingPlugin().get_Type() == Meta::PluginType::Folder;
+
 const string RecentlyPlayedJSON = IO::FromDataFolder("TMXRandom_PlayedMaps.json");
 const string PluginDataJSON = IO::FromDataFolder("TMXRandom_Data.json");
