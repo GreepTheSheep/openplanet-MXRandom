@@ -37,4 +37,11 @@ namespace Log
             UI::ShowNotification(Icons::Kenney::TimesCircle + " " + PLUGIN_NAME + " - Error", message, color, 8000);
         }
     }
+
+    void LoadingMapNotification(MX::MapInfo@ map)
+    {
+        Log("Loading map: " + map.Name + " (" + map.TrackID + ")");
+        vec4 color = UI::HSV(0.25, 1, 0.7);
+        UI::ShowNotification(Icons::Kenney::ReloadInverse + " Loading map", map.Name + "\nby: "+map.Username, color, 5000);
+    }
 }

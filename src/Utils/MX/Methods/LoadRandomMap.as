@@ -11,11 +11,12 @@ namespace MX
             MX::MapInfo@ map = MX::MapInfo(res);
 
             if (map is null){
-                Log::Warn("Map is null");
-                Log::Error(MX_NAME + " API is not responding, it must be down.", true);
-                APIDown = true;
+                Log::Warn("Map is null, retrying...");
+                LoadRandomMap();
                 return;
             }
+
+            Log::LoadingMapNotification(map);
 
             CTrackMania@ app = cast<CTrackMania>(GetApp());
             app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
@@ -28,7 +29,7 @@ namespace MX
         catch
         {
             Log::Warn("Error while loading map ");
-            Log::Error(MX_NAME + " API is not responding, it must be down.", true);
+            Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
         }
     }
