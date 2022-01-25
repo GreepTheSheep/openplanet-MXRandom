@@ -2,6 +2,7 @@ namespace MX
 {
     void FetchMapTags()
     {
+        APIRefreshing = true;
         Json::Value resNet = API::GetAsync("https://"+MX_URL+"/api/tags/gettags");
 
         try {
@@ -17,10 +18,12 @@ namespace MX
 
             print(m_mapTags.get_Length() + " tags loaded");
             APIDown = false;
+            APIRefreshing = false;
         } catch {
             Log::Warn("Error while loading tags");
-            Log::Error(MX_NAME + " API is not responding, it must be down.", true);
+            Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
+            APIRefreshing = false;
         }
     }
 }
