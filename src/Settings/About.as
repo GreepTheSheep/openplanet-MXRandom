@@ -4,6 +4,26 @@ Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 [SettingsTab name="About"]
 void RenderAboutTab()
 {
+    if (MX::APIDown)
+    {
+        if (!MX::APIRefreshing)
+        {
+            UI::Text("\\$fc0"+Icons::ExclamationTriangle);
+            UI::SameLine();
+            UI::PushFont(Header1);
+            UI::Text("\\$fc0"+MX_NAME + " is not responding. It might be down.");
+            UI::PopFont();
+            if (UI::Button("Retry")) startnew(MX::FetchMapTags);
+        }
+        else
+        {
+            int HourGlassValue = Time::Stamp % 3;
+            string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+            UI::TextDisabled(Hourglass + " Loading...");
+        }
+        UI::Separator();
+    }
+
     UI::Text(MX_COLOR_STR + Icons::Random);
     UI::SameLine();
     UI::PushFont(Header1);
