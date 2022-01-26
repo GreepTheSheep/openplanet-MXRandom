@@ -22,8 +22,8 @@ void RenderMenu()
                 UI::EndTooltip();
             }
 
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", mainWindow.isOpened)) {
-                mainWindow.isOpened = !mainWindow.isOpened;
+            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", window.isOpened)) {
+                window.isOpened = !window.isOpened;
             }
             UI::Separator();
             if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", false)) {
@@ -41,7 +41,7 @@ void Main()
 
 void RenderInterface()
 {
-    mainWindow.Render();
+    window.Render();
     Dialogs::RenderInterface();
 }
 
