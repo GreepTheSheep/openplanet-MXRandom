@@ -8,8 +8,6 @@ namespace PluginSettings
     };
 
     [Setting hidden]
-    bool RMC_ShowWindow = true;
-
     string RMC_GoalMedal = Medals[3];
 
     [Setting hidden]
@@ -44,7 +42,7 @@ namespace PluginSettings
 
         if (UI::Button("Reset to default"))
         {
-            RMC_ShowWindow = true;
+            RMC_GoalMedal = Medals[3];
             RMC_DisplayCurrentMap = true;
             RMC_AutoSwitch = true;
             RMC_ExitMapOnEndTime = false;
@@ -53,7 +51,6 @@ namespace PluginSettings
             RMC_SurvivalMaxTime = 15;
         }
 
-        RMC_ShowWindow = UI::Checkbox("Show window", RMC_ShowWindow);
         RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
 
         if (UI::BeginCombo("Goal", RMC_GoalMedal)){

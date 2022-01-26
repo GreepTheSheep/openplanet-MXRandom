@@ -22,12 +22,12 @@ void RenderMenu()
                 UI::EndTooltip();
             }
 
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", false)) {
-                Log::Trace("Opening menu...");
+            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", window.isOpened)) {
+                window.isOpened = !window.isOpened;
             }
             UI::Separator();
             if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", false)) {
-                Log::Trace("Opening menu...");
+                Log::Warn("RMX coming soon one day");
             }
         }
         UI::EndMenu();
@@ -37,4 +37,9 @@ void RenderMenu()
 void Main()
 {
     MX::FetchMapTags();
+}
+
+void Render()
+{
+    window.Render();
 }

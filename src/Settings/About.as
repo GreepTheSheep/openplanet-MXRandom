@@ -1,4 +1,4 @@
-Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 22);
+Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 24);
 Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
 
 [SettingsTab name="About"]
