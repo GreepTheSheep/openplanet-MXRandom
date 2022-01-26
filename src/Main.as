@@ -22,8 +22,8 @@ void RenderMenu()
                 UI::EndTooltip();
             }
 
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", window.isOpened)) {
-                window.isOpened = !window.isOpened;
+            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", mainWindow.isOpened)) {
+                mainWindow.isOpened = !mainWindow.isOpened;
             }
             UI::Separator();
             if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", false)) {
@@ -36,10 +36,16 @@ void RenderMenu()
 
 void Main()
 {
-    MX::FetchMapTags();
+    // MX::FetchMapTags();
+}
+
+void RenderInterface()
+{
+    mainWindow.Render();
+    Dialogs::RenderInterface();
 }
 
 void Render()
 {
-    window.Render();
+    // RMCWindow.Render();
 }

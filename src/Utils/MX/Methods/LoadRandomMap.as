@@ -4,6 +4,7 @@ namespace MX
     {
         try
         {
+            RandomMapIsLoading = true;
             string URL = CreateQueryURL();
             Log::Trace("Querying Random Map: "+URL);
             Json::Value res = API::GetAsync(URL)["results"][0];
@@ -17,6 +18,7 @@ namespace MX
             }
 
             Log::LoadingMapNotification(map);
+            RandomMapIsLoading = false;
 
             CTrackMania@ app = cast<CTrackMania>(GetApp());
             app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map

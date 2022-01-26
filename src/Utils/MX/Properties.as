@@ -7,4 +7,6 @@ namespace MX
 
     bool APIDown = true;
     bool APIRefreshing = false;
+
+    bool RandomMapIsLoading = false;
 }

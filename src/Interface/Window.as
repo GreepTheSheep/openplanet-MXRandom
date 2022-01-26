@@ -11,12 +11,20 @@ class Window
     {
         if (!isOpened) return;
 
-        UI::SetNextWindowSize(800,500);
-        if (UI::Begin(Icons::Random + PLUGIN_NAME, isOpened, flags))
+        UI::SetNextWindowSize(650,450);
+        if (UI::Begin(MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v"+Meta::ExecutingPlugin().get_Version(), isOpened, flags))
         {
-            UI::Text("Hello World!");
+            if (!MX::RandomMapIsLoading) {
+                if (UI::GreenButton(Icons::Play + " Pick a random map")) {
+                    startnew(MX::LoadRandomMap);
+                }
+            } else {
+                UI::Text("Loading...");
+            }
+            UI::SetCursorPos(vec2(0, 100));
+            UI::Separator();
         }
         UI::End();
     }
 }
-Window window;
+Window mainWindow;
