@@ -51,11 +51,15 @@ void RenderInterface()
 void Render()
 {
     if (window.isInRMCMode) window.Render();
+    Renderables::Render();
 }
 
 void Main()
 {
     // MX::FetchMapTags();
+
+    // todo: check plugin version from json and show migration wizard if needed
+    Renderables::Add(DataMigrationWizardModalDialog());
 }
 
 void Update(float dt)
