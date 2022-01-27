@@ -1,6 +1,3 @@
-Resources::Font@ Header1 = Resources::GetFont("DroidSans.ttf", 24);
-Resources::Font@ Header2 = Resources::GetFont("DroidSans.ttf", 20);
-
 [SettingsTab name="About"]
 void RenderAboutTab()
 {
@@ -10,7 +7,7 @@ void RenderAboutTab()
         {
             UI::Text("\\$fc0"+Icons::ExclamationTriangle);
             UI::SameLine();
-            UI::PushFont(Header1);
+            UI::PushFont(g_fontHeaderSub);
             UI::Text("\\$fc0"+MX_NAME + " is not responding. It might be down.");
             UI::PopFont();
             if (UI::Button("Retry")) startnew(MX::FetchMapTags);
@@ -26,7 +23,7 @@ void RenderAboutTab()
 
     UI::Text(MX_COLOR_STR + Icons::Random);
     UI::SameLine();
-    UI::PushFont(Header1);
+    UI::PushFont(g_fontHeader);
     UI::Text(PLUGIN_NAME);
     UI::PopFont();
     UI::Text("Made by \\$777" + Meta::ExecutingPlugin().get_Author() + " \\$aaaand its contributors");
@@ -51,7 +48,7 @@ void RenderAboutTab()
 
     UI::Text("\\$f39" + Icons::Heartbeat);
     UI::SameLine();
-    UI::PushFont(Header2);
+    UI::PushFont(g_fontHeaderSub);
     UI::Text("Openplanet");
     UI::PopFont();
     UI::Text("Version \\$777" + Meta::OpenplanetBuildInfo());
@@ -60,7 +57,7 @@ void RenderAboutTab()
 
     UI::Text(MX_COLOR_STR + Icons::Exchange);
     UI::SameLine();
-    UI::PushFont(Header2);
+    UI::PushFont(g_fontHeaderSub);
     UI::Text("ManiaExchange");
     UI::PopFont();
     if (UI::Button(Icons::KeyboardO + " \\$zContact ManiaExchange")) OpenBrowserURL("https://"+MX_URL+"/messaging/compose/11");

@@ -31,7 +31,7 @@ namespace PluginSettings
     [SettingsTab name="Random Map Challenge"]
     void RenderRMCSettingTab()
     {
-        UI::PushFont(Header1);
+        UI::PushFont(g_fontHeader);
         UI::Text("Random Map Challenge / Survival");
         UI::PopFont();
         UI::TextWrapped("In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour.");

@@ -3,7 +3,12 @@ class Window
     bool isOpened = true;
     bool isInRMCMode = false;
 
-    int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
+    int GetFlags()
+    {
+        int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
+        if (isInRMCMode) flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
+        return flags;
+    }
 
     string GetWindowTitle()
     {
@@ -22,7 +27,7 @@ class Window
         }
 
         UI::SetNextWindowSize(600,400);
-        if (UI::Begin(GetWindowTitle(), isOpened, flags))
+        if (UI::Begin(GetWindowTitle(), isOpened, GetFlags()))
         {
             if (!isInRMCMode)
             {
@@ -68,7 +73,8 @@ class Window
             }
             else
             {
-                if (UI::ColoredButton("Go back", 0.155)) {
+                if (UI::ColoredButton("Go back", 0.155))
+                {
                     isInRMCMode = false;
                 }
             }

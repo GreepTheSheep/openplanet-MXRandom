@@ -1,3 +1,6 @@
+Resources::Font@ g_fontHeader;
+Resources::Font@ g_fontHeaderSub;
+
 void RenderMenu()
 {
     if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
@@ -39,11 +42,6 @@ void RenderMenu()
     }
 }
 
-void Main()
-{
-    // MX::FetchMapTags();
-}
-
 void RenderInterface()
 {
     if (!window.isInRMCMode) window.Render();
@@ -53,4 +51,15 @@ void RenderInterface()
 void Render()
 {
     if (window.isInRMCMode) window.Render();
+}
+
+void Main()
+{
+    // MX::FetchMapTags();
+}
+
+void Update(float dt)
+{
+    @g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
+    @g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 }
