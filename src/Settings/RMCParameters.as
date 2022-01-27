@@ -40,7 +40,7 @@ namespace PluginSettings
         UI::Separator();
 
 
-        if (UI::Button("Reset to default"))
+        if (UI::OrangeButton("Reset to default"))
         {
             RMC_GoalMedal = Medals[3];
             RMC_DisplayCurrentMap = true;

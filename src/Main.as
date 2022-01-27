@@ -46,10 +46,11 @@ void Main()
 
 void RenderInterface()
 {
+    if (!window.isInRMCMode) window.Render();
     Dialogs::RenderInterface();
 }
 
 void Render()
 {
-    window.Render();
+    if (window.isInRMCMode) window.Render();
 }

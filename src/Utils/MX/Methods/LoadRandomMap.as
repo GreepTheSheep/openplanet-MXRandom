@@ -19,13 +19,14 @@ namespace MX
 
             Log::LoadingMapNotification(map);
             RandomMapIsLoading = false;
+            if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
 
-            CTrackMania@ app = cast<CTrackMania>(GetApp());
-            app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
-            while(!app.ManiaTitleControlScriptAPI.IsReady) {
-                yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
-            }
-            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
+            // CTrackMania@ app = cast<CTrackMania>(GetApp());
+            // app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
+            // while(!app.ManiaTitleControlScriptAPI.IsReady) {
+            //     yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
+            // }
+            // app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
 
         }
         catch
@@ -52,7 +53,7 @@ namespace MX
                 url += "&lengthop=" + PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator);
             }
             if (PluginSettings::MapLength != "Anything"){
-                url += "&length=" + PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength);
+                url += "&length=" + (PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)-1);
             }
             if (PluginSettings::MapTag != "Anything"){
                 url += "&tags=" + PluginSettings::MapTagID;

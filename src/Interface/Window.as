@@ -3,7 +3,7 @@ class Window
     bool isOpened = true;
     bool isInRMCMode = false;
 
-    int flags = UI::WindowFlags::NoCollapse;
+    int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
 
     string GetWindowTitle()
     {
@@ -27,8 +27,8 @@ class Window
             if (!isInRMCMode)
             {
                 MainUIView::Header();
-                UI::BeginTabBar("MXInfoTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-                if (UI::BeginTabItem(Icons::Table + " Recently Played Maps"))
+                UI::BeginTabBar("MainUITabBar", UI::TabBarFlags::FittingPolicyResizeDown);
+                if (UI::BeginTabItem(Icons::ListUl + " Recently Played Maps"))
                 {
                     UI::BeginChild("RecentlyPlayedChild");
                     MainUIView::RecentlyPlayedMapsTab();
@@ -36,11 +36,24 @@ class Window
                     UI::EndTabItem();
                 }
 
-                if (UI::BeginTabItem(Icons::Cog + " Searching settings"))
+                if (UI::BeginTabItem(Icons::Cogs + " Settings"))
                 {
-                    UI::BeginChild("SearchingChild");
-                    PluginSettings::RenderSearchingSettingTab();
-                    UI::EndChild();
+                    UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
+                    if (UI::BeginTabItem(Icons::Cog + " Searching"))
+                    {
+                        UI::BeginChild("SearchingChild");
+                        PluginSettings::RenderSearchingSettingTab();
+                        UI::EndChild();
+                        UI::EndTabItem();
+                    }
+                    if (UI::BeginTabItem(Icons::Cog + " Menu"))
+                    {
+                        UI::BeginChild("MenuChild");
+                        PluginSettings::RenderMenuSettings();
+                        UI::EndChild();
+                        UI::EndTabItem();
+                    }
+                    UI::EndTabBar();
                     UI::EndTabItem();
                 }
 
