@@ -22,12 +22,17 @@ void RenderMenu()
                 UI::EndTooltip();
             }
 
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zOpen menu", "", window.isOpened)) {
+            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
                 window.isOpened = !window.isOpened;
             }
             UI::Separator();
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", false)) {
-                Log::Warn("RMX coming soon one day");
+            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
+                if (window.isInRMCMode) window.isInRMCMode = false;
+                else
+                {
+                    if (!window.isOpened) window.isOpened = true;
+                    window.isInRMCMode = true;
+                }
             }
         }
         UI::EndMenu();
@@ -41,11 +46,10 @@ void Main()
 
 void RenderInterface()
 {
-    window.Render();
     Dialogs::RenderInterface();
 }
 
 void Render()
 {
-    // RMCWindow.Render();
+    window.Render();
 }

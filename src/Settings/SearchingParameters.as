@@ -42,7 +42,7 @@ namespace PluginSettings
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {
-        UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$zKeep in mind that search parameters are disabled during Random Map Challenge due to their rules.");
+        UI::TextWrapped("\\$fc0"+Icons::ExclamationTriangle+" \\$zKeep in mind that search parameters are disabled during Random Map Challenge due to their rules.");
         UI::NewLine();
 
         UI::Separator();
