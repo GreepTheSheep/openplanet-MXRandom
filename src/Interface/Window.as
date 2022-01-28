@@ -15,7 +15,7 @@ class Window
         if (isInRMCMode)
             return MX_COLOR_STR + Icons::Random + " \\$z" + " RMC";
         else
-            return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v"+Meta::ExecutingPlugin().get_Version();
+            return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v"+PLUGIN_VERSION;
     }
 
     void Render()

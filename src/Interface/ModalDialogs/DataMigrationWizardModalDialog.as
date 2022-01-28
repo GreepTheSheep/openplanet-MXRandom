@@ -1,6 +1,10 @@
 class DataMigrationWizardModalDialog : ModalDialog
 {
     int m_stage = 0;
+    int m_migrationStep = 0;
+    bool migrationCompleted = false;
+    array<int> m_MXIdsFromRecently;
+    array<MX::MapInfo@> m_MapsFetched;
 
     DataMigrationWizardModalDialog()
     {
@@ -28,7 +32,7 @@ class DataMigrationWizardModalDialog : ModalDialog
         );
 
         UI::TextWrapped(
-            "The migration process will take a few minutes depending of your current recently played maps list."
+            "The migration process will take a few seconds depending of your current recently played maps list."
         );
 
         UI::NewLine();
@@ -40,24 +44,66 @@ class DataMigrationWizardModalDialog : ModalDialog
 
     void RenderStep2()
     {
-        UI::Text("TODO HERE");
+        int HourGlassValue = Time::Stamp % 3;
+        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
 
-        m_stage++;
-    }
-
-    void RenderStep3()
-    {
         UI::PushFont(g_fontHeader);
-        UI::TextWrapped("Data migration complete!");
+        if (!migrationCompleted) UI::Text("Please wait...");
+        else UI::Text("Data migration complete!");
         UI::PopFont();
+        UI::NewLine();
 
-        UI::TextWrapped("Your data has been successfully migrated to the new format.");
-        UI::TextWrapped("Thanks for using " + PLUGIN_NAME + "!");
+        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.Length == 0 ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
+        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
+        UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData saved to the file! \\$444" + DATA_JSON_LOCATION : "\\$f80" + Hourglass  + " \\$zSaving the data to the new file...");
+
+        switch (m_migrationStep) {
+            case 0:
+                m_MXIdsFromRecently = Migration::GetLastestPlayedMapsMXId();
+                if (m_MXIdsFromRecently.Length == 0) m_migrationStep = 2;
+                else {
+                    if (m_MXIdsFromRecently.Length > 50) m_MXIdsFromRecently.Resize(50);
+                    m_migrationStep++;
+                }
+                break;
+            case 1:
+                Migration::CheckMXRequest();
+                if (Migration::n_request is null && Migration::RecentlyPlayed.Length == 0)
+                    Migration::StartRequestMapsInfo(m_MXIdsFromRecently);
+
+                if (Migration::n_request is null && Migration::RecentlyPlayed.Length > 0) {
+                    m_MapsFetched = Migration::RecentlyPlayed;
+                    m_migrationStep++;
+                }
+                break;
+            case 2:
+                if (m_MapsFetched.Length > 0 && !migrationCompleted) {
+                    Migration::SaveToDataFile();
+                }
+                migrationCompleted = true;
+                break;
+        }
+
+        if (migrationCompleted)
+        {
+            UI::Separator();
+            UI::NewLine();
+            UI::TextWrapped("\\$0f0" + Icons::Check + " \\$zYour data has been successfully migrated to the new format.");
+            UI::TextWrapped("Thanks for using " + PLUGIN_NAME + "!");
+        }
+        UI::NewLine();
+        if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
+            for (uint i = 0; i < m_MapsFetched.Length; i++){
+                UI::Text(m_MapsFetched[i].TrackID + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
+                if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/maps/"+m_MapsFetched[i].TrackID);
+            }
+            UI::TreePop();
+        }
     }
 
     bool CanClose() override
     {
-        return false;
+        return migrationCompleted;
     }
 
     void RenderDialog() override
@@ -66,7 +112,6 @@ class DataMigrationWizardModalDialog : ModalDialog
 		switch (m_stage) {
 			case 0: RenderStep1(); break;
 			case 1: RenderStep2(); break;
-			case 2: RenderStep3(); break;
 		}
 		UI::EndChild();
 
@@ -81,7 +126,7 @@ class DataMigrationWizardModalDialog : ModalDialog
                 m_stage++;
             }
         }
-        if (m_stage == 2) {
+        if (migrationCompleted) {
             if (UI::GreenButton(Icons::Check + "Finish")) {
                 Close();
             }

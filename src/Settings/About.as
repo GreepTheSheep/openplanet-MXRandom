@@ -27,7 +27,7 @@ void RenderAboutTab()
     UI::Text(PLUGIN_NAME);
     UI::PopFont();
     UI::Text("Made by \\$777" + Meta::ExecutingPlugin().get_Author() + " \\$aaaand its contributors");
-    UI::Text("Version \\$777" + Meta::ExecutingPlugin().get_Version());
+    UI::Text("Version \\$777" + PLUGIN_VERSION);
     UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().get_ID());
     UI::Text("Site ID \\$777" + Meta::ExecutingPlugin().get_SiteID());
     UI::Text("Type \\$777" + tostring(Meta::ExecutingPlugin().get_Type()));

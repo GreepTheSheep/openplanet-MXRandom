@@ -58,8 +58,23 @@ void Main()
 {
     // MX::FetchMapTags();
 
-    // todo: check plugin version from json and show migration wizard if needed
-    Renderables::Add(DataMigrationWizardModalDialog());
+    if (DataJson.GetType() == Json::Type::Null) {
+        if (DataJsonOldVersion.GetType() == Json::Type::Null) {
+            // init data file
+            Log::Log('init file');
+        } else {
+            if (Versioning::IsVersion1(DataJsonOldVersion["version"])) {
+                Log::Trace("Data JSON old version is "+Json::Write(DataJsonOldVersion["version"])+", showing migration wizard");
+                Renderables::Add(DataMigrationWizardModalDialog());
+            }
+        }
+    }
+
+    // array<int> mxidslist = Migration::GetLastestPlayedMapsMXId();
+
+    // for (uint i = 0; i < mxidslist.Length; i++) {
+    //     Log::Log(""+mxidslist[i]);
+    // }
 }
 
 void Update(float dt)
