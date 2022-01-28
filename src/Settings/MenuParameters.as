@@ -3,6 +3,9 @@ namespace PluginSettings
     [Setting hidden]
     bool closeOverlayOnMapLoaded = true;
 
+    [Setting hidden]
+    bool dontShowChangeLog = false;
+
     [SettingsTab name="Menu"]
     void RenderMenuSettings()
     {
@@ -13,5 +16,6 @@ namespace PluginSettings
             UI::Text("This setting will not affect during RMC.");
             UI::EndTooltip();
         }
+        dontShowChangeLog = UI::Checkbox("Never show changelog when updating", dontShowChangeLog);
     }
 }

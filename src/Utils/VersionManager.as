@@ -4,8 +4,8 @@ namespace Versioning
         return Text::ParseInt(version.Replace(".", ""));
     }
 
-    bool IsVersionUpdated(string version){
-        return Text::ParseInt(PLUGIN_VERSION.Replace(".", "")) > VersionToInt(version);
+    bool IsPluginUpdated(){
+        return Text::ParseInt(PLUGIN_VERSION.Replace(".", "")) > VersionToInt(DataJson["version"]);
     }
 
     bool IsVersion1(string version){

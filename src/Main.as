@@ -56,8 +56,6 @@ void Render()
 
 void Main()
 {
-    // MX::FetchMapTags();
-
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonOldVersion.GetType() == Json::Type::Null) {
             // init data file
@@ -68,13 +66,11 @@ void Main()
                 Renderables::Add(DataMigrationWizardModalDialog());
             }
         }
+    } else {
+        DataManager::CheckData();
     }
 
-    // array<int> mxidslist = Migration::GetLastestPlayedMapsMXId();
-
-    // for (uint i = 0; i < mxidslist.Length; i++) {
-    //     Log::Log(""+mxidslist[i]);
-    // }
+    // MX::FetchMapTags();
 }
 
 void Update(float dt)
