@@ -6,13 +6,23 @@ namespace DataManager
         {
             Log::Log("Plugin was updated, old version was "+ Json::Write(DataJson["version"]));
             if (!PluginSettings::dontShowChangeLog) Renderables::Add(ChangelogModalDialog());
-            DataJson["version"] = PLUGIN_VERSION;
-            // SaveData();
         }
+    }
+
+    void InitData(bool save = true)
+    {
+        DataJson = Json::Object();
+        DataJson["version"] = PLUGIN_VERSION;
+        DataJson["recentlyPlayed"] = Json::Array();
+        DataJson["randomMapChallenge"] = Json::Object();
+        DataJson["randomMapChallenge"]["recentRaces"] = Json::Array();
+
+        if (save) SaveData();
     }
 
     void SaveData()
     {
+        Log::Trace("Saving JSON file");
         Json::ToFile(DATA_JSON_LOCATION, DataJson);
     }
 }

@@ -58,8 +58,8 @@ void Main()
 {
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonOldVersion.GetType() == Json::Type::Null) {
-            // init data file
-            Log::Log('init file');
+            DataManager::InitData();
+            UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing "+PLUGIN_NAME+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
         } else {
             if (Versioning::IsVersion1(DataJsonOldVersion["version"])) {
                 Log::Trace("Data JSON old version is "+Json::Write(DataJsonOldVersion["version"])+", showing migration wizard");

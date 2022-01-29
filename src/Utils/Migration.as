@@ -62,14 +62,13 @@ namespace Migration
 
     void SaveToDataFile()
     {
-        IO::Move(IO::FromDataFolder("TMXRandom_Data.json"), DATA_JSON_LOCATION);
-        DataJsonOldVersion["recentlyPlayed"] = Json::Array();
+        DataManager::InitData(false);
         for (uint i = 0; i < RecentlyPlayed.Length; i++)
         {
             Json::Value MapJson = RecentlyPlayed[i].ToJson();
-            DataJsonOldVersion["recentlyPlayed"].Add(MapJson);
+            DataJson["recentlyPlayed"].Add(MapJson);
         }
-        Json::ToFile(DATA_JSON_LOCATION, DataJsonOldVersion);
+        DataManager::SaveData();
         IO::Delete(IO::FromDataFolder("TMXRandom_PlayedMaps.json"));
     }
 }

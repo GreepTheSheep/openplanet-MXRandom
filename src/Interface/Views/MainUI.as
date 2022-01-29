@@ -46,7 +46,7 @@ namespace MainUIView
 
         if (GH::ReleasesReq is null && GH::Releases.Length > 0) {
             UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyScroll);
-            for (int i = 0; i < GH::Releases.Length; i++) {
+            for (uint i = 0; i < GH::Releases.Length; i++) {
                 GH::Release@ release = GH::Releases[i];
 
                 if (UI::BeginTabItem((release.name.Replace('v', '') == PLUGIN_VERSION ? "\\$090": "") + Icons::Tag + " \\$z" + release.name)) {

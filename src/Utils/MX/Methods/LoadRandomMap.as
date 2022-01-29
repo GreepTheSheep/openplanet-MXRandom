@@ -18,6 +18,8 @@ namespace MX
             }
 
             Log::LoadingMapNotification(map);
+            DataJson["recentlyPlayed"].Add(map.ToJson());
+            DataManager::SaveData();
             RandomMapIsLoading = false;
             if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
 
