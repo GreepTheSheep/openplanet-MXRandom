@@ -64,9 +64,22 @@ class Window
 
                 if (UI::BeginTabItem(Icons::InfoCircle + " About"))
                 {
-                    UI::BeginChild("AboutChild");
-                    RenderAboutTab();
-                    UI::EndChild();
+                    UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
+                    if (UI::BeginTabItem(Icons::InfoCircle + " About"))
+                    {
+                        UI::BeginChild("AboutChild");
+                        RenderAboutTab();
+                        UI::EndChild();
+                        UI::EndTabItem();
+                    }
+                    if (UI::BeginTabItem(Icons::Tags + " Changelogs"))
+                    {
+                        UI::BeginChild("ChangelogsChild");
+                        MainUIView::ChangelogTabs();
+                        UI::EndChild();
+                        UI::EndTabItem();
+                    }
+                    UI::EndTabBar();
                     UI::EndTabItem();
                 }
                 UI::EndTabBar();
