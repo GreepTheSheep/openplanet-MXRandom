@@ -21,7 +21,8 @@ const string PLUGIN_NAME                = MX_NAME + " Random Map Picker";
 const string PLUGIN_VERSION             = Meta::ExecutingPlugin().get_Version();
 const array<string> PLUGIN_VERSION_SPLIT= PLUGIN_VERSION.Split(".");
 
-const string GITHUB_URL                 = "https://github.com/GreepTheSheep/openplanet-mx-random";
+const string GITHUB_REPO_FULLNAME       = "GreepTheSheep/openplanet-mx-random";
+const string GITHUB_URL                 = "https://github.com/" + GITHUB_REPO_FULLNAME;
 
 const bool IS_DEV_MODE                  = Meta::ExecutingPlugin().get_Type() == Meta::PluginType::Folder;
 
