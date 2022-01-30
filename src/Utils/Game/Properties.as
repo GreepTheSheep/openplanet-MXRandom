@@ -11,4 +11,6 @@ namespace TM
 #elif MP4
     GameEditions GameEdition = GameEditions::MP4;
 #endif
+
+    string loadMapURL;
 }

@@ -10,6 +10,7 @@ namespace MX
         string MapType;
         string UploadedAt;
         string UpdatedAt;
+        Json::Value PlayedAt;
         string Name;
         string GbxMapName;
         string Comments;
@@ -39,6 +40,7 @@ namespace MX
                 MapType = json["MapType"];
                 UploadedAt = json["UploadedAt"];
                 UpdatedAt = json["UpdatedAt"];
+                if (json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
                 Name = json["Name"];
                 GbxMapName = json["GbxMapName"];
                 Comments = json["Comments"];
@@ -93,6 +95,7 @@ namespace MX
                 json["MapType"] = MapType;
                 json["UploadedAt"] = UploadedAt;
                 json["UpdatedAt"] = UpdatedAt;
+                json["PlayedAt"] = PlayedAt;
                 json["Name"] = Name;
                 json["GbxMapName"] = GbxMapName;
                 json["Comments"] = Comments;
