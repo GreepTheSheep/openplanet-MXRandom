@@ -38,7 +38,8 @@ class DataMigrationWizardModalDialog : ModalDialog
         UI::NewLine();
         UI::TextWrapped(
             "To start over, select the \"Migrate\" button below.\n"
-            "If you want to skip this wizard, select the \"Skip\" button (but all your lastest data will be put aside and will be not used)."
+            "If you want to skip this wizard, select the \"Skip\" button "
+            "(but all your lastest data will be put aside and will be not used)."
         );
     }
 
@@ -117,6 +118,7 @@ class DataMigrationWizardModalDialog : ModalDialog
 
         if (m_stage == 0) {
             if (UI::RedButton(Icons::Times + " Skip")) {
+                DataManager::InitData();
                 Close();
             }
             UI::SameLine();

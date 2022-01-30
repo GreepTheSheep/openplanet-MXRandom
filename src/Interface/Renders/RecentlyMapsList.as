@@ -23,8 +23,6 @@ namespace Render
                 }
             }
             UI::TableSetColumnIndex(4);
-            UI::Text(tostring(map.AwardCount));
-            UI::TableSetColumnIndex(5);
 
             if (UI::ColoredButton(Icons::ExternalLink, 0.55, 1, 0.5)) {
                 OpenBrowserURL("https://"+MX_URL+"/maps/"+map.TrackID);

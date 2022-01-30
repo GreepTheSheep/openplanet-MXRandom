@@ -26,12 +26,11 @@ namespace MainUIView
     void RecentlyPlayedMapsTab()
     {
         UI::Text("Recently played maps");
-        if (DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 6, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible)) {
+        if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible)) {
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Tags", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn(Icons::Trophy, UI::TableColumnFlags::WidthFixed, 40);
             UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 80);
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableHeadersRow();
