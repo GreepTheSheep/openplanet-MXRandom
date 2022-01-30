@@ -10,12 +10,7 @@ namespace PluginSettings
     void RenderMenuSettings()
     {
         closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loaded", closeOverlayOnMapLoaded);
-        if (UI::IsItemHovered())
-        {
-            UI::BeginTooltip();
-            UI::Text("This setting will not affect during RMC.");
-            UI::EndTooltip();
-        }
+        UI::SetPreviousTooltip("This setting will not affect during RMC.");
         dontShowChangeLog = UI::Checkbox("Never show changelog when updating", dontShowChangeLog);
     }
 }

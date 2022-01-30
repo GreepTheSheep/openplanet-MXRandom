@@ -19,11 +19,7 @@ void RenderMenu()
             if (UI::MenuItem(Icons::Play + " Quick map")) {
                 startnew(MX::LoadRandomMap);
             }
-            if (UI::IsItemHovered()) {
-                UI::BeginTooltip();
-                UI::Text("This will load and play instantly a random map from "+MX_NAME+".");
-                UI::EndTooltip();
-            }
+            UI::SetPreviousTooltip("This will load and play instantly a random map from "+MX_NAME+".");
 
             if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
                 window.isOpened = !window.isOpened;
