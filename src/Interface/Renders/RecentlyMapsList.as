@@ -30,7 +30,11 @@ namespace Render
                 OpenBrowserURL("https://"+MX_URL+"/maps/"+map.TrackID);
             }
             UI::SameLine();
-            if (TM::GameEdition == TM::GameEditions::NEXT && Permissions::PlayLocalMap() && UI::GreenButton(Icons::Play)) {
+#if TMNEXT
+            if (Permissions::PlayLocalMap() && UI::GreenButton(Icons::Play)) {
+#else
+            if (UI::GreenButton(Icons::Play)) {
+#endif
                 TM::loadMapURL = "https://"+MX_URL+"/maps/download/"+map.TrackID;
                 startnew(TM::LoadMap);
             }
