@@ -13,7 +13,11 @@ namespace Render
             UI::TableSetColumnIndex(1);
             UI::Text(map.Username);
             UI::TableSetColumnIndex(2);
-            UI::Text(GeneratePlayedAtString(map.PlayedAt));
+            if (map.PlayedAt.GetType() == Json::Type::Object) UI::Text(GeneratePlayedAtString(map.PlayedAt));
+            else {
+                UI::Text("Unknown");
+                UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
+            }
             UI::TableSetColumnIndex(3);
             if (map.Tags.get_Length() == 0) UI::Text("No tags");
             else {

@@ -25,7 +25,7 @@ void RenderMenu()
                 window.isOpened = !window.isOpened;
             }
             UI::Separator();
-            if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
+            if(UI::MenuItem(MX_COLOR_STR+Icons::ClockO+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
                 if (window.isInRMCMode) window.isInRMCMode = false;
                 else
                 {
