@@ -99,7 +99,7 @@ namespace MX
         if (TM::GameEdition == TM::GameEditions::MP4)
         {
             // Fetch in the correct titlepack
-            url += "&tpack=" + TM::CurrentTitlePack;
+            url += "&tpack=" + TM::CurrentTitlePack();
         }
 
         // prevent loading non-Race maps (Royal, flagrush etc...)

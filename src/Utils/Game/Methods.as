@@ -10,4 +10,14 @@ namespace TM
         }
         app.ManiaTitleControlScriptAPI.PlayMap(loadMapURL, "", "");
     }
+
+    string CurrentTitlePack()
+    {
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        string titleId = app.LoadedManiaTitle.TitleId;
+        if (GameEdition == GameEditions::MP4)
+            return titleId.SubStr(0, titleId.IndexOf("@"));
+        else
+            return titleId;
+    }
 }
