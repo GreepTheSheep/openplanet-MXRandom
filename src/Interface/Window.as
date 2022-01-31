@@ -1,6 +1,6 @@
 class Window
 {
-    bool isOpened = true;
+    bool isOpened = false;
     bool isInRMCMode = false;
 
     int GetFlags()
