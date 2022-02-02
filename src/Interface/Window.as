@@ -6,14 +6,17 @@ class Window
     int GetFlags()
     {
         int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
-        if (isInRMCMode) flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
+        if (isInRMCMode) {
+            flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
+            if (!UI::IsOverlayShown()) flags |= UI::WindowFlags::NoScrollbar | UI::WindowFlags::NoTitleBar;
+        }
         return flags;
     }
 
     string GetWindowTitle()
     {
         if (isInRMCMode)
-            return MX_COLOR_STR + Icons::Random + " \\$z" + " RMC";
+            return MX_COLOR_STR + Icons::ClockO + " \\$z" + " RMC";
         else
             return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v"+PLUGIN_VERSION;
     }
@@ -90,10 +93,7 @@ class Window
             }
             else
             {
-                if (UI::ColoredButton("Go back", 0.155))
-                {
-                    isInRMCMode = false;
-                }
+                RMC::RenderRMCMenu();
             }
         }
         UI::End();
