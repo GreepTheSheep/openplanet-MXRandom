@@ -66,6 +66,7 @@ void RenderAboutTab()
 
     UI::Text("Base URL \\$777" + MX_URL);
 
+    UI::AlignTextToFramePadding();
     UI::Text("Follow the ManiaExchange network on");
     UI::SameLine();
     if (UI::Button(Icons::Facebook + " Facebook")) OpenBrowserURL("https://facebook.com/maniaexchange/");
