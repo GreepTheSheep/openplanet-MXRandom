@@ -15,7 +15,45 @@ class RMC
 
     void Render()
     {
+        if (UI::RedButton(Icons::Times + " Stop RMC"))
+        {}
 
+        UI::Separator();
+
+        UI::Dummy(vec2(0, 5));
+        RenderTimer();
+        UI::Dummy(vec2(0, 10));
+        UI::Separator();
+
+        UI::Dummy(vec2(0, 10));
+        RenderGoalMedal();
+        vec2 pos_orig = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
+        RenderBelowGoalMedal();
+        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+70));
+        // UI::Dummy(vec2(0, 60));
+
+        if (PluginSettings::RMC_DisplayCurrentMap)
+        {
+            
+            RenderCurrentMap();
+        }
+
+        UI::Separator();
+
+        // TODO: buttons here
+    }
+
+    void RenderTimer()
+    {
+        UI::PushFont(timerFont);
+        if (Running) {
+            if (IsPaused) UI::TextDisabled(RMC::FormatTimer(EndTime - StartTime));
+            else UI::Text(RMC::FormatTimer(EndTime - StartTime));
+        } else {
+            UI::TextDisabled("--:--.--");
+        }
+        UI::PopFont();
     }
 
     void RenderGoalMedal()
@@ -49,6 +87,44 @@ class RMC
             UI::Text(tostring(BelowMedalCount));
             UI::PopFont();
             UI::SetCursorPos(pos_orig);
+        }
+    }
+
+    void RenderCurrentMap(){
+        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+        if (currentMap !is null) {
+            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+            if (currentMapInfo !is null) {
+                if (DataJson["recentlyPlayed"].Length > 0 /*&& currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]*/) {
+                    UI::Separator();
+                    MX::MapInfo@ CurrentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+                    UI::Text("Current Map:");
+                    if (CurrentMap !is null) {
+                        UI::Text(CurrentMap.Name + " by " + CurrentMap.Username);
+                        if (CurrentMap.Tags.Length == 0) UI::TextDisabled("No tags");
+                        else {
+                            UI::Text("Tags:");
+                            UI::SameLine();
+                            for (uint i = 0; i < CurrentMap.Tags.Length; i++) {
+                                Render::MapTag(CurrentMap.Tags[i]);
+                                UI::SameLine();
+                            }
+                        }
+                    } else {
+                        UI::Separator();
+                        UI::TextDisabled("Map info unavailable");
+                    }
+                }
+            }
+        } else {
+            UI::Separator();
+            if (IsPaused) {
+                UI::AlignTextToFramePadding();
+                UI::Text("Switching map...");
+                UI::SameLine();
+                if (UI::Button("Force switch")) startnew(MX::LoadRandomMap);
+            }
+            else IsPaused = true;
         }
     }
 }
