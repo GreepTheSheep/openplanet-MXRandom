@@ -2,7 +2,7 @@ namespace MainUIView
 {
     void Header()
     {
-        if (MX::APIDown && !IS_DEV_MODE) {
+        if (MX::APIDown) {
             if (!MX::APIRefreshing) {
                 UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.20, 35));
                 UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
