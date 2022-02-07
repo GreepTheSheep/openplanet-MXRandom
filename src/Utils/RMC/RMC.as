@@ -16,7 +16,9 @@ class RMC
     void Render()
     {
         if (UI::RedButton(Icons::Times + " Stop RMC"))
-        {}
+        {
+            RMC::IsRunning = false;
+        }
 
         UI::Separator();
 
@@ -35,7 +37,6 @@ class RMC
 
         if (PluginSettings::RMC_DisplayCurrentMap)
         {
-            
             RenderCurrentMap();
         }
 
@@ -100,7 +101,8 @@ class RMC
                     MX::MapInfo@ CurrentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     UI::Text("Current Map:");
                     if (CurrentMap !is null) {
-                        UI::Text(CurrentMap.Name + " by " + CurrentMap.Username);
+                        UI::Text(CurrentMap.Name);
+                        UI::TextDisabled("by " + CurrentMap.Username)
                         if (CurrentMap.Tags.Length == 0) UI::TextDisabled("No tags");
                         else {
                             UI::Text("Tags:");
@@ -109,6 +111,7 @@ class RMC
                                 Render::MapTag(CurrentMap.Tags[i]);
                                 UI::SameLine();
                             }
+                            UI::NewLine();
                         }
                     } else {
                         UI::Separator();
