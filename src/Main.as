@@ -66,7 +66,7 @@ void Main()
         DataManager::CheckData();
     }
 
-    // MX::FetchMapTags();
+    MX::FetchMapTags();
 }
 
 void Update(float dt)

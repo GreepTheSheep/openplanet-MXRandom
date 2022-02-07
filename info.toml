@@ -9,3 +9,6 @@ version = "2.0.0"
 
 [script]
 imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
+
+defines = [ "MOCK_TAGS" ]
+# MOCK_TAGS - will not fetch tags from MX server at every plugin load, but will use the ones from the Mock JSON file
