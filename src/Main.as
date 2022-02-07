@@ -4,7 +4,7 @@ Resources::Font@ g_fontHeaderSub;
 void RenderMenu()
 {
     if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
-        if (MX::APIDown) {
+        if (MX::APIDown && !IS_DEV_MODE) {
             if (!MX::APIRefreshing) {
                 UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
                 if (UI::Button("Retry")) {
