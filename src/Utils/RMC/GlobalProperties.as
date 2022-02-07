@@ -24,11 +24,10 @@ namespace RMC
 
     void RenderRMCMenu()
     {
-        // Challenge.Render();
-
         if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")){
             selectedGameMode = GameMode::Challenge;
             Log::Log(tostring(selectedGameMode));
+            IsRunning = true;
         }
         if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")){
             // RMC::StartSurvival();
@@ -39,7 +38,7 @@ namespace RMC
             OpenBrowserURL("https://docs.google.com/spreadsheets/d/1hgjYu84s6RtQZTgDFS7ZeyqszALCH-5OpsmDtBNWK_U/edit?usp=sharing");
         }
         UI::SameLine();
-        if (UI::ColoredButton(UI::IsOverlayShown() ? Icons::Backward + " Go back" : Icons::Times + " Close", 0.155)) {
+        if (UI::OrangeButton(Icons::Backward + " Go back")) {
             window.isInRMCMode = false;
         }
 
@@ -52,5 +51,11 @@ namespace RMC
             if (selectedGameMode == GameMode::Challenge) Challenge.RenderBelowGoalMedal();
             else if (selectedGameMode == GameMode::Survival) Survival.RenderBelowGoalMedal();
         }
+    }
+
+    void RenderRMCTimer()
+    {
+        if (selectedGameMode == GameMode::Challenge) Challenge.Render();
+        else if (selectedGameMode == GameMode::Survival) Survival.Render();
     }
 }

@@ -8,7 +8,7 @@ class Window
         int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
         if (isInRMCMode) {
             flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
-            if (!UI::IsOverlayShown()) flags |= UI::WindowFlags::NoScrollbar | UI::WindowFlags::NoTitleBar;
+            if (RMC::IsRunning) flags |= UI::WindowFlags::NoTitleBar;
         }
         return flags;
     }
@@ -93,7 +93,8 @@ class Window
             }
             else
             {
-                RMC::RenderRMCMenu();
+                if (!RMC::IsRunning) RMC::RenderRMCMenu();
+                else RMC::RenderRMCTimer();
             }
         }
         UI::End();
