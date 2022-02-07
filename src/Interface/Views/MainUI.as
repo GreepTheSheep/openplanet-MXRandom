@@ -47,7 +47,7 @@ namespace MainUIView
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Tags", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 80);
+            UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 90);
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableHeadersRow();
             Render::RecentlyPlayedMaps();
