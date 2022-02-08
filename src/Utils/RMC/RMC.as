@@ -102,7 +102,7 @@ class RMC
                     UI::Text("Current Map:");
                     if (CurrentMap !is null) {
                         UI::Text(CurrentMap.Name);
-                        UI::TextDisabled("by " + CurrentMap.Username)
+                        UI::TextDisabled("by " + CurrentMap.Username);
                         if (CurrentMap.Tags.Length == 0) UI::TextDisabled("No tags");
                         else {
                             UI::Text("Tags:");
