@@ -8,6 +8,11 @@
             "type": "shell",
             "command": "${workspaceFolder}/build-op.ps1",
             "problemMatcher": [],
+            "options": {
+                "shell": {
+                    "executable": "powershell",
+                }
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true

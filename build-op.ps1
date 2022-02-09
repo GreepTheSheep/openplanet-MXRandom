@@ -7,4 +7,4 @@ Compress-Archive @compress -Force
 
 Move-Item -Path "./MXRandom.zip" -Destination "./MXRandom.op" -Force
 
-Write-Host("✅ Done!")
+Write-Host("Done!")
