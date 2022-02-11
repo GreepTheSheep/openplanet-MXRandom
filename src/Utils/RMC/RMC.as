@@ -15,7 +15,8 @@ class RMC
 
     void Render()
     {
-        if (UI::RedButton(Icons::Times + " Stop RMC"))
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
         {
             RMC::IsRunning = false;
         }
