@@ -29,7 +29,11 @@ namespace Render
             UI::TableSetColumnIndex(4);
 
             if (UI::ColoredButton(Icons::ExternalLink, 0.55, 1, 0.5)) {
+#if DEPENDENCY_MANIAEXCHANGE
+                ManiaExchange::ShowMapInfo(map.TrackID);
+#else
                 OpenBrowserURL("https://"+MX_URL+"/maps/"+map.TrackID);
+#endif
             }
             UI::SameLine();
 #if TMNEXT
