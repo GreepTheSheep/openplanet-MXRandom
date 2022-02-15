@@ -57,7 +57,7 @@ namespace PluginSettings
 
         UI::SetNextItemWidth(160);
         // Length Operator
-        if (UI::BeginCombo("", MapLengthOperator)){
+        if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
             for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
                 string operator = SearchingMapLengthOperators[i];
 
