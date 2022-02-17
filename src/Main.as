@@ -16,31 +16,35 @@ void RenderMenu()
                 UI::TextDisabled(Hourglass + " Loading...");
             }
         } else {
-#if TMNEXT
-            if (Permissions::PlayLocalMap()) {
-#endif
-                if (UI::MenuItem(Icons::Play + " Quick map")) {
-                    startnew(MX::LoadRandomMap);
-                }
-                UI::SetPreviousTooltip("This will load and play instantly a random map from "+MX_NAME+".");
-
-                if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
-                    window.isOpened = !window.isOpened;
-                }
-                UI::Separator();
-                if(UI::MenuItem(MX_COLOR_STR+Icons::ClockO+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
-                    if (window.isInRMCMode) window.isInRMCMode = false;
-                    else
-                    {
-                        if (!window.isOpened) window.isOpened = true;
-                        window.isInRMCMode = true;
-                    }
-                }
-#if TMNEXT
+            if (TM::CurrentTitlePack() == "") {
+                UI::TextDisabled("You must select a title pack first.");
             } else {
-                UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
-            }
+#if TMNEXT
+                if (Permissions::PlayLocalMap()) {
 #endif
+                    if (UI::MenuItem(Icons::Play + " Quick map")) {
+                        startnew(MX::LoadRandomMap);
+                    }
+                    UI::SetPreviousTooltip("This will load and play instantly a random map from "+MX_NAME+".");
+
+                    if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
+                        window.isOpened = !window.isOpened;
+                    }
+                    UI::Separator();
+                    if(UI::MenuItem(MX_COLOR_STR+Icons::ClockO+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
+                        if (window.isInRMCMode) window.isInRMCMode = false;
+                        else
+                        {
+                            if (!window.isOpened) window.isOpened = true;
+                            window.isInRMCMode = true;
+                        }
+                    }
+#if TMNEXT
+                } else {
+                    UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
+                }
+#endif
+            }
         }
         UI::EndMenu();
     }

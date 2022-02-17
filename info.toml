@@ -12,4 +12,4 @@ imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
 optional_dependencies = [ "ManiaExchange" ]
 timeout = 0
 
-defines = [ "MOCK_TAGS", "FORCE_API_DOWN" ]
+defines = [ ]

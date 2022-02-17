@@ -4,6 +4,10 @@ namespace MX
     {
         try
         {
+            if (TM::CurrentTitlePack() == "") {
+                Log::Warn("Please load a title pack first.", true);
+                return;
+            }
             RandomMapIsLoading = true;
             string URL = CreateQueryURL();
             Log::Trace("Querying Random Map: "+URL);
@@ -64,6 +68,7 @@ namespace MX
             Log::Warn("Error while loading map ");
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
+            RandomMapIsLoading = false;
         }
     }
 
@@ -90,17 +95,13 @@ namespace MX
             }
         }
 
-        if (TM::GameEdition == TM::GameEditions::NEXT)
-        {
+#if TMNEXT
             // prevent loading CharacterPilot maps
             url += "&vehicles=1";
-        }
-
-        if (TM::GameEdition == TM::GameEditions::MP4)
-        {
+#elif MP4
             // Fetch in the correct titlepack
             url += "&tpack=" + TM::CurrentTitlePack();
-        }
+#endif
 
         // prevent loading non-Race maps (Royal, flagrush etc...)
         url += "&mtype="+SUPPORTED_MAP_TYPE;

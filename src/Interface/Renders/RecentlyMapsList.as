@@ -39,7 +39,7 @@ namespace Render
 #if TMNEXT
             if (Permissions::PlayLocalMap() && UI::GreenButton(Icons::Play)) {
 #else
-            if (UI::GreenButton(Icons::Play)) {
+            if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
                 TM::loadMapURL = "https://"+MX_URL+"/maps/download/"+map.TrackID;
                 startnew(TM::LoadMap);
