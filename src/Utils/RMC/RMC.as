@@ -41,9 +41,10 @@ class RMC
             RenderCurrentMap();
         }
 
-        UI::Separator();
-
-        // TODO: buttons here
+        if (Running) {
+            UI::Separator();
+            RenderPlayingButtons();
+        }
     }
 
     void RenderTimer()
@@ -129,6 +130,20 @@ class RMC
                 if (UI::Button("Force switch")) startnew(MX::LoadRandomMap);
             }
             else IsPaused = true;
+        }
+    }
+
+    void RenderPlayingButtons()
+    {
+        int HourGlassValue = Time::Stamp % 3;
+        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+        if (currentMap !is null) {
+            if (UI::Button((IsPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
+                if (IsPaused) EndTime = EndTime + (Time::get_Now() - StartTime);
+                IsPaused = !IsPaused;
+            }
+            UI::SameLine();
         }
     }
 }

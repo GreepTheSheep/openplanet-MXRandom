@@ -11,6 +11,12 @@ namespace TM
         app.ManiaTitleControlScriptAPI.PlayMap(loadMapURL, "", "");
     }
 
+    bool IsMapLoaded(){
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        if (app.RootMap is null) return false;
+        else return true;
+    }
+
     string CurrentTitlePack()
     {
         CTrackMania@ app = cast<CTrackMania>(GetApp());

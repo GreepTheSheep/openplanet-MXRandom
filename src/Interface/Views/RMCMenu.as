@@ -7,13 +7,11 @@ namespace RMC
 #endif
             if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")){
                 selectedGameMode = GameMode::Challenge;
-                Log::Log(tostring(selectedGameMode));
                 IsRunning = true;
+                startnew(Start);
             }
             if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")){
-                // RMC::StartSurvival();
                 selectedGameMode = GameMode::Survival;
-                Log::Log(tostring(selectedGameMode));
                 IsRunning = true;
             }
 #if TMNEXT
