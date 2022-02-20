@@ -13,14 +13,16 @@ class RMC
     void Render()
     {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
-        if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
-        {
-            RMC::IsRunning = false;
-            RMC::StartTime = -1;
-            RMC::EndTime = -1;
-        }
+        if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
+            if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
+            {
+                RMC::IsRunning = false;
+                RMC::StartTime = -1;
+                RMC::EndTime = -1;
+            }
 
-        UI::Separator();
+            UI::Separator();
+        }
 
         UI::Dummy(vec2(0, 5));
         RenderTimer();
@@ -39,7 +41,7 @@ class RMC
             RenderCurrentMap();
         }
 
-        if (RMC::IsRunning) {
+        if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();
             RenderPlayingButtons();
         }
