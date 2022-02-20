@@ -34,7 +34,6 @@ class RMC
         UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
         RenderBelowGoalMedal();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+70));
-        // UI::Dummy(vec2(0, 60));
 
         if (PluginSettings::RMC_DisplayCurrentMap)
         {
