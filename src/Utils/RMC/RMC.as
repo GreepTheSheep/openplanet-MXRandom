@@ -1,11 +1,5 @@
 class RMC
 {
-    bool Running = false;
-    bool IsPaused = false;
-    bool GotBelowMedalOnCurrentMap = false;
-    int StartTime = -1;
-    int EndTime = -1;
-    int GoalMedalCount = 0;
     int BelowMedalCount = 0;
 
     Resources::Font@ TimerFont = Resources::GetFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
@@ -22,9 +16,8 @@ class RMC
         if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
         {
             RMC::IsRunning = false;
-            Running = false;
-            StartTime = -1;
-            EndTime = -1;
+            RMC::StartTime = -1;
+            RMC::EndTime = -1;
         }
 
         UI::Separator();
@@ -46,7 +39,7 @@ class RMC
             RenderCurrentMap();
         }
 
-        if (Running) {
+        if (RMC::IsRunning) {
             UI::Separator();
             RenderPlayingButtons();
         }
@@ -55,9 +48,9 @@ class RMC
     void RenderTimer()
     {
         UI::PushFont(TimerFont);
-        if (Running || EndTime > 0) {
-            if (IsPaused) UI::TextDisabled(RMC::FormatTimer(EndTime - StartTime));
-            else UI::Text(RMC::FormatTimer(EndTime - StartTime));
+        if (RMC::IsRunning || RMC::EndTime > 0) {
+            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
+            else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
         } else {
             UI::TextDisabled("--:--.--");
         }
@@ -66,27 +59,27 @@ class RMC
 
     void RenderGoalMedal()
     {
-        if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[3]) UI::Image(AuthorTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[2]) UI::Image(GoldTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[1]) UI::Image(SilverTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[0]) UI::Image(BronzeTex, vec2(50,50));
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(50,50));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(50,50));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(50,50));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(50,50));
         else UI::Text(PluginSettings::RMC_GoalMedal);
         UI::SameLine();
         vec2 pos_orig = UI::GetCursorPos();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
         UI::PushFont(TimerFont);
-        UI::Text(tostring(GoalMedalCount));
+        UI::Text(tostring(RMC::GoalMedalCount));
         UI::PopFont();
         UI::SetCursorPos(pos_orig);
     }
 
     void RenderBelowGoalMedal()
     {
-        if (PluginSettings::RMC_GoalMedal != PluginSettings::Medals[0])
+        if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
-            if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[3]) UI::Image(GoldTex, vec2(50,50));
-            else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[2]) UI::Image(SilverTex, vec2(50,50));
-            else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[1]) UI::Image(BronzeTex, vec2(50,50));
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(50,50));
+            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(50,50));
+            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(50,50));
             else UI::Text(PluginSettings::RMC_GoalMedal);
             UI::SameLine();
             vec2 pos_orig = UI::GetCursorPos();
@@ -98,7 +91,8 @@ class RMC
         }
     }
 
-    void RenderCurrentMap(){
+    void RenderCurrentMap()
+    {
         CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
         if (currentMap !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
@@ -131,13 +125,13 @@ class RMC
             }
         } else {
             UI::Separator();
-            if (IsPaused) {
+            if (RMC::IsPaused) {
                 UI::AlignTextToFramePadding();
                 UI::Text("Switching map...");
                 UI::SameLine();
-                if (UI::Button("Force switch")) startnew(MX::LoadRandomMap);
+                if (UI::Button("Force switch")) startnew(RMC::SwitchMap);
             }
-            else IsPaused = true;
+            else RMC::IsPaused = true;
         }
     }
 
@@ -162,61 +156,63 @@ class RMC
     {
         int HourGlassValue = Time::Stamp % 3;
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-        if (UI::Button((IsPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
-            if (IsPaused) EndTime = EndTime + (Time::get_Now() - StartTime);
-            IsPaused = !IsPaused;
+        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
+            if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::get_Now() - RMC::StartTime);
+            RMC::IsPaused = !RMC::IsPaused;
         }
     }
 
     void SkipButton()
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
-        if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[3]) BelowMedal = PluginSettings::Medals[2];
-        else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[2]) BelowMedal = PluginSettings::Medals[1];
-        else if (PluginSettings::RMC_GoalMedal == PluginSettings::Medals[1]) BelowMedal = PluginSettings::Medals[0];
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) BelowMedal = RMC::Medals[1];
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
-        if(UI::Button(Icons::PlayCircleO + " Skip" + (GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
-            if (IsPaused) IsPaused = false;
-            if (GotBelowMedalOnCurrentMap) {
+        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
+            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (RMC::GotBelowMedalOnCurrentMap) {
                 BelowMedalCount += 1;
             }
             Log::Trace("RMC: Skipping map");
             UI::ShowNotification("Please wait...");
-            startnew(MX::LoadRandomMap);
+            startnew(RMC::SwitchMap);
         }
     }
 
     void NextMapButton()
     {
         if(UI::Button(Icons::Play + " Next map")) {
-            if (IsPaused) IsPaused = false;
+            if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
-            startnew(MX::LoadRandomMap);
+            startnew(RMC::SwitchMap);
         }
     }
 
     void DevButtons()
     {
         if (UI::Button("+1min")) {
-            if (IsPaused) IsPaused = false;
-            EndTime += (1*60*1000);
+            if (RMC::IsPaused) RMC::IsPaused = false;
+            RMC::EndTime += (1*60*1000);
         }
         UI::SameLine();
         if (UI::Button("-1min")) {
-            if (IsPaused) IsPaused = false;
-            EndTime -= (1*60*1000);
+            if (RMC::IsPaused) RMC::IsPaused = false;
+            RMC::EndTime -= (1*60*1000);
 
-            if ((EndTime - StartTime) < (1*60*1000)) EndTime = StartTime + (1*60*1000);
+            if ((RMC::EndTime - RMC::StartTime) < (1*60*1000)) RMC::EndTime = RMC::StartTime + (1*60*1000);
         }
     }
 
     void StartTimer()
     {
-        StartTime = Time::get_Now();
-        EndTime = StartTime + TimeLimit();
-        IsPaused = false;
-        Running = true;
+        RMC::StartTime = Time::get_Now();
+        RMC::EndTime = RMC::StartTime + TimeLimit();
+        RMC::IsPaused = false;
+        RMC::IsRunning = true;
+        startnew(RMC::TimerYield);
     }
+
 }

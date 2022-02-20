@@ -1,14 +1,7 @@
 namespace PluginSettings
 {
-    array<string> Medals = {
-        "Bronze",
-        "Silver",
-        "Gold",
-        "Author"
-    };
-
     [Setting hidden]
-    string RMC_GoalMedal = Medals[3];
+    string RMC_GoalMedal = RMC::Medals[3];
 
     [Setting hidden]
     bool RMC_DisplayCurrentMap = true;
@@ -39,7 +32,7 @@ namespace PluginSettings
 
         if (UI::OrangeButton("Reset to default"))
         {
-            RMC_GoalMedal = Medals[3];
+            RMC_GoalMedal = RMC::Medals[3];
             RMC_DisplayCurrentMap = true;
             RMC_AutoSwitch = true;
             RMC_ExitMapOnEndTime = false;
@@ -50,8 +43,8 @@ namespace PluginSettings
         RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
 
         if (UI::BeginCombo("Goal", RMC_GoalMedal)){
-            for (uint i = 0; i < Medals.Length; i++) {
-                string goalMedal = Medals[i];
+            for (uint i = 0; i < RMC::Medals.Length; i++) {
+                string goalMedal = RMC::Medals[i];
 
                 if (UI::Selectable(goalMedal, MapLengthOperator == goalMedal)) {
                     RMC_GoalMedal = goalMedal;

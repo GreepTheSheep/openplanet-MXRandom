@@ -7,12 +7,11 @@ namespace RMC
 #endif
             if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")){
                 selectedGameMode = GameMode::Challenge;
-                IsRunning = true;
                 startnew(Start);
             }
             if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")){
                 selectedGameMode = GameMode::Survival;
-                IsRunning = true;
+                startnew(Start);
             }
 #if TMNEXT
         } else {
@@ -23,11 +22,11 @@ namespace RMC
             OpenBrowserURL("https://docs.google.com/spreadsheets/d/1hgjYu84s6RtQZTgDFS7ZeyqszALCH-5OpsmDtBNWK_U/edit?usp=sharing");
         }
         UI::SameLine();
-        if (UI::OrangeButton(Icons::Backward + " Go back")) {
+        if (UI::IsOverlayShown() && UI::OrangeButton(Icons::Backward + " Go back")) {
             window.isInRMCMode = false;
         }
 
-        if (Challenge.GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0){
+        if (RMC::GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0){
             UI::Separator();
             UI::Text("Last run stats:");
             Challenge.RenderGoalMedal();

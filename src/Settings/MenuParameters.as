@@ -6,7 +6,6 @@ namespace PluginSettings
     [SettingsTab name="Menu"]
     void RenderMenuSettings()
     {
-        closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loaded", closeOverlayOnMapLoaded);
-        UI::SetPreviousTooltip("This setting will not affect during RMC.");
+        closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
     }
 }
