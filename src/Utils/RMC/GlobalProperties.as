@@ -56,9 +56,9 @@ namespace RMC
                     }
 #endif
                     if (RMC::selectedGameMode == GameMode::Challenge){
-                        Challenge.Running = true;
+                        Challenge.StartTimer();
                     } else if (RMC::selectedGameMode == GameMode::Survival){
-                        Survival.Running = true;
+                        Survival.StartTimer();
                     }
                     break;
                 }

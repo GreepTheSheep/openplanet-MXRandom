@@ -20,9 +20,6 @@ namespace PluginSettings
     bool RMC_ExitMapOnEndTime = false;
 
     [Setting hidden]
-    bool RMC_OnlySkipBtn = false;
-
-    [Setting hidden]
     bool RMC_AlwaysShowBtns = true;
 
     [Setting hidden]
@@ -46,7 +43,6 @@ namespace PluginSettings
             RMC_DisplayCurrentMap = true;
             RMC_AutoSwitch = true;
             RMC_ExitMapOnEndTime = false;
-            RMC_OnlySkipBtn = false;
             RMC_AlwaysShowBtns = true;
             RMC_SurvivalMaxTime = 15;
         }
@@ -70,7 +66,6 @@ namespace PluginSettings
 
         RMC_AutoSwitch = UI::Checkbox("Automatically switch map when got "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
         RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quits the map when the timer is up", RMC_ExitMapOnEndTime);
-        RMC_OnlySkipBtn = UI::Checkbox("Show Skip button on first map", RMC_OnlySkipBtn);
         RMC_AlwaysShowBtns = UI::Checkbox("Always show the buttons (even when the Openplanet overlay is hidden)", RMC_AlwaysShowBtns);
 
         UI::SetNextItemWidth(300);
