@@ -57,7 +57,7 @@ namespace MainUIView
         if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible)) {
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthFixed, 135);
             UI::TableSetupColumn("Tags", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 90);
             UI::TableSetupScrollFreeze(0, 1);
