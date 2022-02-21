@@ -22,6 +22,10 @@ namespace RMC
             OpenBrowserURL("https://docs.google.com/spreadsheets/d/1hgjYu84s6RtQZTgDFS7ZeyqszALCH-5OpsmDtBNWK_U/edit?usp=sharing");
         }
         UI::SameLine();
+        if (UI::PurpleButton(Icons::Cog)) {
+            Renderables::Add(RMCSettingsModalDialog());
+        }
+        UI::SameLine();
         if (UI::IsOverlayShown() && UI::OrangeButton(Icons::Backward + " Go back")) {
             window.isInRMCMode = false;
         }
