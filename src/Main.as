@@ -1,129 +1,82 @@
-bool RandomMapProcess = false;
-bool isSearching = false;
-
-Json::Value RecentlyPlayedMaps;
-Json::Value PluginInfoNet;
-Json::Value PluginData;
-
-int loadMapId = 0;
-int loadMapIdWithJson = 0;
-int keyCodes = 0;
-int inputMapID;
+Resources::Font@ g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
+Resources::Font@ g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 
 void RenderMenu()
 {
-    if(UI::MenuItem(MXColor + Icons::Random + " \\$z"+shortMXName+" Randomizer", "", Setting_Window_Show)) {
-		Setting_Window_Show = !Setting_Window_Show;
-	}
-    if(UI::MenuItem(MXColor + Icons::HourglassO + " \\$zRandom Map Challenge", "", Setting_RMC_DisplayTimer)) {
-		Setting_RMC_DisplayTimer = !Setting_RMC_DisplayTimer;
-	}
+    if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
+        if (MX::APIDown && !IS_DEV_MODE) {
+            if (!MX::APIRefreshing) {
+                UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
+                if (UI::Button("Retry")) {
+                    startnew(MX::FetchMapTags);
+                }
+            } else {
+                int HourGlassValue = Time::Stamp % 3;
+                string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+                UI::TextDisabled(Hourglass + " Loading...");
+            }
+        } else {
+            if (TM::CurrentTitlePack() == "") {
+                UI::TextDisabled("You must select a title pack first.");
+            } else {
+#if TMNEXT
+                if (Permissions::PlayLocalMap()) {
+#endif
+                    if (UI::MenuItem(Icons::Play + " Quick map")) {
+                        startnew(MX::LoadRandomMap);
+                    }
+                    UI::SetPreviousTooltip("This will load and play instantly a random map from "+MX_NAME+".");
+
+                    if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
+                        window.isOpened = !window.isOpened;
+                    }
+                    UI::Separator();
+                    if(UI::MenuItem(MX_COLOR_STR+Icons::ClockO+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
+                        if (window.isInRMCMode) window.isInRMCMode = false;
+                        else
+                        {
+                            if (!window.isOpened) window.isOpened = true;
+                            window.isInRMCMode = true;
+                        }
+                    }
+#if TMNEXT
+                } else {
+                    UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
+                }
+#endif
+            }
+        }
+        UI::EndMenu();
+    }
+}
+
+void RenderInterface()
+{
+    if (!window.isInRMCMode) window.Render();
+    Dialogs::RenderInterface();
+}
+
+void Render()
+{
+    if (window.isInRMCMode) window.Render();
+    Renderables::Render();
 }
 
 void Main()
 {
-    startnew(GetInfoAPILoop);
-    PluginData = loadPluginData();
-    startnew(SaveDataLoop);
-    RecentlyPlayedMaps = loadRecentlyPlayed();
-    while (true){
-        yield();
-        startnew(SearchCoroutine);
-        startnew(TimerYield);
-        if (loadMapId != 0) {
-#if TMNEXT
-            ClosePauseMenu();
-#endif
-            DownloadAndLoadMap(loadMapId);
-            loadMapId = 0;
-        }
-        if (loadMapIdWithJson != 0) {
-            Json::Value mapInfo = GetMap(loadMapIdWithJson);
-            if (mapInfo.GetType() == Json::Type::Object) {
-#if MP4
-                if (mapInfo["TitlePack"] == getTitlePack()) {
-#endif
-                    CreatePlayedMapJson(mapInfo);
-                    loadMapId = loadMapIdWithJson;
-#if MP4
-                } else customError("You can't play a map from a different titlepack", mapInfo["TitlePack"]);
-#endif
-            } else customError("Returned data is not valid", "Returned type is " + changeEnumStyle(tostring(mapInfo.GetType())));
-            loadMapIdWithJson = 0;
-        }
-    }
-}
-
-void SearchCoroutine() {
-    if (RandomMapProcess && isSearching) {
-        RandomMapProcess = false;
-
-        string savedMPTitlePack = getTitlePack(true);
-        Json::Value mapRes;
-        if (isTitePackLoaded()) {
-            print("Starting looking for a random map");
-            mapRes = GetRandomMap();
-            if (mapRes.GetType() == Json::Type::Null){
-                customError("Returned data is not valid, API must be down", "Returned type is null");
-                isSearching = false;
-                return;
-            }
-            if (isSearching && savedMPTitlePack == getTitlePack(true)) {
-                isSearching = false;
-                int mapId = mapRes["TrackID"];
-                string mapName = mapRes["Name"];
-                string mapAuthor = mapRes["Username"];
-                print("Track found: " + mapName + " - ID: " + mapId);
-                vec4 color = UI::HSV(0.25, 1, 0.7);
-                UI::ShowNotification(Icons::Check + " Map found!", mapName + "\nby: "+mapAuthor+"\n\n"+Icons::Download+"Downloading...", color, 5000);
-                CreatePlayedMapJson(mapRes);
-                loadMapId = mapId;
-                PlaySound();
-            } else {
-                if (savedMPTitlePack != getTitlePack(true)) customError("Titlepack changed, search has been canceled", "Old pack: " + savedMPTitlePack + " | New pack: " + getTitlePack(true));
-            }
-        }
-    }
-    if (RandomMapProcess && !isSearching)
-    {
-        RandomMapProcess = false;
-        print("Stopped searching");
-    }
-}
-
-void GetInfoAPILoop(){
-    while (true) {
-        if (Setting_API_Enable){
-            print("Getting Plugin info from API...");
-            PluginInfoNet = GetInfoAPI();
-            string version = PluginInfoNet["version"];
-            int announcementsLength = PluginInfoNet["announcements"].get_Length();
-            print("Plugin info received, version: " + version + " | " + announcementsLength + " announcements");
-
-            if (version != Meta::ExecutingPlugin().get_Version()) {
-                print("Versions does not corresponds. Installed version: " + Meta::ExecutingPlugin().get_Version());
-            }
-            sleep(30 * 60 * 1000); // 30 minutes
+    if (DataJson.GetType() == Json::Type::Null) {
+        if (DataJsonOldVersion.GetType() == Json::Type::Null) {
+            DataManager::InitData();
+            UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing "+PLUGIN_NAME+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
         } else {
-            // empty the variable by adding a empty array
-            PluginInfoNet = Json::Array();
+            if (Versioning::IsVersion1(DataJsonOldVersion["version"])) {
+                Log::Trace("Data JSON old version is "+Json::Write(DataJsonOldVersion["version"])+", showing migration wizard");
+                Renderables::Add(DataMigrationWizardModalDialog());
+            }
         }
-        yield();
+    } else {
+        DataManager::CheckData();
     }
-}
 
-void SaveDataLoop() {
-    while (true) {
-        if (isDevMode()) {
-            yield();
-        } else {
-            sleep(10 * 60 * 1000); // 10 minutes
-            print("Saving data");
-        }
-        Json::ToFile(PluginDataJSON, PluginData);
-    }
-}
-
-void OnDestroyed() {
-    Json::ToFile(PluginDataJSON, PluginData);
+    MX::FetchMapTags();
 }

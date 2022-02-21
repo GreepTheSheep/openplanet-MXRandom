@@ -1,0 +1,4 @@
+namespace TM
+{
+    string loadMapURL;
+}
