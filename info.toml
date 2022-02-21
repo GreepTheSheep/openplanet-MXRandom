@@ -11,5 +11,3 @@ version = "2.0.0"
 imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
 optional_dependencies = [ "ManiaExchange" ]
 timeout = 0
-
-defines = [ ]
