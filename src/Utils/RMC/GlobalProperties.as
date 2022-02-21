@@ -41,7 +41,7 @@ namespace RMC
         if (minutes > 0 || (hours > 0 && minutes < 10)) {
             result += Text::Format("%02d", minutes) + ":";
         }
-        result += Text::Format("%02d", seconds) + "." + Text::Format("%d", hundreths);
+        result += Text::Format("%02d", seconds) + "." + Text::Format("%02d", hundreths);
 
         return result;
     }
