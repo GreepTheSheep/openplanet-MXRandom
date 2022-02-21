@@ -50,4 +50,14 @@ namespace RMC
         if (selectedGameMode == GameMode::Challenge) Challenge.Render();
         else if (selectedGameMode == GameMode::Survival) Survival.Render();
     }
+
+    void RenderBaseInfos()
+    {
+        UI::PushFont(g_fontHeader);
+        UI::Text("Random Map Challenge / Survival");
+        UI::PopFont();
+        UI::TextWrapped("In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour.");
+        UI::TextWrapped("In the Random Map Survival, you have to grab the maximum number of author medals before the timer reaches 0. You gain 3 minutes per medal won, you can skip but you lose 1 minute of your time limit");
+        if (UI::GreenButton(Icons::ExternalLink + " More informations")) OpenBrowserURL("https://flinkblog.de/RMC/");
+    }
 }

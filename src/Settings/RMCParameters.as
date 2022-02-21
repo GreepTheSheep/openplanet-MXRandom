@@ -19,16 +19,12 @@ namespace PluginSettings
     int RMC_SurvivalMaxTime = 15;
 
     [SettingsTab name="Random Map Challenge"]
-    void RenderRMCSettingTab()
+    void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
-        UI::PushFont(g_fontHeader);
-        UI::Text("Random Map Challenge / Survival");
-        UI::PopFont();
-        UI::TextWrapped("In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour.");
-        UI::TextWrapped("In the Random Map Survival, you have to grab the maximum number of author medals before the timer reaches 0. You gain 3 minutes per medal won, you can skip but you lose 1 minute of your time limit");
-        if (UI::GreenButton(Icons::ExternalLink + " More informations")) OpenBrowserURL("https://flinkblog.de/RMC/");
-        UI::Separator();
-
+        if (!dontShowBaseInfos) {
+            RMC::RenderBaseInfos();
+            UI::Separator();
+        }
 
         if (UI::OrangeButton("Reset to default"))
         {
