@@ -17,6 +17,7 @@ class RMC
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
                 RMC::IsRunning = false;
+                RMC::ShowTimer = false;
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
             }
@@ -54,7 +55,7 @@ class RMC
             if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
             else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
         } else {
-            UI::TextDisabled("--:--.--");
+            UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
         }
         UI::PopFont();
     }
@@ -99,7 +100,7 @@ class RMC
         if (currentMap !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
             if (currentMapInfo !is null) {
-                if (DataJson["recentlyPlayed"].Length > 0 /*&& currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]*/) {
+                if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
                     UI::Separator();
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     UI::Text("Current Map:");
@@ -122,7 +123,9 @@ class RMC
                     }
                 } else {
                     UI::Separator();
-                    UI::TextDisabled("Error on getting current map");
+                    UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
+                    UI::Text("Please change the map.");
+                    if (UI::Button("Change map")) startnew(RMC::SwitchMap);
                 }
             }
         } else {

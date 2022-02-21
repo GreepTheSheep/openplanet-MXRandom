@@ -1,5 +1,5 @@
-Resources::Font@ g_fontHeader;
-Resources::Font@ g_fontHeaderSub;
+Resources::Font@ g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
+Resources::Font@ g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 
 void RenderMenu()
 {
@@ -79,10 +79,4 @@ void Main()
     }
 
     MX::FetchMapTags();
-}
-
-void Update(float dt)
-{
-    @g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
-    @g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 }

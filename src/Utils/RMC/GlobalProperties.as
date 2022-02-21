@@ -1,5 +1,6 @@
 namespace RMC
 {
+    bool ShowTimer = false;
     bool IsRunning = false;
     bool IsPaused = false;
     bool GotGoalMedalOnCurrentMap = false;
@@ -28,17 +29,27 @@ namespace RMC
     string FormatTimer(int time) {
         int hundreths = time % 1000 / 10;
         time /= 1000;
-        int hours = time / 3600;
+        int hours = time / 60 / 60;
         int minutes = (time / 60) % 60;
         int seconds = time % 60;
 
-        return (hours != 0 ? Text::Format("%02d", hours) + ":" : "" ) + (minutes != 0 ? Text::Format("%02d", minutes) + ":" : "") + Text::Format("%02d", seconds) + "." + Text::Format("%02d", hundreths);
+        string result = "";
+
+        if (hours > 0) {
+            result += Text::Format("%02d", hours) + ":";
+        }
+        if (minutes > 0 || (hours > 0 && minutes < 10)) {
+            result += Text::Format("%02d", minutes) + ":";
+        }
+        result += Text::Format("%02d", seconds) + "." + Text::Format("%d", hundreths);
+
+        return result;
     }
 
     void Start()
     {
         bool IsInited = false;
-        IsRunning = true;
+        ShowTimer = true;
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
             sleep(100);
@@ -102,19 +113,23 @@ namespace RMC
                                 StartTime = -1;
                                 EndTime = -1;
                                 IsRunning = false;
-                                // if (RMC::selectedGameMode == GameMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ authorCount + " author and "+ goldCount + " gold medals!");
-                                // if (RMC::selectedGameMode == GameMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(realStartTime - startTime) + ".\nYou got "+ authorCount + " author medals and " + survivalSkips + " skips.");
+                                ShowTimer = false;
+                                if (RMC::selectedGameMode == GameMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? (" and "+ Challenge.BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]) : "") + " medals!");
+                                if (RMC::selectedGameMode == GameMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(Survival.SurvivedTime) + ".\nYou got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals and " + Survival.Skips + " skips.");
                                 if (PluginSettings::RMC_ExitMapOnEndTime){
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();
                                 }
                             }
+                        } else {
+                            IsPaused = true;
                         }
                     }
                 }
             } else {
                 // pause timer
                 StartTime = Time::get_Now() - (Time::get_Now() - StartTime);
+                EndTime = Time::get_Now() - (Time::get_Now() - EndTime);
             }
 
             if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !GotGoalMedalOnCurrentMap){

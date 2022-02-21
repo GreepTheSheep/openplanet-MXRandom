@@ -26,14 +26,18 @@ namespace RMC
             window.isInRMCMode = false;
         }
 
-        if (RMC::GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0){
+        if (RMC::GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0 || Survival.SurvivedTime > 0) {
             UI::Separator();
             UI::Text("Last run stats:");
-            Challenge.RenderGoalMedal();
             vec2 pos_orig = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
+            Challenge.RenderGoalMedal();
+            UI::SetCursorPos(vec2(UI::GetCursorPos().x+50, UI::GetCursorPos().y));
             if (selectedGameMode == GameMode::Challenge) Challenge.RenderBelowGoalMedal();
-            else if (selectedGameMode == GameMode::Survival) Survival.RenderBelowGoalMedal();
+            else if (selectedGameMode == GameMode::Survival) {
+                Survival.RenderBelowGoalMedal();
+                UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
+                UI::Text("Survived time: " + RMC::FormatTimer(Survival.SurvivedTime));
+            }
         }
     }
 

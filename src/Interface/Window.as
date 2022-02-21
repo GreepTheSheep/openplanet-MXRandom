@@ -8,7 +8,7 @@ class Window
         int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
         if (isInRMCMode) {
             flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
-            if (RMC::IsRunning) flags |= UI::WindowFlags::NoTitleBar;
+            if (RMC::ShowTimer) flags |= UI::WindowFlags::NoTitleBar;
         }
         return flags;
     }
@@ -93,7 +93,7 @@ class Window
             }
             else
             {
-                if (!RMC::IsRunning) RMC::RenderRMCMenu();
+                if (!RMC::ShowTimer) RMC::RenderRMCMenu();
                 else RMC::RenderRMCTimer();
             }
         }
