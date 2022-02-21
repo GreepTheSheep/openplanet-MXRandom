@@ -1,27 +1,47 @@
-# [(Track)ManiaExchange Randomizer](https://openplanet.nl/files/124)
-## Takes randomly a map from (T)MX and plays it
+# ManiaExchange Randomizer
+## Takes randomly a map from MX and plays it
 
-[![Version](https://img.shields.io/badge/dynamic/json?color=pink&label=Version&query=version&url=https%3A%2F%2Fopenplanet.nl%2Fapi%2Ffile%2F124)](https://openplanet.nl/files/124)
-[![Total Downloads](https://img.shields.io/badge/dynamic/json?color=green&label=Downloads&query=downloads&url=https%3A%2F%2Fopenplanet.nl%2Fapi%2Ffile%2F124)](https://openplanet.nl/files/124)
-![Tags 1](https://img.shields.io/badge/dynamic/json?color=darkgreen&label=Game&query=tags%5B0%5D.name&url=https%3A%2F%2Fopenplanet.nl%2Fapi%2Ffile%2F124)
-![Tags 2](https://img.shields.io/badge/dynamic/json?color=blue&label=Game&query=tags%5B1%5D.name&url=https%3A%2F%2Fopenplanet.nl%2Fapi%2Ffile%2F124)
-![Tags 3](https://img.shields.io/badge/dynamic/json?color=green&label=Type&query=tags%5B2%5D.name&url=https%3A%2F%2Fopenplanet.nl%2Fapi%2Ffile%2F124)
+[![Version](https://img.shields.io/badge/dynamic/json?color=pink&label=Version&query=version&url=https%3A%2F%2Fopenplanet.dev%2Fapi%2Fplugin%2F124)](https://openplanet.dev/plugin/mxrandom)
+[![Total Downloads](https://img.shields.io/badge/dynamic/json?color=green&label=Downloads&query=downloads&url=https%3A%2F%2Fopenplanet.dev%2Fapi%2Fplugin%2F124)](https://openplanet.dev/plugin/mxrandom)
+![Tags 1](https://img.shields.io/badge/dynamic/json?color=darkgreen&label=Game&query=tags%5B0%5D.name&url=https%3A%2F%2Fopenplanet.dev%2Fapi%2Fplugin%2F124)
+![Tags 2](https://img.shields.io/badge/dynamic/json?color=blue&label=Game&query=tags%5B1%5D.name&url=https%3A%2F%2Fopenplanet.dev%2Fapi%2Fplugin%2F124)
 ---
-### Usage:
+## Usage:
 
-Select "MX Randomizer" on the "Scripts" pannel for the main menu.
-
-![Main](https://imgur.com/L9knOvS.png)
-
+Select "MX Randomizer" on the "Scripts" pannel.
 
 Select "Random Map Challenge" for the RMC timer.
 
-![Timer Off](https://imgur.com/f5BibDd.png)
+## Exports
+
+### RMC
+- `MXRandom::IsRMCRunning()` - Returns true if RMC is running.
+- `MXRandom::IsRMCPaused()` - Returns true if RMC is paused.
+- `MXRandom::RMCDefinedGoalMedal()` - Returns the user-defined medal number setting for the RMC goal. (See "RMC Goal Medals" table below)
+- `MXRandom::RMCDefinedGoalMedalName()` - Returns the user-defined medal name setting for the RMC goal. (See "RMC Goal Medals" table below)
+- `MXRandom::RMCGotGoalMedalOnCurrentMap()` - Returns true if the current map has a goal medal.
+- `MXRandom::RMCGotBelowMedalOnCurrentMap()` - Returns true if the current map has a medal below the user-defined goal medal.
+- `MXRandom::RMCGoalMedalCount()` - Returns the number of goal medals on a current RMC run.
+- `MXRandom::RMCActualGameMode()` - Returns the actual game mode of the current RMC run. (See "Game Modes" table below)
+
+### Utils
+- `MXRandom::LoadRandomMap()` - Loads a random map from (T)MX.
 
 
-![Timer](https://imgur.com/nzaIEX0.png)
+### RMC Goal Medals
 
+| Identifier | Medal  |
+|------------|--------|
+| 0          | Bronze |
+| 1          | Silver |
+| 2          | Gold   |
+| 3          | Author |
 
-## About (1.7.1)
+### Game Modes
 
-![About](https://imgur.com/xuZTjfN.png)
+Game modes are in a enumurated list.
+
+| Identifier | Mode      | Enum Identifier            |
+|------------|-----------|----------------------------|
+| 0          | Challenge | `RMC::GameMode::Challenge` |
+| 1          | Survival  | `RMC::GameMode::Survival`  |
