@@ -208,4 +208,17 @@ namespace RMC
         GotBelowMedalOnCurrentMap = false;
     }
 
+    void LoadLatestMapFromList()
+    {
+        IsPaused = true;
+        MX::LoadLatestMapFromList();
+        while (!TM::IsMapLoaded()){
+            sleep(100);
+        }
+        EndTime = EndTime + (Time::get_Now() - StartTime);
+        IsPaused = false;
+        GotGoalMedalOnCurrentMap = false;
+        GotBelowMedalOnCurrentMap = false;
+    }
+
 }

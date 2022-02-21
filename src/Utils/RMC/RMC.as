@@ -125,7 +125,7 @@ class RMC
                     UI::Separator();
                     UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
                     UI::Text("Please change the map.");
-                    if (UI::Button("Change map")) startnew(RMC::SwitchMap);
+                    if (UI::Button("Change map")) startnew(RMC::LoadLatestMapFromList);
                 }
             }
         } else {
@@ -144,12 +144,15 @@ class RMC
     {
         CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
         if (currentMap !is null) {
-            PausePlayButton();
-            UI::SameLine();
-            SkipButton();
-            if (!PluginSettings::RMC_AutoSwitch) {
+            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+            if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+                PausePlayButton();
                 UI::SameLine();
-                NextMapButton();
+                SkipButton();
+                if (!PluginSettings::RMC_AutoSwitch) {
+                    UI::SameLine();
+                    NextMapButton();
+                }
             }
             if (IS_DEV_MODE) {
                 DevButtons();
