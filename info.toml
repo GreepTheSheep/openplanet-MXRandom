@@ -10,4 +10,7 @@ version = "2.0.0"
 [script]
 imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
 optional_dependencies = [ "ManiaExchange" ]
+
+exports = [ "src/Exports/Exports.as" ]
+
 timeout = 0

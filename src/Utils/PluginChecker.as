@@ -1,6 +1,5 @@
 // Plugin checker will check for all running plugins on OP
-// This will be useful for linking up with the ManiaExchange menu plugin
-// Or for banning some plugins during RMC (with of course a prompt)
+// This will be useful for banning some plugins during RMC (with of course a prompt)
 namespace Plugins
 {
     array<Meta::Plugin@> GetAllPlugins()
