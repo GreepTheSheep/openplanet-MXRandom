@@ -31,6 +31,7 @@ namespace RMC
         }
 
         if (RMC::GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0 || Survival.SurvivedTime > 0) {
+            if (!UI::IsOverlayShown()) UI::Dummy(vec2(0, 10));
             UI::Separator();
             UI::Text("Last run stats:");
             vec2 pos_orig = UI::GetCursorPos();
