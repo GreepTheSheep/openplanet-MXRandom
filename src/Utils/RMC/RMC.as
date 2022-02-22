@@ -106,8 +106,6 @@ class RMC
                         if (PluginSettings::RMC_TagsLength != 0) {
                             if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
                             else {
-                                UI::Text("Tags:");
-                                UI::SameLine();
                                 int tagsLength = CurrentMapFromJson.Tags.Length;
                                 if (CurrentMapFromJson.Tags.Length > PluginSettings::RMC_TagsLength) tagsLength = PluginSettings::RMC_TagsLength;
                                 for (uint i = 0; i < tagsLength; i++) {
