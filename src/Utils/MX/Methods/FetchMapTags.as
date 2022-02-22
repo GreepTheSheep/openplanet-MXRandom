@@ -13,7 +13,7 @@ namespace MX
                 int tagID = resNet[i]["ID"];
                 string tagName = resNet[i]["Name"];
 
-                Log::Trace("Loading tag #"+tagID+" - "+tagName);
+                if (IS_DEV_MODE) Log::Trace("Loading tag #"+tagID+" - "+tagName);
 
                 m_mapTags.InsertLast(MapTag(resNet[i]));
             }
