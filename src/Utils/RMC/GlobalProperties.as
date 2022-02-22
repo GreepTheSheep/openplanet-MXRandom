@@ -145,7 +145,7 @@ namespace RMC
                     startnew(SwitchMap);
                 } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
             }
-            if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 && RMC::selectedGameMode == RMC::GameMode::Challenge && PluginSettings::RMC_GoalMedal != RMC::Medals[0]){
+            if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 && !GotGoalMedalOnCurrentMap && RMC::selectedGameMode == RMC::GameMode::Challenge && PluginSettings::RMC_GoalMedal != RMC::Medals[0]){
                 Log::Trace("RMC: Got "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
                 if (!GotBelowMedalOnCurrentMap) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal", "You can take the medal and skip the map");
                 GotBelowMedalOnCurrentMap = true;
