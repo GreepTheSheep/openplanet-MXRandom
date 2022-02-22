@@ -25,17 +25,13 @@ class RMC
             UI::Separator();
         }
 
-        UI::Dummy(vec2(0, 5));
         RenderTimer();
-        UI::Dummy(vec2(0, 10));
         UI::Separator();
-
-        UI::Dummy(vec2(0, 10));
         RenderGoalMedal();
         vec2 pos_orig = UI::GetCursorPos();
         UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
         RenderBelowGoalMedal();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+70));
+        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
 
         if (PluginSettings::RMC_DisplayCurrentMap)
         {
@@ -58,6 +54,7 @@ class RMC
             UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
         }
         UI::PopFont();
+        UI::Dummy(vec2(0, 8));
     }
 
     void RenderGoalMedal()
@@ -103,19 +100,22 @@ class RMC
                 if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
                     UI::Separator();
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-                    UI::Text("Current Map:");
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
                         UI::TextDisabled("by " + CurrentMapFromJson.Username);
-                        if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
-                        else {
-                            UI::Text("Tags:");
-                            UI::SameLine();
-                            for (uint i = 0; i < CurrentMapFromJson.Tags.Length; i++) {
-                                Render::MapTag(CurrentMapFromJson.Tags[i]);
+                        if (PluginSettings::RMC_TagsLength != 0) {
+                            if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
+                            else {
+                                UI::Text("Tags:");
                                 UI::SameLine();
+                                int tagsLength = CurrentMapFromJson.Tags.Length;
+                                if (CurrentMapFromJson.Tags.Length > PluginSettings::RMC_TagsLength) tagsLength = PluginSettings::RMC_TagsLength;
+                                for (uint i = 0; i < tagsLength; i++) {
+                                    Render::MapTag(CurrentMapFromJson.Tags[i]);
+                                    UI::SameLine();
+                                }
+                                UI::NewLine();
                             }
-                            UI::NewLine();
                         }
                     } else {
                         UI::Separator();
