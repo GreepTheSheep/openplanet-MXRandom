@@ -125,7 +125,7 @@ class RMC
                     UI::Separator();
                     UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
                     UI::Text("Please change the map.");
-                    if (UI::Button("Change map")) startnew(RMC::LoadLatestMapFromList);
+                    if (UI::Button("Change map")) startnew(RMC::SwitchMap);
                 }
             }
         } else {
