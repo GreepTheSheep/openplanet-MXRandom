@@ -149,8 +149,7 @@ class RMC
                 PausePlayButton();
                 UI::SameLine();
                 SkipButton();
-                if (!PluginSettings::RMC_AutoSwitch && RMC::GotBelowMedalOnCurrentMap) {
-                    UI::SameLine();
+                if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedalOnCurrentMap) {
                     NextMapButton();
                 }
             }
@@ -191,7 +190,7 @@ class RMC
 
     void NextMapButton()
     {
-        if(UI::Button(Icons::Play + " Next map")) {
+        if(UI::GreenButton(Icons::Play + " Next map")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
@@ -201,12 +200,12 @@ class RMC
 
     void DevButtons()
     {
-        if (UI::Button("+1min")) {
+        if (UI::RoseButton("+1min")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             RMC::EndTime += (1*60*1000);
         }
         UI::SameLine();
-        if (UI::Button("-1min")) {
+        if (UI::RoseButton("-1min")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             RMC::EndTime -= (1*60*1000);
 
