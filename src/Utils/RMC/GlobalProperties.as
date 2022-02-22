@@ -135,8 +135,8 @@ namespace RMC
             if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !GotGoalMedalOnCurrentMap){
                 Log::Trace("RMC: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
                 GoalMedalCount += 1;
+                GotGoalMedalOnCurrentMap = true;
                 if (PluginSettings::RMC_AutoSwitch) {
-                    GotGoalMedalOnCurrentMap = true;
                     UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
 
                     if (RMC::selectedGameMode == GameMode::Survival) {

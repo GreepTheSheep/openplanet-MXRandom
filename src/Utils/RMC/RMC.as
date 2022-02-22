@@ -149,7 +149,7 @@ class RMC
                 PausePlayButton();
                 UI::SameLine();
                 SkipButton();
-                if (!PluginSettings::RMC_AutoSwitch) {
+                if (!PluginSettings::RMC_AutoSwitch && RMC::GotBelowMedalOnCurrentMap) {
                     UI::SameLine();
                     NextMapButton();
                 }
