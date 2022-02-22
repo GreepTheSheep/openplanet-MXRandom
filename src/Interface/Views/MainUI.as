@@ -90,7 +90,7 @@ namespace MainUIView
             for (uint i = 0; i < GH::Releases.Length; i++) {
                 GH::Release@ release = GH::Releases[i];
 
-                if (UI::BeginTabItem((release.name.Replace('v', '') == PLUGIN_VERSION ? "\\$090": "") + Icons::Tag + " \\$z" + release.name)) {
+                if (UI::BeginTabItem((release.name.Replace("v", "") == PLUGIN_VERSION ? "\\$090": "") + Icons::Tag + " \\$z" + release.name)) {
                     UI::BeginChild("Changelog"+release.name);
                     UI::Markdown(Render::FormatChangelogBody(release.body));
                     UI::EndChild();

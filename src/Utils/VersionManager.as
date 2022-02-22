@@ -9,7 +9,7 @@ namespace Versioning
     }
 
     bool IsVersion1(string version){
-        int majorVersionProvided = Text::ParseInt(version.Split('.')[0]);
+        int majorVersionProvided = Text::ParseInt(version.Split(".")[0]);
         return majorVersionProvided == 1;
     }
 }
