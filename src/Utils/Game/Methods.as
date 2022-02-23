@@ -31,9 +31,10 @@ namespace TM
 
     void ClosePauseMenu() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
-        if(app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed) {
+        bool MenuDisplayed = app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed;
+        if(MenuDisplayed) {
             CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
-            if(playground != null) {
+            if(playground !is null) {
                 playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
             }
         }
