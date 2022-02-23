@@ -53,7 +53,6 @@ void RenderMenu()
 void RenderInterface()
 {
     if (!window.isInRMCMode) window.Render();
-    Dialogs::RenderInterface();
 }
 
 void Render()

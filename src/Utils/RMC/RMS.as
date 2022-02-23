@@ -54,12 +54,7 @@ class RMS : RMC
         if (UI::OrangeButton(Icons::PlayCircleO + " Free Skip")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
-            Dialogs::Question("\\$f00"+Icons::ExclamationTriangle+" \\$zFree skips is only if the map is impossible or broken.\n\nAre you sure to skip?", function() {
-                RMC::IsPaused = false;
-                print("RMC: Survival Free Skip");
-                UI::ShowNotification("Please wait...");
-                startnew(RMC::SwitchMap);
-            }, function(){RMC::IsPaused = false;});
+            Renderables::Add(SurvivalFreeSkipWarnModalDialog());
         }
     }
 

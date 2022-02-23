@@ -8,7 +8,7 @@ siteid = 124
 version = "2.0.2"
 
 [script]
-imports = [ "Icons.as", "Permissions.as", "Dialogs.as" ]
+imports = [ "Icons.as", "Permissions.as" ]
 optional_dependencies = [ "ManiaExchange" ]
 
 exports = [ "src/Exports/Exports.as" ]
