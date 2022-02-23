@@ -16,13 +16,16 @@ namespace PluginSettings
     bool RMC_AlwaysShowBtns = true;
 
     [Setting hidden]
-    int RMC_TagsLength = 1;
+    uint RMC_TagsLength = 1;
 
     [Setting hidden]
     bool RMC_SurvivalShowSurvivedTime = true;
 
     [Setting hidden]
     int RMC_SurvivalMaxTime = 15;
+
+    [Setting hidden]
+    int RMC_ImageSize = 25;
 
     [SettingsTab name="Random Map Challenge"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
@@ -73,6 +76,7 @@ namespace PluginSettings
                 RMC_AlwaysShowBtns = true;
                 RMC_SurvivalShowSurvivedTime = true;
                 RMC_TagsLength = 1;
+                RMC_ImageSize = 20;
             }
             RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
             RMC_AlwaysShowBtns = UI::Checkbox("Always show the buttons (even when the Openplanet overlay is hidden)", RMC_AlwaysShowBtns);
@@ -80,6 +84,9 @@ namespace PluginSettings
 
             UI::SetNextItemWidth(100);
             RMC_TagsLength = UI::SliderInt("Display Map Tags Length (0: hidden)", RMC_TagsLength, 0, 3);
+
+            UI::SetNextItemWidth(300);
+            RMC_ImageSize = UI::SliderInt("Medals size", RMC_ImageSize, 15, 35);
             UI::EndTabItem();
         }
         UI::EndTabBar();

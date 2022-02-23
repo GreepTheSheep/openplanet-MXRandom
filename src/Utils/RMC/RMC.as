@@ -59,10 +59,10 @@ class RMC
 
     void RenderGoalMedal()
     {
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(50,50));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(50,50));
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else UI::Text(PluginSettings::RMC_GoalMedal);
         UI::SameLine();
         vec2 pos_orig = UI::GetCursorPos();
@@ -77,9 +77,9 @@ class RMC
     {
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(50,50));
-            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(50,50));
-            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(50,50));
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else UI::Text(PluginSettings::RMC_GoalMedal);
             UI::SameLine();
             vec2 pos_orig = UI::GetCursorPos();
@@ -106,7 +106,7 @@ class RMC
                         if (PluginSettings::RMC_TagsLength != 0) {
                             if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
                             else {
-                                int tagsLength = CurrentMapFromJson.Tags.Length;
+                                uint tagsLength = CurrentMapFromJson.Tags.Length;
                                 if (CurrentMapFromJson.Tags.Length > PluginSettings::RMC_TagsLength) tagsLength = PluginSettings::RMC_TagsLength;
                                 for (uint i = 0; i < tagsLength; i++) {
                                     Render::MapTag(CurrentMapFromJson.Tags[i]);
