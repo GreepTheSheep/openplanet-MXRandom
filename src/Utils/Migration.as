@@ -43,7 +43,13 @@ namespace Migration
             Log::Trace("Migration::CheckRequest : " + res);
             auto json = Json::Parse(res);
 
-            if (json.get_Length() == 0) {
+            if (json.GetType() != Json::Type::Array) {
+                print("Migration::CheckRequest : Json is not an array");
+                requestError = true;
+                return;
+            }
+
+            if (json.Length < 1) {
                 print("Migration::CheckRequest : Error parsing response");
                 requestError = true;
                 return;
