@@ -76,7 +76,8 @@ namespace RMC
                         yield();
                     }
 #elif TMNEXT
-                    while (player.ScriptAPI.CurrentRaceTime < 0){
+                    CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
+                    while (playerScriptAPI.CurrentRaceTime < 0){
                         yield();
                     }
 #endif
@@ -176,7 +177,8 @@ namespace RMC
             if (PlaygroundScript !is null && GamePlayground.GameTerminals.get_Length() > 0) {
                 CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
                 if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish && player !is null) {
-                    auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(player.ScriptAPI);
+                    CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
+                    auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(playerScriptAPI);
                     if (ghost !is null) {
                         if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
                         PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
