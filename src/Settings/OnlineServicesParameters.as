@@ -1,25 +1,7 @@
 namespace PluginSettings
 {
-
-    array<string> API_URLS_BRANCHS = {
-        "production",
-        "staging"
-    };
-
-    array<string> API_URLS = {
-        "https://rmcapi.greep.gq/",
-        "https://rmcapi-dev.greep.gq/"
-    };
-
-    array<string> API_URLS_RESCUE = {
-        "https://tm-rmc-prod.herokuapp.com/",
-        "https://tm-rmc-staging.herokuapp.com/"
-    };
-
     [Setting hidden]
-    string selectedAPI = API_URLS_BRANCHS[0];
-
-    string API_URL = API_URLS[0];
+    string selectedAPI = OnlineServices::API_URLS_BRANCHS[0];
 
     [Setting hidden]
     bool useRescueHosts = false;
@@ -34,19 +16,37 @@ namespace PluginSettings
         UI::Text("Online Services");
         UI::PopFont();
         UI::TextWrapped("This plugin uses online services for the Random Map Race, and soon the leaderboard of the RMC/RMS");
-        UI::Separator();
-        if (UI::OrangeButton("Reset to default"))
-        {
-            selectedAPI = API_URLS_BRANCHS[0];
-            API_URL = API_URLS[0];
-            useRescueHosts = false;
-            useCustomAPIURL = false;
+        UI::NewLine();
+        if (!OnlineServices::authentified) {
+            if (!OnlineServices::authentificationInProgress) {
+                UI::Text("You're not authentified");
+                if (UI::Button("Authentificate")) {
+                    OpenBrowserURL(OnlineServices::API_URL + "oauth/login?userlogin=" + GetLocalLogin());
+                    startnew(OnlineServices::CheckAuthentification);
+                }
+            } else {
+                int HourGlassValue = Time::Stamp % 3;
+                string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+                UI::Text(Hourglass + " Authentification in progress...");
+                UI::Text("Attempt: " + tostring(OnlineServices::authentificationAttempts) + "/" + tostring(OnlineServices::authentificationAttemptsMax));
+            }
+        } else {
+            string displayName = OnlineServices::AuthState["displayName"];
+            UI::Text("You're logged in as " + displayName);
         }
+        UI::Separator();
         if (UI::TreeNode("Advanced options")){
+            if (UI::OrangeButton("Reset to default"))
+            {
+                selectedAPI = OnlineServices::API_URLS_BRANCHS[0];
+                OnlineServices::API_URL = OnlineServices::API_URLS[0];
+                useRescueHosts = false;
+                useCustomAPIURL = false;
+            }
             if (!useCustomAPIURL) {
                 if (IS_DEV_MODE && UI::BeginCombo("Backend Branch", selectedAPI)){
-                    for (uint i = 0; i < API_URLS_BRANCHS.Length; i++) {
-                        string branch = API_URLS_BRANCHS[i];
+                    for (uint i = 0; i < OnlineServices::API_URLS_BRANCHS.Length; i++) {
+                        string branch = OnlineServices::API_URLS_BRANCHS[i];
 
                         if (UI::Selectable(branch, selectedAPI == branch)) {
                             selectedAPI = branch;
@@ -59,16 +59,16 @@ namespace PluginSettings
                     UI::EndCombo();
                 }
 
-                if (!useRescueHosts) API_URL = API_URLS[API_URLS_BRANCHS.Find(selectedAPI)];
-                else API_URL = API_URLS_RESCUE[API_URLS_BRANCHS.Find(selectedAPI)];
+                if (!useRescueHosts) OnlineServices::API_URL = OnlineServices::API_URLS[OnlineServices::API_URLS_BRANCHS.Find(selectedAPI)];
+                else OnlineServices::API_URL = OnlineServices::API_URLS_RESCUE[OnlineServices::API_URLS_BRANCHS.Find(selectedAPI)];
             } else {
-                API_URL = UI::InputText("Custom API URL", API_URL);
+                OnlineServices::API_URL = UI::InputText("Custom API URL", OnlineServices::API_URL);
             }
 
             useCustomAPIURL = UI::Checkbox("Use custom hostname", useCustomAPIURL);
             UI::SetPreviousTooltip("Use this if you know what are you doing.");
 
-            useRescueHosts = UI::Checkbox("Use rescue hostnames", useRescueHosts);
+            useRescueHosts = UI::Checkbox("Use rescue hostname", useRescueHosts);
             UI::SetPreviousTooltip("In case of connection issues, use this.");
             UI::TreePop();
         }

@@ -81,4 +81,12 @@ void Main()
     }
 
     MX::FetchMapTags();
+
+    OnlineServices::authentificationAttemptsMax = 1;
+    OnlineServices::CheckAuthentification();
+    OnlineServices::authentificationAttemptsMax = 10;
+
+    if (OnlineServices::authentified) {
+        OnlineServices::GetGroups();
+    }
 }
