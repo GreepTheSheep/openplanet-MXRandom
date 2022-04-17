@@ -39,6 +39,12 @@ namespace PluginSettings
     [Setting hidden]
     int MapTagID = 0;
 
+    [Setting hidden]
+    string ExcludeMapTag = "Nothing";
+
+    [Setting hidden]
+    int ExcludeMapTagID = 0;
+
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {
@@ -93,7 +99,7 @@ namespace PluginSettings
         UI::NewLine();
 
         UI::SetNextItemWidth(150);
-        if (UI::BeginCombo("Tags", MapTag)){
+        if (UI::BeginCombo("Include Tags", MapTag)){
             if (UI::Selectable("Anything", MapTag == "Anything")){
                 MapTag = "Anything";
                 MapTagID = 0;
@@ -109,6 +115,29 @@ namespace PluginSettings
                 }
 
                 if (MapTag == tag.Name) {
+                    UI::SetItemDefaultFocus();
+                }
+            }
+            UI::EndCombo();
+        }
+
+        UI::SetNextItemWidth(150);
+        if (UI::BeginCombo("Exclude Tags", ExcludeMapTag)){
+            if (UI::Selectable("Nothing", ExcludeMapTag == "Nothing")){
+                ExcludeMapTag = "Nothing";
+                ExcludeMapTagID = 0;
+                Log::Trace("Searching map exclude tag reseted to Nothing (" + ExcludeMapTagID + ")");
+            }
+            for (uint i = 0; i < MX::m_mapTags.Length; i++)
+            {
+                MX::MapTag@ tag = MX::m_mapTags[i];
+                if (UI::Selectable(tag.Name, ExcludeMapTag == tag.Name)){
+                    ExcludeMapTag = tag.Name;
+                    ExcludeMapTagID = tag.ID;
+                    Log::Trace("Searching map exclude tag changed to " + ExcludeMapTag + " (" + ExcludeMapTagID + ")");
+                }
+
+                if (ExcludeMapTag == tag.Name) {
                     UI::SetItemDefaultFocus();
                 }
             }
