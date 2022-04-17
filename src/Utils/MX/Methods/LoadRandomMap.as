@@ -97,6 +97,9 @@ namespace MX
             if (PluginSettings::MapTag != "Anything"){
                 url += "&tags=" + PluginSettings::MapTagID;
             }
+            if (PluginSettings::ExcludeMapTag != "Nothing"){
+                url += "&etags=" + PluginSettings::ExcludeMapTagID;
+            }
         }
 
 #if TMNEXT
