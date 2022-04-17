@@ -35,7 +35,6 @@ namespace OnlineServices
         {
             Log::Trace("[RMC Online Services] Authentification attempt " + authentificationAttempts);
             AuthState = API::GetAsync(API_URL + 'oauth/getUserStatus?userlogin=' + GetLocalLogin());
-            Log::Trace("CheckAuthentification::Result: " + Json::Write(AuthState));
             if (AuthState.GetType() != Json::Type::Object) {
                 Log::Error("[RMC Online Services] JSON is not an Object");
                 authentificationAttemptsMax++;
@@ -48,7 +47,6 @@ namespace OnlineServices
                 string tokenType = AuthState["tokenType"];
                 string accessToken = AuthState["accessToken"];
                 authentificationToken = tokenType + " " + accessToken;
-                Log::Trace("auth token: " + authentificationToken);
                 break;
             }
             else {
@@ -79,7 +77,6 @@ namespace OnlineServices
         }
         for (uint i = 0; i < groupsJson.Length; i++) {
             string groupName = groupsJson[i]["name"];
-            Log::Trace("Loading group " + groupName);
             Group@ group = Group(groupsJson[i]);
             groups.InsertLast(group);
             int playerGroupId = AuthState["groupId"];
