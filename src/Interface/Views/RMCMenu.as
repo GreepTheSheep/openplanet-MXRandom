@@ -13,6 +13,9 @@ namespace RMC
                 selectedGameMode = GameMode::Survival;
                 startnew(Start);
             }
+            if (UI::RedButton(Icons::FlagCheckered + " Random Map Race \\$ff0(Coming soon!)")){
+                Renderables::Add(RMRIntroModalDialog());
+            }
 #if TMNEXT
         } else {
             UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");

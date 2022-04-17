@@ -15,7 +15,7 @@ namespace PluginSettings
         UI::PushFont(g_fontHeaderSub);
         UI::Text("Online Services");
         UI::PopFont();
-        UI::TextWrapped("This plugin uses online services for the Random Map Race, and soon the leaderboard of the RMC/RMS");
+        UI::TextWrapped("This plugin uses online services for the Random Map Race and other online modes coming soon!");
         UI::NewLine();
         if (!OnlineServices::authentified) {
             if (!OnlineServices::authentificationInProgress) {
