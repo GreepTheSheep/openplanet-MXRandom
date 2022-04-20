@@ -2,15 +2,18 @@ namespace OnlineServices
 {
     array<string> API_URLS_BRANCHS = {
         "production",
-        "staging"
+        "staging",
+        "develop (localhost:3000)"
     };
     array<string> API_URLS = {
         "https://rmcapi.greep.gq/",
-        "https://rmcapi-dev.greep.gq/"
+        "https://rmcapi-dev.greep.gq/",
+        "http://localhost:3000/"
     };
     array<string> API_URLS_RESCUE = {
         "https://tm-rmc-prod.herokuapp.com/",
-        "https://tm-rmc-staging.herokuapp.com/"
+        "https://tm-rmc-staging.herokuapp.com/",
+        "http://localhost:3000/"
     };
 
     [Setting hidden]
@@ -24,31 +27,41 @@ namespace OnlineServices
 
     bool authenticated = false;
     bool authenticationInProgress = false;
+    bool isServerAvailable = false;
     int authenticationAttempts = 0;
     int authenticationAttemptsMax = 10;
     int authenticationAttemptsDelay = 5000;
-    string authenticationToken = "";
     Json::Value userInfoAPI;
 
-    array<Group@> groups;
-    Group@ currentPlayerGroup;
-
-    // Workaround method for checkServer to ensure checkServer is only called when webId and playerLogin are not the equal
+    // Workaround method for checkServer to ensure CheckAuthenticationStartup is only called when webId and playerLogin are not the equal
     void waitForValidWebId() {
-        while (g_onlineService.network.PlayerInfo.Login == g_onlineService.network.PlayerInfo.WebServicesUserId) {
+        while (g_onlineServices.network.PlayerInfo.Login == g_onlineServices.network.PlayerInfo.WebServicesUserId) {
             sleep(50);
             yield();
         }
 
-        g_onlineService.playerName = g_onlineService.network.PlayerInfo.Name;
-        g_onlineService.playerLogin = g_onlineService.network.PlayerInfo.Login;
-        g_onlineService.webId = g_onlineService.network.PlayerInfo.WebServicesUserId;
+        g_onlineServices.playerName = g_onlineServices.network.PlayerInfo.Name;
+        g_onlineServices.playerLogin = g_onlineServices.network.PlayerInfo.Login;
+        g_onlineServices.webId = g_onlineServices.network.PlayerInfo.WebServicesUserId;
+    }
+
+    void checkServer()
+    {
+        g_onlineServices.serverInfo = API::GetAsync(API_URL);
+        if (g_onlineServices.serverInfo.GetType() != Json::Type::Object) {
+            isServerAvailable = false;
+            Log::Error("[RMC Online Services] Server is not available");
+            return;
+        }
+        isServerAvailable = true;
+        Log::Trace("[RMC Online Services] Server is available");
+        if (IS_DEV_MODE) Log::Trace(Json::Write(g_onlineServices.serverInfo));
     }
 
     void CheckAuthenticationStartup()
     {
         authenticationInProgress = true;
-        Json::Value AuthState = API::GetAsync(API_URL + 'oauth/getUserStatus?name=' + g_onlineService.playerName + '&login=' + g_onlineService.playerLogin + '&webid=' + g_onlineService.webId + '&sessionid=' + OnlineServices::SessionId + '&pluginVersion=' + g_onlineService.version);
+        Json::Value AuthState = API::GetAsync(API_URL + 'oauth/getUserStatus?name=' + g_onlineServices.playerName + '&login=' + g_onlineServices.playerLogin + '&webid=' + g_onlineServices.webId + '&sessionid=' + OnlineServices::SessionId + '&pluginVersion=' + g_onlineServices.version);
         if (AuthState.GetType() != Json::Type::Object) {
             Log::Error("[RMC Online Services] JSON is not an Object");
             return;
@@ -73,7 +86,7 @@ namespace OnlineServices
         while (authenticationAttempts < authenticationAttemptsMax)
         {
             Log::Trace("[RMC Online Services] Authentication attempt " + authenticationAttempts);
-            Json::Value getSessionJson = API::GetAsync(API_URL + 'oauth/pluginSecret?state=' + state + '&pluginVersion=' + g_onlineService.version);
+            Json::Value getSessionJson = API::GetAsync(API_URL + 'oauth/pluginSecret?state=' + state + '&pluginVersion=' + g_onlineServices.version);
             if (getSessionJson.GetType() != Json::Type::Object) {
                 Log::Error("[RMC Online Services] JSON is not an Object");
                 break;
@@ -128,7 +141,7 @@ namespace OnlineServices
             return;
         }
         string logoutBody = "{\"sessionid\":\"" + OnlineServices::SessionId + "\"}";
-        Net::HttpRequest@ req = API::Post(API_URL + "oauth/logout?pluginVersion=" + g_onlineService.version, logoutBody);
+        Net::HttpRequest@ req = API::Post(API_URL + "oauth/logout?pluginVersion=" + g_onlineServices.version, logoutBody);
         while (!req.Finished()) {
             yield();
         }

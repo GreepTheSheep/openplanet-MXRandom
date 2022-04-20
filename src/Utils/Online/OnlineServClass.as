@@ -1,4 +1,4 @@
-class OnlineService
+class OnlineServices
 {
     CTrackManiaNetwork@ network;
 
@@ -11,12 +11,20 @@ class OnlineService
     Meta::Plugin@ plugin = Meta::ExecutingPlugin();
     string version = plugin.Version;
 
-    bool pluginAuthed = false;
-    bool isAuthenticating = false;
-    bool authWindowOpened = false;
+    // Server info
+    Json::Value serverInfo;
 
-    OnlineService() {
+    OnlineServices() {
         auto app = GetApp();
         @network = cast<CTrackManiaNetwork>(app.Network);
+    }
+
+    string getServerVersion()
+    {
+        if (serverInfo.GetType() == Json::Type::Object) {
+            string version = serverInfo["version"];
+            return version;
+        }
+        return "unknown";
     }
 }

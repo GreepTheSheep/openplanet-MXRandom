@@ -17,27 +17,32 @@ namespace PluginSettings
         UI::PopFont();
         UI::TextWrapped("This plugin uses online services for the upcoming online modes on this plugin!");
         UI::NewLine();
-        if (!OnlineServices::authenticated) {
-            if (!OnlineServices::authenticationInProgress) {
-                UI::Text("You're not authenticated");
-                if (OnlineServices::authURL.Length > 0 && UI::Button("Authentificate")) {
-                    OpenBrowserURL(OnlineServices::authURL);
-                    startnew(OnlineServices::CheckAuthenticationButton);
+        if (OnlineServices::isServerAvailable) {
+            if (!OnlineServices::authenticated) {
+                if (!OnlineServices::authenticationInProgress) {
+                    UI::Text("You're not authenticated");
+                    if (OnlineServices::authURL.Length > 0 && UI::Button(Icons::ExternalLink + " Authentificate")) {
+                        OpenBrowserURL(OnlineServices::authURL);
+                        startnew(OnlineServices::CheckAuthenticationButton);
+                    }
+                } else {
+                    int HourGlassValue = Time::Stamp % 3;
+                    string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+                    UI::Text(Hourglass + " Authentication in progress...");
+                    UI::Text("Attempt: " + tostring(OnlineServices::authenticationAttempts) + "/" + tostring(OnlineServices::authenticationAttemptsMax));
                 }
             } else {
-                int HourGlassValue = Time::Stamp % 3;
-                string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                UI::Text(Hourglass + " Authentication in progress...");
-                UI::Text("Attempt: " + tostring(OnlineServices::authenticationAttempts) + "/" + tostring(OnlineServices::authenticationAttemptsMax));
+                string displayName = OnlineServices::userInfoAPI["displayName"];
+                UI::Text("You're authenticated as " + displayName);
+                if (UI::RedButton(Icons::ChainBroken + " Logout")) {
+                    startnew(OnlineServices::Logout);
+                }
             }
         } else {
-            string displayName = OnlineServices::userInfoAPI["displayName"];
-            UI::Text("You're authenticated as " + displayName);
-            if (UI::RedButton("Logout")) {
-                startnew(OnlineServices::Logout);
-            }
+            UI::Text("\\$f00" + Icons::Times + " \\$zServer is not available");
         }
         UI::Separator();
+        if (OnlineServices::isServerAvailable) UI::Text("Server version: " + g_onlineServices.getServerVersion());
         if (UI::TreeNode("Advanced options")){
             if (UI::OrangeButton("Reset to default"))
             {
