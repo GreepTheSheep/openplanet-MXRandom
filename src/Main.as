@@ -1,3 +1,4 @@
+OnlineService@ g_onlineService;
 Resources::Font@ g_fontHeader;
 Resources::Font@ g_fontHeaderSub;
 
@@ -63,6 +64,7 @@ void Render()
 
 void Main()
 {
+    @g_onlineService = OnlineService();
     @g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
     @g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 
@@ -82,11 +84,6 @@ void Main()
 
     MX::FetchMapTags();
 
-    OnlineServices::authentificationAttemptsMax = 1;
-    OnlineServices::CheckAuthentification();
-    OnlineServices::authentificationAttemptsMax = 10;
-
-    if (OnlineServices::authentified) {
-        OnlineServices::GetGroups();
-    }
+    OnlineServices::waitForValidWebId();
+    OnlineServices::CheckAuthenticationStartup();
 }

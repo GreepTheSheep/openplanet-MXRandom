@@ -10,7 +10,6 @@ namespace MX
             }
             RandomMapIsLoading = true;
             string URL = CreateQueryURL();
-            Log::Trace("Querying Random Map: "+URL);
             Json::Value res = API::GetAsync(URL)["results"][0];
             Log::Trace("RandomMapRes: "+Json::Write(res));
 

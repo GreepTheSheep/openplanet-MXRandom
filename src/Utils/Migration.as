@@ -30,7 +30,6 @@ namespace Migration
             mapIdsStr += tostring(MXIds[i]);
             if (i < MXIds.Length - 1) mapIdsStr += ",";
         }
-        Log::Trace("Migration::SendRequest : " + url + mapIdsStr);
         @n_request = API::Get(url + mapIdsStr);
     }
 

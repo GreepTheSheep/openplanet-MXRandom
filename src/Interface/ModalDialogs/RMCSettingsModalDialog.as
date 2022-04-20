@@ -51,8 +51,6 @@ class RMCSettingsModalDialog : ModalDialog
     void StartRulesRequest()
     {
         string url = "https://openplanet.dev/plugin/mxrandom/config/user-rules";
-
-        Log::Trace("Rules::SendRequest : " + url);
         @m_request = API::Get(url);
     }
 

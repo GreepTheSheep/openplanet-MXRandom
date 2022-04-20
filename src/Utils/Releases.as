@@ -33,7 +33,6 @@ namespace GH
     void StartReleasesReq()
     {
         string url = "https://api.github.com/repos/"+GITHUB_REPO_FULLNAME+"/releases";
-        Log::Trace("Releases::SendRequest : " + url);
         @ReleasesReq = API::Get(url);
     }
 

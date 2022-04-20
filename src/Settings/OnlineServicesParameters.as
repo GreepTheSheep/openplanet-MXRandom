@@ -15,24 +15,27 @@ namespace PluginSettings
         UI::PushFont(g_fontHeaderSub);
         UI::Text("Online Services");
         UI::PopFont();
-        UI::TextWrapped("This plugin uses online services for the Random Map Race and other online modes coming soon!");
+        UI::TextWrapped("This plugin uses online services for the upcoming online modes on this plugin!");
         UI::NewLine();
-        if (!OnlineServices::authentified) {
-            if (!OnlineServices::authentificationInProgress) {
-                UI::Text("You're not authentified");
-                if (UI::Button("Authentificate")) {
-                    OpenBrowserURL(OnlineServices::API_URL + "oauth/login?userlogin=" + GetLocalLogin());
-                    startnew(OnlineServices::CheckAuthentification);
+        if (!OnlineServices::authenticated) {
+            if (!OnlineServices::authenticationInProgress) {
+                UI::Text("You're not authenticated");
+                if (OnlineServices::authURL.Length > 0 && UI::Button("Authentificate")) {
+                    OpenBrowserURL(OnlineServices::authURL);
+                    startnew(OnlineServices::CheckAuthenticationButton);
                 }
             } else {
                 int HourGlassValue = Time::Stamp % 3;
                 string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                UI::Text(Hourglass + " Authentification in progress...");
-                UI::Text("Attempt: " + tostring(OnlineServices::authentificationAttempts) + "/" + tostring(OnlineServices::authentificationAttemptsMax));
+                UI::Text(Hourglass + " Authentication in progress...");
+                UI::Text("Attempt: " + tostring(OnlineServices::authenticationAttempts) + "/" + tostring(OnlineServices::authenticationAttemptsMax));
             }
         } else {
-            string displayName = OnlineServices::AuthState["displayName"];
-            UI::Text("You're logged in as " + displayName);
+            string displayName = OnlineServices::userInfoAPI["displayName"];
+            UI::Text("You're authenticated as " + displayName);
+            if (UI::RedButton("Logout")) {
+                startnew(OnlineServices::Logout);
+            }
         }
         UI::Separator();
         if (UI::TreeNode("Advanced options")){
@@ -68,8 +71,16 @@ namespace PluginSettings
             useCustomAPIURL = UI::Checkbox("Use custom hostname", useCustomAPIURL);
             UI::SetPreviousTooltip("Use this if you know what are you doing.");
 
-            useRescueHosts = UI::Checkbox("Use rescue hostname", useRescueHosts);
-            UI::SetPreviousTooltip("In case of connection issues, use this.");
+            if (!useCustomAPIURL) {
+                useRescueHosts = UI::Checkbox("Use rescue hostname", useRescueHosts);
+                UI::SetPreviousTooltip("In case of connection issues, use this.");
+            }
+
+            if (IS_DEV_MODE) {
+                UI::Text("Session ID: " + OnlineServices::SessionId);
+                UI::Text("Auth URL: " + OnlineServices::authURL);
+                UI::Text("State: " + OnlineServices::state);
+            }
             UI::TreePop();
         }
     }
