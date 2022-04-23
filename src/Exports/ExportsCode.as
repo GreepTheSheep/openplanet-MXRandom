@@ -10,4 +10,10 @@ namespace MXRandom
     RMC::GameMode RMCActualGameMode() { return RMC::selectedGameMode; }
 
     void LoadRandomMap() { startnew(MX::LoadRandomMap); }
+
+    string GetRandomMapUrlAsync() {
+        string URL = MX::CreateQueryURL();
+        MX::MapInfo@ map = MX::MapInfo(API::GetAsync(URL)["results"][0]);
+        return "https://"+MX_URL+"/maps/download/"+map.TrackID;
+    }
 }

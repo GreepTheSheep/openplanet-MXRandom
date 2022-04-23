@@ -26,6 +26,7 @@ Select "Random Map Challenge" for the RMC timer.
 
 ### Utils
 - `MXRandom::LoadRandomMap()` - Loads a random map from (T)MX.
+- `MXRandom::GetRandomMapUrlAsync()` [ASYNC] - Get a random map URL from (T)MX and retuns its download URL.
 
 
 ### RMC Goal Medals

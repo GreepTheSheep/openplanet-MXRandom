@@ -10,4 +10,5 @@ namespace MXRandom
     import RMC::GameMode RMCActualGameMode() from "MXRandom";
 
     import void LoadRandomMap() from "MXRandom";
+    import string GetRandomMapUrlAsync() from "MXRandom";
 }
