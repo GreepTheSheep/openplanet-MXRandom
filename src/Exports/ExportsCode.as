@@ -7,7 +7,7 @@ namespace MXRandom
     bool RMCGotGoalMedalOnCurrentMap() { return RMC::GotGoalMedalOnCurrentMap; }
     bool RMCGotBelowMedalOnCurrentMap() { return RMC::GotBelowMedalOnCurrentMap; }
     int RMCGoalMedalCount() { return RMC::GoalMedalCount; }
-    RMC::GameMode RMCActualGameMode() { return RMC::selectedGameMode; }
+    int RMCActualGameMode() { return RMC::selectedGameMode; }
 
     void LoadRandomMap() { startnew(MX::LoadRandomMap); }
 

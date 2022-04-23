@@ -42,7 +42,7 @@ Select "Random Map Challenge" for the RMC timer.
 
 Game modes are in a enumurated list.
 
-| Identifier | Mode      | Enum Identifier            |
-|------------|-----------|----------------------------|
-| 0          | Challenge | `RMC::GameMode::Challenge` |
-| 1          | Survival  | `RMC::GameMode::Survival`  |
+| Identifier | Mode      |
+|------------|-----------|
+| 0          | Challenge |
+| 1          | Survival  |
