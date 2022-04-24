@@ -1,3 +1,4 @@
+#if TMNEXT
 namespace OnlineServices
 {
     class Group
@@ -32,3 +33,4 @@ namespace OnlineServices
         }
     }
 }
+#endif

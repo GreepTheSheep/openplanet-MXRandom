@@ -1,3 +1,4 @@
+#if TMNEXT
 class OnlineServices
 {
     CTrackManiaNetwork@ network;
@@ -28,3 +29,4 @@ class OnlineServices
         return "unknown";
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if TMNEXT
 namespace PluginSettings
 {
     [Setting hidden]
@@ -90,3 +91,4 @@ namespace PluginSettings
         }
     }
 }
+#endif

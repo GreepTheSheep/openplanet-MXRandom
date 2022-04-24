@@ -84,7 +84,9 @@ void Main()
 
     MX::FetchMapTags();
 
+#if TMNEXT
     OnlineServices::waitForValidWebId();
     OnlineServices::checkServer();
     if (OnlineServices::isServerAvailable) OnlineServices::CheckAuthenticationStartup();
+#endif
 }

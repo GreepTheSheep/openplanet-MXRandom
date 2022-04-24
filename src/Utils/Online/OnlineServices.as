@@ -1,3 +1,4 @@
+#if TMNEXT
 namespace OnlineServices
 {
     array<string> API_URLS_BRANCHS = {
@@ -158,3 +159,4 @@ namespace OnlineServices
         }
     }
 }
+#endif
