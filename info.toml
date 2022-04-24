@@ -9,7 +9,7 @@ version = "2.0.5"
 
 [script]
 imports = [ "Permissions.as" ]
-optional_dependencies = [ "ManiaExchange" ]
+optional_dependencies = [ "ManiaExchange", "ChaosMode" ]
 
 exports = [ "src/Exports/Exports.as" ]
 

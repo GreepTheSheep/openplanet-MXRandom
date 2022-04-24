@@ -63,8 +63,16 @@ namespace MX
             while(!app.ManiaTitleControlScriptAPI.IsReady) {
                 yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
             }
-            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
 
+#if DEPENDENCY_CHAOSMODE
+            if (ChaosMode::IsInRMCMode()) {
+                Log::Trace("Loading map in Chaos Mode");
+                app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
+            }
+            else app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
+#else
+            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
+#endif
         }
         catch
         {

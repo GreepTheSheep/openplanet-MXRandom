@@ -16,6 +16,9 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCMode(false);
+#endif
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
                 RMC::StartTime = -1;

@@ -13,6 +13,24 @@ namespace RMC
                 selectedGameMode = GameMode::Survival;
                 startnew(Start);
             }
+#if TMNEXT
+#if DEPENDENCY_CHAOSMODE
+            if (UI::RedButton(Icons::Fire + " Start Random Map Challenge in Chaos Mode")){
+                selectedGameMode = GameMode::ChallengeChaos;
+                ChaosMode::SetRMCMode(true);
+                startnew(Start);
+            }
+            if (UI::RedButton(Icons::Fire + " Start Random Map Survival in Chaos Mode")){
+                selectedGameMode = GameMode::SurvivalChaos;
+                ChaosMode::SetRMCMode(true);
+                startnew(Start);
+            }
+#else
+            if (UI::RedButton(Icons::Fire + " Chaos Mode \\$ff0(NEW)")){
+                Renderables::Add(ChaosModeIntroModalDialog());
+            }
+#endif
+#endif
             // if (UI::RedButton(Icons::FlagCheckered + " Random Map Race \\$ff0(Coming soon!)")){
             //     Renderables::Add(RMRIntroModalDialog());
             // }
@@ -51,8 +69,8 @@ namespace RMC
 
     void RenderRMCTimer()
     {
-        if (selectedGameMode == GameMode::Challenge) Challenge.Render();
-        else if (selectedGameMode == GameMode::Survival) Survival.Render();
+        if (selectedGameMode == GameMode::Challenge || selectedGameMode == GameMode::ChallengeChaos) Challenge.Render();
+        else if (selectedGameMode == GameMode::Survival || selectedGameMode == GameMode::SurvivalChaos) Survival.Render();
     }
 
     void RenderBaseInfos()

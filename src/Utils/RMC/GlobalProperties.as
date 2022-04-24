@@ -22,7 +22,9 @@ namespace RMC
     enum GameMode
     {
         Challenge,
-        Survival
+        Survival,
+        ChallengeChaos,
+        SurvivalChaos
     }
     GameMode selectedGameMode;
 
@@ -86,6 +88,11 @@ namespace RMC
                     } else if (RMC::selectedGameMode == GameMode::Survival){
                         Survival.StartTimer();
                     }
+                    else if (RMC::selectedGameMode == GameMode::ChallengeChaos){
+                        Challenge.StartTimer();
+                    } else if (RMC::selectedGameMode == GameMode::SurvivalChaos){
+                        Survival.StartTimer();
+                    }
                     break;
                 }
             }
@@ -96,6 +103,9 @@ namespace RMC
         while (IsRunning){
             yield();
             if (!IsPaused) {
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCPaused(false);
+#endif
                 CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
                 if (currentMap !is null) {
                     CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
@@ -117,6 +127,16 @@ namespace RMC
                                 ShowTimer = false;
                                 if (RMC::selectedGameMode == GameMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? (" and "+ Challenge.BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]) : "") + " medals!");
                                 if (RMC::selectedGameMode == GameMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(Survival.SurvivedTime) + ".\nYou got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals and " + Survival.Skips + " skips.");
+#if DEPENDENCY_CHAOSMODE
+                                if (RMC::selectedGameMode == GameMode::ChallengeChaos) {
+                                    UI::ShowNotification("\\$0f0Random Map Chaos Challenge ended!", "You got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? (" and "+ Challenge.BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]) : "") + " medals!");
+                                    ChaosMode::SetRMCMode(false);
+                                }
+                                if (RMC::selectedGameMode == GameMode::SurvivalChaos) {
+                                    UI::ShowNotification("\\$0f0Random Map Chaos Survival ended!", "You survived with a time of " + FormatTimer(Survival.SurvivedTime) + ".\nYou got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals and " + Survival.Skips + " skips.");
+                                    ChaosMode::SetRMCMode(false);
+                                }
+#endif
                                 if (PluginSettings::RMC_ExitMapOnEndTime){
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();
@@ -131,6 +151,9 @@ namespace RMC
                 // pause timer
                 StartTime = Time::get_Now() - (Time::get_Now() - StartTime);
                 EndTime = Time::get_Now() - (Time::get_Now() - EndTime);
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCPaused(true);
+#endif
             }
 
             if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !GotGoalMedalOnCurrentMap){
