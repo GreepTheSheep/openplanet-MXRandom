@@ -18,9 +18,8 @@ class ChaosModeIntroModalDialog : ModalDialog
         UI::Text("The Chaos Mode comes in the Random Map Challenge!");
         UI::PopFont();
         UI::Markdown(
-            "**Chaos mode is a mode developed by Nsgr featuring game physics modification (No Engine, No steer and more!) during your run, including Twitch integration to allow the chat to vote for the next physics modification.**\n"
+            "**Chaos mode is a mode developed by Nsgr featuring game physics modification (No Engine, No steer and more!) during your run.**\n"
             "**To get it, please install the Chaos Mode plugin in the plugin manager!**\n\n"
-            "To get Twitch integration with Chaos Mode, install the \"Twitch Base\" plugin and remember to insert your Twitch authentication key in the Twitch Base plugin settings (details in the Twitch Base plugin description), then enable Twitch voting in the Chaos Mode settings\n"
             "Note that Chaos mode is a fun mode, and will not be ranked in the leaderboard"
         );
         UI::EndChild();
