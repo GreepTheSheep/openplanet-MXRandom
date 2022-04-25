@@ -42,7 +42,9 @@ Select "Random Map Challenge" for the RMC timer.
 
 Game modes are in a enumurated list.
 
-| Identifier | Mode      |
-|------------|-----------|
-| 0          | Challenge |
-| 1          | Survival  |
+| Identifier | Mode             |
+|------------|------------------|
+| 0          | Challenge        |
+| 1          | Survival         |
+| 2          | ChallengeChaos   |
+| 3          | SurvivalChaos    |
