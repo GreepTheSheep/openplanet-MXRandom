@@ -1,9 +1,7 @@
 Resources::Font@ g_fontHeader;
 Resources::Font@ g_fontHeaderSub;
-
-#if TMNEXT
 OnlineServices@ g_onlineServices;
-#endif
+
 
 void RenderMenu()
 {
