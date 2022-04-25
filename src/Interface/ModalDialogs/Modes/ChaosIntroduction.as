@@ -18,8 +18,10 @@ class ChaosModeIntroModalDialog : ModalDialog
         UI::Text("The Chaos Mode comes in the Random Map Challenge!");
         UI::PopFont();
         UI::Markdown(
-            "**Chaos mode is a mode developed by Nsgr featuring game physics modification (No Engine, No steer and more!) during your run.**\n"
-            "**To get it, please install the Chaos Mode plugin in the plugin manager!**\n\n"
+            "**Chaos mode is a mode developed by Nsgr featuring game physics modification (No Engine, No steer and more!) during your run. Including Twitch chat voting!**\n"
+            "**To get it, please install the Chaos Mode plugin in the plugin manager!**\n"
+            "To get Twitch Integration with the Chaos Mode, please install the 'Twitch Base' plugin in the plugin manager and insert your Twitch authentification key in the Twitch Base plugin settings (details on this [plugin page](https://openplanet.dev/plugin/twitchbase)), then enable Twitch voting in the Chaos Mode settings\n\n"
+            "If you got this dialog box again after installing the plugins, try to restart the script engine by pressing Ctrl+Shift+R.\n"
             "Note that Chaos mode is a fun mode, and will not be ranked in the leaderboard"
         );
         UI::EndChild();
