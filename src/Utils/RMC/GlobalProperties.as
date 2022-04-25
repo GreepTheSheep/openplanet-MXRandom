@@ -113,7 +113,7 @@ namespace RMC
                         if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
                             StartTime = Time::get_Now();
 
-                            if (RMC::selectedGameMode == GameMode::Survival) {
+                            if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos) {
                                 // Cap timer max
                                 if ((EndTime - StartTime) > (PluginSettings::RMC_SurvivalMaxTime-Survival.Skips)*60*1000) {
                                     EndTime = StartTime + (PluginSettings::RMC_SurvivalMaxTime-Survival.Skips)*60*1000;
