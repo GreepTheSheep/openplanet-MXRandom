@@ -189,7 +189,6 @@ namespace RMC
             int silverTime = map.TMObjective_SilverTime;
             int bronzeTime = map.TMObjective_BronzeTime;
             int time = -1;
-
 #if MP4
             CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
             if (GameCtnPlayground.PlayerRecordedGhost !is null){
@@ -210,11 +209,22 @@ namespace RMC
             } else time = -1;
 #endif
             if (time != -1){
+                // run finished
                 if(time <= authorTime) medal = 3;
                 else if(time <= goldTime) medal = 2;
                 else if(time <= silverTime) medal = 1;
                 else if(time <= bronzeTime) medal = 0;
                 else medal = -1;
+
+                if (IS_DEV_MODE) {
+                    Log::Trace("Run finished with time " + FormatTimer(time));
+                    Log::Trace("Author time: " + FormatTimer(authorTime));
+                    Log::Trace("Gold time: " + FormatTimer(goldTime));
+                    Log::Trace("Silver time: " + FormatTimer(silverTime));
+                    Log::Trace("Bronze time: " + FormatTimer(bronzeTime));
+                    Log::Trace("Medal: " + medal);
+                }
+
             }
         }
         return medal;
