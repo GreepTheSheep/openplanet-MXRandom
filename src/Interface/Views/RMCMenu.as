@@ -15,12 +15,12 @@ namespace RMC
             }
 #if TMNEXT
 #if DEPENDENCY_CHAOSMODE
-            if (UI::RedButton(Icons::Fire + " Start Random Map Challenge in Chaos Mode")){
+            if (UI::RedButton(Icons::Fire + " Start RMC with Chaos Mode")){
                 selectedGameMode = GameMode::ChallengeChaos;
                 ChaosMode::SetRMCMode(true);
                 startnew(Start);
             }
-            if (UI::RedButton(Icons::Fire + " Start Random Map Survival in Chaos Mode")){
+            if (UI::RedButton(Icons::Fire + " Start RMS with Chaos Mode")){
                 selectedGameMode = GameMode::SurvivalChaos;
                 ChaosMode::SetRMCMode(true);
                 startnew(Start);
