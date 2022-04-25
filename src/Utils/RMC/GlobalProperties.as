@@ -163,7 +163,7 @@ namespace RMC
                 if (PluginSettings::RMC_AutoSwitch) {
                     UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
 
-                    if (RMC::selectedGameMode == GameMode::Survival) {
+                    if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos) {
                         EndTime += (3*60*1000);
                     }
                     startnew(SwitchMap);
