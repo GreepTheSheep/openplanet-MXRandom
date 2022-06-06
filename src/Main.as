@@ -1,5 +1,5 @@
-Resources::Font@ g_fontHeader;
-Resources::Font@ g_fontHeaderSub;
+UI::Font@ g_fontHeader;
+UI::Font@ g_fontHeaderSub;
 OnlineServices@ g_onlineServices;
 
 
@@ -66,8 +66,8 @@ void Render()
 void Main()
 {
     @g_onlineServices = OnlineServices();
-    @g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
-    @g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
+    @g_fontHeader = UI::LoadFont("DroidSans-Bold.ttf", 22);
+    @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20);
 
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonOldVersion.GetType() == Json::Type::Null) {

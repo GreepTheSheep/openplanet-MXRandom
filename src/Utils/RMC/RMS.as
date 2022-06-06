@@ -3,7 +3,7 @@ class RMS : RMC
     int Skips = 0;
     int SurvivedTimeStart = -1;
     int SurvivedTime = -1;
-    Resources::Texture@ SkipTex = Resources::GetTexture("src/Assets/Images/YEPSkip.png");
+    UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
     int TimeLimit() override { return PluginSettings::RMC_SurvivalMaxTime * 60 * 1000; }
 
