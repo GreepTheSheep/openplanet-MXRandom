@@ -1,7 +1,5 @@
 Resources::Font@ g_fontHeader;
 Resources::Font@ g_fontHeaderSub;
-OnlineServices@ g_onlineServices;
-
 
 void RenderMenu()
 {
@@ -65,7 +63,6 @@ void Render()
 
 void Main()
 {
-    @g_onlineServices = OnlineServices();
     @g_fontHeader = Resources::GetFont("DroidSans-Bold.ttf", 22);
     @g_fontHeaderSub = Resources::GetFont("DroidSans.ttf", 20);
 
@@ -84,10 +81,4 @@ void Main()
     }
 
     MX::FetchMapTags();
-
-#if TMNEXT
-    OnlineServices::waitForValidWebId();
-    OnlineServices::checkServer();
-    if (OnlineServices::isServerAvailable) OnlineServices::CheckAuthenticationStartup();
-#endif
 }
