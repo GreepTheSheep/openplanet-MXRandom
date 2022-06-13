@@ -198,7 +198,7 @@ namespace RMC
             CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
             if (PlaygroundScript !is null && GamePlayground.GameTerminals.get_Length() > 0) {
                 CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-                if (GamePlayground.GameTerminals[0].UISequence_Current == CGameTerminal::ESGamePlaygroundUIConfig__EUISequence::Finish && player !is null) {
+                if (GamePlayground.GameTerminals[0].UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Finish && player !is null) {
                     CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
                     auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(playerScriptAPI);
                     if (ghost !is null) {
