@@ -2,11 +2,11 @@ class RMC
 {
     int BelowMedalCount = 0;
 
-    Resources::Font@ TimerFont = Resources::GetFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
-    Resources::Texture@ AuthorTex = Resources::GetTexture("src/Assets/Images/Author.png");
-    Resources::Texture@ GoldTex = Resources::GetTexture("src/Assets/Images/Gold.png");
-    Resources::Texture@ SilverTex = Resources::GetTexture("src/Assets/Images/Silver.png");
-    Resources::Texture@ BronzeTex = Resources::GetTexture("src/Assets/Images/Bronze.png");
+    UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
+    UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
+    UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");
+    UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
+    UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
 
     int TimeLimit() { return 60 * 60 * 1000; }
 
