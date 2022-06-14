@@ -5,7 +5,7 @@ category = "TMX"
 perms = "paid"
 siteid = 124
 
-version = "2.1.4"
+version = "2.1.5"
 
 [script]
 imports = [ "Permissions.as" ]
