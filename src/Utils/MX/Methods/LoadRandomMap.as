@@ -89,7 +89,11 @@ namespace MX
 
         if (RMC::IsRunning)
         {
+#if TMNEXT
             url += "&etags=23,37,40";
+#else
+            url += "&etags=20";
+#endif
             url += "&lengthop=1";
             url += "&length=9";
         }
