@@ -26,7 +26,7 @@ namespace RMC
                 startnew(Start);
             }
 #else
-            if (UI::RedButton(Icons::Fire + " Chaos Mode \\$ff0(NEW)")){
+            if (UI::RedButton(Icons::Fire + " Chaos Mode")){
                 Renderables::Add(ChaosModeIntroModalDialog());
             }
 #endif
