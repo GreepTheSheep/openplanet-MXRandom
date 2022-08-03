@@ -14,22 +14,25 @@ namespace RMC
                 startnew(Start);
             }
 #if TMNEXT
+            if (UI::TreeNode("\\$f50" + Icons::Fire + " \\$zChaos Mode")) {
 #if DEPENDENCY_CHAOSMODE
-            if (UI::RedButton(Icons::Fire + " Start RMC with Chaos Mode")){
-                selectedGameMode = GameMode::ChallengeChaos;
-                ChaosMode::SetRMCMode(true);
-                startnew(Start);
-            }
-            if (UI::RedButton(Icons::Fire + " Start RMS with Chaos Mode")){
-                selectedGameMode = GameMode::SurvivalChaos;
-                ChaosMode::SetRMCMode(true);
-                startnew(Start);
-            }
+                if (UI::RedButton(Icons::Fire + " Start RMC with Chaos Mode")){
+                    selectedGameMode = GameMode::ChallengeChaos;
+                    ChaosMode::SetRMCMode(true);
+                    startnew(Start);
+                }
+                if (UI::RedButton(Icons::Fire + " Start RMS with Chaos Mode")){
+                    selectedGameMode = GameMode::SurvivalChaos;
+                    ChaosMode::SetRMCMode(true);
+                    startnew(Start);
+                }
 #else
-            if (UI::RedButton(Icons::Fire + " Chaos Mode")){
-                Renderables::Add(ChaosModeIntroModalDialog());
-            }
+                if (UI::RedButton(Icons::Fire + " Chaos Mode")){
+                    Renderables::Add(ChaosModeIntroModalDialog());
+                }
 #endif
+                UI::TreePop();
+            }
 #endif
             // if (UI::RedButton(Icons::FlagCheckered + " Random Map Race \\$ff0(Coming soon!)")){
             //     Renderables::Add(RMRIntroModalDialog());
@@ -39,6 +42,7 @@ namespace RMC
             UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
         }
 #endif
+        UI::Separator();
         if (UI::Button(Icons::Table + " Standings")) {
             OpenBrowserURL("https://docs.google.com/spreadsheets/d/1hgjYu84s6RtQZTgDFS7ZeyqszALCH-5OpsmDtBNWK_U/edit?usp=sharing");
         }
