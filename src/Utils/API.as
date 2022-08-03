@@ -32,7 +32,7 @@ namespace API
         return ret;
     }
 
-    Json::Value GetAsync(const string &in url, const string &in body)
+    Json::Value PostAsync(const string &in url, const string &in body)
     {
         auto req = Post(url, body);
         while (!req.Finished()) {
