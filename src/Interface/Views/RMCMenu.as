@@ -36,7 +36,7 @@ namespace RMC
 #endif
             if (UI::TreeNode(MX_COLOR_STR + Icons::Trophy + " \\$zObjective Mode" + " \\$0ee(NEW)")) {
                 UI::TextDisabled(Icons::InfoCircle + " Hover for infos");
-                UI::SetPreviousTooltip("Set a goal, and get it done as quickly as possible!");
+                UI::SetPreviousTooltip("Set a goal, and get it done as quickly as possible!\nSkips are unlimited but costs you time spending on the map.");
                 UI::Text("Goal:");
                 UI::SameLine();
                 UI::SetNextItemWidth(150);
@@ -88,7 +88,12 @@ namespace RMC
             window.isInRMCMode = false;
         }
 
-        if (RMC::GoalMedalCount > 0 || Challenge.BelowMedalCount > 0 || Survival.Skips > 0 || Survival.SurvivedTime > 0) {
+        if (
+            RMC::GoalMedalCount > 0 ||
+            Challenge.BelowMedalCount > 0 ||
+            Survival.Skips > 0 ||
+            Survival.SurvivedTime > 0
+        ) {
             if (!UI::IsOverlayShown()) UI::Dummy(vec2(0, 10));
             UI::Separator();
             UI::Text("Last run stats:");
