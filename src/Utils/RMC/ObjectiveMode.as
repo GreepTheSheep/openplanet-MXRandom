@@ -5,6 +5,8 @@ class RMObjective : RMC
     int RunTime = -1;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
+    string GetModeName() override { return "Random Map Objective";}
+
     void RenderTimer() override
     {
         UI::PushFont(TimerFont);

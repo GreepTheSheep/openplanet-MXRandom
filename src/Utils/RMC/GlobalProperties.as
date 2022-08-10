@@ -16,9 +16,9 @@ namespace RMC
         "Author"
     };
 
-    RMC Challenge;
-    RMS Survival;
-    RMObjective Objective;
+    RMC@ Challenge;
+    RMS@ Survival;
+    RMObjective@ Objective;
 
     enum GameMode
     {
@@ -29,6 +29,12 @@ namespace RMC
         Objective
     }
     GameMode selectedGameMode;
+
+    void InitModes() {
+        @Challenge = RMC();
+        @Survival = RMS();
+        @Objective = RMObjective();
+    }
 
     string FormatTimer(int time) {
         int hundreths = time % 1000 / 10;

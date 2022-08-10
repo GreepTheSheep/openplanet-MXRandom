@@ -80,5 +80,6 @@ void Main()
         DataManager::CheckData();
     }
 
+    RMC::InitModes();
     MX::FetchMapTags();
 }

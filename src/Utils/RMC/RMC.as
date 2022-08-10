@@ -8,6 +8,13 @@ class RMC
     UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
     UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
 
+    RMC()
+    {
+        print(GetModeName() + " loaded");
+    }
+
+    string GetModeName() { return "Random Map Challenge";}
+
     int TimeLimit() { return 60 * 60 * 1000; }
 
     void Render()

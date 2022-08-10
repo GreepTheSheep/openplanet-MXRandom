@@ -5,6 +5,8 @@ class RMS : RMC
     int SurvivedTime = -1;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
+    string GetModeName() override { return "Random Map Survival";}
+
     int TimeLimit() override { return PluginSettings::RMC_SurvivalMaxTime * 60 * 1000; }
 
     void RenderTimer() override
