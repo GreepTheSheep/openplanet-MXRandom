@@ -96,7 +96,7 @@ class RMObjective : RMC
     void GotGoalMedalNotification() override
     {
         Log::Trace("ObjectiveMode: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
-        if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) { {
+        if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
             if (PluginSettings::RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
                 startnew(RMC::SwitchMap);
