@@ -18,13 +18,15 @@ namespace RMC
 
     RMC Challenge;
     RMS Survival;
+    RMObjective Objective;
 
     enum GameMode
     {
         Challenge,
         Survival,
         ChallengeChaos,
-        SurvivalChaos
+        SurvivalChaos,
+        Objective
     }
     GameMode selectedGameMode;
 
@@ -87,92 +89,11 @@ namespace RMC
                         Challenge.StartTimer();
                     } else if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos){
                         Survival.StartTimer();
+                    } else if (RMC::selectedGameMode == GameMode::Objective){
+                        Objective.StartTimer();
                     }
                     break;
                 }
-            }
-        }
-    }
-
-    void TimerYield() {
-        while (IsRunning){
-            yield();
-            if (!IsPaused) {
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(false);
-#endif
-                CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-                if (currentMap !is null) {
-                    CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-                    if (currentMapInfo !is null) {
-                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
-                            StartTime = Time::get_Now();
-
-                            if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos) {
-                                // Cap timer max
-                                if ((EndTime - StartTime) > (PluginSettings::RMC_SurvivalMaxTime-Survival.Skips)*60*1000) {
-                                    EndTime = StartTime + (PluginSettings::RMC_SurvivalMaxTime-Survival.Skips)*60*1000;
-                                }
-                            }
-
-                            if (StartTime > EndTime) {
-                                StartTime = -1;
-                                EndTime = -1;
-                                IsRunning = false;
-                                ShowTimer = false;
-                                if (RMC::selectedGameMode == GameMode::Challenge) UI::ShowNotification("\\$0f0Random Map Challenge ended!", "You got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? (" and "+ Challenge.BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]) : "") + " medals!");
-                                if (RMC::selectedGameMode == GameMode::Survival) UI::ShowNotification("\\$0f0Random Map Survival ended!", "You survived with a time of " + FormatTimer(Survival.SurvivedTime) + ".\nYou got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals and " + Survival.Skips + " skips.");
-#if DEPENDENCY_CHAOSMODE
-                                if (RMC::selectedGameMode == GameMode::ChallengeChaos) {
-                                    UI::ShowNotification("\\$0f0Random Map Chaos Challenge ended!", "You got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? (" and "+ Challenge.BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]) : "") + " medals!");
-                                    ChaosMode::SetRMCMode(false);
-                                }
-                                if (RMC::selectedGameMode == GameMode::SurvivalChaos) {
-                                    UI::ShowNotification("\\$0f0Random Map Chaos Survival ended!", "You survived with a time of " + FormatTimer(Survival.SurvivedTime) + ".\nYou got "+ GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals and " + Survival.Skips + " skips.");
-                                    ChaosMode::SetRMCMode(false);
-                                }
-#endif
-                                if (PluginSettings::RMC_ExitMapOnEndTime){
-                                    CTrackMania@ app = cast<CTrackMania>(GetApp());
-                                    app.BackToMainMenu();
-                                }
-                            }
-                        } else {
-                            IsPaused = true;
-                        }
-                    }
-                }
-            } else {
-                // pause timer
-                StartTime = Time::get_Now() - (Time::get_Now() - StartTime);
-                EndTime = Time::get_Now() - (Time::get_Now() - EndTime);
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(true);
-#endif
-            }
-
-            if (GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !GotGoalMedalOnCurrentMap){
-                Log::Trace("RMC: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
-                GoalMedalCount += 1;
-                GotGoalMedalOnCurrentMap = true;
-                if (PluginSettings::RMC_AutoSwitch) {
-                    UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
-
-                    if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos) {
-                        EndTime += (3*60*1000);
-                    }
-                    startnew(SwitchMap);
-                } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
-            }
-            if (
-                GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 &&
-                !GotGoalMedalOnCurrentMap &&
-                (RMC::selectedGameMode == RMC::GameMode::Challenge || RMC::selectedGameMode == RMC::GameMode::ChallengeChaos) &&
-                PluginSettings::RMC_GoalMedal != RMC::Medals[0])
-            {
-                Log::Trace("RMC: Got "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
-                if (!GotBelowMedalOnCurrentMap) UI::ShowNotification("\\$db4" + Icons::Trophy + " You got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal", "You can take the medal and skip the map");
-                GotBelowMedalOnCurrentMap = true;
             }
         }
     }

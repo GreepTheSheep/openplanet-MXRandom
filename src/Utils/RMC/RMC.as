@@ -220,7 +220,110 @@ class RMC
         RMC::EndTime = RMC::StartTime + TimeLimit();
         RMC::IsPaused = false;
         RMC::IsRunning = true;
-        startnew(RMC::TimerYield);
+        startnew(CoroutineFunc(TimerYield));
+    }
+
+    void GameEndNotification()
+    {
+        if (RMC::selectedGameMode == RMC::GameMode::Challenge)
+            UI::ShowNotification(
+                "\\$0f0Random Map Challenge ended!",
+                "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
+                (
+                    PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
+                    (" and "+ BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1])
+                    : ""
+                ) + " medals!");
+#if DEPENDENCY_CHAOSMODE
+        if (RMC::selectedGameMode == RMC::GameMode::ChallengeChaos) {
+            UI::ShowNotification(
+                "\\$0f0Random Map Chaos Challenge ended!",
+                "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
+                (
+                    PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
+                    (" and "+ BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1])
+                    : ""
+                ) + " medals!");
+            ChaosMode::SetRMCMode(false);
+        }
+#endif
+    }
+
+    void GotGoalMedalNotification()
+    {
+        Log::Trace("RMC: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
+        if (PluginSettings::RMC_AutoSwitch) {
+            UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
+            startnew(RMC::SwitchMap);
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
+    }
+
+    void GotBelowGoalMedalNotification()
+    {
+        Log::Trace("RMC: Got "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
+        if (!RMC::GotBelowMedalOnCurrentMap)
+            UI::ShowNotification(
+                "\\$db4" + Icons::Trophy + " You got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal",
+                "You can take the medal and skip the map"
+            );
+    }
+
+    void PendingTimerLoop(){}
+
+    void TimerYield() {
+        while (RMC::IsRunning){
+            yield();
+            if (!RMC::IsPaused) {
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCPaused(false);
+#endif
+                CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
+                if (currentMap !is null) {
+                    CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
+                    if (currentMapInfo !is null) {
+                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+                            RMC::StartTime = Time::get_Now();
+                            PendingTimerLoop();
+
+                            if (RMC::StartTime > RMC::EndTime) {
+                                RMC::StartTime = -1;
+                                RMC::EndTime = -1;
+                                RMC::IsRunning = false;
+                                RMC::ShowTimer = false;
+                                GameEndNotification();
+                                if (PluginSettings::RMC_ExitMapOnEndTime){
+                                    CTrackMania@ app = cast<CTrackMania>(GetApp());
+                                    app.BackToMainMenu();
+                                }
+                            }
+                        } else {
+                            RMC::IsPaused = true;
+                        }
+                    }
+                }
+            } else {
+                // pause timer
+                RMC::StartTime = Time::get_Now() - (Time::get_Now() - RMC::StartTime);
+                RMC::EndTime = Time::get_Now() - (Time::get_Now() - RMC::EndTime);
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCPaused(true);
+#endif
+            }
+
+            if (RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !RMC::GotGoalMedalOnCurrentMap){
+                GotGoalMedalNotification();
+                RMC::GoalMedalCount += 1;
+                RMC::GotGoalMedalOnCurrentMap = true;
+            }
+            if (
+                RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 &&
+                !RMC::GotGoalMedalOnCurrentMap &&
+                PluginSettings::RMC_GoalMedal != RMC::Medals[0])
+            {
+                GotBelowGoalMedalNotification();
+                RMC::GotBelowMedalOnCurrentMap = true;
+            }
+        }
     }
 
 }

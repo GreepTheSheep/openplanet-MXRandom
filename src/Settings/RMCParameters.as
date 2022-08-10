@@ -27,6 +27,12 @@ namespace PluginSettings
     [Setting hidden]
     int RMC_ImageSize = 25;
 
+    [Setting hidden]
+    int RMC_ObjectiveMode_Goal = 5;
+
+    [Setting hidden]
+    bool RMC_ObjectiveMode_DisplayRemaininng = true;
+
     [SettingsTab name="Random Map Challenge"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
@@ -49,11 +55,11 @@ namespace PluginSettings
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
                     string goalMedal = RMC::Medals[i];
 
-                    if (UI::Selectable(goalMedal, MapLengthOperator == goalMedal)) {
+                    if (UI::Selectable(goalMedal, RMC_GoalMedal == goalMedal)) {
                         RMC_GoalMedal = goalMedal;
                     }
 
-                    if (MapLengthOperator == goalMedal) {
+                    if (RMC_GoalMedal == goalMedal) {
                         UI::SetItemDefaultFocus();
                     }
                 }
