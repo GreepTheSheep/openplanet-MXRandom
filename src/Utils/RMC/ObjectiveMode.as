@@ -23,7 +23,7 @@ class RMObjective : RMC
         UI::Dummy(vec2(0, 8));
     }
 
-    void RenderGoalMedal()
+    void RenderGoalMedal() override
     {
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
