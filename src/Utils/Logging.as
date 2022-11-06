@@ -1,6 +1,6 @@
 namespace Log
 {
-    void Log(string&in message, bool showNotification = false)
+    void Log(const string &in message, bool showNotification = false)
     {
         print(message);
         if (showNotification)
@@ -9,7 +9,7 @@ namespace Log
         }
     }
 
-    void Trace(string&in message, bool showNotification = false)
+    void Trace(const string &in message, bool showNotification = false)
     {
         trace(message);
         if (showNotification)
@@ -18,7 +18,7 @@ namespace Log
         }
     }
 
-    void Warn(string&in message, bool showNotification = IS_DEV_MODE)
+    void Warn(const string &in message, bool showNotification = IS_DEV_MODE)
     {
         warn(message);
         if (showNotification)
@@ -28,7 +28,7 @@ namespace Log
         }
     }
 
-    void Error(string&in message, bool showNotification = IS_DEV_MODE)
+    void Error(const string &in message, bool showNotification = IS_DEV_MODE)
     {
         error(message);
         if (showNotification)

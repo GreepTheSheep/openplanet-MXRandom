@@ -8,6 +8,7 @@ namespace RMC
     int GoalMedalCount = 0;
     int StartTime = -1;
     int EndTime = -1;
+    RMCConfig@ config;
 
     array<string> Medals = {
         "Bronze",
@@ -29,6 +30,18 @@ namespace RMC
         Objective
     }
     GameMode selectedGameMode;
+
+    void FetchConfig() {
+        Log::Trace("Fetching RMC configs from openplanet.dev...");
+        string url = "https://openplanet.dev/plugin/mxrandom/config/rmc-config";
+        RMCConfigs@ cfgs = RMCConfigs(API::GetAsync(url));
+#if TMNEXT
+        @config = cfgs.cfgNext;
+#else
+        @config = cfgs.cfgMP4;
+#endif
+        Log::Trace("Fetched and loaded RMC configs!", IS_DEV_MODE);
+    }
 
     void InitModes() {
         @Challenge = RMC();

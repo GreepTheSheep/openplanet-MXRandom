@@ -16,7 +16,9 @@ namespace API
         while (!req.Finished()) {
             yield();
         }
-        return Json::Parse(req.String());
+        string res = req.String();
+        if (IS_DEV_MODE) Log::Trace("Get Res: " + res);
+        return Json::Parse(res);
     }
 
     Net::HttpRequest@ Post(const string &in url, const string &in body)

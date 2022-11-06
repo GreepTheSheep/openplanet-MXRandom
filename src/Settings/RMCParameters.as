@@ -25,6 +25,9 @@ namespace PluginSettings
     int RMC_SurvivalMaxTime = 15;
 
     [Setting hidden]
+    bool RMC_PrepatchTagsWarns = true;
+
+    [Setting hidden]
     int RMC_ImageSize = 25;
 
     [Setting hidden]
@@ -50,6 +53,7 @@ namespace PluginSettings
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
                 RMC_SurvivalMaxTime = 15;
+                RMC_PrepatchTagsWarns = true;
             }
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
@@ -71,6 +75,9 @@ namespace PluginSettings
 
             UI::SetNextItemWidth(300);
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
+
+            RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch maps warnings", RMC_PrepatchTagsWarns);
+            UI::SetPreviousTooltip("Display a warning if the map is built before the new physics patches (eg the bobsleigh update)");
             UI::EndTabItem();
         }
 
