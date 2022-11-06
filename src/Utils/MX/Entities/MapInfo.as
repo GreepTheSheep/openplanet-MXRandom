@@ -8,6 +8,7 @@ namespace MX
         string Username;
         string AuthorLogin;
         string MapType;
+        string ExeBuild;
         string UploadedAt;
         string UpdatedAt;
         Json::Value PlayedAt;
@@ -38,6 +39,7 @@ namespace MX
                 Username = json["Username"];
                 AuthorLogin = json["AuthorLogin"];
                 MapType = json["MapType"];
+                ExeBuild = json["ExeBuild"];
                 UploadedAt = json["UploadedAt"];
                 UpdatedAt = json["UpdatedAt"];
                 if (json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
@@ -93,6 +95,7 @@ namespace MX
                 json["Username"] = Username;
                 json["AuthorLogin"] = AuthorLogin;
                 json["MapType"] = MapType;
+                json["ExeBuild"] = ExeBuild;
                 json["UploadedAt"] = UploadedAt;
                 json["UpdatedAt"] = UpdatedAt;
                 json["PlayedAt"] = PlayedAt;
