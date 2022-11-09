@@ -68,11 +68,9 @@ namespace MX
             if (ChaosMode::IsInRMCMode()) {
                 Log::Trace("Loading map in Chaos Mode");
                 app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
-            }
-            else app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
-#else
-            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
+            } else
 #endif
+            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
         }
         catch
         {
