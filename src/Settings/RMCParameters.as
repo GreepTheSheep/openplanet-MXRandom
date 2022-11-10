@@ -22,6 +22,9 @@ namespace PluginSettings
     bool RMC_SurvivalShowSurvivedTime = true;
 
     [Setting hidden]
+    bool RMC_DisplayMapTimeSpent = true;
+
+    [Setting hidden]
     int RMC_SurvivalMaxTime = 15;
 
     [Setting hidden]
@@ -88,12 +91,14 @@ namespace PluginSettings
                 RMC_DisplayCurrentMap = true;
                 RMC_AlwaysShowBtns = true;
                 RMC_SurvivalShowSurvivedTime = true;
+                RMC_DisplayMapTimeSpent = true;
                 RMC_TagsLength = 1;
                 RMC_ImageSize = 20;
             }
             RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
             RMC_AlwaysShowBtns = UI::Checkbox("Always show the buttons (even when the Openplanet overlay is hidden)", RMC_AlwaysShowBtns);
             RMC_SurvivalShowSurvivedTime = UI::Checkbox("Display the time survived in Survival mode", RMC_SurvivalShowSurvivedTime);
+            RMC_DisplayMapTimeSpent = UI::Checkbox("Display the time spent on the actual map", RMC_DisplayMapTimeSpent);
 
             UI::SetNextItemWidth(100);
             RMC_TagsLength = UI::SliderInt("Display Map Tags Length (0: hidden)", RMC_TagsLength, 0, 3);

@@ -29,6 +29,12 @@ class RMS : RMC
             UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
             UI::Dummy(vec2(0, 8));
         }
+        if (PluginSettings::RMC_DisplayMapTimeSpent) {
+            UI::PushFont(g_fontHeaderSub);
+            UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
+            UI::SetPreviousTooltip("Time spent on this map");
+            UI::PopFont();
+        }
         UI::PopFont();
     }
 
