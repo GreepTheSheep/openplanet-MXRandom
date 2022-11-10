@@ -9,24 +9,66 @@ class RMCConfigs {
 }
 
 class RMCConfig {
-    array<RMCConfigMapTags@> prepatchMapTags;
+    array<RMCConfigMapTag@> prepatchMapTags;
 
     RMCConfig(const Json::Value &in json) {
         if (json.HasKey("prepatch-maps-tags")) {
             for (uint i = 0; i < json["prepatch-maps-tags"].Length; i++)
-                prepatchMapTags.InsertLast(RMCConfigMapTags(json["prepatch-maps-tags"][i]));
+                prepatchMapTags.InsertLast(RMCConfigMapTag(json["prepatch-maps-tags"][i]));
         }
+    }
+
+    bool isMapHasPrepatchMapTags(const MX::MapInfo &in map) {
+        for (uint i = 0; i < prepatchMapTags.Length; i++)
+            for (uint j = 0; j < map.Tags.Length; j++)
+                if (map.Tags[j].ID == prepatchMapTags[i].ID) {
+                    // Check ExeBuild
+                    ExeBuild@ exebuild = ExeBuild(prepatchMapTags[i].ExeBuild);
+                    Time::Info todayInfo = Time::Parse();
+                    Date@ today = Date(todayInfo.Year, todayInfo.Month, todayInfo.Day);
+                    Date@ exeBuildDate = Date(exebuild.year, exebuild.month, exebuild.day);
+                    return exeBuildDate.isBefore(today);
+                }
+        return false;
+    }
+
+    RMCConfigMapTag@ getMapPrepatchMapTag(const MX::MapInfo &in map) {
+        for (uint i = 0; i < prepatchMapTags.Length; i++)
+            for (uint j = 0; j < map.Tags.Length; j++)
+                if (map.Tags[j].ID == prepatchMapTags[i].ID)
+                    return prepatchMapTags[i];
+        return null;
     }
 }
 
-class RMCConfigMapTags {
+class RMCConfigMapTag {
     int ID;
     string ExeBuild;
+    string title;
     string reason;
 
-    RMCConfigMapTags(const Json::Value &in json) {
+    RMCConfigMapTag(const Json::Value &in json) {
         ID = json["ID"];
         ExeBuild = json["ExeBuild"];
+        title = json["title"];
         reason = json["reason"];
+    }
+}
+
+// ExeBuild parser
+class ExeBuild {
+    int year;
+    int month;
+    int day;
+    string date;
+    int hour;
+    int min;
+    ExeBuild(const string &in exeBuild) {
+        date = exeBuild.SubStr(0, exeBuild.IndexOf("_"));
+        hour = Text::ParseInt(exeBuild.SubStr(exeBuild.IndexOf('_')+1, 2));
+        min = Text::ParseInt(exeBuild.SubStr(exeBuild.IndexOf('_')+4, 2));
+        year = Text::ParseInt(date.SubStr(0,4));
+        month = Text::ParseInt(date.SubStr(5,2));
+        day = Text::ParseInt(date.SubStr(8,2));
     }
 }

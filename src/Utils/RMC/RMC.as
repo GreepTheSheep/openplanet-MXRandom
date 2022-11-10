@@ -113,6 +113,11 @@ class RMC
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
                         UI::TextDisabled("by " + CurrentMapFromJson.Username);
+                        if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+                            RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(CurrentMapFromJson);
+                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z"+prepatchTag.title);
+                            UI::SetPreviousTooltip(prepatchTag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
+                        }
                         if (PluginSettings::RMC_TagsLength != 0) {
                             if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
                             else {
@@ -189,6 +194,10 @@ class RMC
             if (RMC::IsPaused) RMC::IsPaused = false;
             if (RMC::GotBelowMedalOnCurrentMap) {
                 BelowMedalCount += 1;
+            }
+            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+                RMC::EndTime += RMC::TimeSpentMap;
             }
             Log::Trace("RMC: Skipping map");
             UI::ShowNotification("Please wait...");
@@ -289,7 +298,8 @@ class RMC
                     CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
                     if (currentMapInfo !is null) {
                         if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
-                            RMC::StartTime = Time::get_Now();
+                            RMC::StartTime = Time::Now;
+                            RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
                             PendingTimerLoop();
 
                             if (RMC::StartTime > RMC::EndTime) {

@@ -8,6 +8,8 @@ namespace RMC
     int GoalMedalCount = 0;
     int StartTime = -1;
     int EndTime = -1;
+    int TimeSpentMap = -1;
+    int TimeSpawnedMap = -1;
     RMCConfig@ config;
 
     array<string> Medals = {
@@ -82,6 +84,7 @@ namespace RMC
             CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
             if (GamePlayground !is null){
                 if (!IsInited) {
+                    TimeSpawnedMap = -1;
                     GoalMedalCount = 0;
                     Challenge.BelowMedalCount = 0;
                     Survival.Skips = 0;
@@ -111,6 +114,7 @@ namespace RMC
                     } else if (RMC::selectedGameMode == GameMode::Objective){
                         Objective.StartTimer();
                     }
+                    TimeSpawnedMap = Time::Now;
                     break;
                 }
             }
@@ -177,10 +181,10 @@ namespace RMC
         while (!TM::IsMapLoaded()){
             sleep(100);
         }
-        EndTime = EndTime + (Time::get_Now() - StartTime);
+        EndTime = EndTime + (Time::Now - StartTime);
         IsPaused = false;
         GotGoalMedalOnCurrentMap = false;
         GotBelowMedalOnCurrentMap = false;
+        TimeSpawnedMap = Time::Now;
     }
-
 }
