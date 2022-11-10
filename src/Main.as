@@ -63,7 +63,6 @@ void Render()
 
 void Main()
 {
-    RMC::FetchConfig();
     @g_fontHeader = UI::LoadFont("DroidSans-Bold.ttf", 22);
     @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20);
 
@@ -80,7 +79,7 @@ void Main()
     } else {
         DataManager::CheckData();
     }
-
-    RMC::InitModes();
     MX::FetchMapTags();
+    RMC::FetchConfig();
+    RMC::InitModes();
 }

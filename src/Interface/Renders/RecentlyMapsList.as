@@ -40,6 +40,8 @@ namespace Render
                 UI::SameLine();
 #if TMNEXT
                 if (Permissions::PlayLocalMap() && UI::GreenButton(Icons::Play)) {
+#else if FALSE
+                }
 #else
                 if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
