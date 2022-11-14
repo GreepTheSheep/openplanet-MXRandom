@@ -116,7 +116,11 @@ namespace MX
             url += "&vehicles=1";
 #elif MP4
             // Fetch in the correct titlepack
-            url += "&tpack=" + TM::CurrentTitlePack();
+            if (TM::CurrentTitlePack() == "TMAll") {
+                url += "&tpack=" + TM::CurrentTitlePack()+"&tpack=TMCanyon&tpack=TMValley&tpack=TMStadium&tpack=TMLagoon";
+            } else {
+                url += "&tpack=" + TM::CurrentTitlePack();
+            }
 #endif
 
         // prevent loading non-Race maps (Royal, flagrush etc...)
