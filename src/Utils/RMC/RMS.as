@@ -58,6 +58,10 @@ class RMS : RMC
             Log::Trace("RMS: Skipping map");
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);
+            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+                RMC::EndTime += RMC::TimeSpentMap;
+            }
         }
         if (UI::OrangeButton(Icons::PlayCircleO + " Free Skip")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();

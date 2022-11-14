@@ -29,6 +29,10 @@ class SurvivalFreeSkipWarnModalDialog : ModalDialog
             RMC::IsPaused = false;
             print("RMC: Survival Free Skip");
             UI::ShowNotification("Please wait...");
+            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+                RMC::EndTime += RMC::TimeSpentMap;
+            }
             startnew(RMC::SwitchMap);
         }
     }

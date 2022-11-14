@@ -76,6 +76,10 @@ class RMObjective : RMC
             Skips += 1;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
+            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+                RMC::EndTime += RMC::TimeSpentMap;
+            }
             startnew(RMC::SwitchMap);
         }
     }
