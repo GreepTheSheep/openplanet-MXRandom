@@ -56,6 +56,7 @@ namespace NadeoServices
         string joinLink;
         string currentMapUid;
         bool starting;
+        bool isOff;
 
         ClubRoomInfo(const Json::Value &in json)
         {
@@ -69,9 +70,14 @@ namespace NadeoServices
                 script = json["script"];
                 scalable = json["scalable"];
                 if (json["scriptSettings"]["S_TimeLimit"].GetType() != Json::Type::Null) timeLimit = json["scriptSettings"]["S_TimeLimit"]["value"];
-                joinLink = json["serverInfo"]["joinLink"];
-                currentMapUid = json["serverInfo"]["currentMapUid"];
-                starting = json["serverInfo"]["starting"];
+                if (json["serverInfo"].GetType() != Json::Type::Null) {
+                    joinLink = json["serverInfo"]["joinLink"];
+                    currentMapUid = json["serverInfo"]["currentMapUid"];
+                    starting = json["serverInfo"]["starting"];
+                    isOff = false;
+                } else {
+                    isOff = true;
+                }
 
                 for (uint i = 0; i < json["maps"].Length; i++)
                     maps.InsertLast(json["maps"][i]);
