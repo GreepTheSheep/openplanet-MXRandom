@@ -13,6 +13,23 @@ namespace RMC
                 selectedGameMode = GameMode::Survival;
                 startnew(Start);
             }
+            UI::SetNextItemWidth(100);
+            if (UI::BeginCombo("##GoalMedalObjectiveMode", PluginSettings::RMC_GoalMedal)){
+                for (uint i = 0; i < RMC::Medals.Length; i++) {
+                    string goalMedal = RMC::Medals[i];
+
+                    if (UI::Selectable(goalMedal, PluginSettings::RMC_GoalMedal == goalMedal)) {
+                        PluginSettings::RMC_GoalMedal = goalMedal;
+                    }
+
+                    if (PluginSettings::RMC_GoalMedal == goalMedal) {
+                        UI::SetItemDefaultFocus();
+                    }
+                }
+                UI::EndCombo();
+            }
+            UI::SameLine();
+            UI::Text("medals");
 #if TMNEXT
             if (UI::TreeNode("\\$f50" + Icons::Fire + " \\$zChaos Mode")) {
 #if DEPENDENCY_CHAOSMODE
@@ -44,22 +61,6 @@ namespace RMC
                 if (PluginSettings::RMC_ObjectiveMode_Goal < 1)
                     PluginSettings::RMC_ObjectiveMode_Goal = 1;
                 UI::SameLine();
-                UI::SetNextItemWidth(100);
-                if (UI::BeginCombo("##GoalMedalObjectiveMode", PluginSettings::RMC_GoalMedal)){
-                    for (uint i = 0; i < RMC::Medals.Length; i++) {
-                        string goalMedal = RMC::Medals[i];
-
-                        if (UI::Selectable(goalMedal, PluginSettings::RMC_GoalMedal == goalMedal)) {
-                            PluginSettings::RMC_GoalMedal = goalMedal;
-                        }
-
-                        if (PluginSettings::RMC_GoalMedal == goalMedal) {
-                            UI::SetItemDefaultFocus();
-                        }
-                    }
-                    UI::EndCombo();
-                }
-                UI::SameLine();
                 UI::Text("medals");
 
                 if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")){
@@ -70,6 +71,58 @@ namespace RMC
                     OpenBrowserURL("https://www.speedrun.com/tmce#Flinks_Random_Map_Challenge");
                 UI::TreePop();
             }
+#if TMNEXT
+            if (Permissions::CreateActivity() && UI::TreeNode(MX_COLOR_STR + Icons::Users + " \\$zRandom Map Together \\$f33(BETA)")) {
+#if DEPENDENCY_NADEOSERVICES
+                UI::TextDisabled(Icons::InfoCircle + " Click for help");
+                if (UI::IsItemClicked()) {
+                    Log::Trace("Soon", true);
+                }
+                UI::Text("Club ID:");
+                UI::SameLine();
+                UI::SetNextItemWidth(150);
+                PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
+
+                UI::Text("Room ID:");
+                UI::SameLine();
+                UI::SetNextItemWidth(150);
+                PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
+
+                bool RMT_isServerOK = false;
+
+                if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
+                    UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
+                    if (UI::Button("Check Room")) {
+                        startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
+                    }
+                    UI::EndDisabled();
+                    if (MXNadeoServicesGlobal::isCheckingRoom) {
+                        int HourGlassValue = Time::Stamp % 3;
+                        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
+                        UI::TextDisabled(Hourglass + " Checking...");
+                    }
+                    if (MXNadeoServicesGlobal::foundRoom !is null) {
+                        RMT_isServerOK = true;
+                        UI::Text("Room found:");
+                        UI::Text("'"+MXNadeoServicesGlobal::foundRoom.name+"', in club '"+StripFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
+                    }
+                }
+                if (RMT_isServerOK && !TM::IsInServer()) {
+                    UI::BeginDisabled();
+                    UI::GreyButton(Icons::Users + " Start Random Map Together");
+                    UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
+                    UI::EndDisabled();
+                }
+                if (RMT_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Users + " Start Random Map Together")){
+                    selectedGameMode = GameMode::Together;
+                    startnew(Start);
+                }
+#else
+                UI::Text("NadeoServices dependency not found, your Openplanet installation may be corrupt!");
+#endif
+                UI::TreePop();
+            }
+#endif
 #if TMNEXT
         } else {
             UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");

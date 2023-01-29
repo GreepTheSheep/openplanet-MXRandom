@@ -82,4 +82,7 @@ void Main()
     MX::FetchMapTags();
     RMC::FetchConfig();
     RMC::InitModes();
+#if DEPENDENCY_NADEOSERVICES
+    MXNadeoServicesGlobal::LoadNadeoLiveServices();
+#endif
 }

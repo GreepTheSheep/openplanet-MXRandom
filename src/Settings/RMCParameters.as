@@ -39,6 +39,12 @@ namespace PluginSettings
     [Setting hidden]
     bool RMC_ObjectiveMode_DisplayRemaininng = true;
 
+    [Setting hidden]
+    int RMC_Together_ClubId = 0;
+
+    [Setting hidden]
+    int RMC_Together_RoomId = 0;
+
     [SettingsTab name="Random Map Challenge"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {

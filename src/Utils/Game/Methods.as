@@ -39,4 +39,10 @@ namespace TM
             }
         }
     }
+
+    bool IsInServer(){
+        CTrackManiaNetwork@ Network = cast<CTrackManiaNetwork>(GetApp().Network);
+        CGameCtnNetServerInfo@ ServerInfo = cast<CGameCtnNetServerInfo>(Network.ServerInfo);
+        return ServerInfo.JoinLink != "";
+    }
 }
