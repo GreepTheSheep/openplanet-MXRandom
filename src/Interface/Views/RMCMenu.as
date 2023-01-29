@@ -115,7 +115,7 @@ namespace RMC
                 }
                 if (RMT_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Users + " Start Random Map Together")){
                     selectedGameMode = GameMode::Together;
-                    startnew(Start);
+                    startnew(CoroutineFunc(Together.StartRMT));
                 }
 #else
                 UI::Text("NadeoServices dependency not found, your Openplanet installation may be corrupt!");
