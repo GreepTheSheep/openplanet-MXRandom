@@ -76,7 +76,7 @@ namespace RMC
 #if DEPENDENCY_NADEOSERVICES
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
                 if (UI::IsItemClicked()) {
-                    Log::Trace("Soon", true);
+                    Renderables::Add(RMTHelpModalDialog());
                 }
                 UI::Text("Club ID:");
                 UI::SameLine();
