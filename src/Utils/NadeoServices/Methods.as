@@ -58,5 +58,23 @@ namespace MXNadeoServicesGlobal
         if (res.GetType() == Json::Type::Object)
             @foundRoom = NadeoServices::ClubRoom(res);
     }
+
+    void UploadMapToNadeoServices() {
+        MX::DownloadMap(AddMapToServer_MapMXId, AddMapToServer_MapUid);
+        auto app = cast<CGameManiaPlanet>(GetApp());
+        auto cma = app.MenuManager.MenuCustom_CurrentManiaApp;
+        auto dfm = cma.DataFileMgr;
+        auto userId = cma.UserMgr.Users[0].Id;
+        yield();
+        auto regScript = dfm.Map_NadeoServices_Register(userId, AddMapToServer_MapUid);
+        while (regScript.IsProcessing) yield();
+        if (regScript.HasFailed)
+            Log::Error("Uploading map failed: " + regScript.ErrorType + ", " + regScript.ErrorCode + ", " + regScript.ErrorDescription);
+        else if (regScript.HasSucceeded)
+            trace("UploadMapFromLocal: Map uploaded: " + AddMapToServer_MapUid);
+        dfm.TaskResult_Release(regScript.Id);
+        string downloadedMapFolder = IO::FromUserGameFolder("Maps/Downloaded");
+        IO::Delete(downloadedMapFolder + "/" + AddMapToServer_MapUid + ".Map.Gbx");
+    }
 #endif
 }
