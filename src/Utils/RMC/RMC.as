@@ -119,11 +119,13 @@ class RMC
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
                         UI::TextDisabled("by " + CurrentMapFromJson.Username);
+#if TMNEXT
                         if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
                             RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(CurrentMapFromJson);
                             UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z"+prepatchTag.title);
                             UI::SetPreviousTooltip(prepatchTag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
                         }
+#endif
                         if (PluginSettings::RMC_TagsLength != 0) {
                             if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
                             else {
