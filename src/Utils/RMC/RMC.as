@@ -204,9 +204,13 @@ class RMC
                 BelowMedalCount += 1;
             }
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson) && !RMC::GotBelowMedalOnCurrentMap) {
-                RMC::EndTime += RMC::TimeSpentMap;
-            }
+            if (
+#if TMNEXT
+                PluginSettings::RMC_PrepatchTagsWarns &&
+                RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson) &&
+#endif
+                !RMC::GotBelowMedalOnCurrentMap
+            ) RMC::EndTime += RMC::TimeSpentMap;
             Log::Trace("RMC: Skipping map");
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);

@@ -59,9 +59,11 @@ class RMS : RMC
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+#if TMNEXT
             if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
                 RMC::EndTime += RMC::TimeSpentMap;
             }
+#endif
         }
         if (UI::OrangeButton(Icons::PlayCircleO + " Free Skip")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
