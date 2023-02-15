@@ -28,7 +28,11 @@ namespace PluginSettings
     int RMC_SurvivalMaxTime = 15;
 
     [Setting hidden]
+#if TMNEXT
     bool RMC_PrepatchTagsWarns = true;
+#else
+    bool RMC_PrepatchTagsWarns = false;
+#endif
 
     [Setting hidden]
     int RMC_ImageSize = 25;
@@ -85,8 +89,10 @@ namespace PluginSettings
             UI::SetNextItemWidth(300);
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
+#if TMNEXT
             RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch maps warnings", RMC_PrepatchTagsWarns);
             UI::SetPreviousTooltip("Display a warning if the map is built before the new physics patches (eg the bobsleigh update)");
+#endif
             UI::EndTabItem();
         }
 
