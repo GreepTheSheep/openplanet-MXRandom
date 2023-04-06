@@ -8,7 +8,8 @@ class RMT : RMC
     void StartRMT()
     {
         Log::Trace("RMT: Getting lobby map UID from the room...");
-        await(startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync));
+        MXNadeoServicesGlobal::CheckNadeoRoomAsync();
+        yield();
         @RMTRoom = MXNadeoServicesGlobal::foundRoom;
         LobbyMapUID = RMTRoom.room.currentMapUid;
         Log::Trace("RMT: Lobby map UID: " + LobbyMapUID);
