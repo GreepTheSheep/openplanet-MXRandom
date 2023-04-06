@@ -56,6 +56,8 @@ namespace MXNadeoServicesGlobal
 
         if (res.GetType() == Json::Type::Object)
             @foundRoom = NadeoServices::ClubRoom(res);
+
+        return;
     }
 
     void UploadMapToNadeoServices() {
