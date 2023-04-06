@@ -35,7 +35,6 @@ namespace MXNadeoServicesGlobal
     }
 
     void CheckNadeoRoomAsync() {
-        // Step 1: Check if we can access to the room
         isCheckingRoom = true;
         roomCheckErrorCode = "";
         roomCheckError = "";
