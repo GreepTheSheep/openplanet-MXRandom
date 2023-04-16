@@ -81,7 +81,7 @@ namespace MX
                 }
             } catch {
                 Name = json["Name"];
-                Log::Warn("Error parsing infos for the map: "+ Name, true);
+                Log::Warn("Error parsing infos for the map: "+ Name + "\nReason: " + getExceptionInfo(), true);
             }
         }
 

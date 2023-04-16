@@ -17,6 +17,12 @@ namespace TM
         else return true;
     }
 
+    bool IsMapCorrect(const string &in mapUid){
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        if (app.RootMap is null) return false;
+        else return app.RootMap.MapInfo.MapUid == mapUid;
+    }
+
     string CurrentTitlePack()
     {
         CTrackMania@ app = cast<CTrackMania>(GetApp());

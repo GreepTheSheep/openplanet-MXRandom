@@ -71,6 +71,12 @@ class RMC
             UI::SetPreviousTooltip("Time spent on this map");
             UI::PopFont();
         }
+        if (IS_DEV_MODE) {
+            if (RMC::IsRunning || RMC::EndTime > 0) {
+                if (RMC::IsPaused) UI::Text("Timer en pause");
+                else UI::Text("Timer en cours");
+            } else UI::Text("Fin du timer");
+        }
     }
 
     void RenderGoalMedal()

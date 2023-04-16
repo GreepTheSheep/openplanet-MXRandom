@@ -182,6 +182,7 @@ namespace RMC
         if (selectedGameMode == GameMode::Challenge || selectedGameMode == GameMode::ChallengeChaos) Challenge.Render();
         else if (selectedGameMode == GameMode::Survival || selectedGameMode == GameMode::SurvivalChaos) Survival.Render();
         else if (selectedGameMode == GameMode::Objective) Objective.Render();
+        else if (selectedGameMode == GameMode::Together) Together.Render();
     }
 
     void RenderBaseInfos()
