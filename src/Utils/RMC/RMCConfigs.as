@@ -23,11 +23,13 @@ class RMCConfig {
             for (uint j = 0; j < map.Tags.Length; j++)
                 if (map.Tags[j].ID == prepatchMapTags[i].ID) {
                     // Check ExeBuild
-                    ExeBuild@ exebuild = ExeBuild(prepatchMapTags[i].ExeBuild);
-                    Time::Info todayInfo = Time::Parse();
-                    Date@ today = Date(todayInfo.Year, todayInfo.Month, todayInfo.Day);
-                    Date@ exeBuildDate = Date(exebuild.year, exebuild.month, exebuild.day);
-                    return exeBuildDate.isBefore(today);
+                    ExeBuild exebuildConfig(prepatchMapTags[i].ExeBuild);
+                    ExeBuild exebuildMap(map.ExeBuild);
+
+                    Date@ exeBuildConfig = Date(exebuildConfig.year, exebuildConfig.month, exebuildConfig.day);
+                    Date@ exeBuildMap = Date(exebuildMap.year, exebuildMap.month, exebuildMap.day);
+
+                    return exeBuildMap.isBefore(exeBuildConfig);
                 }
         return false;
     }
