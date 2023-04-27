@@ -53,7 +53,6 @@ namespace MainUIView
 
     void RecentlyPlayedMapsTab()
     {
-        UI::Text("Recently played maps");
         if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible)) {
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);

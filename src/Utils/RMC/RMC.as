@@ -17,6 +17,14 @@ class RMC
 
     int TimeLimit() { return 60 * 60 * 1000; }
 
+    string IsoDateToDMY(string isoDate) 
+    {
+        string year = isoDate.SubStr(0, 4);
+        string month = isoDate.SubStr(5, 2);
+        string day = isoDate.SubStr(8, 2);
+        return day + "-" + month + "-" + year;
+    } 
+
     void Render()
     {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
@@ -124,7 +132,11 @@ class RMC
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
-                        UI::TextDisabled("by " + CurrentMapFromJson.Username);
+                        if( PluginSettings::RMC_DisplayMapDate) {
+                            UI::TextDisabled("On " + IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
+                            UI::SameLine();
+                        }
+                        UI::TextDisabled("by " + CurrentMapFromJson.Username);    
 #if TMNEXT
                         if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
                             RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(CurrentMapFromJson);
