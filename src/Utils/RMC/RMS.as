@@ -22,19 +22,24 @@ class RMS : RMC
                 UI::Dummy(vec2(0, 8));
                 UI::PushFont(g_fontHeaderSub);
                 UI::Text(RMC::FormatTimer(SurvivedTime));
+                UI::SetPreviousTooltip("Total time survived");
             } else {
                 UI::Dummy(vec2(0, 8));
+            }
+            if (PluginSettings::RMC_DisplayMapTimeSpent) {
+                if(SurvivedTime > 0 && PluginSettings::RMC_SurvivalShowSurvivedTime) {
+                    UI::SameLine();
+                }
+                UI::PushFont(g_fontHeaderSub);
+                UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
+                UI::SetPreviousTooltip("Time spent on this map");
+                UI::PopFont();
             }
         } else {
             UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
             UI::Dummy(vec2(0, 8));
         }
-        if (PluginSettings::RMC_DisplayMapTimeSpent) {
-            UI::PushFont(g_fontHeaderSub);
-            UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
-            UI::SetPreviousTooltip("Time spent on this map");
-            UI::PopFont();
-        }
+        
         UI::PopFont();
     }
 
