@@ -133,7 +133,7 @@ class RMC
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
                         if( PluginSettings::RMC_DisplayMapDate) {
-                            UI::TextDisabled("On " + IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
+                            UI::TextDisabled(IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
                             UI::SameLine();
                         }
                         UI::TextDisabled("by " + CurrentMapFromJson.Username);    
