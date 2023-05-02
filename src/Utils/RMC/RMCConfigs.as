@@ -29,7 +29,9 @@ class RMCConfig {
                     Date@ exeBuildConfig = Date(exebuildConfig.year, exebuildConfig.month, exebuildConfig.day);
                     Date@ exeBuildMap = Date(exebuildMap.year, exebuildMap.month, exebuildMap.day);
 
-                    return exeBuildMap.isBefore(exeBuildConfig);
+                    if (exeBuildMap.isBefore(exeBuildConfig)) {
+                        return true;
+                    }
                 }
         return false;
     }
