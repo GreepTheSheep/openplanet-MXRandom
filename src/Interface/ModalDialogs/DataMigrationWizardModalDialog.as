@@ -109,7 +109,8 @@ class DataMigrationWizardModalDialog : ModalDialog
 
     void RenderDialog() override
     {
-        UI::BeginChild("Content", vec2(0, -32));
+        float scale = UI::GetScale();
+        UI::BeginChild("Content", vec2(0, -32) * scale);
 		switch (m_stage) {
 			case 0: RenderStep1(); break;
 			case 1: RenderStep2(); break;
@@ -123,7 +124,7 @@ class DataMigrationWizardModalDialog : ModalDialog
             }
             UI::SameLine();
             vec2 currentPos = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(UI::GetWindowSize().x - 90, currentPos.y));
+            UI::SetCursorPos(vec2(UI::GetWindowSize().x - 90 * scale, currentPos.y));
             if (UI::GreenButton("Migrate " + Icons::ArrowRight)) {
                 m_stage++;
             }
