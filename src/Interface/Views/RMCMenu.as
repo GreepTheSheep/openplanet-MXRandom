@@ -73,7 +73,16 @@ namespace RMC
             }
 #if TMNEXT
             if (Permissions::CreateActivity() && UI::TreeNode(MX_COLOR_STR + Icons::Users + " \\$zRandom Map Together \\$f33(BETA)")) {
-#if DEPENDENCY_NADEOSERVICES
+#if !DEPENDENCY_NADEOSERVICES
+                UI::Text(Icons::ExclamationTriangle + " NadeoServices dependency not found, your Openplanet installation may be corrupt!");
+#endif
+#if !DEPENDENCY_MLHOOK
+                UI::Text(Icons::ExclamationTriangle + " MLHook dependency not found, please enable or install \"MLHook & Event Inspector\" from the Plugin Manager.");
+#endif
+#if !DEPENDENCY_MLFEEDRACEDATA
+                UI::Text(Icons::ExclamationTriangle + " MLFeed dependency not found, please enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
+#endif
+#if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
                 if (UI::IsItemClicked()) {
                     Renderables::Add(RMTHelpModalDialog());
@@ -117,8 +126,6 @@ namespace RMC
                     selectedGameMode = GameMode::Together;
                     startnew(CoroutineFunc(Together.StartRMT));
                 }
-#else
-                UI::Text("NadeoServices dependency not found, your Openplanet installation may be corrupt!");
 #endif
                 UI::TreePop();
             }
