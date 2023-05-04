@@ -6,14 +6,15 @@ class RMTHelpModalDialog : ModalDialog
     RMTHelpModalDialog()
     {
         super(Icons::InfoCircle + " \\$zRandom Map Together###RMTHelp");
-        m_size = vec2(Math::Ceil(Draw::GetWidth()/1.2f), Math::Ceil(Draw::GetHeight()/1.2f));
+        m_size = vec2(Draw::GetWidth(), Draw::GetHeight()) * 0.6f;
         @clubIdTex = UI::LoadTexture("src/Assets/Images/help_clubId.png");
         @roomIdTex = UI::LoadTexture("src/Assets/Images/help_roomId.png");
     }
 
     void RenderDialog() override
     {
-        UI::BeginChild("Content", vec2(0, -32));
+        float scale = UI::GetScale();
+        UI::BeginChild("Content", vec2(0, -32) * scale);
         UI::PushFont(g_fontHeader);
         UI::Text("Setting up a Room");
         UI::PopFont();
@@ -36,12 +37,12 @@ class RMTHelpModalDialog : ModalDialog
 
         vec2 imgSize = clubIdTex.GetSize();
         UI::Image(clubIdTex, vec2(
-            m_size.x-20,
-            imgSize.y / (imgSize.x / (m_size.x-20))
+            m_size.x-20*scale,
+            imgSize.y / (imgSize.x / (m_size.x-20*scale))
         ));
         UI::Image(roomIdTex, vec2(
-            m_size.x-20,
-            imgSize.y / (imgSize.x / (m_size.x-20))
+            m_size.x-20*scale,
+            imgSize.y / (imgSize.x / (m_size.x-20*scale))
         ));
         UI::EndChild();
         if (UI::Button(Icons::Times + " Close")) {

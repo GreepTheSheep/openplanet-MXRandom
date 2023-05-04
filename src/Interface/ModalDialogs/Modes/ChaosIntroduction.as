@@ -13,7 +13,7 @@ class ChaosModeIntroModalDialog : ModalDialog
 
     void RenderDialog() override
     {
-        UI::BeginChild("Content", vec2(0, -32));
+        UI::BeginChild("Content", vec2(0, -32) * UI::GetScale());
         UI::PushFont(g_fontHeader);
         UI::Text("The Chaos Mode comes in the Random Map Challenge!");
         UI::PopFont();
