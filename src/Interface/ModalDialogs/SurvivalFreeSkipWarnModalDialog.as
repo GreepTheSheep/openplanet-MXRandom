@@ -13,7 +13,8 @@ class SurvivalFreeSkipWarnModalDialog : ModalDialog
 
     void RenderDialog() override
     {
-        UI::BeginChild("Content", vec2(0, -32));
+        float scale = UI::GetScale();
+        UI::BeginChild("Content", vec2(0, -32) * scale);
         UI::Text("Free skips is only if the map is impossible or broken.\n\nAre you sure to skip?");
         UI::EndChild();
         if (UI::Button(Icons::Times + " No")) {
@@ -22,7 +23,7 @@ class SurvivalFreeSkipWarnModalDialog : ModalDialog
             RMC::IsPaused = false;
         }
         UI::SameLine();
-        UI::SetCursorPos(vec2(UI::GetWindowSize().x - 70, UI::GetCursorPos().y));
+        UI::SetCursorPos(vec2(UI::GetWindowSize().x - 70 * scale, UI::GetCursorPos().y));
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
             RMC::EndTime = RMC::EndTime + (Time::get_Now() - RMC::StartTime);
