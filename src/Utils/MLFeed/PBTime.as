@@ -10,7 +10,7 @@ class PBTime {
     bool isLocalPlayer;
 
     PBTime(CSmPlayer@ _player, CMapRecord@ _rec, bool _isLocalPlayer = false) {
-        wsid = _player.User.WebServicesUserId; // rare null pointer exception here? `[        Platform] [11:24:26] [players-pbs-dev]  Invalid address for member ID 03002000. This is likely a Nadeo bug! Setting it to null!`
+        wsid = _player.User.WebServicesUserId; // rare null pointer exception here
         name = _player.User.Name;
         club = _player.User.ClubTag;
         isLocalPlayer = _isLocalPlayer;
