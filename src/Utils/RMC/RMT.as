@@ -156,6 +156,7 @@ class RMT : RMC
         CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
         while (playerScriptAPI.Post == 0) yield();
         RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
+        RMC::TimeSpawnedMap = Time::Now;
         RMC::IsPaused = false;
         isSwitchingMap = false;
     }
