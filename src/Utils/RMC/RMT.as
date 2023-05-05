@@ -116,6 +116,7 @@ class RMT : RMC
     }
 
     void RMTSwitchMap() {
+        m_playerScores.SortDesc();
         isSwitchingMap = true;
         m_mapPersonalBests = {};
         RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
