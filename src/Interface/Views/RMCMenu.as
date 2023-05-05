@@ -181,6 +181,9 @@ namespace RMC
                 UI::Text(RMC::FormatTimer(Objective.RunTime));
                 UI::PopFont();
             }
+            else if (selectedGameMode == GameMode::Together) {
+                Together.RenderScores();
+            }
         }
     }
 
