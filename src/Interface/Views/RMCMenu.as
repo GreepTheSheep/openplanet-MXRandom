@@ -182,6 +182,11 @@ namespace RMC
                 UI::PopFont();
             }
             else if (selectedGameMode == GameMode::Together) {
+                vec2 pos_orig = UI::GetCursorPos();
+                Together.RenderGoalMedal();
+                UI::SetCursorPos(vec2(pos_orig.x+100, pos_orig.y));
+                Together.RenderBelowGoalMedal();
+                UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
                 Together.RenderScores();
             }
         }
