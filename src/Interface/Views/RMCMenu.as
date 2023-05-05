@@ -85,11 +85,11 @@ namespace RMC
                 UI::Text(Icons::ExclamationTriangle + " MLFeed dependency not found, please enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
                 UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
 #endif
-#if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
                 if (UI::IsItemClicked()) {
                     Renderables::Add(RMTHelpModalDialog());
                 }
+#if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
                 UI::Text("Club ID:");
                 UI::SameLine();
                 UI::SetNextItemWidth(150);
