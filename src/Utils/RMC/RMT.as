@@ -8,11 +8,13 @@ class RMT : RMC
     bool m_CurrentlyLoadingRecords = false;
     PBTime@ playerGotGoalActualMap;
     PBTime@ playerGotBelowGoalActualMap;
+    uint RMTTimerMapChange = 0;
 
     string GetModeName() override { return "Random Map Together";}
 
     void StartRMT()
     {
+        m_records = {};
         RMC::ShowTimer = true;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
@@ -47,64 +49,111 @@ class RMT : RMC
 
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
         MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
-        while (!TM::IsMapCorrect(currentMap.TrackUID)) {
-            sleep(1000);
-        }
+        while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit() / 1000);
+        while (GetApp().CurrentPlayground is null) yield();
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
-        while (GamePlayground is null || GamePlayground.GameTerminals.Length < 1 || GamePlayground.GameTerminals[0].GUIPlayer is null) {
-            sleep(1000);
-        }
+        while (GamePlayground.GameTerminals.Length < 0) yield();
+        while (GamePlayground.GameTerminals[0] is null) yield();
+        while (GamePlayground.GameTerminals[0].GUIPlayer is null) yield();
         CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-        while (player is null){
-            yield();
-        }
+        while (player.ScriptAPI is null) yield();
         CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-        while (playerScriptAPI.Post == 0){
-            yield();
-        }
-        StartTimer();
+        while (playerScriptAPI.Post == 0) yield();
+        RMC::StartTime = Time::Now;
+        RMC::EndTime = RMC::StartTime + TimeLimit();
+        RMC::IsPaused = false;
+        RMC::GotGoalMedalOnCurrentMap = false;
+        RMC::GotBelowMedalOnCurrentMap = false;
+        RMC::IsRunning = true;
+        startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(UpdateRecordsLoop));
         RMC::TimeSpawnedMap = Time::Now;
+    }
+
+    void RMTSwitchMap() {
+        m_records = {};
+        RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
+        RMC::IsPaused = true;
+        RMC::GotGoalMedalOnCurrentMap = false;
+        RMC::GotBelowMedalOnCurrentMap = false;
+        // Fetch a map
+        Log::Trace("RMT: Fetching a random map...");
+        Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+        Json::Value playedAt = Json::Object();
+        Time::Info date = Time::Parse();
+        playedAt["Year"] = date.Year;
+        playedAt["Month"] = date.Month;
+        playedAt["Day"] = date.Day;
+        playedAt["Hour"] = date.Hour;
+        playedAt["Minute"] = date.Minute;
+        playedAt["Second"] = date.Second;
+        res["PlayedAt"] = playedAt;
+        @currentMap = MX::MapInfo(res);
+        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+
+        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
+            Log::Trace("RMT: Map is not on NadeoServices, retrying...");
+            RMTSwitchMap();
+            return;
+        }
+
+        MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
+        MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+        while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
+        MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, RMTTimerMapChange / 1000);
+        while (GetApp().CurrentPlayground is null) yield();
+        CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
+        while (GamePlayground.GameTerminals.Length < 0) yield();
+        while (GamePlayground.GameTerminals[0] is null) yield();
+        while (GamePlayground.GameTerminals[0].GUIPlayer is null) yield();
+        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+        while (player.ScriptAPI is null) yield();
+        CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
+        while (playerScriptAPI.Post == 0) yield();
+        RMC::EndTime = RMC::StartTime + RMTTimerMapChange;
+        RMC::IsPaused = false;
     }
 
     void TimerYield() override
     {
         while (RMC::IsRunning){
             yield();
-            RMC::IsPaused = false;
-            CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
-            if (currentMapChallenge !is null) {
-                CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
-                if (currentMapInfo !is null) {
-                    RMC::StartTime = Time::Now;
-                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
-                    PendingTimerLoop();
+            if (RMC::IsPaused) {
+                RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
+                RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
+            } else {
+                CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
+                if (currentMapChallenge !is null) {
+                    CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
+                    if (currentMapInfo !is null) {
+                        RMC::StartTime = Time::Now;
+                        RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
+                        PendingTimerLoop();
 
-                    if (RMC::StartTime > RMC::EndTime) {
-                        RMC::StartTime = -1;
-                        RMC::EndTime = -1;
-                        RMC::IsRunning = false;
-                        RMC::ShowTimer = false;
-                        GameEndNotification();
+                        if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
+                            RMC::StartTime = -1;
+                            RMC::EndTime = -1;
+                            RMC::IsRunning = false;
+                            RMC::ShowTimer = false;
+                            GameEndNotification();
+                        }
                     }
                 }
-            }
 
-            if (isObjectiveCompleted() && !RMC::GotGoalMedalOnCurrentMap){
-                Log::Log(playerGotGoalActualMap.name + " got goal medal with a time of " + playerGotGoalActualMap.time);
-                UI::ShowNotification("\\$071" + Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
-                RMC::GoalMedalCount += 1;
-                RMC::GotGoalMedalOnCurrentMap = true;
-            }
-            if (
-                isBelowObjectiveCompleted() &&
-                !RMC::GotBelowMedalOnCurrentMap &&
-                PluginSettings::RMC_GoalMedal != RMC::Medals[0])
-            {
-                Log::Log(playerGotBelowGoalActualMap.name + " got below goal medal with a time of " + playerGotBelowGoalActualMap.time);
-                UI::ShowNotification("\\$db4" + Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr);
-                RMC::GotBelowMedalOnCurrentMap = true;
+                if (isObjectiveCompleted() && !RMC::GotGoalMedalOnCurrentMap) {
+                    Log::Log(playerGotGoalActualMap.name + " got goal medal with a time of " + playerGotGoalActualMap.time);
+                    UI::ShowNotification("\\$071" + Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
+                    RMC::GoalMedalCount += 1;
+                    RMC::GotGoalMedalOnCurrentMap = true;
+
+                    RMTSwitchMap();
+                }
+                if (isBelowObjectiveCompleted() && !RMC::GotBelowMedalOnCurrentMap && PluginSettings::RMC_GoalMedal != RMC::Medals[0]) {
+                    Log::Log(playerGotBelowGoalActualMap.name + " got below goal medal with a time of " + playerGotBelowGoalActualMap.time);
+                    UI::ShowNotification("\\$db4" + Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr);
+                    RMC::GotBelowMedalOnCurrentMap = true;
+                }
             }
         }
     }
@@ -272,7 +321,7 @@ class RMT : RMC
             auto rec = rl.MapRecordList[i];
             auto _p = cast<CSmPlayer>(wsidToPlayer[rec.WebServicesUserId]);
             if (_p is null) {
-                warn("Failed to lookup player from temp dict");
+                Log::Warn("Failed to lookup player from temp dict");
                 continue;
             }
             ret.InsertLast(PBTime(_p, rec, rec.WebServicesUserId == localWSID));
