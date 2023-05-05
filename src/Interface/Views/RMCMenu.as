@@ -75,12 +75,15 @@ namespace RMC
             if (Permissions::CreateActivity() && UI::TreeNode(MX_COLOR_STR + Icons::Users + " \\$zRandom Map Together \\$f33(BETA)")) {
 #if !DEPENDENCY_NADEOSERVICES
                 UI::Text(Icons::ExclamationTriangle + " NadeoServices dependency not found, your Openplanet installation may be corrupt!");
+                UI::SetPreviousTooltip("RMT needs NadeoServices dependency (shipped with Openplanet) in order to send events to a room.");
 #endif
 #if !DEPENDENCY_MLHOOK
                 UI::Text(Icons::ExclamationTriangle + " MLHook dependency not found, please enable or install \"MLHook & Event Inspector\" from the Plugin Manager.");
+                UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
 #endif
 #if !DEPENDENCY_MLFEEDRACEDATA
                 UI::Text(Icons::ExclamationTriangle + " MLFeed dependency not found, please enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
+                UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
 #endif
 #if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
