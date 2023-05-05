@@ -11,6 +11,7 @@ class RMT : RMC
     PBTime@ playerGotBelowGoalActualMap;
     uint RMTTimerMapChange = 0;
     bool isSwitchingMap = false;
+    bool pressedStopButton = false;
 
     string GetModeName() override { return "Random Map Together";}
 
@@ -20,13 +21,12 @@ class RMT : RMC
         if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns)) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCMode(false);
-#endif
+                pressedStopButton = true;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
+                startnew(CoroutineFunc(ResetToLobbyMap));
             }
 
             UI::Separator();
@@ -57,6 +57,7 @@ class RMT : RMC
         m_mapPersonalBests = {};
         m_playerScores = {};
         RMC::ShowTimer = true;
+        pressedStopButton = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
         yield();
@@ -161,11 +162,11 @@ class RMT : RMC
         isSwitchingMap = false;
     }
 
-    void ResetToLobbyMap() {
+    void ResetToLobbyMap(bool _isTimerEnded = false) {
         if (LobbyMapUID != "") {
             UI::ShowNotification("Returning to lobby map", "Please wait...", Text::ParseHexColor("#993f03"));
             MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, LobbyMapUID);
-            MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+            if (!_isTimerEnded) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
             while (!TM::IsMapCorrect(LobbyMapUID)) sleep(1000);
         }
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
@@ -187,13 +188,13 @@ class RMT : RMC
                         RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
                         PendingTimerLoop();
 
-                        if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
+                        if (!pressedStopButton && (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0)) {
                             RMC::StartTime = -1;
                             RMC::EndTime = -1;
                             RMC::IsRunning = false;
                             RMC::ShowTimer = false;
                             GameEndNotification();
-                            ResetToLobbyMap();
+                            ResetToLobbyMap(true);
                         }
                     }
                 }
