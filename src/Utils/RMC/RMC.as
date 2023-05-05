@@ -81,9 +81,9 @@ class RMC
         }
         if (IS_DEV_MODE) {
             if (RMC::IsRunning || RMC::EndTime > 0) {
-                if (RMC::IsPaused) UI::Text("Timer en pause");
-                else UI::Text("Timer en cours");
-            } else UI::Text("Fin du timer");
+                if (RMC::IsPaused) UI::Text("Timer paused");
+                else UI::Text("Timer running");
+            } else UI::Text("Timer ended");
         }
     }
 
@@ -262,7 +262,7 @@ class RMC
 
     void StartTimer()
     {
-        RMC::StartTime = Time::get_Now();
+        RMC::StartTime = Time::Now;
         RMC::EndTime = RMC::StartTime + TimeLimit();
         RMC::IsPaused = false;
         RMC::IsRunning = true;
@@ -332,7 +332,7 @@ class RMC
                             RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
                             PendingTimerLoop();
 
-                            if (RMC::StartTime > RMC::EndTime) {
+                            if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
                                 RMC::StartTime = -1;
                                 RMC::EndTime = -1;
                                 RMC::IsRunning = false;
