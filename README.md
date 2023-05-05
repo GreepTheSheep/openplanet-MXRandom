@@ -49,3 +49,4 @@ Game modes are in a enumurated list.
 | 2          | ChallengeChaos   |
 | 3          | SurvivalChaos    |
 | 4          | Objective        |
+| 5          | Together         |
