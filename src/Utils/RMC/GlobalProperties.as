@@ -106,7 +106,7 @@ namespace RMC
                     }
 #elif TMNEXT
                     CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-                    while (playerScriptAPI.CurrentRaceTime < 0){
+                    while (playerScriptAPI.Post == 0){
                         yield();
                     }
 #endif
