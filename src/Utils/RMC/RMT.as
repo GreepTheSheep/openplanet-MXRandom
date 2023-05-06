@@ -60,6 +60,8 @@ class RMT : RMC
     {
         m_mapPersonalBests = {};
         m_playerScores = {};
+        RMC::GoalMedalCount = 0;
+        BelowMedalCount = 0;
         RMC::ShowTimer = true;
         pressedStopButton = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
