@@ -116,7 +116,7 @@ namespace RMC
                     if (MXNadeoServicesGlobal::foundRoom !is null) {
                         RMT_isServerOK = true;
                         UI::Text("Room found:");
-                        UI::Text("'"+MXNadeoServicesGlobal::foundRoom.name+"', in club '"+StripFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
+                        UI::Text("'"+ColoredString(MXNadeoServicesGlobal::foundRoom.name)+"', in club '"+ColoredString(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
                     }
                 }
                 if (RMT_isServerOK && !TM::IsInServer()) {
