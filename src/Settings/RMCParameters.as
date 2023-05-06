@@ -16,6 +16,9 @@ namespace PluginSettings
     bool RMC_AlwaysShowBtns = true;
 
     [Setting hidden]
+    bool RMC_DisplayPace = false;
+
+    [Setting hidden]
     uint RMC_TagsLength = 1;
 
     [Setting hidden]
@@ -113,6 +116,7 @@ namespace PluginSettings
             }
             RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
             RMC_AlwaysShowBtns = UI::Checkbox("Always show the buttons (even when the Openplanet overlay is hidden)", RMC_AlwaysShowBtns);
+            RMC_DisplayPace = UI::Checkbox("Show goal pace during the run", RMC_DisplayPace);
             RMC_SurvivalShowSurvivedTime = UI::Checkbox("Display the time survived in Survival mode", RMC_SurvivalShowSurvivedTime);
             RMC_DisplayMapTimeSpent = UI::Checkbox("Display the time spent on the actual map", RMC_DisplayMapTimeSpent);
             RMC_DisplayMapDate = UI::Checkbox("Display the date the map was last updated", RMC_DisplayMapDate);

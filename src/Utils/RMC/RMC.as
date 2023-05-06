@@ -1,6 +1,7 @@
 class RMC
 {
     int BelowMedalCount = 0;
+    int ModeStartTimestamp = -1;
 
     UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -50,6 +51,15 @@ class RMC
         UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
         RenderBelowGoalMedal();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
+
+        if (PluginSettings::RMC_DisplayPace) {
+            try {
+                float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
+                UI::Text("Pace: " + Text::Format("%.2f", goalPace));
+            } catch {
+                UI::Text("Pace: 0.00");
+            }
+        }
 
         if (PluginSettings::RMC_DisplayCurrentMap)
         {

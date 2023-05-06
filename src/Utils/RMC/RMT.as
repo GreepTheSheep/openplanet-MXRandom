@@ -45,6 +45,15 @@ class RMT : RMC
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
         RenderMVPPlayer();
 
+       if (PluginSettings::RMC_DisplayPace) {
+            try {
+                float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
+                UI::Text("Pace: " + Text::Format("%.2f", goalPace));
+            } catch {
+                UI::Text("Pace: 0.00");
+            }
+        }
+
         if (PluginSettings::RMC_DisplayCurrentMap)
         {
             RenderCurrentMap();
