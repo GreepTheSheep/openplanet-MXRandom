@@ -200,7 +200,7 @@ class RMT : RMC
 #if DEPENDENCY_BETTERCHAT
         if (m_playerScores.Length > 0) {
             RMTPlayerScore@ p = m_playerScores[0];
-            string currentStatChat = Icons::Users + " RMT Leaderboard:$z " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals " + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n";
+            string currentStatChat = Icons::Users + " RMT Leaderboard:$z " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals" + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n";
             currentStatChat += "Current MVP: " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_GoalMedal) +
                 (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
                     " - " + p.belowGoals + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]
@@ -312,7 +312,7 @@ class RMT : RMC
 #if DEPENDENCY_BETTERCHAT
         sleep(200);
         if (m_playerScores.Length > 0) {
-            string currentStatsChat = Icons::Users + " RMT Leaderboard:$z " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals " + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n\n";
+            string currentStatsChat = Icons::Users + " RMT Leaderboard:$z " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals" + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n\n";
             for (uint i = 0; i < m_playerScores.Length; i++) {
                 RMTPlayerScore@ p = m_playerScores[i];
                 currentStatsChat += tostring(i+1) + ". " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + p.belowGoals + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] : "") + "\n";
