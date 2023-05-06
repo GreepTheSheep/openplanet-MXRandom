@@ -85,6 +85,10 @@ namespace RMC
                 UI::Text(Icons::ExclamationTriangle + " MLFeed dependency not found, please enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
                 UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
 #endif
+#if !DEPENDENCY_BETTERCHAT
+                UI::Text(Icons::ExclamationCircle + " Better Chat plugin not found.");
+                UI::SetPreviousTooltip("RMT can use Better Chat plugin (by Miss) in order to send events to other people in game chat. This is optional.");
+#endif
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
                 if (UI::IsItemClicked()) {
                     Renderables::Add(RMTHelpModalDialog());

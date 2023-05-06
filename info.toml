@@ -9,7 +9,7 @@ version = "2.2.2"
 
 [script]
 imports = [ "Permissions.as" ]
-optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook", "MLFeedRaceData" ]
+optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook", "MLFeedRaceData", "BetterChat" ]
 
 exports = [ "src/Exports/Exports.as" ]
 
