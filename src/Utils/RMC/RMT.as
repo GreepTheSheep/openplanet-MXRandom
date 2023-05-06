@@ -16,6 +16,8 @@ class RMT : RMC
 
     string GetModeName() override { return "Random Map Together";}
 
+    void DevButtons() override {}
+
     void Render() override
     {
         if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns)) {
