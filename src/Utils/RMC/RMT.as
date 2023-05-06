@@ -17,9 +17,8 @@ class RMT : RMC
 
     void Render() override
     {
-        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns)) {
-            if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
+            if (UI::RedButton(Icons::Times + " Stop RMT"))
             {
                 pressedStopButton = true;
                 RMC::IsRunning = false;
@@ -163,12 +162,13 @@ class RMT : RMC
         isSwitchingMap = false;
     }
 
-    void ResetToLobbyMap(bool _isTimerEnded = false) {
+    void ResetToLobbyMap() {
         if (LobbyMapUID != "") {
             UI::ShowNotification("Returning to lobby map", "Please wait...", Text::ParseHexColor("#993f03"));
             MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, LobbyMapUID);
-            if (!_isTimerEnded) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+            if (pressedStopButton) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
             while (!TM::IsMapCorrect(LobbyMapUID)) sleep(1000);
+            pressedStopButton = false;
         }
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
     }
@@ -195,7 +195,7 @@ class RMT : RMC
                             RMC::IsRunning = false;
                             RMC::ShowTimer = false;
                             GameEndNotification();
-                            ResetToLobbyMap(true);
+                            ResetToLobbyMap();
                         }
                     }
                 }
