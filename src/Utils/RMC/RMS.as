@@ -39,7 +39,7 @@ class RMS : RMC
             UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
             UI::Dummy(vec2(0, 8));
         }
-        
+
         UI::PopFont();
     }
 
