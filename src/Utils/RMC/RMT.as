@@ -296,6 +296,10 @@ class RMT : RMC
                 UI::Separator();
                 if (currentMap !is null) {
                     UI::Text(currentMap.Name);
+                    if(PluginSettings::RMC_DisplayMapDate) {
+                        UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
+                        UI::SameLine();
+                    }
                     UI::TextDisabled("by " + currentMap.Username);
 #if TMNEXT
                     if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(currentMap)) {
