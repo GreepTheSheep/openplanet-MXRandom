@@ -118,6 +118,7 @@ namespace RMC
                         Objective.StartTimer();
                     }
                     TimeSpawnedMap = Time::Now;
+                    MX::PreloadRandomMap();
                     break;
                 }
             }
@@ -189,5 +190,6 @@ namespace RMC
         GotGoalMedalOnCurrentMap = false;
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
+        MX::PreloadRandomMap();
     }
 }

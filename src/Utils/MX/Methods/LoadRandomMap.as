@@ -1,5 +1,34 @@
 namespace MX
 {
+    MX::MapInfo@ preloadedMap;
+
+    void PreloadRandomMap()
+    {
+        string URL = CreateQueryURL();
+        Json::Value res = API::GetAsync(URL)["results"][0];
+        Log::Trace("PreloadRandomMapRes: "+Json::Write(res));
+
+        Json::Value playedAt = Json::Object();
+        Time::Info date = Time::Parse();
+        playedAt["Year"] = date.Year;
+        playedAt["Month"] = date.Month;
+        playedAt["Day"] = date.Day;
+        playedAt["Hour"] = date.Hour;
+        playedAt["Minute"] = date.Minute;
+        playedAt["Second"] = date.Second;
+        res["PlayedAt"] = playedAt;
+
+        MX::MapInfo@ map = MX::MapInfo(res);
+
+        if (map is null){
+            Log::Warn("Map is null, retrying...");
+            PreloadRandomMap();
+            return;
+        }
+
+        @preloadedMap = map;
+    }
+
     void LoadRandomMap()
     {
         try
@@ -9,27 +38,9 @@ namespace MX
                 return;
             }
             RandomMapIsLoading = true;
-            string URL = CreateQueryURL();
-            Json::Value res = API::GetAsync(URL)["results"][0];
-            Log::Trace("RandomMapRes: "+Json::Write(res));
-
-            Json::Value playedAt = Json::Object();
-            Time::Info date = Time::Parse();
-            playedAt["Year"] = date.Year;
-            playedAt["Month"] = date.Month;
-            playedAt["Day"] = date.Day;
-            playedAt["Hour"] = date.Hour;
-            playedAt["Minute"] = date.Minute;
-            playedAt["Second"] = date.Second;
-            res["PlayedAt"] = playedAt;
-
-            MX::MapInfo@ map = MX::MapInfo(res);
-
-            if (map is null){
-                Log::Warn("Map is null, retrying...");
-                LoadRandomMap();
-                return;
-            }
+            if (preloadedMap is null) PreloadRandomMap();
+            MX::MapInfo@ map = preloadedMap;
+            @preloadedMap = null;
 
             Log::LoadingMapNotification(map);
 

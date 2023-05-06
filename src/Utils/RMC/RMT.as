@@ -3,6 +3,7 @@ class RMT : RMC
     string LobbyMapUID = "";
     NadeoServices::ClubRoom@ RMTRoom;
     MX::MapInfo@ currentMap;
+    MX::MapInfo@ nextMap;
     uint lastPbUpdate = 0;
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
@@ -121,16 +122,10 @@ class RMT : RMC
         startnew(CoroutineFunc(UpdateRecordsLoop));
         RMC::TimeSpawnedMap = Time::Now;
         isSwitchingMap = false;
+        startnew(CoroutineFunc(RMTFetchNextMap));
     }
 
-    void RMTSwitchMap() {
-        m_playerScores.SortDesc();
-        isSwitchingMap = true;
-        m_mapPersonalBests = {};
-        RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
-        RMC::IsPaused = true;
-        RMC::GotGoalMedalOnCurrentMap = false;
-        RMC::GotBelowMedalOnCurrentMap = false;
+    void RMTFetchNextMap() {
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
@@ -143,13 +138,49 @@ class RMT : RMC
         playedAt["Minute"] = date.Minute;
         playedAt["Second"] = date.Second;
         res["PlayedAt"] = playedAt;
-        @currentMap = MX::MapInfo(res);
-        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
-
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
-            Log::Trace("RMT: Map is not on NadeoServices, retrying...");
+        @nextMap = MX::MapInfo(res);
+        Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.TrackID + ")");
+        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
+            Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
+            @nextMap = null;
             RMTSwitchMap();
             return;
+        }
+    }
+
+    void RMTSwitchMap() {
+        m_playerScores.SortDesc();
+        isSwitchingMap = true;
+        m_mapPersonalBests = {};
+        RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
+        RMC::IsPaused = true;
+        RMC::GotGoalMedalOnCurrentMap = false;
+        RMC::GotBelowMedalOnCurrentMap = false;
+        if (nextMap is null) {
+            // Fetch a map
+            Log::Trace("RMT: Fetching a random map...");
+            Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            Json::Value playedAt = Json::Object();
+            Time::Info date = Time::Parse();
+            playedAt["Year"] = date.Year;
+            playedAt["Month"] = date.Month;
+            playedAt["Day"] = date.Day;
+            playedAt["Hour"] = date.Hour;
+            playedAt["Minute"] = date.Minute;
+            playedAt["Second"] = date.Second;
+            res["PlayedAt"] = playedAt;
+            @currentMap = MX::MapInfo(res);
+            Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+
+            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
+                Log::Trace("RMT: Map is not on NadeoServices, retrying...");
+                RMTSwitchMap();
+                return;
+            }
+        } else {
+            @currentMap = nextMap;
+            @nextMap = null;
+            Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
         }
 
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
@@ -181,6 +212,7 @@ class RMT : RMC
         RMC::TimeSpawnedMap = Time::Now;
         RMC::IsPaused = false;
         isSwitchingMap = false;
+        startnew(CoroutineFunc(RMTFetchNextMap));
     }
 
     void ResetToLobbyMap() {
