@@ -221,6 +221,7 @@ class RMT : RMC
         if (LobbyMapUID != "") {
             UI::ShowNotification("Returning to lobby map", "Please wait...", Text::ParseHexColor("#993f03"));
 #if DEPENDENCY_BETTERCHAT
+            sleep(200);
             BetterChat::SendChatMessage(Icons::Users + " Returning to lobby map...");
 #endif
             MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, LobbyMapUID);
