@@ -435,7 +435,7 @@ class RMT : RMC
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn(PluginSettings::RMC_GoalMedal, UI::TableColumnFlags::WidthFixed, 40);
-            UI::TableSetupColumn(BelowMedal, UI::TableColumnFlags::WidthFixed, 40);
+            if (tableCols == 3) UI::TableSetupColumn(BelowMedal, UI::TableColumnFlags::WidthFixed, 40);
             UI::TableHeadersRow();
 
             UI::ListClipper clipper(m_playerScores.Length);
