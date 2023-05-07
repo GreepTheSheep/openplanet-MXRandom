@@ -3,6 +3,7 @@ namespace RMC
     bool ShowTimer = false;
     bool IsRunning = false;
     bool IsPaused = false;
+    bool ClickedOnSkip = false;
     bool GotGoalMedalOnCurrentMap = false;
     bool GotBelowMedalOnCurrentMap = false;
     int GoalMedalCount = 0;
@@ -78,6 +79,7 @@ namespace RMC
     {
         bool IsInited = false;
         ShowTimer = true;
+        ClickedOnSkip = false;
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
             sleep(100);
@@ -190,6 +192,7 @@ namespace RMC
         GotGoalMedalOnCurrentMap = false;
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
+        ClickedOnSkip = false;
         MX::PreloadRandomMap();
     }
 }

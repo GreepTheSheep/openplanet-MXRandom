@@ -78,6 +78,7 @@ class RMT : RMC
         RMC::GoalMedalCount = 0;
         BelowMedalCount = 0;
         RMC::ShowTimer = true;
+        RMC::ClickedOnSkip = false;
         pressedStopButton = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
@@ -97,7 +98,14 @@ class RMT : RMC
         isSwitchingMap = true;
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
-        Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+        Json::Value res;
+        try {
+            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+        } catch {
+            Log::Error("ManiaExchange API returned an error, retrying...", true);
+            SetupMapStart();
+            return;
+        }
         Json::Value playedAt = Json::Object();
         Time::Info date = Time::Parse();
         playedAt["Year"] = date.Year;
@@ -176,7 +184,14 @@ class RMT : RMC
         if (nextMap is null) {
             // Fetch a map
             Log::Trace("RMT: Fetching a random map...");
-            Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            Json::Value res;
+            try {
+                res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            } catch {
+                Log::Error("ManiaExchange API returned an error, retrying...", true);
+                RMTSwitchMap();
+                return;
+            }
             Json::Value playedAt = Json::Object();
             Time::Info date = Time::Parse();
             playedAt["Year"] = date.Year;
@@ -229,6 +244,7 @@ class RMT : RMC
         RMC::TimeSpawnedMap = Time::Now;
         RMC::IsPaused = false;
         isSwitchingMap = false;
+        RMC::ClickedOnSkip = false;
         startnew(CoroutineFunc(RMTFetchNextMap));
     }
 
@@ -400,7 +416,9 @@ class RMT : RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
+        UI::BeginDisabled(RMC::ClickedOnSkip);
         if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
+            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             if (RMC::GotBelowMedalOnCurrentMap) {
                 BelowMedalCount += 1;
@@ -418,6 +436,7 @@ class RMT : RMC
 #endif
             startnew(CoroutineFunc(RMTSwitchMap));
         }
+        UI::EndDisabled();
     }
 
     void RenderScores()

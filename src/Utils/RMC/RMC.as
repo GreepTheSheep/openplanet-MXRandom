@@ -228,8 +228,9 @@ class RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed());
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
+            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             if (RMC::GotBelowMedalOnCurrentMap) {
                 BelowMedalCount += 1;
@@ -252,8 +253,9 @@ class RMC
 
     void NextMapButton()
     {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed());
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if(UI::GreenButton(Icons::Play + " Next map")) {
+            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
