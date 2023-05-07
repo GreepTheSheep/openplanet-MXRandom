@@ -59,7 +59,7 @@ class RMC
                 float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
                 UI::Text("Pace: " + goalPace);
             } catch {
-                UI::Text("Pace: 0.00");
+                UI::Text("Pace: 0");
             }
         }
 
