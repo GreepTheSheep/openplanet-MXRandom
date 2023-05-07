@@ -122,8 +122,8 @@ class RMT : RMC
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
         while (GamePlayground.GameTerminals.Length < 0) yield();
         while (GamePlayground.GameTerminals[0] is null) yield();
-        while (GamePlayground.GameTerminals[0].GUIPlayer is null) yield();
-        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+        while (GamePlayground.GameTerminals[0].ControlledPlayer is null) yield();
+        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
         while (player.ScriptAPI is null) yield();
         CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
         while (playerScriptAPI.Post == 0) yield();
@@ -206,8 +206,8 @@ class RMT : RMC
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
         while (GamePlayground.GameTerminals.Length < 0) yield();
         while (GamePlayground.GameTerminals[0] is null) yield();
-        while (GamePlayground.GameTerminals[0].GUIPlayer is null) yield();
-        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
+        while (GamePlayground.GameTerminals[0].ControlledPlayer is null) yield();
+        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
         while (player.ScriptAPI is null) yield();
         m_playerScores.SortAsc();
 #if DEPENDENCY_BETTERCHAT
