@@ -434,8 +434,8 @@ class RMT : RMC
             }
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             if (
-                PluginSettings::RMC_PrepatchTagsWarns &&
-                RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson) &&
+                (PluginSettings::RMC_PrepatchTagsWarns &&
+                RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) &&
                 !RMC::GotBelowMedalOnCurrentMap
             ) RMC::EndTime += RMC::TimeSpentMap;
 #if DEPENDENCY_BETTERCHAT
