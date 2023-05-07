@@ -423,7 +423,7 @@ class RMT : RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
-        UI::BeginDisabled(RMC::ClickedOnSkip);
+        UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
         if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
             RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
