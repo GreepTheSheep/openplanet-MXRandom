@@ -164,7 +164,7 @@ class RMT : RMC
     }
 
     void RMTSwitchMap() {
-        m_playerScores.SortDesc();
+        m_playerScores.SortAsc();
         isSwitchingMap = true;
         m_mapPersonalBests = {};
         RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
@@ -209,7 +209,7 @@ class RMT : RMC
         while (GamePlayground.GameTerminals[0].GUIPlayer is null) yield();
         CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
         while (player.ScriptAPI is null) yield();
-        m_playerScores.SortDesc();
+        m_playerScores.SortAsc();
 #if DEPENDENCY_BETTERCHAT
         if (m_playerScores.Length > 0) {
             RMTPlayerScore@ p = m_playerScores[0];
@@ -286,7 +286,7 @@ class RMT : RMC
                     RMC::GotGoalMedalOnCurrentMap = true;
                     RMTPlayerScore@ playerScored = findOrCreatePlayerScore(playerGotGoalActualMap);
                     playerScored.AddGoal();
-                    m_playerScores.SortDesc();
+                    m_playerScores.SortAsc();
 
 #if DEPENDENCY_BETTERCHAT
                     BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
