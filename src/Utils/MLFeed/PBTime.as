@@ -1,3 +1,4 @@
+#if TMNEXT
 class PBTime {
     string name;
     string club;
@@ -40,3 +41,4 @@ class PBTime {
         return 1;
     }
 }
+#endif

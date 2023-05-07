@@ -188,6 +188,7 @@ namespace RMC
                 UI::Text(RMC::FormatTimer(Objective.RunTime));
                 UI::PopFont();
             }
+#if TMNEXT
             else if (selectedGameMode == GameMode::Together) {
                 vec2 pos_orig = UI::GetCursorPos();
                 Together.RenderGoalMedal();
@@ -196,6 +197,7 @@ namespace RMC
                 UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
                 Together.RenderScores();
             }
+#endif
         }
     }
 

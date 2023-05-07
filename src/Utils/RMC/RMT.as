@@ -1,5 +1,6 @@
 class RMT : RMC
 {
+#if TMNEXT
     string LobbyMapUID = "";
     NadeoServices::ClubRoom@ RMTRoom;
     MX::MapInfo@ currentMap;
@@ -350,13 +351,11 @@ class RMT : RMC
                         UI::SameLine();
                     }
                     UI::TextDisabled("by " + currentMap.Username);
-#if TMNEXT
                     if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(currentMap)) {
                         RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(currentMap);
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z"+prepatchTag.title);
                         UI::SetPreviousTooltip(prepatchTag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
-#endif
                     if (PluginSettings::RMC_TagsLength != 0) {
                         if (currentMap.Tags.Length == 0) UI::TextDisabled("No tags");
                         else {
@@ -409,10 +408,8 @@ class RMT : RMC
             }
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             if (
-#if TMNEXT
                 PluginSettings::RMC_PrepatchTagsWarns &&
                 RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson) &&
-#endif
                 !RMC::GotBelowMedalOnCurrentMap
             ) RMC::EndTime += RMC::TimeSpentMap;
 #if DEPENDENCY_BETTERCHAT
@@ -611,4 +608,7 @@ class RMTPlayerScore {
         if (goals == other.goals) return 0;
         return 1;
     }
+#else
+    string GetModeName() override { return "Random Map Together (NOT SUPPORTED ON THIS GAME)";}
+#endif
 }
