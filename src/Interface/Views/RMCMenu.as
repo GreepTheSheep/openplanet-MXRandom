@@ -54,6 +54,7 @@ namespace RMC
             if (UI::TreeNode(MX_COLOR_STR + Icons::Trophy + " \\$zObjective Mode")) {
                 UI::TextDisabled(Icons::InfoCircle + " Hover for infos");
                 UI::SetPreviousTooltip("Set a goal, and get it done as quickly as possible!\nSkips are unlimited but costs you time spending on the map.");
+                UI::AlignTextToFramePadding();
                 UI::Text("Goal:");
                 UI::SameLine();
                 UI::SetNextItemWidth(150);
@@ -94,11 +95,13 @@ namespace RMC
                     Renderables::Add(RMTHelpModalDialog());
                 }
 #if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
+                UI::AlignTextToFramePadding();
                 UI::Text("Club ID:");
                 UI::SameLine();
-                UI::SetNextItemWidth(150);
+                UI::SetNextItemWidth(156);
                 PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
 
+                UI::AlignTextToFramePadding();
                 UI::Text("Room ID:");
                 UI::SameLine();
                 UI::SetNextItemWidth(150);
