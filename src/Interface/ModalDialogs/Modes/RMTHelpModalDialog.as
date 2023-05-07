@@ -7,8 +7,8 @@ class RMTHelpModalDialog : ModalDialog
     {
         super(Icons::InfoCircle + " \\$zRandom Map Together###RMTHelp");
         m_size = vec2(Draw::GetWidth(), Draw::GetHeight()) * 0.6f;
-        @clubIdTex = UI::LoadTexture("src/Assets/Images/help_clubId.png");
-        @roomIdTex = UI::LoadTexture("src/Assets/Images/help_roomId.png");
+        @clubIdTex = UI::LoadTexture("src/Assets/Images/help_clubId.jpg");
+        @roomIdTex = UI::LoadTexture("src/Assets/Images/help_roomId.jpg");
     }
 
     void RenderDialog() override
