@@ -166,7 +166,7 @@ class RMT : RMC
     }
 
     void RMTSwitchMap() {
-        m_playerScores.SortAsc();
+        m_playerScores.SortDesc();
         isSwitchingMap = true;
         m_mapPersonalBests = {};
         RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
@@ -211,7 +211,7 @@ class RMT : RMC
         while (GamePlayground.GameTerminals[0].ControlledPlayer is null) yield();
         CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
         while (player.ScriptAPI is null) yield();
-        m_playerScores.SortAsc();
+        m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
         if (m_playerScores.Length > 0) {
             RMTPlayerScore@ p = m_playerScores[0];
@@ -270,7 +270,7 @@ class RMT : RMC
                             RMC::ShowTimer = false;
                             GameEndNotification();
                             @nextMap = null;
-                            m_playerScores.SortAsc();
+                            m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
                             BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
                             sleep(200);
@@ -288,7 +288,7 @@ class RMT : RMC
                     RMC::GotGoalMedalOnCurrentMap = true;
                     RMTPlayerScore@ playerScored = findOrCreatePlayerScore(playerGotGoalActualMap);
                     playerScored.AddGoal();
-                    m_playerScores.SortAsc();
+                    m_playerScores.SortDesc();
 
 #if DEPENDENCY_BETTERCHAT
                     BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
@@ -602,10 +602,7 @@ class RMTPlayerScore {
     }
 
     int opCmp(RMTPlayerScore@ other) const {
-        if (goals == 0) {
-            return (other.goals == 0 ? 0 : 1); // one or both goals unset
-        }
-        if (other.goals == 0 || goals < other.goals) return -1;
+        if (goals < other.goals) return -1;
         if (goals == other.goals) return 0;
         return 1;
     }
