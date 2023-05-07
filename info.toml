@@ -14,3 +14,5 @@ optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook
 exports = [ "src/Exports/Exports.as" ]
 
 timeout = 0
+
+#defines = [ "FORCE_NO_DEV" ]

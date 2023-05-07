@@ -24,7 +24,11 @@ const array<string> PLUGIN_VERSION_SPLIT= PLUGIN_VERSION.Split(".");
 const string GITHUB_REPO_FULLNAME       = "GreepTheSheep/openplanet-mx-random";
 const string GITHUB_URL                 = "https://github.com/" + GITHUB_REPO_FULLNAME;
 
+#if FORCE_NO_DEV
+const bool IS_DEV_MODE                  = false;
+#else
 const bool IS_DEV_MODE                  = Meta::IsDeveloperMode();
+#endif
 
 const string DATA_JSON_LOCATION         = IO::FromDataFolder("MXRandom_Data.json");
 Json::Value DataJson                    = Json::FromFile(DATA_JSON_LOCATION);
