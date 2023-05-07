@@ -39,6 +39,7 @@ class RMT : RMC
         }
 
         RenderTimer();
+        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
         vec2 pos_orig = UI::GetCursorPos();
         RenderGoalMedal();
@@ -50,7 +51,7 @@ class RMT : RMC
        if (PluginSettings::RMC_DisplayPace) {
             try {
                 float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
-                UI::Text("Pace: " + Text::Format("%.2f", goalPace));
+                UI::Text("Pace: " + goalPace);
             } catch {
                 UI::Text("Pace: 0.00");
             }

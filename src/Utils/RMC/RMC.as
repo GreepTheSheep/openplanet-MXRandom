@@ -45,17 +45,18 @@ class RMC
         }
 
         RenderTimer();
+        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
-        RenderGoalMedal();
         vec2 pos_orig = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig.x+50, pos_orig.y));
+        RenderGoalMedal();
+        UI::SetCursorPos(vec2(pos_orig.x+100, pos_orig.y));
         RenderBelowGoalMedal();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
 
         if (PluginSettings::RMC_DisplayPace) {
             try {
                 float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
-                UI::Text("Pace: " + Text::Format("%.2f", goalPace));
+                UI::Text("Pace: " + goalPace);
             } catch {
                 UI::Text("Pace: 0.00");
             }
@@ -274,6 +275,7 @@ class RMC
     {
         RMC::StartTime = Time::Now;
         RMC::EndTime = RMC::StartTime + TimeLimit();
+        ModeStartTimestamp = Time::get_Now();
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
