@@ -36,14 +36,17 @@ namespace TM
     }
 
     void ClosePauseMenu() {
-        CTrackMania@ app = cast<CTrackMania>(GetApp());
-        bool MenuDisplayed = app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed;
-        if(MenuDisplayed) {
-            CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
+        if(IsPauseMenuDisplayed()) {
+            CSmArenaClient@ playground = cast<CSmArenaClient>(GetApp().CurrentPlayground);
             if(playground !is null) {
                 playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
             }
         }
+    }
+
+    bool IsPauseMenuDisplayed() {
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        return app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed;
     }
 
     bool IsInServer(){
