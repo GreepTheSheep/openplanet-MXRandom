@@ -50,7 +50,7 @@ class RMC
         vec2 pos_orig = UI::GetCursorPos();
         RenderGoalMedal();
         vec2 pos_orig_goal = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig_goal.x+100, pos_orig_goal.y));
+        UI::SetCursorPos(vec2(pos_orig_goal.x+50, pos_orig_goal.y));
         RenderBelowGoalMedal();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
 
