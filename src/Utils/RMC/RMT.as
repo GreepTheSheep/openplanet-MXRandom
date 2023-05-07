@@ -153,7 +153,14 @@ class RMT : RMC
     void RMTFetchNextMap() {
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
-        Json::Value res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+        Json::Value res;
+        try {
+            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+        } catch {
+            Log::Error("ManiaExchange API returned an error, retrying...", true);
+            RMTSwitchMap();
+            return;
+        }
         Json::Value playedAt = Json::Object();
         Time::Info date = Time::Parse();
         playedAt["Year"] = date.Year;
