@@ -1,6 +1,7 @@
 namespace RMC
 {
     bool ShowTimer = false;
+    bool IsStarting = false;
     bool IsRunning = false;
     bool IsPaused = false;
     bool ClickedOnSkip = false;
@@ -79,6 +80,7 @@ namespace RMC
     {
         bool IsInited = false;
         ShowTimer = true;
+        IsStarting = true;
         ClickedOnSkip = false;
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
@@ -120,6 +122,7 @@ namespace RMC
                         Objective.StartTimer();
                     }
                     TimeSpawnedMap = Time::Now;
+                    IsStarting = false;
                     MX::PreloadRandomMap();
                     break;
                 }

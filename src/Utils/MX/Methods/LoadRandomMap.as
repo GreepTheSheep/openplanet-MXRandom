@@ -107,7 +107,7 @@ namespace MX
     {
         string url = "https://"+MX_URL+"/mapsearch2/search?api=on&random=1";
 
-        if (RMC::IsRunning)
+        if (RMC::IsRunning || RMC::IsStarting)
         {
 #if TMNEXT
             url += "&etags=23,37,40";

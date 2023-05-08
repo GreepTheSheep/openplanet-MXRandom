@@ -96,6 +96,7 @@ class RMT : RMC
     }
 
     void SetupMapStart() {
+        RMC::IsStarting = true;
         isSwitchingMap = true;
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
@@ -148,6 +149,7 @@ class RMT : RMC
         startnew(CoroutineFunc(UpdateRecordsLoop));
         RMC::TimeSpawnedMap = Time::Now;
         isSwitchingMap = false;
+        RMC::IsStarting = false;
         startnew(CoroutineFunc(RMTFetchNextMap));
     }
 
