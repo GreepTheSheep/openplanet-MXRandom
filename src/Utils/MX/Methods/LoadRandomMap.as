@@ -114,8 +114,8 @@ namespace MX
 #else
             url += "&etags=20";
 #endif
-            url += "&lengthop=1";
-            url += "&length=9";
+            url += "&lengthop=3";
+            url += "&length=8";
         }
         else
         {
