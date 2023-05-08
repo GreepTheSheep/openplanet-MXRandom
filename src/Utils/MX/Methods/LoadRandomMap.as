@@ -5,7 +5,13 @@ namespace MX
     void PreloadRandomMap()
     {
         string URL = CreateQueryURL();
-        Json::Value res = API::GetAsync(URL)["results"][0];
+        try {
+            Json::Value res = API::GetAsync(URL)["results"][0];
+        } catch {
+            Log::Error("ManiaExchange API returned an error, retrying...");
+            PreloadRandomMap();
+            return;
+        }
         Log::Trace("PreloadRandomMapRes: "+Json::Write(res));
 
         Json::Value playedAt = Json::Object();
