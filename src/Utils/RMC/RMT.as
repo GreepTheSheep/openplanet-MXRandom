@@ -158,7 +158,7 @@ class RMT : RMC
             res = API::GetAsync(MX::CreateQueryURL())["results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...", true);
-            RMTSwitchMap();
+            RMTFetchNextMap();
             return;
         }
         Json::Value playedAt = Json::Object();
