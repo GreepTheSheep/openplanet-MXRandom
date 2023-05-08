@@ -157,7 +157,7 @@ class RMT : RMC
         try {
             res = API::GetAsync(MX::CreateQueryURL())["results"][0];
         } catch {
-            Log::Error("ManiaExchange API returned an error, retrying...", true);
+            Log::Error("ManiaExchange API returned an error, retrying...");
             RMTFetchNextMap();
             return;
         }
