@@ -1,12 +1,15 @@
 namespace MX
 {
     MX::MapInfo@ preloadedMap;
+    bool isLoadingPreload = false;
 
     void PreloadRandomMap()
     {
+        isLoadingPreload = true;
         string URL = CreateQueryURL();
+        Json::Value res;
         try {
-            Json::Value res = API::GetAsync(URL)["results"][0];
+            res = API::GetAsync(URL)["results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...");
             PreloadRandomMap();
@@ -32,6 +35,7 @@ namespace MX
             return;
         }
 
+        isLoadingPreload = false;
         @preloadedMap = map;
     }
 
@@ -44,7 +48,8 @@ namespace MX
                 return;
             }
             RandomMapIsLoading = true;
-            if (preloadedMap is null) PreloadRandomMap();
+            if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
+            while (isLoadingPreload) yield();
             MX::MapInfo@ map = preloadedMap;
             @preloadedMap = null;
 

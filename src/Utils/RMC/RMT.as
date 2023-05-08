@@ -14,6 +14,7 @@ class RMT : RMC
     uint RMTTimerMapChange = 0;
     bool isSwitchingMap = false;
     bool pressedStopButton = false;
+    bool isFetchingNextMap = false;
 
     string GetModeName() override { return "Random Map Together";}
 
@@ -151,6 +152,7 @@ class RMT : RMC
     }
 
     void RMTFetchNextMap() {
+        isFetchingNextMap = true;
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
@@ -178,6 +180,7 @@ class RMT : RMC
             RMTSwitchMap();
             return;
         }
+        isFetchingNextMap = false;
     }
 
     void RMTSwitchMap() {
@@ -188,39 +191,11 @@ class RMT : RMC
         RMC::IsPaused = true;
         RMC::GotGoalMedalOnCurrentMap = false;
         RMC::GotBelowMedalOnCurrentMap = false;
-        if (nextMap is null) {
-            // Fetch a map
-            Log::Trace("RMT: Fetching a random map...");
-            Json::Value res;
-            try {
-                res = API::GetAsync(MX::CreateQueryURL())["results"][0];
-            } catch {
-                Log::Error("ManiaExchange API returned an error, retrying...", true);
-                RMTSwitchMap();
-                return;
-            }
-            Json::Value playedAt = Json::Object();
-            Time::Info date = Time::Parse();
-            playedAt["Year"] = date.Year;
-            playedAt["Month"] = date.Month;
-            playedAt["Day"] = date.Day;
-            playedAt["Hour"] = date.Hour;
-            playedAt["Minute"] = date.Minute;
-            playedAt["Second"] = date.Second;
-            res["PlayedAt"] = playedAt;
-            @currentMap = MX::MapInfo(res);
-            Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
-
-            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
-                Log::Trace("RMT: Map is not on NadeoServices, retrying...");
-                RMTSwitchMap();
-                return;
-            }
-        } else {
-            @currentMap = nextMap;
-            @nextMap = null;
-            Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
-        }
+        if (nextMap is null && !isFetchingNextMap) RMTFetchNextMap();
+        while (isFetchingNextMap) yield();
+        @currentMap = nextMap;
+        @nextMap = null;
+        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
 
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
         MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
