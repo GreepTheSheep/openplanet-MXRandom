@@ -179,7 +179,7 @@ class RMT : RMC
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
             Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
             @nextMap = null;
-            RMTSwitchMap();
+            RMTFetchNextMap();
             return;
         }
         isFetchingNextMap = false;
