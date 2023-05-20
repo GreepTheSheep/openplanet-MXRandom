@@ -10,12 +10,26 @@ class RMCConfigs {
 
 class RMCConfig {
     array<RMCConfigMapTag@> prepatchMapTags;
+    string etags;
+    string lengthop;
+    string length;
 
     RMCConfig(const Json::Value &in json) {
         if (json.HasKey("prepatch-maps-tags")) {
             for (uint i = 0; i < json["prepatch-maps-tags"].Length; i++)
                 prepatchMapTags.InsertLast(RMCConfigMapTag(json["prepatch-maps-tags"][i]));
         }
+        if (json.HasKey("search-etags") && json["search-etags"].GetType() == Json::Type::String) etags = json["search-etags"];
+#if TMNEXT
+        else etags = "23,37,40";
+#else
+        else etags = "20";
+#endif
+
+        if (json.HasKey("search-lengthop") && json["search-lengthop"].GetType() == Json::Type::String) lengthop = json["search-lengthop"];
+        else lengthop = "1";
+        if (json.HasKey("search-length") && json["search-length"].GetType() == Json::Type::String) length = json["search-length"];
+        else length = "9";
     }
 
     bool isMapHasPrepatchMapTags(const MX::MapInfo &in map) {

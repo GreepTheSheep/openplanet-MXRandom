@@ -92,13 +92,9 @@ namespace MX
 
         if (RMC::IsRunning || RMC::IsStarting)
         {
-#if TMNEXT
-            url += "&etags=23,37,40";
-#else
-            url += "&etags=20";
-#endif
-            url += "&lengthop=3";
-            url += "&length=8";
+            url += "&etags="+RMC::config.etags;
+            url += "&lengthop="+RMC::config.lengthop;
+            url += "&length="+RMC::config.length;
         }
         else
         {
