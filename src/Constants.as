@@ -30,6 +30,8 @@ const bool IS_DEV_MODE                  = false;
 const bool IS_DEV_MODE                  = Meta::IsDeveloperMode();
 #endif
 
-const string DATA_JSON_LOCATION         = IO::FromDataFolder("MXRandom_Data.json");
+const string DATA_JSON_LOCATION         = IO::FromStorageFolder("MXRandom_Data.json");
 Json::Value DataJson                    = Json::FromFile(DATA_JSON_LOCATION);
 Json::Value DataJsonOldVersion          = Json::FromFile(IO::FromDataFolder("TMXRandom_Data.json"));
+const string DATA_JSON_LOCATION_DATADIR = IO::FromDataFolder("MXRandom_Data.json");
+Json::Value DataJsonFromDataFolder      = Json::FromFile(DATA_JSON_LOCATION_DATADIR);

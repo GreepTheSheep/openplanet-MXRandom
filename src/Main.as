@@ -67,7 +67,12 @@ void Main()
     @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20);
 
     if (DataJson.GetType() == Json::Type::Null) {
-        if (DataJsonOldVersion.GetType() == Json::Type::Null) {
+        if (DataJsonFromDataFolder.GetType() != Json::Type::Null) {
+            DataManager::InitData(false);
+            DataJson = DataJsonFromDataFolder;
+            DataManager::SaveData();
+            IO::Delete(DATA_JSON_LOCATION_DATADIR);
+        } else if (DataJsonOldVersion.GetType() == Json::Type::Null) {
             DataManager::InitData();
             UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing "+PLUGIN_NAME+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
         } else {
