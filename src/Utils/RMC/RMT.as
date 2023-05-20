@@ -126,6 +126,7 @@ class RMT : RMC
             return;
         }
 
+        DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
         MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
         while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
@@ -199,6 +200,7 @@ class RMT : RMC
         @nextMap = null;
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
 
+        DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
         MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
         while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
