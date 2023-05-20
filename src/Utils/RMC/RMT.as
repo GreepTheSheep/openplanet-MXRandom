@@ -539,6 +539,7 @@ class RMT : RMC
             auto player = raceData.GetPlayer_V2(SMPlayer.User.Name);
             if (player is null) continue;
             if (player.bestTime < 1) continue;
+            if (player.CpCount != raceData.CPsToFinish) continue;
             auto pbTime = PBTime(SMPlayer, null, SMPlayer.User.WebServicesUserId == GetLocalPlayerWSID());
             pbTime.time = player.bestTime;
             pbTime.recordTs = Time::Stamp;
