@@ -16,7 +16,7 @@ class RMC
 
     string GetModeName() { return "Random Map Challenge";}
 
-    int TimeLimit() { return 60 * 60 * 1000; }
+    int TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
     string IsoDateToDMY(string isoDate)
     {

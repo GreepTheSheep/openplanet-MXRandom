@@ -31,6 +31,9 @@ namespace PluginSettings
     bool RMC_DisplayMapDate = true;
 
     [Setting hidden]
+    int RMC_Duration = 15;
+
+    [Setting hidden]
     int RMC_SurvivalMaxTime = 15;
 
     [Setting hidden]
@@ -71,6 +74,7 @@ namespace PluginSettings
                 RMC_GoalMedal = RMC::Medals[3];
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
+                RMC_Duration = 60;
                 RMC_SurvivalMaxTime = 15;
                 RMC_PrepatchTagsWarns = true;
             }
@@ -92,6 +96,8 @@ namespace PluginSettings
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map when got "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quits the map when the timer is up", RMC_ExitMapOnEndTime);
 
+            UI::SetNextItemWidth(300);
+            RMC_Duration = UI::SliderInt("Random Map Challange duration (in minutes)", RMC_Duration, 5, 120);
             UI::SetNextItemWidth(300);
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
