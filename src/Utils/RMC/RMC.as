@@ -41,6 +41,7 @@ class RMC
                 RMC::EndTime = -1;
             }
 
+            RenderCustomSearchWarning();
             UI::Separator();
         }
 
@@ -71,6 +72,14 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();
             RenderPlayingButtons();
+        }
+    }
+
+    void RenderCustomSearchWarning() {
+        if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
+            UI::SameLine();
+            UI::Text("\\$fc0"+Icons::ExclamationTriangle);
+            UI::SetPreviousTooltip("Custom Search Parameters. Forbidden on official Leaderboard");
         }
     }
 

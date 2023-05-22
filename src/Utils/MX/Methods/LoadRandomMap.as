@@ -90,7 +90,7 @@ namespace MX
     {
         string url = "https://"+MX_URL+"/mapsearch2/search?api=on&random=1";
 
-        if (RMC::IsRunning || RMC::IsStarting)
+        if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules)
         {
             url += "&etags="+RMC::config.etags;
             url += "&lengthop="+RMC::config.lengthop;
@@ -104,11 +104,14 @@ namespace MX
             if (PluginSettings::MapLength != "Anything"){
                 url += "&length=" + (PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)-1);
             }
-            if (PluginSettings::MapTag != "Anything"){
-                url += "&tags=" + PluginSettings::MapTagID;
+            if (!PluginSettings::MapTagsArr.IsEmpty()){
+                url += "&tags=" + PluginSettings::MapTags;
             }
-            if (PluginSettings::ExcludeMapTag != "Nothing"){
-                url += "&etags=" + PluginSettings::ExcludeMapTagID;
+            if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()){
+                url += "&etags=" + PluginSettings::ExcludeMapTags;
+            }
+            if (PluginSettings::TagInclusiveSearch){
+                url += "&tagsinc=1";
             }
         }
 
