@@ -153,6 +153,10 @@ class RMC
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
+                        if (PluginSettings::RMC_ShowAwards) {
+                            UI::SameLine();
+                            UI::Text("\\$db4" + Icons::Trophy + "\\$z " + CurrentMapFromJson.AwardCount);
+                        }
                         if(PluginSettings::RMC_DisplayMapDate) {
                             UI::TextDisabled(IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
                             UI::SameLine();
