@@ -16,7 +16,7 @@ class RMC
 
     string GetModeName() { return "Random Map Challenge";}
 
-    int TimeLimit() { return 60 * 60 * 1000; }
+    int TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
     string IsoDateToDMY(string isoDate)
     {
@@ -41,6 +41,7 @@ class RMC
                 RMC::EndTime = -1;
             }
 
+            RenderCustomSearchWarning();
             UI::Separator();
         }
 
@@ -71,6 +72,14 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();
             RenderPlayingButtons();
+        }
+    }
+
+    void RenderCustomSearchWarning() {
+        if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
+            UI::SameLine();
+            UI::Text("\\$fc0"+Icons::ExclamationTriangle);
+            UI::SetPreviousTooltip("Custom Search Parameters. Forbidden on official Leaderboard");
         }
     }
 
@@ -144,6 +153,10 @@ class RMC
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     if (CurrentMapFromJson !is null) {
                         UI::Text(CurrentMapFromJson.Name);
+                        if (PluginSettings::RMC_ShowAwards) {
+                            UI::SameLine();
+                            UI::Text("\\$db4" + Icons::Trophy + "\\$z " + CurrentMapFromJson.AwardCount);
+                        }
                         if(PluginSettings::RMC_DisplayMapDate) {
                             UI::TextDisabled(IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
                             UI::SameLine();

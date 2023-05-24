@@ -22,6 +22,9 @@ namespace PluginSettings
     uint RMC_TagsLength = 1;
 
     [Setting hidden]
+    bool RMC_ShowAwards = true;
+
+    [Setting hidden]
     bool RMC_SurvivalShowSurvivedTime = true;
 
     [Setting hidden]
@@ -29,6 +32,9 @@ namespace PluginSettings
 
     [Setting hidden]
     bool RMC_DisplayMapDate = true;
+
+    [Setting hidden]
+    int RMC_Duration = 60;
 
     [Setting hidden]
     int RMC_SurvivalMaxTime = 15;
@@ -71,6 +77,7 @@ namespace PluginSettings
                 RMC_GoalMedal = RMC::Medals[3];
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
+                RMC_Duration = 60;
                 RMC_SurvivalMaxTime = 15;
                 RMC_PrepatchTagsWarns = true;
             }
@@ -92,6 +99,8 @@ namespace PluginSettings
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map when got "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quits the map when the timer is up", RMC_ExitMapOnEndTime);
 
+            UI::SetNextItemWidth(300);
+            RMC_Duration = UI::SliderInt("Random Map Challange duration (in minutes)", RMC_Duration, 10, 120);
             UI::SetNextItemWidth(300);
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
@@ -120,6 +129,7 @@ namespace PluginSettings
             RMC_SurvivalShowSurvivedTime = UI::Checkbox("Display the time survived in Survival mode", RMC_SurvivalShowSurvivedTime);
             RMC_DisplayMapTimeSpent = UI::Checkbox("Display the time spent on the actual map", RMC_DisplayMapTimeSpent);
             RMC_DisplayMapDate = UI::Checkbox("Display the date the map was last updated", RMC_DisplayMapDate);
+            RMC_ShowAwards = UI::Checkbox("Display the amount of awards the map has received", RMC_ShowAwards);
             UI::SetNextItemWidth(100);
             RMC_TagsLength = UI::SliderInt("Display Map Tags Length (0: hidden)", RMC_TagsLength, 0, 3);
 
