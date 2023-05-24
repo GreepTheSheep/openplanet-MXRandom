@@ -42,7 +42,7 @@ namespace PluginSettings
 
     [Setting hidden]
 #if TMNEXT
-    string ExcludeMapTags = "25,37,40";
+    string ExcludeMapTags = "23,37,40";
     array<int> ExcludeMapTagsArr = {23, 37, 40};
 #else
     string ExcludeMapTags = "20";
