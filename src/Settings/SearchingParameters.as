@@ -123,7 +123,7 @@ namespace PluginSettings
             UI::Text("Include Tags");
             UI::TableNextColumn();
             UI::Text("Exclude Tags");
-            
+
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))){
                 for (uint i = 0; i < MX::m_mapTags.Length; i++)
@@ -152,7 +152,7 @@ namespace PluginSettings
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
     }
 
-        array<int> ToggleMapTag(array<int> tags, int tagID)
+    array<int> ToggleMapTag(array<int> tags, int tagID)
     {
         int position = tags.Find(tagID);
         if (position >= 0) {
@@ -182,7 +182,7 @@ namespace PluginSettings
         while ((i = tags.IndexOf(",")) > 0) {
             res.InsertLast(Text::ParseInt(tags.SubStr(0, i)));
             tags = tags.SubStr(i + 1);
-        } 
+        }
         if (tags != "") res.InsertLast(Text::ParseInt(tags));
         return res;
     }
