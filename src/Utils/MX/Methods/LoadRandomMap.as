@@ -29,6 +29,12 @@ namespace MX
 
         MX::MapInfo@ map = MX::MapInfo(res);
 
+        if (map.MapType != "TM_Race") {
+            Log::Warn("Map is not TM_Race, retrying...");
+            PreloadRandomMap();
+            return;
+        }
+
         if (map is null){
             Log::Warn("Map is null, retrying...");
             PreloadRandomMap();
@@ -125,7 +131,7 @@ namespace MX
 #endif
 
         // prevent loading non-Race maps (Royal, flagrush etc...)
-        url += "&mtype="+SUPPORTED_MAP_TYPE;
+        //url += "&mtype="+SUPPORTED_MAP_TYPE;
 
         return url;
     }
