@@ -22,7 +22,7 @@ namespace PluginSettings
     uint RMC_TagsLength = 1;
 
     [Setting hidden]
-    bool RMC_ShowAwards = true;
+    bool RMC_ShowAwards = false;
 
     [Setting hidden]
     bool RMC_SurvivalShowSurvivedTime = true;
