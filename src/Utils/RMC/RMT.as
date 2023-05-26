@@ -350,6 +350,10 @@ class RMT : RMC
                 UI::Separator();
                 if (currentMap !is null) {
                     UI::Text(currentMap.Name);
+                    if (PluginSettings::RMC_ShowAwards) {
+                        UI::SameLine();
+                        UI::Text("\\$db4" + Icons::Trophy + "\\$z " + currentMap.AwardCount);
+                    }
                     if(PluginSettings::RMC_DisplayMapDate) {
                         UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
                         UI::SameLine();
