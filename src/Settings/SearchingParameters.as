@@ -54,6 +54,19 @@ namespace PluginSettings
     [Setting hidden]
     bool TagInclusiveSearch = false;
 
+    const array<string> SearchingDifficultys = {
+        "Anything",
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+        "Expert",
+        "Lunatic",
+        "Impossible"
+    };
+
+    [Setting hidden]
+    string Difficulty = SearchingDifficultys[0];
+
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {
@@ -150,6 +163,24 @@ namespace PluginSettings
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
+
+        UI::NewLine();
+
+        UI::SetNextItemWidth(160);
+        if (UI::BeginCombo("Difficulty", Difficulty)){
+            for (uint i = 0; i < SearchingDifficultys.Length; i++) {
+                string difficulty = SearchingDifficultys[i];
+
+                if (UI::Selectable(difficulty, Difficulty == difficulty)) {
+                    Difficulty = difficulty;
+                }
+
+                if (Difficulty == difficulty) {
+                    UI::SetItemDefaultFocus();
+                }
+            }
+            UI::EndCombo();
+        }
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID)

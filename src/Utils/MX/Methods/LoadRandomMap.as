@@ -113,6 +113,9 @@ namespace MX
             if (PluginSettings::TagInclusiveSearch){
                 url += "&tagsinc=1";
             }
+            if (PluginSettings::Difficulty != "Anything"){
+                url += "&difficulty=" + (PluginSettings::SearchingDifficultys.Find(PluginSettings::Difficulty)-1);
+            }
         }
 
 #if TMNEXT
