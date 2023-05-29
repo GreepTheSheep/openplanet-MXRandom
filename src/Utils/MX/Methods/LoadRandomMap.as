@@ -12,8 +12,10 @@ namespace MX
             res = API::GetAsync(URL)["results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...");
-            RMC::config.length = RMC::config.length == "9" ? "8" : "9"
-            RMC::config.lengthop = RMC::config.lengthop == "1" ? "3" : "1"
+            if (RMC::IsRunning || RMC::IsStarting) {
+                RMC::config.length = RMC::config.length == "9" ? "8" : "9";
+                RMC::config.lengthop = RMC::config.lengthop == "1" ? "3" : "1";
+            }
             PreloadRandomMap();
             return;
         }
