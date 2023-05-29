@@ -93,13 +93,11 @@ namespace PluginSettings
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {   
-
-        UseLengthChecksInRequests = UI::Checkbox("Use length filters while doing the request to TMX (toggle this if TMX response times worsen significantly)", UseLengthChecksInRequests);
+        UI::Text("Length filter setting. Toggle this when:\n    * TMX gives super long response times (not guaranteed to fix the issue)\n    * You are trying to play very long maps");
+        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
         UI::Separator();
 
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zAllow search parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
-        UI::NewLine();
-
         UI::Separator();
 
         if (UI::OrangeButton("Reset to default")){
