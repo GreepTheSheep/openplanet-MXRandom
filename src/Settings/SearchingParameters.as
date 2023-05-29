@@ -33,6 +33,25 @@ namespace PluginSettings
         "Longer than 5 minutes"
     };
 
+    const array<int> SearchingMapLengthsMilliseconds = {
+        0,
+        15000,
+        30000,
+        45000,
+        60000,
+        75000,
+        90000,
+        105000,
+        120000,
+        150000,
+        180000,
+        210000,
+        240000,
+        270000,
+        300000,
+        1e30,  // infinity, I guess.
+    };
+
     [Setting hidden]
     string MapLength = SearchingMapLengths[0];
 
@@ -50,6 +69,10 @@ namespace PluginSettings
 #endif
 
     bool initArrays = false;
+
+    // add a setting that streamers can toggle to switch back to the old length checks in case the TMX API starts failing again.
+    [Setting hidden]
+    bool UseLengthChecksInRequests = false;
 
     [Setting hidden]
     bool TagInclusiveSearch = false;
@@ -69,7 +92,11 @@ namespace PluginSettings
 
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
-    {
+    {   
+
+        UseLengthChecksInRequests = UI::Checkbox("Use length filters while doing the request to TMX (toggle this if TMX response times worsen significantly)", UseLengthChecksInRequests);
+        UI::Separator();
+
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zAllow search parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
         UI::NewLine();
 

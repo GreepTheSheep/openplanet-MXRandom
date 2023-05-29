@@ -35,6 +35,93 @@ namespace MX
             return;
         }
 
+        if (!PluginSettings::UseLengthChecksInRequests) {
+            if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
+                if (map.AuthorTime >= 180000) {
+                    Log::Warn("Map is too long, retrying...");
+                    PreloadRandomMap();
+                    return;
+                }
+            } else if (PluginSettings::MapLength != "Anything") {
+                int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
+                switch (PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator)) {
+                    case 0:  // exact is prorbably a bit too strict so we'll allow a 5 second difference
+                        if (requiredLength == 1e30) {
+                            if (map.AuthorTime <= 300000+10000) {
+                                Log::Warn("Map is too short, retrying...");
+                                PreloadRandomMap();
+                                return;
+                            } else {
+                                break;
+                            }
+                        } else if ((map.AuthorTime < requiredLength-5000) || (map.AuthorTime > requiredLength+5000)) {
+                            Log::Warn("Map is not the correct length, retrying...");
+                            PreloadRandomMap();
+                            return;
+                        }
+                        break;
+                    
+                    case 1:
+                        if (requiredLength == 1e30) {
+                            if (map.AuthorTime > 300000) {
+                                Log::Warn("Map is too long, retrying...");
+                                PreloadRandomMap();
+                                return;
+                            } else {
+                                break;
+                            }
+                        } else if (!(map.AuthorTime < requiredLength)) {
+                            Log::Warn("Map is not the correct length, retrying...");
+                            PreloadRandomMap();
+                            return;
+                        }
+                        break;
+                    
+                    case 2:
+                        if (requiredLength == 1e30) {
+                            if (map.AuthorTime < 300000+10000) {
+                                Log::Warn("Map is too short, retrying...");
+                                PreloadRandomMap();
+                                return;
+                            } else {
+                                break;
+                            }
+                        } else if (!(map.AuthorTime > requiredLength)) {
+                            Log::Warn("Map is not the correct length, retrying...");
+                            PreloadRandomMap();
+                            return;
+                        }
+                        break;
+                     
+                    case 3:
+                        if (requiredLength == 1e30) {
+                            // everything is shorter than long, do nothing
+                        } else if (!(map.AuthorTime <= requiredLength)) {
+                            Log::Warn("Map is not the correct length, retrying...");
+                            PreloadRandomMap();
+                            return;
+                        }
+                        break;
+
+                    case 4:
+                        if (requiredLength == 1e30) {
+                            if (map.AuthorTime <= 300000) {
+                                Log::Warn("Map is too long, retrying...");
+                                PreloadRandomMap();
+                                return;
+                            } else {
+                                break;
+                            }
+                        } else if (!(map.AuthorTime >= requiredLength)) {
+                            Log::Warn("Map is not the correct length, retrying...");
+                            PreloadRandomMap();
+                            return;
+                        }
+                        break;
+                }
+            }
+        }
+
         isLoadingPreload = false;
         @preloadedMap = map;
     }
@@ -93,16 +180,20 @@ namespace MX
         if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules)
         {
             url += "&etags="+RMC::config.etags;
-            url += "&lengthop="+RMC::config.lengthop;
-            url += "&length="+RMC::config.length;
+            if (PluginSettings::UseLengthChecksInRequests) {
+                url += "&lengthop="+RMC::config.lengthop;
+                url += "&length="+RMC::config.length;
+            }
         }
         else
         {
-            if (PluginSettings::MapLengthOperator != "Exacts"){
-                url += "&lengthop=" + PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator);
-            }
-            if (PluginSettings::MapLength != "Anything"){
-                url += "&length=" + (PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)-1);
+            if (PluginSettings::UseLengthChecksInRequests) {
+                if (PluginSettings::MapLengthOperator != "Exacts"){
+                    url += "&lengthop=" + PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator);
+                }
+                if (PluginSettings::MapLength != "Anything"){
+                    url += "&length=" + (PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)-1);
+                }
             }
             if (!PluginSettings::MapTagsArr.IsEmpty()){
                 url += "&tags=" + PluginSettings::MapTags;
