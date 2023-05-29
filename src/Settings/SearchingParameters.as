@@ -93,7 +93,7 @@ namespace PluginSettings
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {   
-        UI::Text("Length filter setting. Toggle this when: TMX gives super long response times.");
+        UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
         UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
         UI::Separator();
 
