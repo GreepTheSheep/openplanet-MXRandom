@@ -37,7 +37,7 @@ namespace MX
 
         if (!PluginSettings::UseLengthChecksInRequests) {
             if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
-                if (map.AuthorTime >= 180000) {
+                if (map.AuthorTime > 180000) {
                     Log::Warn("Map is too long, retrying...");
                     PreloadRandomMap();
                     return;
