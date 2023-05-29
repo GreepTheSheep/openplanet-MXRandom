@@ -46,7 +46,7 @@ namespace MX
                 int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
                 switch (PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator)) {
                     case 0:  // exact is prorbably a bit too strict so we'll allow a 5 second difference
-                        if (requiredLength == 1e30) {
+                        if (requiredLength == 100000000) {
                             if (map.AuthorTime <= 300000+10000) {
                                 Log::Warn("Map is too short, retrying...");
                                 PreloadRandomMap();
@@ -62,7 +62,7 @@ namespace MX
                         break;
                     
                     case 1:
-                        if (requiredLength == 1e30) {
+                        if (requiredLength == 100000000) {
                             if (map.AuthorTime > 300000) {
                                 Log::Warn("Map is too long, retrying...");
                                 PreloadRandomMap();
@@ -78,7 +78,7 @@ namespace MX
                         break;
                     
                     case 2:
-                        if (requiredLength == 1e30) {
+                        if (requiredLength == 100000000) {
                             if (map.AuthorTime < 300000+10000) {
                                 Log::Warn("Map is too short, retrying...");
                                 PreloadRandomMap();
@@ -94,7 +94,7 @@ namespace MX
                         break;
                      
                     case 3:
-                        if (requiredLength == 1e30) {
+                        if (requiredLength == 100000000) {
                             // everything is shorter than long, do nothing
                         } else if (!(map.AuthorTime <= requiredLength)) {
                             Log::Warn("Map is not the correct length, retrying...");
@@ -104,7 +104,7 @@ namespace MX
                         break;
 
                     case 4:
-                        if (requiredLength == 1e30) {
+                        if (requiredLength == 100000000) {
                             if (map.AuthorTime <= 300000) {
                                 Log::Warn("Map is too long, retrying...");
                                 PreloadRandomMap();

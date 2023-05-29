@@ -49,7 +49,7 @@ namespace PluginSettings
         240000,
         270000,
         300000,
-        1e30,  // infinity, I guess.
+        100000000,  // infinity, I guess.
     };
 
     [Setting hidden]
