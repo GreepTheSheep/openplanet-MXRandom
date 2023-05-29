@@ -72,7 +72,7 @@ namespace PluginSettings
 
     // add a setting that streamers can toggle to switch back to the old length checks in case the TMX API starts failing again.
     [Setting hidden]
-    bool UseLengthChecksInRequests = false;
+    bool UseLengthChecksInRequests = true;
 
     [Setting hidden]
     bool TagInclusiveSearch = false;
@@ -93,7 +93,7 @@ namespace PluginSettings
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {   
-        UI::Text("Length filter setting. Toggle this when:\n    * TMX gives super long response times (not guaranteed to fix the issue)\n    * You are trying to play very long maps");
+        UI::Text("Length filter setting. Toggle this when: TMX gives super long response times.");
         UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
         UI::Separator();
 
