@@ -92,11 +92,7 @@ namespace PluginSettings
 
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
-    {   
-        UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
-        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
-        UI::Separator();
-
+    {
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zAllow search parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
         UI::Separator();
 
@@ -115,6 +111,9 @@ namespace PluginSettings
 
         UI::SetNextItemWidth(160);
         // Length Operator
+        UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
+        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
+        UI::NewLine();
         if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
             for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
                 string operator = SearchingMapLengthOperators[i];
