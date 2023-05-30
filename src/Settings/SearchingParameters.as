@@ -70,7 +70,7 @@ namespace PluginSettings
 
     bool initArrays = false;
 
-    // add a setting that streamers can toggle to switch back to the old length checks in case the TMX API starts failing again.
+    // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
     [Setting hidden]
     bool UseLengthChecksInRequests = true;
 
