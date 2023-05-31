@@ -48,16 +48,16 @@ namespace MX
             } else if (PluginSettings::MapLength != "Anything") {
                 int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
                 switch (PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator)) {
-                    case 0:  // exact is prorbably a bit too strict so we'll allow a 5 second difference
+                    case 0:  // exact is prorbably a bit too strict so we'll allow an about 15 seconds difference
                         if (requiredLength == 100000000) {
-                            if (map.AuthorTime <= 300000+10000) {
+                            if (map.AuthorTime <= 300000+15000) {
                                 Log::Warn("Map is too short, retrying...");
                                 PreloadRandomMap();
                                 return;
                             } else {
                                 break;
                             }
-                        } else if ((map.AuthorTime < requiredLength-5000) || (map.AuthorTime > requiredLength+5000)) {
+                        } else if ((map.AuthorTime < requiredLength-15000) || (map.AuthorTime > requiredLength+15000)) {
                             Log::Warn("Map is not the correct length, retrying...");
                             PreloadRandomMap();
                             return;
