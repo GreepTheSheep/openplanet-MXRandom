@@ -60,7 +60,7 @@ namespace MX
                             return;
                         }
                         break;
-                    
+
                     case 1:
                         if (requiredLength == 100000000) {
                             if (map.AuthorTime > 300000) {
@@ -76,7 +76,7 @@ namespace MX
                             return;
                         }
                         break;
-                    
+
                     case 2:
                         if (requiredLength == 100000000) {
                             if (map.AuthorTime < 300000+10000) {
@@ -92,7 +92,7 @@ namespace MX
                             return;
                         }
                         break;
-                     
+
                     case 3:
                         if (requiredLength == 100000000) {
                             // everything is shorter than long, do nothing
