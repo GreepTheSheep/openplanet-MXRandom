@@ -29,8 +29,8 @@ namespace RMC
         "1 m 15 s",
         "1 m 30 s",
         "1 m 45 s",
-        "2 min", 
-        "2 m 30 s", 
+        "2 min",
+        "2 m 30 s",
         "3 min"
     };
 
