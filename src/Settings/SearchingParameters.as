@@ -107,13 +107,11 @@ namespace PluginSettings
             ExcludeMapTagsArr = {20};
 #endif
         }
-        UI::NewLine();
 
-        UI::SetNextItemWidth(160);
         // Length Operator
         UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
         UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
-        UI::NewLine();
+        UI::SetNextItemWidth(160);
         if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
             for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
                 string operator = SearchingMapLengthOperators[i];
@@ -146,8 +144,6 @@ namespace PluginSettings
             }
             UI::EndCombo();
         }
-
-        UI::NewLine();
 
         if (!initArrays) {
             MapTagsArr = ConvertListToArray(MapTags);
@@ -187,8 +183,6 @@ namespace PluginSettings
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
-
-        UI::NewLine();
 
         UI::SetNextItemWidth(160);
         if (UI::BeginCombo("Difficulty", Difficulty)){
