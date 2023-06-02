@@ -37,10 +37,7 @@ namespace MX
 
         if (!PluginSettings::UseLengthChecksInRequests) {
             if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
-                if (!(
-                    map.LengthName == "15 secs" || map.LengthName == "30 secs" || map.LengthName == "45 secs" || map.LengthName == "1 min" || map.LengthName == "1 m 15 s" || 
-                    map.LengthName == "1 m 30 s" || map.LengthName == "1 m 45 s" || map.LengthName == "2 min" || map.LengthName == "2 m 30 s" || map.LengthName == "3 min"
-                )) {
+                if (RMC::allowedMapLengths.Find(map.LengthName) == -1) {
                     Log::Warn("Map is too long, retrying...");
                     PreloadRandomMap();
                     return;
