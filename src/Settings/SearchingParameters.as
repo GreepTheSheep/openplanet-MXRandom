@@ -33,6 +33,25 @@ namespace PluginSettings
         "Longer than 5 minutes"
     };
 
+    const array<int> SearchingMapLengthsMilliseconds = {
+        0,
+        15000,
+        30000,
+        45000,
+        60000,
+        75000,
+        90000,
+        105000,
+        120000,
+        150000,
+        180000,
+        210000,
+        240000,
+        270000,
+        300000,
+        100000000,  // infinity, I guess.
+    };
+
     [Setting hidden]
     string MapLength = SearchingMapLengths[0];
 
@@ -50,6 +69,10 @@ namespace PluginSettings
 #endif
 
     bool initArrays = false;
+
+    // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
+    [Setting hidden]
+    bool UseLengthChecksInRequests = true;
 
     [Setting hidden]
     bool TagInclusiveSearch = false;
@@ -71,8 +94,6 @@ namespace PluginSettings
     void RenderSearchingSettingTab()
     {
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zAllow search parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
-        UI::NewLine();
-
         UI::Separator();
 
         if (UI::OrangeButton("Reset to default")){
@@ -90,6 +111,9 @@ namespace PluginSettings
 
         UI::SetNextItemWidth(160);
         // Length Operator
+        UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
+        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
+        UI::NewLine();
         if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
             for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
                 string operator = SearchingMapLengthOperators[i];
