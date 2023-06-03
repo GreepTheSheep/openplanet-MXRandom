@@ -3,6 +3,65 @@ namespace MX
     MX::MapInfo@ preloadedMap;
     bool isLoadingPreload = false;
 
+    Json::Value CheckCustomRulesParametersNoResults() {
+        // for some reason if we use random it *always* returns a webpage instead of an actual dict response if no items are found. It also sometimes does not find any items even though there are some.
+        // So we have to use a non-random API call which then gives us a dict from which we can check if any item would exist with the specified parameters. Thanks TMX. 
+        string check_url = "https://trackmania.exchange/mapsearch2/search?api=on&limit=1";
+#if TMNEXT
+        // ignore CharacterPilot maps
+        check_url += "&vehicles=1";
+#elif MP4
+        // only consider the correct titlepack
+        if (TM::CurrentTitlePack() == "TMAll") {
+            check_url += "&tpack=" + TM::CurrentTitlePack()+"&tpack=TMCanyon&tpack=TMValley&tpack=TMStadium&tpack=TMLagoon";
+        } else {
+            check_url += "&tpack=" + TM::CurrentTitlePack();
+        }
+#endif
+        // ignore any non-Race maps (Royal, flagrush etc...)
+        check_url += "&mtype="+SUPPORTED_MAP_TYPE;
+        if (PluginSettings::MapAuthor != "") {
+            Json::Value _res = API::GetAsync(check_url + "&author=" + Net::UrlEncode(PluginSettings::MapAuthor));
+            if (_res["totalItemCount"] == 0) {
+                // author does not own any usable map.
+                Log::Error(Icons::ExclamationTriangle+" No maps found for author '"+PluginSettings::MapAuthor+"', retrying without author set...");
+                PluginSettings::MapAuthor = "";
+                return _res;
+            } else if (_res["totalItemCount"] == 1) {
+                // author only has one usable map, so we can just return it as the API will troll when using random on it
+                return _res["results"][0];
+            }
+        }
+        if (PluginSettings::MapName != "") {
+            Json::Value _res = API::GetAsync(check_url + "&trackname=" + Net::UrlEncode(PluginSettings::MapName));
+            if (_res["totalItemCount"] == 0) {
+                // there are no map names matching the filter
+                Log::Error(Icons::ExclamationTriangle+" No maps found for name '"+PluginSettings::MapName+"', retrying without name set...");
+                PluginSettings::MapName = "";
+                return _res;
+            } else if (_res["totalItemCount"] == 1) {
+                // there is only one map matching the filter, so we can just return it
+                return _res["results"][0];
+            }
+        }
+        if (PluginSettings::MapAuthor != "" && PluginSettings::MapName != "") {
+            Json::Value _res = API::GetAsync(check_url + "&author=" + Net::UrlEncode(PluginSettings::MapAuthor) + "&trackname=" + Net::UrlEncode(PluginSettings::MapName));
+            if (_res["totalItemCount"] == 0) {
+                // there are no map names matching the filter
+                Log::Error(Icons::ExclamationTriangle+" No maps found for author '"+PluginSettings::MapAuthor+"' and name '"+PluginSettings::MapName+"', retrying without name set...");
+                PluginSettings::MapName = "";
+                return _res;
+            } else if (_res["totalItemCount"] == 1) {
+                // there is only one map matching the filter, so we can just return it
+                return _res["results"][0];
+            }
+        }
+        
+        Json::Value retval = Json::Object();
+        retval["hasMaps"] = true;
+        return retval;
+    }
+
     void PreloadRandomMap()
     {
         isLoadingPreload = true;
@@ -11,9 +70,29 @@ namespace MX
         try {
             res = API::GetAsync(URL)["results"][0];
         } catch {
-            Log::Error("ManiaExchange API returned an error, retrying...");
-            PreloadRandomMap();
-            return;
+            if (PluginSettings::CustomRules || (!RMC::IsStarting && !RMC::IsRunning)) {  
+                // we might get an error because the author doesn't have a map/no map with the given name exists
+                // if we do not detect that there are no matching results, we will enter an infinite loop with errors 
+                // that will force the user to reload the plugin 
+                Json::Value check = CheckCustomRulesParametersNoResults();
+                if (check.HasKey("TrackID")) {
+                    // we found a single map that matches the parameters, so we can just return it
+                    res = check;
+                } else if (check.HasKey("hasMaps")) {  
+                    // maps with parameters exist but we still got an error, just retry 
+                    // (from testing usually TMX doing weird stuff and not returning a map even though there is multiple, just retry and it will find one after a few tries)
+                    Log::Error("ManiaExchange API returned an error, retrying...");
+                    PreloadRandomMap();
+                    return;
+                } else {  // no maps found, retrying without parameters
+                    PreloadRandomMap();
+                    return;
+                }
+            } else {
+                Log::Error("ManiaExchange API returned an error, retrying...");
+                PreloadRandomMap();
+                return;
+            }
         }
         Log::Trace("PreloadRandomMapRes: "+Json::Write(res));
 
@@ -206,6 +285,15 @@ namespace MX
             }
             if (PluginSettings::Difficulty != "Anything"){
                 url += "&difficulty=" + (PluginSettings::SearchingDifficultys.Find(PluginSettings::Difficulty)-1);
+            }  
+            if (PluginSettings::MapAuthor != "") {
+                url += "&author=" + Net::UrlEncode(PluginSettings::MapAuthor);
+            }
+            if (PluginSettings::MapName != "") {
+                url += "&trackname=" + Net::UrlEncode(PluginSettings::MapName);
+            }
+            if (PluginSettings::MapPackID != 0) {
+                url += "&mid=" + PluginSettings::MapPackID;
             }
         }
 

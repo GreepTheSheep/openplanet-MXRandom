@@ -56,6 +56,15 @@ namespace PluginSettings
     string MapLength = SearchingMapLengths[0];
 
     [Setting hidden]
+    string MapAuthor = "";
+
+    [Setting hidden]
+    string MapName = "";
+
+    [Setting hidden]
+    int64 MapPackID = 0;
+
+    [Setting hidden]
     string MapTags = "";
     array<int> MapTagsArr = {};
 
@@ -100,6 +109,9 @@ namespace PluginSettings
             MapLengthOperator = SearchingMapLengthOperators[0];
             MapLength = SearchingMapLengths[0];
             TagInclusiveSearch = false;
+            MapAuthor = "";
+            MapName = "";
+            MapPackID = 0;
             MapTagsArr = {};
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40};
@@ -144,6 +156,18 @@ namespace PluginSettings
             }
             UI::EndCombo();
         }
+
+        UI::NewLine();
+
+        UI::SetNextItemWidth(200);
+        MapName = UI::InputText("Map Name Filter", MapName, false);
+        UI::SetNextItemWidth(200);
+        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", false)); 
+        // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
+        UI::SetNextItemWidth(200);
+        MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
+
+        UI::NewLine();
 
         if (!initArrays) {
             MapTagsArr = ConvertListToArray(MapTags);
