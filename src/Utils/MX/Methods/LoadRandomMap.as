@@ -56,7 +56,7 @@ namespace MX
                 return _res["results"][0];
             }
         }
-        
+
         Json::Value retval = Json::Object();
         retval["hasMaps"] = true;
         return retval;
@@ -70,16 +70,16 @@ namespace MX
         try {
             res = API::GetAsync(URL)["results"][0];
         } catch {
-            if (PluginSettings::CustomRules || (!RMC::IsStarting && !RMC::IsRunning)) {  
+            if (PluginSettings::CustomRules || (!RMC::IsStarting && !RMC::IsRunning)) {
                 // we might get an error because the author doesn't have a map/no map with the given name exists
-                // if we do not detect that there are no matching results, we will enter an infinite loop with errors 
-                // that will force the user to reload the plugin 
+                // if we do not detect that there are no matching results, we will enter an infinite loop with errors
+                // that will force the user to reload the plugin
                 Json::Value check = CheckCustomRulesParametersNoResults();
                 if (check.HasKey("TrackID")) {
                     // we found a single map that matches the parameters, so we can just return it
                     res = check;
-                } else if (check.HasKey("hasMaps")) {  
-                    // maps with parameters exist but we still got an error, just retry 
+                } else if (check.HasKey("hasMaps")) {
+                    // maps with parameters exist but we still got an error, just retry
                     // (from testing usually TMX doing weird stuff and not returning a map even though there is multiple, just retry and it will find one after a few tries)
                     Log::Error("ManiaExchange API returned an error, retrying...");
                     PreloadRandomMap();
@@ -285,7 +285,7 @@ namespace MX
             }
             if (PluginSettings::Difficulty != "Anything"){
                 url += "&difficulty=" + (PluginSettings::SearchingDifficultys.Find(PluginSettings::Difficulty)-1);
-            }  
+            }
             if (PluginSettings::MapAuthor != "") {
                 url += "&author=" + Net::UrlEncode(PluginSettings::MapAuthor);
             }

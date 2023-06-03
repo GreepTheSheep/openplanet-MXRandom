@@ -162,7 +162,7 @@ namespace PluginSettings
         UI::SetNextItemWidth(200);
         MapName = UI::InputText("Map Name Filter", MapName, false);
         UI::SetNextItemWidth(200);
-        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", false)); 
+        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", false));
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
         UI::SetNextItemWidth(200);
         MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
@@ -207,6 +207,8 @@ namespace PluginSettings
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
+
+        UI::NewLine();
 
         UI::SetNextItemWidth(160);
         if (UI::BeginCombo("Difficulty", Difficulty)){
