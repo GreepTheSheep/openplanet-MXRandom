@@ -429,6 +429,7 @@ class RMT : RMC
 #endif
             startnew(CoroutineFunc(RMTSwitchMap));
         }
+        Log::Warn("Skip might fail due to Nadeo. If it fails, try vote-skipping, it should skip properly.");
         UI::EndDisabled();
     }
 
