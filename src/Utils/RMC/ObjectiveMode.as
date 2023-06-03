@@ -146,6 +146,7 @@ class RMObjective : RMC
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();
                                 }
+                                @MX::preloadedMap = null;
                             }
                         } else {
                             RMC::IsPaused = true;

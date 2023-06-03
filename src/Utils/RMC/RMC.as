@@ -39,6 +39,7 @@ class RMC
                 RMC::ShowTimer = false;
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
+                @MX::preloadedMap = null;
             }
 
             RenderCustomSearchWarning();
@@ -376,6 +377,7 @@ class RMC
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();
                                 }
+                                @MX::preloadedMap = null;
                             }
                         } else {
                             RMC::IsPaused = true;

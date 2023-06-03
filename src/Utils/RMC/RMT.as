@@ -31,6 +31,7 @@ class RMT : RMC
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
                 @nextMap = null;
+                @MX::preloadedMap = null;
 #if DEPENDENCY_BETTERCHAT
                 BetterChat::SendChatMessage(Icons::Users + " Random Map Together stopped");
                 startnew(CoroutineFunc(BetterChatSendLeaderboard));
@@ -273,6 +274,7 @@ class RMT : RMC
                             RMC::ShowTimer = false;
                             GameEndNotification();
                             @nextMap = null;
+                            @MX::preloadedMap = null;
                             m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
                             BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
