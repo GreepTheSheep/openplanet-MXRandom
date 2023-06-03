@@ -5,7 +5,7 @@ namespace MX
 
     Json::Value CheckCustomRulesParametersNoResults() {
         // for some reason if we use random it *always* returns a webpage instead of an actual dict response if no items are found. It also sometimes does not find any items even though there are some.
-        // So we have to use a non-random API call which then gives us a dict from which we can check if any item would exist with the specified parameters. Thanks TMX. 
+        // So we have to use a non-random API call which then gives us a dict from which we can check if any item would exist with the specified parameters.
         string check_url = "https://trackmania.exchange/mapsearch2/search?api=on&limit=1";
 #if TMNEXT
         // ignore CharacterPilot maps
