@@ -102,7 +102,7 @@ namespace PluginSettings
     [SettingsTab name="Searching"]
     void RenderSearchingSettingTab()
     {
-        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zAllow search parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
+        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse there parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
         UI::Separator();
 
         if (UI::OrangeButton("Reset to default")){
