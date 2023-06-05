@@ -96,7 +96,7 @@ namespace RMC
         IsStarting = true;
         ClickedOnSkip = false;
         if (!(MX::preloadedMap is null)) {
-            MX::clearPreloadedMap();
+            @MX::preloadedMap = null;
         }
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
