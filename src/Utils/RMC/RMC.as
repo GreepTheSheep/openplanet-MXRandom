@@ -80,8 +80,8 @@ class RMC
     void RenderCustomSearchWarning() {
         if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
             UI::Separator();
-            UI::Text("\\$fc0"+ Icons::ExclamationTriangle + " Invalid for offical leaderboards " + Icons::ExclamationTriangle);
-            UI::SetPreviousTooltip("This run has custom search parameters enabled, meaning that you only get maps after the settings you configured. \nTo change this, toggle the first setting under the \"Searching\" settings");
+            UI::Text("\\$fc0"+ Icons::ExclamationTriangle + " \\$zInvalid for offical leaderboards ");
+            UI::SetPreviousTooltip("This run has custom search parameters enabled, meaning that you only get maps after the settings you configured. \nTo change this, toggle the \"Use these parameters in RMC\" under the \"Searching\" settings");
         }
     }
 
