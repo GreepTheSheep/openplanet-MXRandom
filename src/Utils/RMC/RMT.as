@@ -121,6 +121,7 @@ class RMT : RMC
         res["PlayedAt"] = playedAt;
         @currentMap = MX::MapInfo(res);
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#991703"));
 
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
             Log::Trace("RMT: Map is not on NadeoServices, retrying...");
@@ -201,6 +202,7 @@ class RMT : RMC
         @currentMap = nextMap;
         @nextMap = null;
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#991703"));
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
@@ -346,7 +348,7 @@ class RMT : RMC
     void RenderCurrentMap() override
     {
         CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (currentMapChallenge !is null) {
+        if (isSwitchingMap || currentMapChallenge !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
             if (currentMapInfo !is null) {
                 UI::Separator();
@@ -387,6 +389,9 @@ class RMT : RMC
             UI::Separator();
             UI::AlignTextToFramePadding();
             UI::Text("Switching map...");
+            UI::AlignTextToFramePadding();
+            UI::Text(Icons::InfoCircle + " hover for infos");
+            UI::SetPreviousTooltip("Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.");
         }
     }
 
