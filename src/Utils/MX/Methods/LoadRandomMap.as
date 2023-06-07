@@ -200,7 +200,6 @@ namespace MX
                 }
             }
         }
-        print(map.LengthName);
         isLoadingPreload = false;
         @preloadedMap = map;
     }
