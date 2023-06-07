@@ -42,7 +42,6 @@ class RMC
                 @MX::preloadedMap = null;
             }
 
-            RenderCustomSearchWarning();
             UI::Separator();
         }
 
@@ -70,6 +69,8 @@ class RMC
             RenderCurrentMap();
         }
 
+        RenderCustomSearchWarning();
+
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();
             RenderPlayingButtons();
@@ -78,9 +79,9 @@ class RMC
 
     void RenderCustomSearchWarning() {
         if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
-            UI::SameLine();
-            UI::Text("\\$fc0"+Icons::ExclamationTriangle);
-            UI::SetPreviousTooltip("Custom Search Parameters. Forbidden on official Leaderboard");
+            UI::Separator();
+            UI::Text("\\$fc0"+ Icons::ExclamationTriangle + " \\$zInvalid for offical leaderboards ");
+            UI::SetPreviousTooltip("This run has custom search parameters enabled, meaning that you only get maps after the settings you configured. \nTo change this, toggle the \"Use these parameters in RMC\" under the \"Searching\" settings");
         }
     }
 
