@@ -348,7 +348,7 @@ class RMT : RMC
     void RenderCurrentMap() override
     {
         CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (isSwitchingMap || currentMapChallenge !is null) {
+        if (!isSwitchingMap && currentMapChallenge !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
             if (currentMapInfo !is null) {
                 UI::Separator();
