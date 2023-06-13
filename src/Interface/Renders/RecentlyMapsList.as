@@ -45,7 +45,7 @@ namespace Render
 #else
                 if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
-                    TM::loadMapURL = "https://"+MX_URL+"/maps/download/"+map.TrackID;
+                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID;
                     startnew(TM::LoadMap);
                 }
 

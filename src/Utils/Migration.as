@@ -22,7 +22,7 @@ namespace Migration
     void StartRequestMapsInfo(array<int> MXIds)
     {
         array<MX::MapInfo@> Maps;
-        string url = "https://"+MX_URL+"/api/maps/get_map_info/multi/";
+        string url = PluginSettings::RMC_MX_Url+"/api/maps/get_map_info/multi/";
         string mapIdsStr = "";
 
         for (uint i = 0; i < MXIds.Length; i++)

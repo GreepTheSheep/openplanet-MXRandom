@@ -6,7 +6,7 @@ namespace MX
     Json::Value CheckCustomRulesParametersNoResults() {
         // for some reason if we use random it *always* returns a webpage instead of an actual dict response if no items are found. It also sometimes does not find any items even though there are some.
         // So we have to use a non-random API call which then gives us a dict from which we can check if any item would exist with the specified parameters.
-        string check_url = "https://trackmania.exchange/mapsearch2/search?api=on&limit=1";
+        string check_url = PluginSettings::RMC_MX_Url + "/mapsearch2/search?api=on&limit=1";
 #if TMNEXT
         // ignore CharacterPilot maps
         check_url += "&vehicles=1";
@@ -237,10 +237,10 @@ namespace MX
 #if DEPENDENCY_CHAOSMODE
             if (ChaosMode::IsInRMCMode()) {
                 Log::Trace("Loading map in Chaos Mode");
-                app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
+                app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
             } else
 #endif
-            app.ManiaTitleControlScriptAPI.PlayMap("https://"+MX_URL+"/maps/download/"+map.TrackID, "", "");
+            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "", "");
         }
         catch
         {
@@ -253,7 +253,7 @@ namespace MX
 
     string CreateQueryURL()
     {
-        string url = "https://"+MX_URL+"/mapsearch2/search?api=on&random=1";
+        string url = PluginSettings::RMC_MX_Url+"/mapsearch2/search?api=on&random=1";
 
         if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules)
         {
