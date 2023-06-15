@@ -114,8 +114,8 @@ namespace PluginSettings
 #endif
 
             UI::SetNextItemWidth(300);
-            RMC_MX_Url = UI::InputText("ManiaExchange Proxy Url", RMC_MX_Url);
-            UI::SetPreviousTooltip("Proxy api calls to ManiaExchange via this url. Useful for caching and preloading api responses for better performance.");
+            RMC_MX_Url = UI::InputText("ManiaExchange Base Url", RMC_MX_Url);
+            UI::SetPreviousTooltip("Use this url for api calls to ManiaExchange. Useful for hosting your own service for caching and preloading api responses for better performance.");
 
             UI::EndTabItem();
         }

@@ -64,8 +64,7 @@ void RenderAboutTab()
     UI::SameLine();
     if (UI::RedButton(Icons::Heart + " \\$zSupport ManiaExchange")) OpenBrowserURL("https://"+MX_URL+"/support");
 
-    UI::Text("Base URL \\$777" + MX_URL);
-    if (PluginSettings::RMC_MX_Url != "https://"+MX_URL) UI::Text("Proxy URL \\$777" + PluginSettings::RMC_MX_Url);
+    UI::Text("Base URL \\$777" + PluginSettings::RMC_MX_Url);
 
     UI::AlignTextToFramePadding();
     UI::Text("Follow the ManiaExchange network on");
