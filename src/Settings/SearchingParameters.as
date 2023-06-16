@@ -178,10 +178,12 @@ namespace PluginSettings
         UI::SetPreviousTooltip("If disabled, you will get results for any author that contains the text you entered.\nIf you search for \"Nadeo\", you will get results for \"Nadeo\", \"Nadeo123\", \"Nadeo_\", etc.\nIf enabled, you will only get results for \"Nadeo\".\nHowever this can lead to issues if the author has changed their MX username since uploading the map. This can be avoided by specifying all the names the author has used.");
         UI::NewLine();
 
+        MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
+
+
         if (!initArrays) {
             MapTagsArr = ConvertListToArray(MapTags);
             ExcludeMapTagsArr = ConvertListToArray(ExcludeMapTags);
-            MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
             initArrays = true;
         }
 
