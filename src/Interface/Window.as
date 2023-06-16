@@ -58,10 +58,10 @@ class Window
                         UI::EndChild();
                         UI::EndTabItem();
                     }
-                    if (UI::BeginTabItem(Icons::Cog + " Menu"))
+                    if (UI::BeginTabItem(Icons::Cog + " Advanced"))
                     {
-                        UI::BeginChild("MenuChild");
-                        PluginSettings::RenderMenuSettings();
+                        UI::BeginChild("AdvancedChild");
+                        PluginSettings::RenderAdvancedSettings();
                         UI::EndChild();
                         UI::EndTabItem();
                     }
