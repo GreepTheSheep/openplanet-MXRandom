@@ -64,7 +64,7 @@ void RenderAboutTab()
     UI::SameLine();
     if (UI::RedButton(Icons::Heart + " \\$zSupport ManiaExchange")) OpenBrowserURL("https://"+MX_URL+"/support");
 
-    UI::Text("Base URL \\$777" + MX_URL);
+    UI::Text("Base URL \\$777" + PluginSettings::RMC_MX_Url);
 
     UI::AlignTextToFramePadding();
     UI::Text("Follow the ManiaExchange network on");

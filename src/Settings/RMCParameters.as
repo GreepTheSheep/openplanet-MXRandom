@@ -61,6 +61,9 @@ namespace PluginSettings
     [Setting hidden]
     int RMC_Together_RoomId = 0;
 
+    [Setting hidden]
+    string RMC_MX_Url = "https://" + MX_URL;
+
     [SettingsTab name="Random Map Challenge"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
@@ -80,6 +83,7 @@ namespace PluginSettings
                 RMC_Duration = 60;
                 RMC_SurvivalMaxTime = 15;
                 RMC_PrepatchTagsWarns = true;
+                RMC_MX_Url = "https://" + MX_URL;
             }
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
@@ -108,6 +112,11 @@ namespace PluginSettings
             RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch maps warnings", RMC_PrepatchTagsWarns);
             UI::SetPreviousTooltip("Display a warning if the map is built before the new physics patches (eg the bobsleigh update)");
 #endif
+
+            UI::SetNextItemWidth(300);
+            RMC_MX_Url = UI::InputText("ManiaExchange Base Url", RMC_MX_Url);
+            UI::SetPreviousTooltip("Use this url for api calls to ManiaExchange. Useful for hosting your own service for caching and preloading api responses for better performance.");
+
             UI::EndTabItem();
         }
 
