@@ -1,4 +1,4 @@
-[SettingsTab name="About"]
+[SettingsTab name="About" order="0" icon="InfoCircle"]
 void RenderAboutTab()
 {
     if (MX::APIDown)

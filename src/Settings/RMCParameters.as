@@ -64,7 +64,7 @@ namespace PluginSettings
     [Setting hidden]
     string RMC_MX_Url = "https://" + MX_URL;
 
-    [SettingsTab name="Random Map Challenge"]
+    [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
         if (!dontShowBaseInfos) {

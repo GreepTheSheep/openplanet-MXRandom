@@ -99,7 +99,7 @@ namespace PluginSettings
     [Setting hidden]
     string Difficulty = SearchingDifficultys[0];
 
-    [SettingsTab name="Searching"]
+    [SettingsTab name="Searching" order="2" icon="Search"]
     void RenderSearchingSettingTab()
     {
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse these parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
