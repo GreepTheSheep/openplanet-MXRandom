@@ -79,10 +79,6 @@ namespace PluginSettings
 
     bool initArrays = false;
 
-    // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
-    [Setting hidden]
-    bool UseLengthChecksInRequests = true;
-
     [Setting hidden]
     bool TagInclusiveSearch = false;
 
@@ -121,8 +117,6 @@ namespace PluginSettings
         }
 
         // Length Operator
-        UI::Text("Length filter setting. Toggle this when TMX gives super long response times.");
-        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
         UI::SetNextItemWidth(160);
         if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
             for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
