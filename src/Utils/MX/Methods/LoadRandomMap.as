@@ -114,6 +114,19 @@ namespace MX
             return;
         }
 
+        if (
+            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch) 
+            || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
+        ) {
+            string author = map.Username.ToLower();
+            print(PluginSettings::MapAuthorNamesArr.Find(author));
+            if (PluginSettings::MapAuthorNamesArr.Find(author) == -1) {
+                Log::Warn("Map author does not match, retrying...");
+                PreloadRandomMap();
+                return;
+            }
+        }
+
         if (!PluginSettings::UseLengthChecksInRequests) {
             if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
                 if (RMC::allowedMapLengths.Find(map.LengthName) == -1) {
