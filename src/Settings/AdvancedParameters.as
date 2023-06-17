@@ -16,8 +16,8 @@ namespace PluginSettings
         }
 
         UI::SetNextItemWidth(300);
-        RMC_MX_Url = UI::InputText("ManiaExchange Base Url", RMC_MX_Url);
-        UI::SetPreviousTooltip("Use this url for api calls to ManiaExchange. Useful for hosting your own service for caching and preloading api responses for better performance.");
+        RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
+        UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading api responses for better performance.\nOnly change if you know what you're doing!");
 
         closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
     }
