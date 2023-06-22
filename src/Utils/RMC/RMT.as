@@ -538,30 +538,34 @@ class RMT : RMC
     array<PBTime@> GetPlayersPBsMLFeed() {
         array<PBTime@> ret;
 #if DEPENDENCY_MLFEEDRACEDATA
-        auto mapg = cast<CTrackMania>(GetApp()).Network.ClientManiaAppPlayground;
-        if (mapg is null) return {};
-        auto scoreMgr = mapg.ScoreMgr;
-        auto userMgr = mapg.UserMgr;
-        if (scoreMgr is null || userMgr is null) return {};
-        auto raceData = MLFeed::GetRaceData_V2();
-        auto players = GetPlayersInServer();
-        if (players.Length == 0) return {};
-        auto playerWSIDs = MwFastBuffer<wstring>();
-        dictionary wsidToPlayer;
-        for (uint i = 0; i < players.Length; i++) {
-            auto SMPlayer = players[i];
-            auto player = raceData.GetPlayer_V2(SMPlayer.User.Name);
-            if (player is null) continue;
-            if (player.bestTime < 1) continue;
-            if (player.BestRaceTimes.Length != raceData.CPsToFinish) continue;
-            auto pbTime = PBTime(SMPlayer, null, SMPlayer.User.WebServicesUserId == GetLocalPlayerWSID());
-            pbTime.time = player.bestTime;
-            pbTime.recordTs = Time::Stamp;
-            pbTime.replayUrl = "";
-            pbTime.UpdateCachedStrings();
-            ret.InsertLast(pbTime);
+        try {
+            auto mapg = cast<CTrackMania>(GetApp()).Network.ClientManiaAppPlayground;
+            if (mapg is null) return {};
+            auto scoreMgr = mapg.ScoreMgr;
+            auto userMgr = mapg.UserMgr;
+            if (scoreMgr is null || userMgr is null) return {};
+            auto raceData = MLFeed::GetRaceData_V2();
+            auto players = GetPlayersInServer();
+            if (players.Length == 0) return {};
+            auto playerWSIDs = MwFastBuffer<wstring>();
+            dictionary wsidToPlayer;
+            for (uint i = 0; i < players.Length; i++) {
+                auto SMPlayer = players[i];
+                auto player = raceData.GetPlayer_V2(SMPlayer.User.Name);
+                if (player is null) continue;
+                if (player.bestTime < 1) continue;
+                if (player.BestRaceTimes is null || player.BestRaceTimes.Length != raceData.CPsToFinish) continue;
+                auto pbTime = PBTime(SMPlayer, null, SMPlayer.User.WebServicesUserId == GetLocalPlayerWSID());
+                pbTime.time = player.bestTime;
+                pbTime.recordTs = Time::Stamp;
+                pbTime.replayUrl = "";
+                pbTime.UpdateCachedStrings();
+                ret.InsertLast(pbTime);
+            }
+            ret.SortAsc();
+        } catch {
+            warn("Error while getting player PBs: " + getExceptionInfo());
         }
-        ret.SortAsc();
 #endif
         return ret;
     }
