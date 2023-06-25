@@ -29,11 +29,12 @@ namespace PluginSettings
             RMC_MX_Url = "https://" + MX_URL;
         }
 
-        bool clickedDanApi = UI::Button("Use DanOnTheMoon's Preloading + Proxy API");
-        UI::SetPreviousTooltip("Much faster API that preloads random maps and proxies requests to TMX.");
-        if (clickedDanApi) {
-            RMC_MX_Url = "https://mx.danonthemoon.dev/mx";
-        }
+        // Commented for the moment since it's not ready yet
+        // bool clickedDanApi = UI::Button("Use DanOnTheMoon's Preloading + Proxy API");
+        // UI::SetPreviousTooltip("Much faster API that preloads random maps and proxies requests to TMX.");
+        // if (clickedDanApi) {
+        //     RMC_MX_Url = "https://mx.danonthemoon.dev/mx";
+        // }
 
         bool clickedXertApi = UI::Button("Use XertroV's API w/ Fixed Randomization");
         UI::SetPreviousTooltip("Much faster random API for TMX maps, and fixes TMX's broken randomization.\nAll TMX maps are cached and standard RMC map filtering applies.");
