@@ -24,6 +24,24 @@ namespace PluginSettings
         RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
         UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\nOnly change if you know what you're doing!");
 
+        if (UI::Button("Use official TMX server")) {
+            RMC_MX_Url = "https://" + MX_URL;
+        }
+
+        bool clickedDanApi = UI::Button("Use DanOnTheMoon's Preloading + Proxy API");
+        UI::SetPreviousTooltip("Much faster API that preloads random maps and proxies requests to TMX.");
+        if (clickedDanApi) {
+            RMC_MX_Url = "https://mx.danonthemoon.dev/mx";
+        }
+
+        bool clickedXertApi = UI::Button("Use XertroV's API w/ Fixed Randomization");
+        UI::SetPreviousTooltip("Much faster random API for TMX maps, and fixes TMX's broken randomization.\nAll TMX maps are cached and standard RMC map filtering applies.");
+        if (clickedXertApi) {
+            RMC_MX_Url = "https://map-monitor.xk.io";
+        }
+
+        UI::Separator();
+
         closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
 
         UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
