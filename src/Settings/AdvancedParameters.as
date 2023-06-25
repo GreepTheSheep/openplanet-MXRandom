@@ -24,7 +24,8 @@ namespace PluginSettings
         RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
         UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\nOnly change if you know what you're doing!");
 
-        if (UI::Button("Use official TMX server")) {
+#if TMNEXT
+        if (UI::Button("Use official TMX API")) {
             RMC_MX_Url = "https://" + MX_URL;
         }
 
@@ -41,6 +42,7 @@ namespace PluginSettings
         }
 
         UI::Separator();
+#endif
 
         closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
 
