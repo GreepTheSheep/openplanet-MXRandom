@@ -106,6 +106,42 @@ namespace MXNadeoServicesGlobal
         }
     }
 
+    void EditRoomPayloadSetMaps(Json::Value@ data, string[]@ maps) {
+        data["maps"] = Json::Array();
+        for (uint i = 0; i < maps.Length; i++) {
+            data["maps"].Add(maps[i]);
+        }
+    }
+
+    void EditRoomPayloadSetTimeout(Json::Value@ data, int timeout) {
+        if (!data.HasKey("settings")) {
+            data["settings"] = Json::Array();
+        }
+        auto timeoutSetting = Json::Parse('{"key": "S_TimeLimit", "type": "integer", "value": "1"}');
+        timeoutSetting["value"] = tostring(timeout);
+        data["settings"].Add(timeoutSetting);
+    }
+
+    void ClubRoomSetMapAndSwitchAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID) {
+        Json::Value bodyJson = Json::Object();
+        EditRoomPayloadSetMaps(bodyJson, {mapUID});
+        EditRoomPayloadSetTimeout(bodyJson, 1);
+        RunClubRoomRequest(room, bodyJson, "ClubRoomSetMapAndSwitch");
+    }
+
+    void RunClubRoomRequest(const NadeoServices::ClubRoom@ &in room, Json::Value@ bodyJson, const string &in callingFuncName) {
+        string url = NadeoServices::BaseURL()+"/api/token/club/"+room.clubId+"/room/"+room.activityId+"/edit";
+        string body = Json::Write(bodyJson);
+        if (IS_DEV_MODE) Log::Trace("NadeoServices - "+callingFuncName+": " + url + " - " + body);
+        Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        auto res = req.String();
+        if (IS_DEV_MODE) Log::Trace("NadeoServices - "+callingFuncName+"::Res: " + res);
+    }
+
     void SetMapToClubRoomAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID)
     {
         string url = NadeoServices::BaseURL()+"/api/token/club/"+room.clubId+"/room/"+room.activityId+"/edit";
@@ -153,26 +189,8 @@ namespace MXNadeoServicesGlobal
     {
         string url = NadeoServices::BaseURL()+"/api/token/club/"+room.clubId+"/room/"+room.activityId+"/edit";
         Json::Value bodyJson = Json::Object();
-
-        Json::Value bodyJsonSettingTimeLimit = Json::Object();
-        bodyJsonSettingTimeLimit["key"] = "S_TimeLimit";
-        bodyJsonSettingTimeLimit["value"] = tostring(timerSec);
-        bodyJsonSettingTimeLimit["type"] = "integer";
-
-        Json::Value bodyJsonSettings = Json::Array();
-        bodyJsonSettings.Add(bodyJsonSettingTimeLimit);
-
-        bodyJson["settings"] = bodyJsonSettings;
-        string body = Json::Write(bodyJson);
-
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - ClubRoomSetCountdownTimer: " + url + " - " + body);
-        Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
-        req.Start();
-        while (!req.Finished()) {
-            yield();
-        }
-        auto res = req.String();
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - ClubRoomSetCountdownTimer::Res: " + res);
+        EditRoomPayloadSetTimeout(bodyJson, timerSec);
+        RunClubRoomRequest(room, bodyJson, "ClubRoomSetCountdownTimer");
     }
 #endif
 }

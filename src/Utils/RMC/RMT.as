@@ -130,8 +130,7 @@ class RMT : RMC
         }
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
-        MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
-        MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.TrackUID);
         while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit() / 1000);
         while (GetApp().CurrentPlayground is null) yield();
@@ -205,8 +204,7 @@ class RMT : RMC
         UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#991703"));
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
-        MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, currentMap.TrackUID);
-        MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.TrackUID);
         while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, RMTTimerMapChange / 1000);
         while (GetApp().CurrentPlayground is null) yield();
