@@ -12,6 +12,9 @@ namespace RMC
     int EndTime = -1;
     int TimeSpentMap = -1;
     int TimeSpawnedMap = -1;
+    int CurrentMapID = 0;
+    string CurrentRunIdentifier = "";  // relevant for save files
+    Json::Value CurrentRunData;
     RMCConfig@ config;
 
     array<string> Medals = {
@@ -95,6 +98,16 @@ namespace RMC
         ShowTimer = true;
         IsStarting = true;
         ClickedOnSkip = false;
+        
+        if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
+            string gameMode = RMC::selectedGameMode == GameMode::Challenge ? "RMC" : "RMS";
+            if (RMC::CurrentRunIdentifier != "") {
+                // when you pause for cotd ask to continue the ongoing run
+            } else {
+                // TODO add seperate menu to load previous runs from
+                DataManager::CreateSaveFile(gameMode);
+            }
+        }
         if (!(MX::preloadedMap is null)) {
             @MX::preloadedMap = null;
         }
@@ -212,6 +225,17 @@ namespace RMC
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
+        CurrentRunData["MapID"] = CurrentMapID;
+        CurrentRunData["TimerRemaining"] = EndTime - StartTime;
+        CurrentRunData["TimeSpentOnMap"] = 0;
+        CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
+        CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
+        if (selectedGameMode == GameMode::Survival) {
+            CurrentRunData["CurrentRunTime"] = Survival.SurvivedTime;
+        }
+        DataManager::SaveCurrentRunData();
+
         MX::PreloadRandomMap();
+
     }
 }

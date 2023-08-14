@@ -40,6 +40,13 @@ class RMC
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
                 @MX::preloadedMap = null;
+                int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
+                if (RMC::GoalMedalCount > 0 && secondaryCount > 0) {
+                    // no saves for instant resets
+                    Renderables::Add(SaveRunQuestionModalDialog());
+                } else {
+                    DataManager::RemoveCurrentSaveFile();
+                }
             }
 
             UI::Separator();
@@ -374,6 +381,7 @@ class RMC
                                 RMC::IsRunning = false;
                                 RMC::ShowTimer = false;
                                 GameEndNotification();
+                                DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
                                 if (PluginSettings::RMC_ExitMapOnEndTime){
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();

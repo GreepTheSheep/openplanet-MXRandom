@@ -84,6 +84,7 @@ void Main()
     } else {
         DataManager::CheckData();
     }
+    DataManager::EnsureSaveFileFolderPresent();
     MX::FetchMapTags();
     RMC::FetchConfig();
     RMC::InitModes();
