@@ -256,8 +256,19 @@ namespace RMC
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
-        MX::PreloadRandomMap();
 
         // TODO add back autosaves
+        CurrentRunData["MapID"] = CurrentMapID;
+        CurrentRunData["TimeSpentOnMap"] = 0;
+        CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
+        CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
+        CurrentRunData["CurrentRunTime"] = selectedGameMode == GameMode::Survival ? Survival.SurvivedTime : Challenge.ModeStartTimestamp;
+        CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
+        CurrentRunData["GotGoalMedalOnMap"] = false;
+        CurrentRunData["GotBelowMedalOnMap"] = false;
+        DataManager::SaveCurrentRunData();
+
+        MX::PreloadRandomMap();
+
     }
 }
