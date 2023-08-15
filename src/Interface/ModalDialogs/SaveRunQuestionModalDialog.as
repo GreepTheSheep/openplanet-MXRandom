@@ -15,13 +15,14 @@ class SaveRunQuestionModalDialog : ModalDialog
         if (UI::Button(Icons::Times + " No")) {
             Close();
             DataManager::RemoveCurrentSaveFile();
+            RMC::HasCompletedCheckbox = true;
         }
         UI::SameLine();
         UI::SetCursorPos(vec2(UI::GetWindowSize().x - 70 * scale, UI::GetCursorPos().y));
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
             RMC::CurrentRunData["MapID"] = RMC::CurrentMapID;
-            RMC::CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;
+            RMC::CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
             RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
             RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
             RMC::CurrentRunData["SecondaryCounterValue"] = RMC::selectedGameMode == RMC::GameMode::Challenge ? RMC::Challenge.BelowMedalCount : RMC::Survival.Skips;
@@ -29,10 +30,12 @@ class SaveRunQuestionModalDialog : ModalDialog
                 RMC::CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
             } else {
                 RMC::CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedalOnCurrentMap;
+                RMC::CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
             }
             RMC::CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedalOnCurrentMap;
             DataManager::SaveCurrentRunData();
-            Log::Trace("Saved run data");
+            Log::Log("Saved run data", true);
+            RMC::HasCompletedCheckbox = true;
         }
     }
 }

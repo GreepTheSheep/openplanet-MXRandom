@@ -226,10 +226,28 @@ namespace MX
                 return;
             }
             RandomMapIsLoading = true;
-            if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
-            while (isLoadingPreload) yield();
-            MX::MapInfo@ map = preloadedMap;
-            @preloadedMap = null;
+            MX::MapInfo@ map;
+            if (RMC::ContinueSavedRun && !RMC::IsInited) {
+                string url = "https://trackmania.exchange/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
+                Json::Value res = API::GetAsync(url);
+                Json::Value playedAt = Json::Object();
+                Time::Info date = Time::Parse();
+                playedAt["Year"] = date.Year;
+                playedAt["Month"] = date.Month;
+                playedAt["Day"] = date.Day;
+                playedAt["Hour"] = date.Hour;
+                playedAt["Minute"] = date.Minute;
+                playedAt["Second"] = date.Second;
+                res["PlayedAt"] = playedAt;
+
+                @map = MX::MapInfo(res);
+                @preloadedMap = null;
+            } else {
+                if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
+                while (isLoadingPreload) yield();
+                @map = preloadedMap;
+                @preloadedMap = null;
+            }
 
             Log::LoadingMapNotification(map);
 

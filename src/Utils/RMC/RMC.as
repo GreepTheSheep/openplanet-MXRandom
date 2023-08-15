@@ -32,20 +32,24 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCMode(false);
-#endif
+                RMC::EndTimeCopyForSaveData = RMC::EndTime;
+                RMC::StartTimeCopyForSaveData = RMC::StartTime;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
                 RMC::StartTime = -1;
                 RMC::EndTime = -1;
                 @MX::preloadedMap = null;
+
+#if DEPENDENCY_CHAOSMODE
+                ChaosMode::SetRMCMode(false);
+#endif
                 int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedalOnCurrentMap || RMC::GotGoalMedalOnCurrentMap) {
-                    // no saves for instant resets
-                    if (GotBelowGoalMedalNotification())
                     Renderables::Add(SaveRunQuestionModalDialog());
+                    // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy 
+                    // of the timers to use for the save file
                 } else {
+                    // no saves for instant resets
                     DataManager::RemoveCurrentSaveFile();
                 }
             }
@@ -306,8 +310,14 @@ class RMC
     void StartTimer()
     {
         RMC::StartTime = Time::Now;
-        RMC::EndTime = RMC::StartTime + TimeLimit();
-        ModeStartTimestamp = Time::get_Now();
+        RMC::StartTime + RMC::CurrentRunData["CurrentRunTime"];
+        RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + RMC::CurrentRunData["TimerRemaining"];
+        if (RMC::ContinueSavedRun) {
+            ModeStartTimestamp = RMC::StartTime - (Time::get_Now() - RMC::CurrentRunData["CurrentRunTime"]);
+
+        } else {
+            ModeStartTimestamp = Time::get_Now();
+        }
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));

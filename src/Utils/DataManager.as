@@ -41,7 +41,7 @@ namespace DataManager
         SaveFileData["TimeSpentOnMap"] = 0;  // this is updated when you manually quit on a map
         SaveFileData["PrimaryCounterValue"] = 0;  // Amount of goal medals
         SaveFileData["SecondaryCounterValue"] = 0;  // Second medal type for RMC ("Gold Skips") or skip count for RMS
-        SaveFileData["CurrentRunTime"] = 0; // for survival runs
+        SaveFileData["CurrentRunTime"] = 0;
         SaveFileData["GotBelowMedalOnMap"] = false; // for challenge runs
         SaveFileData["GotGoalMedalOnMap"] = false; // for challenge runs
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);

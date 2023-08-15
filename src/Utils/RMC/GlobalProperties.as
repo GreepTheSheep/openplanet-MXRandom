@@ -13,7 +13,12 @@ namespace RMC
     int TimeSpentMap = -1;
     int TimeSpawnedMap = -1;
     int CurrentMapID = 0;
-    Json::Value CurrentRunData;
+    bool ContinueSavedRun = false;
+    bool IsInited = false;
+    bool HasCompletedCheckbox = false;
+    Json::Value CurrentRunData = Json::Object();
+    int StartTimeCopyForSaveData = -1;
+    int EndTimeCopyForSaveData = -1;
     RMCConfig@ config;
 
     array<string> Medals = {
@@ -93,18 +98,26 @@ namespace RMC
 
     void Start()
     {
-        bool IsInited = false;
+        IsInited = false;
         ShowTimer = true;
         IsStarting = true;
         ClickedOnSkip = false;
+        ContinueSavedRun = false;
+        HasCompletedCheckbox = false;
         
         if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
             if (!hasRun) {
                 DataManager::CreateSaveFile();
             } else {
-                // Ask if the saved run should be overwritten or continued
+                Renderables::Add(ContinueSavedRunModalDialog());
+                while (!HasCompletedCheckbox) {
+                    sleep(100);
+                }
             }
+        }
+        if (RMC::ContinueSavedRun) {
+            RMC::CurrentMapID = CurrentRunData["MapID"];
         }
         if (!(MX::preloadedMap is null)) {
             @MX::preloadedMap = null;
@@ -118,10 +131,27 @@ namespace RMC
             CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
             if (GamePlayground !is null){
                 if (!IsInited) {
-                    TimeSpawnedMap = -1;
-                    GoalMedalCount = 0;
-                    Challenge.BelowMedalCount = 0;
-                    Survival.Skips = 0;
+                    if (!ContinueSavedRun) {
+                        TimeSpawnedMap = -1;
+                        GoalMedalCount = 0;
+                        Challenge.BelowMedalCount = 0;
+                        Survival.Skips = 0;
+                        GotBelowMedalOnCurrentMap = false;
+                        GotGoalMedalOnCurrentMap = false;
+                    } else {
+                        GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
+                        if (selectedGameMode == GameMode::Challenge) {
+                            Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
+                            Survival.Skips = 0;                            
+                        } else {
+                            Challenge.BelowMedalCount = 0;
+                            Survival.Skips = CurrentRunData["SecondaryCounterValue"];
+                            Survival.SurvivedTime = CurrentRunData["CurrentRunTime"];
+                            Challenge.ModeStartTimestamp = -1;
+                        }
+                        GotGoalMedalOnCurrentMap = CurrentRunData["GotGoalMedalOnMap"];
+                        GotBelowMedalOnCurrentMap = CurrentRunData["GotBelowMedalOnMap"];
+                    }
                     UI::ShowNotification("\\$080Random Map "+ tostring(RMC::selectedGameMode) + " started!", "Good Luck!");
                     IsInited = true;
                 }
@@ -148,7 +178,10 @@ namespace RMC
                     } else if (RMC::selectedGameMode == GameMode::Objective){
                         Objective.StartTimer();
                     }
-                    TimeSpawnedMap = Time::Now;
+                    TimeSpawnedMap = Time::Now - CurrentRunData["TimeSpentOnMap"];
+                    // Clear the currently saved data so you cannot load into the same state multiple times
+                    DataManager::RemoveCurrentSaveFile();
+                    DataManager::CreateSaveFile();
                     IsStarting = false;
                     MX::PreloadRandomMap();
                     break;
@@ -225,5 +258,6 @@ namespace RMC
         ClickedOnSkip = false;
         MX::PreloadRandomMap();
 
+        // TODO add back autosaves
     }
 }
