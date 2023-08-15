@@ -142,7 +142,8 @@ namespace RMC
                         GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
                         if (selectedGameMode == GameMode::Challenge) {
                             Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
-                            Survival.Skips = 0;                            
+                            Survival.Skips = 0;
+                            GotBelowMedalOnCurrentMap = CurrentRunData["GotBelowMedalOnMap"];
                         } else {
                             Challenge.BelowMedalCount = 0;
                             Survival.Skips = CurrentRunData["SecondaryCounterValue"];
@@ -150,7 +151,6 @@ namespace RMC
                             Challenge.ModeStartTimestamp = -1;
                         }
                         GotGoalMedalOnCurrentMap = CurrentRunData["GotGoalMedalOnMap"];
-                        GotBelowMedalOnCurrentMap = CurrentRunData["GotBelowMedalOnMap"];
                     }
                     UI::ShowNotification("\\$080Random Map "+ tostring(RMC::selectedGameMode) + " started!", "Good Luck!");
                     IsInited = true;
