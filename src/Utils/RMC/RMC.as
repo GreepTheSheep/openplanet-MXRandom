@@ -41,8 +41,9 @@ class RMC
                 RMC::EndTime = -1;
                 @MX::preloadedMap = null;
                 int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
-                if (RMC::GoalMedalCount > 0 && secondaryCount > 0) {
+                if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedalOnCurrentMap || RMC::GotGoalMedalOnCurrentMap) {
                     // no saves for instant resets
+                    if (GotBelowGoalMedalNotification())
                     Renderables::Add(SaveRunQuestionModalDialog());
                 } else {
                     DataManager::RemoveCurrentSaveFile();

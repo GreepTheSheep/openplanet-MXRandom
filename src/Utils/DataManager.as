@@ -32,8 +32,9 @@ namespace DataManager
         Json::ToFile(DATA_JSON_LOCATION, DataJson);
     }
 
-    void CreateSaveFile(string gameMode) {
-        string curr_time = Time::FormatString("%y%m%d-%H%M");
+    void CreateSaveFile() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
         Json::Value SaveFileData = Json::Object();
         SaveFileData["TimerRemaining"] = 0;
         SaveFileData["MapID"] = 0;
@@ -41,24 +42,33 @@ namespace DataManager
         SaveFileData["PrimaryCounterValue"] = 0;  // Amount of goal medals
         SaveFileData["SecondaryCounterValue"] = 0;  // Second medal type for RMC ("Gold Skips") or skip count for RMS
         SaveFileData["CurrentRunTime"] = 0; // for survival runs
-        Json::ToFile(SAVE_DATA_LOCATION + gameMode + "_" + curr_time + ".json", SaveFileData);
-        RMC::CurrentRunIdentifier = gameMode + "_" + curr_time;
+        SaveFileData["GotBelowMedalOnMap"] = false; // for challenge runs
+        SaveFileData["GotGoalMedalOnMap"] = false; // for challenge runs
+        Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
         RMC::CurrentRunData = SaveFileData;
     }
 
     void RemoveCurrentSaveFile() {
-        IO::Delete(SAVE_DATA_LOCATION + RMC::CurrentRunIdentifier + ".json");
-        RMC::CurrentRunIdentifier = "";
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        IO::Delete(SAVE_DATA_LOCATION + gameMode + ".json");
         RMC::CurrentRunData = Json::Object();
     }
 
     void SaveCurrentRunData() {
-        Json::ToFile(SAVE_DATA_LOCATION + RMC::CurrentRunIdentifier + ".json", RMC::CurrentRunData);
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
     }
 
-    void LoadRunData(string runIdentifier) {
-        RMC::CurrentRunIdentifier = runIdentifier;
-        RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + runIdentifier + ".json");
+    bool LoadRunData() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
+            RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+            return true;
+        }
+        return false;
     }
 
     void SaveMapToRecentlyPlayed(MX::MapInfo@ map) {

@@ -254,9 +254,7 @@ namespace MX
             } else
 #endif
             app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "", "");
-            if (RMC::CurrentRunIdentifier != "") {
-                RMC::CurrentMapID = map.TrackID;
-            }
+            RMC::CurrentMapID = map.TrackID;
         }
         catch
         {
