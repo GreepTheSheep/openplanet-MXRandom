@@ -3,7 +3,7 @@ class ContinueSavedRunModalDialog : ModalDialog
     ContinueSavedRunModalDialog()
     {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zContinue Saved Run?");
-        m_size = vec2(400, 130);
+        m_size = vec2(400, 160);
     }
 
     void RenderDialog() override
@@ -15,7 +15,8 @@ class ContinueSavedRunModalDialog : ModalDialog
         int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
         UI::Text(
             "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + PluginSettings::RMC_GoalMedal + "s"
-            "\n\nDo you want to continue this run or start a new one?"
+            "\n\nDo you want to continue this run or start a new one?\n"
+            "\nNOTE: Starting a new run will delete the current save!"
         );
         UI::EndChild();
         if (UI::Button(Icons::Times + " New Run")) {
@@ -28,7 +29,6 @@ class ContinueSavedRunModalDialog : ModalDialog
         if (UI::OrangeButton(Icons::PlayCircleO + " Continue")) {
             RMC::ContinueSavedRun = true;
             Close();
-            Log::Trace("Saved run data");
             RMC::HasCompletedCheckbox = true;
         }
     }

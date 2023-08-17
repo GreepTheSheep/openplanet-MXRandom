@@ -269,6 +269,20 @@ namespace RMC
         DataManager::SaveCurrentRunData();
 
         MX::PreloadRandomMap();
-
+    }
+    void SaveRunDataOnEnd() {
+        RMC::CurrentRunData["MapID"] = RMC::CurrentMapID;
+        RMC::CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
+        RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
+        RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
+        RMC::CurrentRunData["SecondaryCounterValue"] = RMC::selectedGameMode == RMC::GameMode::Challenge ? RMC::Challenge.BelowMedalCount : RMC::Survival.Skips;
+        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+            RMC::CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
+        } else {
+            RMC::CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedalOnCurrentMap;
+            RMC::CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
+        }
+        RMC::CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedalOnCurrentMap;
+        DataManager::SaveCurrentRunData();
     }
 }

@@ -2,6 +2,7 @@ class RMC
 {
     int BelowMedalCount = 0;
     int ModeStartTimestamp = -1;
+    bool UserEndedRun = false;
 
     UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -32,6 +33,7 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
+                UserEndedRun = true;
                 RMC::EndTimeCopyForSaveData = RMC::EndTime;
                 RMC::StartTimeCopyForSaveData = RMC::StartTime;
                 RMC::IsRunning = false;
@@ -45,9 +47,15 @@ class RMC
 #endif
                 int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedalOnCurrentMap || RMC::GotGoalMedalOnCurrentMap) {
-                    Renderables::Add(SaveRunQuestionModalDialog());
-                    // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy 
-                    // of the timers to use for the save file
+                    if (!PluginSettings::RMC_RUN_AUTOSAVE) {
+                        Renderables::Add(SaveRunQuestionModalDialog());
+                        // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy 
+                        // of the timers to use for the save file
+                    } else {
+                        RMC::SaveRunDataOnEnd();
+                        vec4 color = UI::HSV(0.25, 1, 0.7);
+                        UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
+                    }
                 } else {
                     // no saves for instant resets
                     DataManager::RemoveCurrentSaveFile();
@@ -310,7 +318,6 @@ class RMC
     void StartTimer()
     {
         RMC::StartTime = Time::Now;
-        RMC::StartTime + RMC::CurrentRunData["CurrentRunTime"];
         RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + RMC::CurrentRunData["TimerRemaining"];
         if (RMC::ContinueSavedRun) {
             ModeStartTimestamp = RMC::StartTime - (Time::get_Now() - RMC::CurrentRunData["CurrentRunTime"]);
@@ -392,7 +399,7 @@ class RMC
                                 RMC::IsRunning = false;
                                 RMC::ShowTimer = false;
                                 GameEndNotification();
-                                DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
+                                if (!UserEndedRun) DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
                                 if (PluginSettings::RMC_ExitMapOnEndTime){
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();

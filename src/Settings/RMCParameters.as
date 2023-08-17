@@ -61,6 +61,9 @@ namespace PluginSettings
     [Setting hidden]
     int RMC_Together_RoomId = 0;
 
+    [Setting hidden]
+    bool RMC_RUN_AUTOSAVE = true;
+
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
@@ -80,6 +83,7 @@ namespace PluginSettings
                 RMC_Duration = 60;
                 RMC_SurvivalMaxTime = 15;
                 RMC_PrepatchTagsWarns = true;
+                RMC_RUN_AUTOSAVE = true;
             }
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
@@ -98,6 +102,7 @@ namespace PluginSettings
 
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map when got "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quits the map when the timer is up", RMC_ExitMapOnEndTime);
+            RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the state of the current run when stopping the run", RMC_RUN_AUTOSAVE);
 
             UI::SetNextItemWidth(300);
             RMC_Duration = UI::SliderInt("Random Map Challange duration (in minutes)", RMC_Duration, 10, 120);

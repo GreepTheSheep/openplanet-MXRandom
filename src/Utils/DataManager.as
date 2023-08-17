@@ -66,6 +66,7 @@ namespace DataManager
         string gameMode = "RM" + lastLetter;
         if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
             RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+            if (RMC::CurrentRunData["TimerRemaining"] == 0) return false;
             return true;
         }
         return false;

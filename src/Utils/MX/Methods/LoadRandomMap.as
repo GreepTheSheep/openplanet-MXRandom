@@ -228,7 +228,11 @@ namespace MX
             RandomMapIsLoading = true;
             MX::MapInfo@ map;
             if (RMC::ContinueSavedRun && !RMC::IsInited) {
+#if TMNEXT
                 string url = "https://trackmania.exchange/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
+#else
+                string url = MX_URL + "/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
+#endif
                 Json::Value res = API::GetAsync(url);
                 Json::Value playedAt = Json::Object();
                 Time::Info date = Time::Parse();
