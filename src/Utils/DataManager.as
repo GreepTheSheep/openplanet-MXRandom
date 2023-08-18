@@ -9,6 +9,12 @@ namespace DataManager
         }
     }
 
+    void EnsureSaveFileFolderPresent() {
+        if(!IO::FolderExists(SAVE_DATA_LOCATION)) {
+            IO::CreateFolder(SAVE_DATA_LOCATION);
+        }
+    }
+
     void InitData(bool save = true)
     {
         DataJson = Json::Object();
@@ -24,6 +30,46 @@ namespace DataManager
     {
         Log::Trace("Saving JSON file");
         Json::ToFile(DATA_JSON_LOCATION, DataJson);
+    }
+
+    void CreateSaveFile() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        Json::Value SaveFileData = Json::Object();
+        SaveFileData["TimerRemaining"] = 0;
+        SaveFileData["MapID"] = 0;
+        SaveFileData["TimeSpentOnMap"] = 0;  // this is updated when you manually quit on a map
+        SaveFileData["PrimaryCounterValue"] = 0;  // Amount of goal medals
+        SaveFileData["SecondaryCounterValue"] = 0;  // Second medal type for RMC ("Gold Skips") or skip count for RMS
+        SaveFileData["CurrentRunTime"] = 0;
+        SaveFileData["GotBelowMedalOnMap"] = false; // for challenge runs
+        SaveFileData["GotGoalMedalOnMap"] = false; // for challenge runs
+        Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
+        RMC::CurrentRunData = SaveFileData;
+    }
+
+    void RemoveCurrentSaveFile() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        IO::Delete(SAVE_DATA_LOCATION + gameMode + ".json");
+        RMC::CurrentRunData = Json::Object();
+    }
+
+    void SaveCurrentRunData() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
+    }
+
+    bool LoadRunData() {
+        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string gameMode = "RM" + lastLetter;
+        if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
+            RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+            if (RMC::CurrentRunData["TimerRemaining"] == 0) return false;
+            return true;
+        }
+        return false;
     }
 
     void SaveMapToRecentlyPlayed(MX::MapInfo@ map) {

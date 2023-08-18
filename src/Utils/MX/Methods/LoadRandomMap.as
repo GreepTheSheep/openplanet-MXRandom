@@ -226,10 +226,32 @@ namespace MX
                 return;
             }
             RandomMapIsLoading = true;
-            if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
-            while (isLoadingPreload) yield();
-            MX::MapInfo@ map = preloadedMap;
-            @preloadedMap = null;
+            MX::MapInfo@ map;
+            if (RMC::ContinueSavedRun && !RMC::IsInited) {
+#if TMNEXT
+                string url = "https://trackmania.exchange/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
+#else
+                string url = MX_URL + "/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
+#endif
+                Json::Value res = API::GetAsync(url);
+                Json::Value playedAt = Json::Object();
+                Time::Info date = Time::Parse();
+                playedAt["Year"] = date.Year;
+                playedAt["Month"] = date.Month;
+                playedAt["Day"] = date.Day;
+                playedAt["Hour"] = date.Hour;
+                playedAt["Minute"] = date.Minute;
+                playedAt["Second"] = date.Second;
+                res["PlayedAt"] = playedAt;
+
+                @map = MX::MapInfo(res);
+                @preloadedMap = null;
+            } else {
+                if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
+                while (isLoadingPreload) yield();
+                @map = preloadedMap;
+                @preloadedMap = null;
+            }
 
             Log::LoadingMapNotification(map);
 
@@ -254,6 +276,7 @@ namespace MX
             } else
 #endif
             app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "", "");
+            RMC::CurrentMapID = map.TrackID;
         }
         catch
         {
