@@ -37,7 +37,7 @@ namespace DataManager
         string gameMode = "RM" + lastLetter;
         Json::Value SaveFileData = Json::Object();
         SaveFileData["TimerRemaining"] = 0;
-        SaveFileData["MapID"] = 0;
+        SaveFileData["MapData"] = 0;
         SaveFileData["TimeSpentOnMap"] = 0;  // this is updated when you manually quit on a map
         SaveFileData["PrimaryCounterValue"] = 0;  // Amount of goal medals
         SaveFileData["SecondaryCounterValue"] = 0;  // Second medal type for RMC ("Gold Skips") or skip count for RMS
