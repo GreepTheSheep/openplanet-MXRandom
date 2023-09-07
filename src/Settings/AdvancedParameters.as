@@ -22,11 +22,12 @@ namespace PluginSettings
 
         UI::SetNextItemWidth(300);
         RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
+        UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\nOnly change if you know what you're doing!");
+
         if (RMC_MX_Url.Length() > 0 && RMC_MX_Url[RMC_MX_Url.Length() - 1] == '/') {
             // Remove the last character if it's a forward slash
             RMC_MX_Url = RMC_MX_Url.SubStr(0, RMC_MX_Url.Length() - 1);
         }
-        UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\nOnly change if you know what you're doing!");
 
 #if TMNEXT
         if (UI::Button("Use official TMX API")) {
