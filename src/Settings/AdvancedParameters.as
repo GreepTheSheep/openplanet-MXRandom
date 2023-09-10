@@ -24,9 +24,9 @@ namespace PluginSettings
         RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
         UI::SetPreviousTooltip("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\nOnly change if you know what you're doing!");
 
-        if (RMC_MX_Url.Length() > 0 && RMC_MX_Url[RMC_MX_Url.Length() - 1] == '/') {
+        if (RMC_MX_Url.Length > 0 && RMC_MX_Url[RMC_MX_Url.Length - 1] == 47) {  // 47 is the ASCII code for a forward slash
             // Remove the last character if it's a forward slash
-            RMC_MX_Url = RMC_MX_Url.SubStr(0, RMC_MX_Url.Length() - 1);
+            RMC_MX_Url = RMC_MX_Url.SubStr(0, RMC_MX_Url.Length - 1);
         }
 
 #if TMNEXT
