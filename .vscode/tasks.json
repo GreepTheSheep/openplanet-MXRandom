@@ -7,7 +7,7 @@
             "label": "Build .op file",
             "type": "shell",
             "command": "${workspaceFolder}/build-op.bat",
-            "problemMatcher": [],
+            "problemMatcher": [ "$Openplanet Remote Build Problem Matcher: Angelscript Compiler" ],
             "group": {
                 "kind": "build",
                 "isDefault": true
