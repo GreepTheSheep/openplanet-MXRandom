@@ -1,6 +1,6 @@
 namespace MX
 {
-    void DownloadMap(const int &in mapId, string fileName = "") {
+    void DownloadMap(const int &in mapId, string _fileName = "") {
         try {
             auto json = API::GetAsync(PluginSettings::RMC_MX_Url+"/api/maps/get_map_info/multi/"+mapId);
             if (json.Length == 0) {
@@ -20,9 +20,9 @@ namespace MX
                 yield();
             }
 
-            if (fileName.Length > 0) fileName = map.TrackID + " - " + map.Name;
-            netMap.SaveToFile(mxDLFolder + "/" + fileName + ".Map.Gbx");
-            Log::Log("Map downloaded to " + mxDLFolder + "/" + fileName + ".Map.Gbx");
+            if (_fileName.Length > 0) _fileName = map.TrackID + " - " + map.Name;
+            netMap.SaveToFile(mxDLFolder + "/" + _fileName + ".Map.Gbx");
+            Log::Log("Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
         } catch {
             Log::Error("Error while downloading map");
         }

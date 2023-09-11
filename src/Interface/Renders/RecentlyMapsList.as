@@ -21,7 +21,7 @@ namespace Render
                     UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
                 }
                 UI::TableSetColumnIndex(3);
-                if (map.Tags.get_Length() == 0) UI::Text("No tags");
+                if (map.Tags.Length == 0) UI::Text("No tags");
                 else {
                     for (uint j = 0; j < map.Tags.Length; j++) {
                         Render::MapTag(map.Tags[j]);
@@ -30,7 +30,7 @@ namespace Render
                 }
                 UI::TableSetColumnIndex(4);
 
-                if (UI::ColoredButton(Icons::ExternalLink, 0.55, 1, 0.5)) {
+                if (UI::ButtonColored(Icons::ExternalLink, 0.55, 1, 0.5)) {
 #if DEPENDENCY_MANIAEXCHANGE
                     ManiaExchange::ShowMapInfo(map.TrackID);
 #else

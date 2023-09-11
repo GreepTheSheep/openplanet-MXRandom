@@ -19,7 +19,7 @@ class RMC
 
     int TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
-    string IsoDateToDMY(string isoDate)
+    string IsoDateToDMY(const string &in isoDate)
     {
         string year = isoDate.SubStr(0, 4);
         string month = isoDate.SubStr(5, 2);
@@ -49,7 +49,7 @@ class RMC
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedalOnCurrentMap || RMC::GotGoalMedalOnCurrentMap) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                         Renderables::Add(SaveRunQuestionModalDialog());
-                        // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy 
+                        // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy
                         // of the timers to use for the save file
                     } else {
                         RMC::SaveRunDataOnEnd();
@@ -318,9 +318,9 @@ class RMC
     void StartTimer()
     {
         RMC::StartTime = Time::Now;
-        RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + RMC::CurrentRunData["TimerRemaining"];
+        RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
         if (RMC::ContinueSavedRun) {
-            ModeStartTimestamp = RMC::StartTime - (Time::get_Now() - RMC::CurrentRunData["CurrentRunTime"]);
+            ModeStartTimestamp = RMC::StartTime - (Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]));
 
         } else {
             ModeStartTimestamp = Time::get_Now();

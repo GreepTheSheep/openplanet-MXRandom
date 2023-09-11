@@ -7,19 +7,19 @@ namespace Plugins
         return Meta::AllPlugins();
     }
 
-    Meta::Plugin@ GetPlugin(string id)
+    Meta::Plugin@ GetPlugin(const string &in id)
     {
         return Meta::GetPluginFromID(id);
     }
 
-    bool IsPluginExists(string name)
+    bool IsPluginExists(const string &in name)
     {
         Meta::Plugin@ plugin = GetPlugin(name);
         if (plugin is null) return false;
         else return true;
     }
 
-    bool IsPluginRunning(string name)
+    bool IsPluginRunning(const string &in name)
     {
         array<Meta::Plugin@> allPlugins = GetAllPlugins();
         bool pluginExists = IsPluginExists(name);
@@ -27,18 +27,18 @@ namespace Plugins
         for (uint i = 0; i < allPlugins.Length; i++)
         {
             Meta::Plugin@ plugin = allPlugins[i];
-            if (plugin.get_ID() == name) return plugin.get_Enabled();
+            if (plugin.ID == name) return plugin.Enabled;
         }
         return false;
     }
 
-    void SetPluginStatus(string name, bool status = true)
+    void SetPluginStatus(const string &in name, bool status = true)
     {
         array<Meta::Plugin@> allPlugins = GetAllPlugins();
         for (uint i = 0; i < allPlugins.Length; i++)
         {
             Meta::Plugin@ plugin = allPlugins[i];
-            if (plugin.get_ID() == name) {
+            if (plugin.ID == name) {
                 if (status) plugin.Enable();
                 else plugin.Disable();
             }

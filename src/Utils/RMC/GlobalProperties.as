@@ -104,7 +104,7 @@ namespace RMC
         ClickedOnSkip = false;
         ContinueSavedRun = false;
         HasCompletedCheckbox = false;
-        
+
         if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
             if (!hasRun) {
@@ -178,7 +178,7 @@ namespace RMC
                     } else if (RMC::selectedGameMode == GameMode::Objective){
                         Objective.StartTimer();
                     }
-                    TimeSpawnedMap = Time::Now - CurrentRunData["TimeSpentOnMap"];
+                    TimeSpawnedMap = int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
                     // Clear the currently saved data so you cannot load into the same state multiple times
                     DataManager::RemoveCurrentSaveFile();
                     DataManager::CreateSaveFile();
@@ -209,7 +209,7 @@ namespace RMC
             } else time = -1;
 #elif TMNEXT
             CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
-            if (PlaygroundScript !is null && GamePlayground.GameTerminals.get_Length() > 0) {
+            if (PlaygroundScript !is null && GamePlayground.GameTerminals.Length > 0) {
                 CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
                 if (GamePlayground.GameTerminals[0].UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Finish && player !is null) {
                     CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);

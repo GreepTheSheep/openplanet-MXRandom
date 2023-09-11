@@ -37,7 +37,7 @@ namespace MainUIView
                         UI::Text(Hourglass + " Loading...");
                     }
                     UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.34, 70*scale));
-                    if (UI::ColoredButton(Icons::ClockO +" Random Map Challenge", 0.155)) {
+                    if (UI::ButtonColored(Icons::ClockO +" Random Map Challenge", 0.155)) {
                         window.isInRMCMode = !window.isInRMCMode;
                     }
                 }

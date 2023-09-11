@@ -55,7 +55,7 @@ namespace Migration
             }
 
             // Handle the response
-            for (uint i = 0; i < json.get_Length(); i++)
+            for (uint i = 0; i < json.Length; i++)
             {
                 Json::Value MapJson = json[i];
                 MX::MapInfo@ Map = MX::MapInfo(MapJson);

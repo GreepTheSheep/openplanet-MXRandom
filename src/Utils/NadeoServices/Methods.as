@@ -78,7 +78,7 @@ namespace MXNadeoServicesGlobal
         IO::Delete(downloadedMapFolder + "/" + AddMapToServer_MapUid + ".Map.Gbx");
     }
 
-    bool CheckIfMapExistsAsync(string mapUid)
+    bool CheckIfMapExistsAsync(const string &in mapUid)
     {
         string url = NadeoServices::BaseURL()+"/api/token/map/"+mapUid;
         if (IS_DEV_MODE) Log::Trace("NadeoServices - Check if map exists: " + url);

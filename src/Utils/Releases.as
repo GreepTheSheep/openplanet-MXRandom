@@ -46,14 +46,14 @@ namespace GH
             auto json = Json::Parse(res);
             @ReleasesReq = null;
 
-            if (json.GetType() != Json::Type::Array || json.get_Length() == 0) {
+            if (json.GetType() != Json::Type::Array || json.Length == 0) {
                 print("Releases::CheckRequest : Error parsing response");
                 releasesRequestError = true;
                 return;
             }
 
             // Handle the response
-            for (uint i = 0; i < json.get_Length(); i++)
+            for (uint i = 0; i < json.Length; i++)
             {
                 Json::Value RelJson = json[i];
                 Release@ ReleaseData = Release(RelJson);

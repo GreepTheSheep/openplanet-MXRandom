@@ -1,13 +1,13 @@
 namespace Render
 {
-    string FormatChangelogBody(string body)
+    string FormatChangelogBody(string _body)
     {
         // Directs urls
-        body = Regex::Replace(body, "(https?:\\/\\/[^\\[ ]*)", "[" + Icons::ExternalLink + " $1]($1)");
+        _body = Regex::Replace(_body, "(https?:\\/\\/[^\\[ ]*)", "[" + Icons::ExternalLink + " $1]($1)");
 
         // Issues links
-        body = Regex::Replace(body, "\\(?#([0-9]+)\\)?", "[#$1]("+GITHUB_URL+"/issues/$1)");
+        _body = Regex::Replace(_body, "\\(?#([0-9]+)\\)?", "[#$1]("+GITHUB_URL+"/issues/$1)");
 
-        return body;
+        return _body;
     }
 }

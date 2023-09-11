@@ -256,19 +256,19 @@ namespace PluginSettings
         return res;
     }
 
-    array<int> ConvertListToArray(string tags)
+    array<int> ConvertListToArray(string _tags)
     {
         array<int> res = {};
         int i = 0;
-        while ((i = tags.IndexOf(",")) > 0) {
-            res.InsertLast(Text::ParseInt(tags.SubStr(0, i)));
-            tags = tags.SubStr(i + 1);
+        while ((i = _tags.IndexOf(",")) > 0) {
+            res.InsertLast(Text::ParseInt(_tags.SubStr(0, i)));
+            _tags = _tags.SubStr(i + 1);
         }
-        if (tags != "") res.InsertLast(Text::ParseInt(tags));
+        if (_tags != "") res.InsertLast(Text::ParseInt(_tags));
         return res;
     }
 
-    array<string> ConvertStringToArray(string str, string separator = ",") {
+    array<string> ConvertStringToArray(const string &in str, const string &in separator = ",") {
         array<string> res = str.Split(separator);
         for (uint i = 0; i < res.Length; i++) {
             res[i] = res[i].ToLower();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase

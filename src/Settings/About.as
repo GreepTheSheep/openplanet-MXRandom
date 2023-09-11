@@ -26,11 +26,11 @@ void RenderAboutTab()
     UI::PushFont(g_fontHeader);
     UI::Text(PLUGIN_NAME);
     UI::PopFont();
-    UI::Text("Made by \\$777" + Meta::ExecutingPlugin().get_Author() + " \\$aaaand its contributors");
+    UI::Text("Made by \\$777" + Meta::ExecutingPlugin().Author + " \\$aaaand its contributors");
     UI::Text("Version \\$777" + PLUGIN_VERSION);
-    UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().get_ID());
-    UI::Text("Site ID \\$777" + Meta::ExecutingPlugin().get_SiteID());
-    UI::Text("Type \\$777" + tostring(Meta::ExecutingPlugin().get_Type()));
+    UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().ID);
+    UI::Text("Site ID \\$777" + Meta::ExecutingPlugin().SiteID);
+    UI::Text("Type \\$777" + tostring(Meta::ExecutingPlugin().Type));
     if (IS_DEV_MODE) {
         UI::SameLine();
         UI::Text("\\$777(\\$f39"+Icons::Code+" \\$777Dev mode)");
@@ -42,7 +42,7 @@ void RenderAboutTab()
     UI::SameLine();
     if (UI::Button(Icons::DiscordAlt + " Discord")) OpenBrowserURL("https://greep.gq/discord");
     UI::SameLine();
-    if (UI::Button(Icons::Heartbeat + " Plugin Home")) OpenBrowserURL("https://openplanet.nl/files/" + Meta::ExecutingPlugin().get_SiteID());
+    if (UI::Button(Icons::Heartbeat + " Plugin Home")) OpenBrowserURL("https://openplanet.nl/files/" + Meta::ExecutingPlugin().SiteID);
 
     UI::Separator();
 

@@ -8,7 +8,7 @@ namespace MX
         Json::Value resNet = API::GetAsync(PluginSettings::RMC_MX_Url+"/api/tags/gettags");
 
         try {
-            for (uint i = 0; i < resNet.get_Length(); i++)
+            for (uint i = 0; i < resNet.Length; i++)
             {
                 int tagID = resNet[i]["ID"];
                 string tagName = resNet[i]["Name"];
@@ -18,7 +18,7 @@ namespace MX
                 m_mapTags.InsertLast(MapTag(resNet[i]));
             }
 
-            print(m_mapTags.get_Length() + " tags loaded");
+            print(m_mapTags.Length + " tags loaded");
             APIDown = false;
             APIRefreshing = false;
         } catch {

@@ -476,7 +476,7 @@ class RMT : RMC
     bool isObjectiveCompleted()
     {
         if (GetApp().RootMap !is null) {
-            uint objectiveTime = -1;
+            uint objectiveTime = uint(-1);
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_AuthorTime;
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_GoldTime;
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_SilverTime;
@@ -499,7 +499,7 @@ class RMT : RMC
     bool isBelowObjectiveCompleted()
     {
         if (GetApp().RootMap !is null) {
-            uint objectiveTime = -1;
+            uint objectiveTime = uint(-1);
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_GoldTime;
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_SilverTime;
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_BronzeTime;

@@ -91,8 +91,8 @@ class RMS : RMC
     void StartTimer() override
     {
         RMC::StartTime = Time::get_Now();
-        RMC::EndTime =  !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + RMC::CurrentRunData["TimerRemaining"];
-        SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::get_Now() : Time::get_Now() - RMC::CurrentRunData["CurrentRunTime"];
+        RMC::EndTime =  !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
+        SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::get_Now() : Time::get_Now() - int(RMC::CurrentRunData["CurrentRunTime"]);
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));

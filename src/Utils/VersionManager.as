@@ -1,6 +1,6 @@
 namespace Versioning
 {
-    int VersionToInt(string version){
+    int VersionToInt(const string &in version){
         return Text::ParseInt(version.Replace(".", ""));
     }
 
@@ -8,7 +8,7 @@ namespace Versioning
         return Text::ParseInt(PLUGIN_VERSION.Replace(".", "")) > VersionToInt(DataJson["version"]);
     }
 
-    bool IsVersion1(string version){
+    bool IsVersion1(const string &in version){
         int majorVersionProvided = Text::ParseInt(version.Split(".")[0]);
         return majorVersionProvided == 1;
     }
