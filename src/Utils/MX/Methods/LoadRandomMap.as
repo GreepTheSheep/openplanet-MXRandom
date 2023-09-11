@@ -228,12 +228,7 @@ namespace MX
             RandomMapIsLoading = true;
             MX::MapInfo@ map;
             if (RMC::ContinueSavedRun && !RMC::IsInited) {
-#if TMNEXT
-                string url = "https://trackmania.exchange/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
-#else
-                string url = MX_URL + "/api/maps/get_map_info/id/" + tostring(RMC::CurrentMapID);
-#endif
-                Json::Value res = API::GetAsync(url);
+                Json::Value res = RMC::CurrentMapJsonData;
                 Json::Value playedAt = Json::Object();
                 Time::Info date = Time::Parse();
                 playedAt["Year"] = date.Year;
@@ -276,7 +271,7 @@ namespace MX
             } else
 #endif
             app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "", "");
-            RMC::CurrentMapID = map.TrackID;
+            RMC::CurrentMapJsonData = map.ToJson();
         }
         catch
         {

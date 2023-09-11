@@ -12,7 +12,7 @@ namespace RMC
     int EndTime = -1;
     int TimeSpentMap = -1;
     int TimeSpawnedMap = -1;
-    int CurrentMapID = 0;
+    Json::Value CurrentMapJsonData = Json::Object();
     bool ContinueSavedRun = false;
     bool IsInited = false;
     bool HasCompletedCheckbox = false;
@@ -117,7 +117,7 @@ namespace RMC
             }
         }
         if (RMC::ContinueSavedRun) {
-            RMC::CurrentMapID = CurrentRunData["MapID"];
+            RMC::CurrentMapJsonData = CurrentRunData["MapData"];
         }
         if (!(MX::preloadedMap is null)) {
             @MX::preloadedMap = null;
@@ -257,8 +257,7 @@ namespace RMC
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
 
-        // TODO add back autosaves
-        CurrentRunData["MapID"] = CurrentMapID;
+        CurrentRunData["MapData"] = CurrentMapJsonData;
         CurrentRunData["TimeSpentOnMap"] = 0;
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
@@ -271,7 +270,7 @@ namespace RMC
         MX::PreloadRandomMap();
     }
     void SaveRunDataOnEnd() {
-        RMC::CurrentRunData["MapID"] = RMC::CurrentMapID;
+        RMC::CurrentRunData["MapData"] = RMC::CurrentMapJsonData;
         RMC::CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
         RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
         RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
