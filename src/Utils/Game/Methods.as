@@ -8,7 +8,7 @@ namespace TM
         while(!app.ManiaTitleControlScriptAPI.IsReady) {
             yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
         }
-        app.ManiaTitleControlScriptAPI.PlayMap(loadMapURL, "", "");
+        app.ManiaTitleControlScriptAPI.PlayMap(loadMapURL, DEFAULT_MODE, "");
     }
 
     bool IsMapLoaded(){

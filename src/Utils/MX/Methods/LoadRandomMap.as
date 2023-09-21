@@ -270,7 +270,7 @@ namespace MX
                 app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
             } else
 #endif
-            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "", "");
+            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, DEFAULT_MODE, "");
             RMC::CurrentMapJsonData = map.ToJson();
         }
         catch
