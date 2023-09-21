@@ -262,7 +262,7 @@ namespace RMC
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
         CurrentRunData["CurrentRunTime"] = selectedGameMode == GameMode::Survival ? Survival.SurvivedTime : Challenge.ModeStartTimestamp;
-        CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
+        CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;  // don't use the copies here, they are only updated for game end.
         CurrentRunData["GotGoalMedalOnMap"] = false;
         CurrentRunData["GotBelowMedalOnMap"] = false;
         DataManager::SaveCurrentRunData();
