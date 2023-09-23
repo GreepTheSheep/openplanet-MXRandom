@@ -20,6 +20,7 @@ namespace RMC
     int StartTimeCopyForSaveData = -1;
     int EndTimeCopyForSaveData = -1;
     RMCConfig@ config;
+    int CurrentTimeOnMap = -1; // for autosaves on PBs
 
     array<string> Medals = {
         "Bronze",
@@ -151,6 +152,7 @@ namespace RMC
                             Challenge.ModeStartTimestamp = -1;
                         }
                         GotGoalMedalOnCurrentMap = CurrentRunData["GotGoalMedalOnMap"];
+                        CurrentTimeOnMap = CurrentRunData["PBOnMap"];
                     }
                     UI::ShowNotification("\\$080Random Map "+ tostring(RMC::selectedGameMode) + " started!", "Good Luck!");
                     IsInited = true;
@@ -238,9 +240,39 @@ namespace RMC
                     Log::Trace("Medal: " + medal);
                 }
 
+                if (CurrentTimeOnMap != time) {
+                    // PB
+                    CurrentTimeOnMap = time;
+                    CreateSave();
+                }
             }
         }
         return medal;
+    }
+
+    void CreateSave(bool endRun = false) {
+        CurrentRunData["MapData"] = CurrentMapJsonData;
+        CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
+        CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
+        CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
+        CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedalOnCurrentMap;
+        CurrentRunData["PBOnMap"] = RMC::CurrentTimeOnMap;
+
+        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+            CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
+        } else {
+            CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedalOnCurrentMap;
+            CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
+        }
+
+        if (!endRun) {        
+            CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;  // don't use the copies here, they are only updated for game end.
+        } else {
+            CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
+        }
+
+
+        DataManager::SaveCurrentRunData();
     }
 
     void SwitchMap()
@@ -257,31 +289,6 @@ namespace RMC
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
 
-        CurrentRunData["MapData"] = CurrentMapJsonData;
-        CurrentRunData["TimeSpentOnMap"] = 0;
-        CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
-        CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
-        CurrentRunData["CurrentRunTime"] = selectedGameMode == GameMode::Survival ? Survival.SurvivedTime : Challenge.ModeStartTimestamp;
-        CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;  // don't use the copies here, they are only updated for game end.
-        CurrentRunData["GotGoalMedalOnMap"] = false;
-        CurrentRunData["GotBelowMedalOnMap"] = false;
-        DataManager::SaveCurrentRunData();
-
         MX::PreloadRandomMap();
-    }
-    void SaveRunDataOnEnd() {
-        RMC::CurrentRunData["MapData"] = RMC::CurrentMapJsonData;
-        RMC::CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
-        RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
-        RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
-        RMC::CurrentRunData["SecondaryCounterValue"] = RMC::selectedGameMode == RMC::GameMode::Challenge ? RMC::Challenge.BelowMedalCount : RMC::Survival.Skips;
-        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
-            RMC::CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
-        } else {
-            RMC::CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedalOnCurrentMap;
-            RMC::CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
-        }
-        RMC::CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedalOnCurrentMap;
-        DataManager::SaveCurrentRunData();
     }
 }
