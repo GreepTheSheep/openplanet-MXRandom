@@ -240,7 +240,7 @@ namespace RMC
                     Log::Trace("Medal: " + medal);
                 }
 
-                if (CurrentTimeOnMap != time) {
+                if (CurrentTimeOnMap > time) {
                     // PB
                     CurrentTimeOnMap = time;
                     CreateSave();
