@@ -234,7 +234,7 @@ class RMC
             if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
                 PausePlayButton();
                 UI::SameLine();
-                SkipButton();
+                SkipButtons();
                 if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedalOnCurrentMap) {
                     NextMapButton();
                 }
@@ -255,7 +255,8 @@ class RMC
         }
     }
 
-    void SkipButton()
+
+    void SkipButtons()
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
@@ -264,24 +265,45 @@ class RMC
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
-        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
-            RMC::ClickedOnSkip = true;
-            if (RMC::IsPaused) RMC::IsPaused = false;
-            if (RMC::GotBelowMedalOnCurrentMap) {
-                BelowMedalCount += 1;
+        if (PluginSettings::RMC_FreeSkipAMount > RMC::FreeSkipsUsed){
+            int skipsLeft = PluginSettings::RMC_FreeSkipAMount - RMC::FreeSkipsUsed;
+            if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedalOnCurrentMap ? " Take " + BelowMedal + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
+                RMC::ClickedOnSkip = true;
+                if (RMC::IsPaused) RMC::IsPaused = false;
+                if (RMC::GotBelowMedalOnCurrentMap) {
+                    BelowMedalCount += 1;
+                } else {
+                    RMC::FreeSkipsUsed += 1;
+                    RMC::CurrentRunData["FreeSkipsUsed"] = RMC::FreeSkipsUsed;
+                    DataManager::SaveCurrentRunData();
+                }
+                Log::Trace("RMC: Skipping map");
+                UI::ShowNotification("Please wait...");
+                startnew(RMC::SwitchMap);
             }
-            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-#if TMNEXT
-            if (
-                (PluginSettings::RMC_PrepatchTagsWarns &&
-                RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) &&
-                !RMC::GotBelowMedalOnCurrentMap
-            ) RMC::EndTime += RMC::TimeSpentMap;
-#endif
-            Log::Trace("RMC: Skipping map");
-            UI::ShowNotification("Please wait...");
-            startnew(RMC::SwitchMap);
+        } else if (RMC::GotBelowMedalOnCurrentMap) {
+            if (UI::Button(Icons::PlayCircleO + " Take " + BelowMedal + " medal")) {
+                RMC::ClickedOnSkip = true;
+                if (RMC::IsPaused) RMC::IsPaused = false;
+                BelowMedalCount += 1;
+                Log::Trace("RMC: Skipping map");
+                UI::ShowNotification("Please wait...");
+                startnew(RMC::SwitchMap);
+            }
+        } else {
+            UI::NewLine();
         }
+        if (!RMC::GotBelowMedalOnCurrentMap) UI::SetPreviousTooltip(
+            "Free Skips are if the map is finishable but you still want to skip it for any reason.\n"+ 
+            "Standard RMC rules allow 1 Free skip. If the map is broken please use the button below."
+        );
+
+        if (UI::OrangeButton(Icons::PlayCircleO + "Skip broken Map")) {
+            if (!UI::IsOverlayShown()) UI::ShowOverlay();
+            RMC::IsPaused = true;
+            Renderables::Add(BrokenMapSkipWarnModalDialog());
+        }
+
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
         UI::EndDisabled();
     }

@@ -55,26 +55,25 @@ class RMS : RMC
         UI::SetCursorPos(pos_orig);
     }
 
-    void SkipButton() override
+    void SkipButtons() override
     {
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Skips += 1;
             Log::Trace("RMS: Skipping map");
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);
-            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-#if TMNEXT
-            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
-                RMC::EndTime += RMC::TimeSpentMap;
-            }
-#endif
         }
-        if (UI::OrangeButton(Icons::PlayCircleO + " Free Skip")) {
+#endif
+        if (UI::OrangeButton(Icons::PlayCircleO + " Skip Broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
-            Renderables::Add(SurvivalFreeSkipWarnModalDialog());
+            Renderables::Add(BrokenMapSkipWarnModalDialog());
         }
+
+        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
+        UI::EndDisabled();
     }
 
     void NextMapButton() override

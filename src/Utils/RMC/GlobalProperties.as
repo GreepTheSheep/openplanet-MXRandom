@@ -20,6 +20,7 @@ namespace RMC
     int StartTimeCopyForSaveData = -1;
     int EndTimeCopyForSaveData = -1;
     RMCConfig@ config;
+    int FreeSkipsUsed = 0;
 
     array<string> Medals = {
         "Bronze",
@@ -144,6 +145,7 @@ namespace RMC
                             Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
                             Survival.Skips = 0;
                             GotBelowMedalOnCurrentMap = CurrentRunData["GotBelowMedalOnMap"];
+                            FreeSkipsUsed = CurrentRunData["FreeSkipsUsed"];
                         } else {
                             Challenge.BelowMedalCount = 0;
                             Survival.Skips = CurrentRunData["SecondaryCounterValue"];
