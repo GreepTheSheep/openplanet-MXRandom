@@ -65,7 +65,7 @@ namespace PluginSettings
     bool RMC_RUN_AUTOSAVE = true;
 
     [Setting hidden]
-    int RMC_FreeSkipAMount = 1;  // one free skip as per official rules
+    int RMC_FreeSkipAmount = 1;  // one free skip as per official rules
 
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
@@ -87,7 +87,7 @@ namespace PluginSettings
                 RMC_SurvivalMaxTime = 15;
                 RMC_PrepatchTagsWarns = true;
                 RMC_RUN_AUTOSAVE = true;
-                RMC_FreeSkipAMount = 1;
+                RMC_FreeSkipAmount = 1;
             }
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
@@ -111,7 +111,7 @@ namespace PluginSettings
             UI::SetNextItemWidth(300);
             RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 10, 120);
             UI::SetNextItemWidth(300);
-            RMC_FreeSkipAMount = UI::SliderInt("Amount of free skips in RMC runs", RMC_FreeSkipAMount, 1, 200);
+            RMC_FreeSkipAmount = UI::SliderInt("Amount of free skips in RMC runs", RMC_FreeSkipAmount, 1, 200);
             UI::SetNextItemWidth(300);
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 

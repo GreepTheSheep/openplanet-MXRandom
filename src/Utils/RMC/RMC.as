@@ -265,8 +265,8 @@ class RMC
         else BelowMedal = PluginSettings::RMC_GoalMedal;
 
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
-        if (PluginSettings::RMC_FreeSkipAMount > RMC::FreeSkipsUsed){
-            int skipsLeft = PluginSettings::RMC_FreeSkipAMount - RMC::FreeSkipsUsed;
+        if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed){
+            int skipsLeft = PluginSettings::RMC_FreeSkipAmount - RMC::FreeSkipsUsed;
             if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedalOnCurrentMap ? " Take " + BelowMedal + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
