@@ -52,7 +52,7 @@ class RMC
                         // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy
                         // of the timers to use for the save file
                     } else {
-                        RMC::SaveRunDataOnEnd();
+                        RMC::CreateSave(true);
                         vec4 color = UI::HSV(0.25, 1, 0.7);
                         UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
                     }
@@ -349,6 +349,9 @@ class RMC
         }
         RMC::IsPaused = false;
         RMC::IsRunning = true;
+        if (RMC::GotBelowMedalOnCurrentMap && RMC::GotGoalMedalOnCurrentMap) RMC::GotBelowMedalOnCurrentMap = false;
+        if (RMC::GotBelowMedalOnCurrentMap) GotBelowGoalMedalNotification();
+        if (RMC::GotGoalMedalOnCurrentMap) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
     }
 
@@ -446,6 +449,7 @@ class RMC
                 GotGoalMedalNotification();
                 RMC::GoalMedalCount += 1;
                 RMC::GotGoalMedalOnCurrentMap = true;
+                RMC::CreateSave();
             }
             if (
                 RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 &&
@@ -454,6 +458,7 @@ class RMC
             {
                 GotBelowGoalMedalNotification();
                 RMC::GotBelowMedalOnCurrentMap = true;
+                RMC::CreateSave();
             }
         }
     }

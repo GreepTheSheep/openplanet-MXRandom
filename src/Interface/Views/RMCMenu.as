@@ -1,5 +1,9 @@
 namespace RMC
 {
+
+    bool autodetectError = false;
+    string autodetectStatus = "";
+
     void RenderRMCMenu()
     {
 #if TMNEXT
@@ -90,11 +94,31 @@ namespace RMC
                 UI::Text(Icons::ExclamationCircle + " Better Chat plugin not found.");
                 UI::SetPreviousTooltip("RMT can use Better Chat plugin (by Miss) in order to send events to other people in game chat. This is optional.");
 #endif
+#if !DEPENDENCY_BETTERROOMMANAGER
+                UI::Text(Icons::ExclamationCircle + " Better Room Manager plugin not found.");
+                UI::SetPreviousTooltip("RMT can use Better Room Manager plugin (by XertroV) in order to autodetect Club and Room ID. This is optional.");
+#endif
                 UI::TextDisabled(Icons::InfoCircle + " Click for help");
                 if (UI::IsItemClicked()) {
                     Renderables::Add(RMTHelpModalDialog());
                 }
 #if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
+#if DEPENDENCY_BETTERROOMMANAGER
+                if (BRM::IsInAServer(GetApp())) {
+                    UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
+                    if (UI::Button("Auto-detect Club and Room ID")) {
+                        startnew(BRMStartAutoDetectRoomRMT);
+                    }
+                    UI::EndDisabled();
+                    if (autodetectStatus != "" || autodetectStatus == "Done") UI::Text(autodetectStatus);
+                    if (autodetectError) UI::Text(MXNadeoServicesGlobal::roomCheckError);
+                    if (autodetectStatus == "Done") {
+                        autodetectStatus = "";
+                        startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
+                    }
+                }
+#endif
+
                 UI::AlignTextToFramePadding();
                 UI::Text("Club ID:");
                 UI::SameLine();
@@ -221,4 +245,61 @@ namespace RMC
         UI::TextWrapped("In the Random Map Survival, you have to grab the maximum number of author medals before the timer reaches 0. You gain 3 minutes per medal won, you can skip but you lose 1 minute of your time limit");
         if (UI::GreenButton(Icons::ExternalLink + " More informations")) OpenBrowserURL("https://flinkblog.de/RMC/");
     }
+
+#if DEPENDENCY_BETTERROOMMANAGER
+    void BRMStartAutoDetectRoomRMT() {
+        MXNadeoServicesGlobal::isCheckingRoom = true;
+        autodetectError = false;
+        autodetectStatus = "Detecting... ";
+        auto cs = BRM::GetCurrentServerInfo(GetApp());
+        if (cs is null) {
+            MXNadeoServicesGlobal::roomCheckError = "Couldn't get current server info";
+            autodetectError = true;
+            return;
+        }
+        if (cs.clubId <= 0) {
+            MXNadeoServicesGlobal::roomCheckError = "Could not detect club ID for this server (" + cs.name + " / " + cs.login + ")";
+            autodetectError = true;
+            return;
+        }
+
+        autodetectStatus = "Found Club ID: " + cs.clubId;
+
+        auto myClubs = BRM::GetMyClubs();
+        const Json::Value@ foundClub = null;
+
+        for (uint i = 0; i < myClubs.Length; i++) {
+            if (cs.clubId == int(myClubs[i]['id'])) {
+                @foundClub = myClubs[i];
+                break;
+            }
+        }
+
+        if (foundClub is null) {
+            MXNadeoServicesGlobal::roomCheckError = "Club not found in your list of clubs (refresh from Better Room Manager if you joined the club recently).";
+            autodetectError = true;
+            return;
+        }
+
+        if (!bool(foundClub['isAnyAdmin'])) {
+            MXNadeoServicesGlobal::roomCheckError = "Club was found but your role isn't enough to edit rooms (refresh from Better Room Manager if this changed recently).";
+            autodetectError = true;
+            return;
+        }
+
+        autodetectStatus = "Checking for matching rooms...";
+
+        if (cs.roomId <= 0) {
+            MXNadeoServicesGlobal::roomCheckError = "Room not found in club";
+            autodetectError = true;
+            return;
+        }
+
+        PluginSettings::RMC_Together_ClubId = cs.clubId;
+        PluginSettings::RMC_Together_RoomId = cs.roomId;
+
+        autodetectStatus = "Done";
+        MXNadeoServicesGlobal::isCheckingRoom = false;
+    }
+#endif
 }
