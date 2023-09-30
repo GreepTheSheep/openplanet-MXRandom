@@ -95,6 +95,7 @@ class RMS : RMC
         SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::get_Now() : Time::get_Now() - int(RMC::CurrentRunData["CurrentRunTime"]);
         RMC::IsPaused = false;
         RMC::IsRunning = true;
+        if (RMC::GotGoalMedalOnCurrentMap) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
     }
 
