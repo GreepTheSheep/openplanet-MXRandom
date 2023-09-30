@@ -1,13 +1,13 @@
-class SurvivalFreeSkipWarnModalDialog : ModalDialog
+class BrokenMapSkipWarnModalDialog : ModalDialog
 {
     Net::HttpRequest@ m_request;
     string resErrorString;
     Json::Value m_rulesJson;
     bool m_requestError = false;
 
-    SurvivalFreeSkipWarnModalDialog()
+    BrokenMapSkipWarnModalDialog()
     {
-        super("\\$f90" + Icons::ExclamationTriangle + " \\$zWarning###RMSFreeSkip");
+        super("\\$f90" + Icons::ExclamationTriangle + " \\$zWarning###BrokenMapSkip");
         m_size = vec2(400, 130);
     }
 
@@ -15,7 +15,7 @@ class SurvivalFreeSkipWarnModalDialog : ModalDialog
     {
         float scale = UI::GetScale();
         UI::BeginChild("Content", vec2(0, -32) * scale);
-        UI::Text("Free skips is only if the map is impossible or broken.\n\nAre you sure to skip?");
+        UI::Text("Broken Map skips are only for impossible or broken maps.\n\nAre you sure to skip?");
         UI::EndChild();
         if (UI::Button(Icons::Times + " No")) {
             Close();
@@ -28,14 +28,9 @@ class SurvivalFreeSkipWarnModalDialog : ModalDialog
             Close();
             RMC::EndTime = RMC::EndTime + (Time::get_Now() - RMC::StartTime);
             RMC::IsPaused = false;
-            print("RMC: Survival Free Skip");
+            print("RMC: Broken Map Skip");
             UI::ShowNotification("Please wait...");
-            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-#if TMNEXT
-            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
-                RMC::EndTime += RMC::TimeSpentMap;
-            }
-#endif
+            RMC::EndTime += RMC::TimeSpentMap;
             startnew(RMC::SwitchMap);
         }
     }

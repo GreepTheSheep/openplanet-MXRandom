@@ -69,7 +69,7 @@ class RMObjective : RMC
         UI::SetCursorPos(pos_orig);
     }
 
-    void SkipButton() override
+    void SkipButtons() override
     {
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
             if (RMC::IsPaused) RMC::IsPaused = false;

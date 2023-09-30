@@ -397,14 +397,14 @@ class RMT : RMC
     {
         CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
         if (currentMap !is null) {
-            SkipButton();
+            SkipButtons();
             if (IS_DEV_MODE) {
                 DevButtons();
             }
         }
     }
 
-    void SkipButton() override
+    void SkipButtons() override
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];

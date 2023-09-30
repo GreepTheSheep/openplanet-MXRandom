@@ -45,6 +45,7 @@ namespace DataManager
         SaveFileData["CurrentRunTime"] = 0;
         SaveFileData["GotBelowMedalOnMap"] = false; // for challenge runs
         SaveFileData["GotGoalMedalOnMap"] = false; // for challenge runs
+        SaveFileData["FreeSkipsUsed"] = 0; // for RMC runs
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
         RMC::CurrentRunData = SaveFileData;
     }
