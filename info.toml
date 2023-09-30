@@ -8,7 +8,7 @@ siteid = 124
 version = "2.3.6"
 
 [script]
-optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook", "MLFeedRaceData", "BetterChat" ]
+optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook", "MLFeedRaceData", "BetterChat", "BetterRoomManager" ]
 
 exports = [ "src/Exports/Exports.as" ]
 
