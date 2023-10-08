@@ -65,7 +65,6 @@ class RMS : RMC
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);
         }
-#endif
         if (UI::OrangeButton(Icons::PlayCircleO + " Skip Broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
