@@ -71,6 +71,8 @@ class RMT : RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();
             RenderPlayingButtons();
+            UI::Separator();
+            DrawPlayerProgress();
         }
     }
 
@@ -596,6 +598,68 @@ class RMT : RMC
         return newPlayerScore;
     }
 
+    void DrawPlayerProgress() {
+        if (UI::CollapsingHeader("Current Runs")) {
+#if DEPENDENCY_MLFEEDRACEDATA
+            UI::Indent();
+
+            auto rd = MLFeed::GetRaceData_V4();
+            UI::ListClipper clip(rd.SortedPlayers_TimeAttack.Length);
+            if (UI::BeginTable("player-curr-runs", 4, UI::TableFlags::SizingStretchProp | UI::TableFlags::ScrollY)) {
+                UI::TableSetupColumn("name", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("cp", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("time", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("delta", UI::TableColumnFlags::WidthStretch);
+                // UI::TableHeadersRow();
+
+                while (clip.Step()) {
+                    for (int i = clip.DisplayStart; i < clip.DisplayEnd; i++) {
+                        auto p = rd.SortedPlayers_TimeAttack[i];
+                        UI::PushID(i);
+
+                        UI::TableNextRow();
+
+                        UI::TableNextColumn();
+                        UI::Text(p.Name);
+                        UI::TableNextColumn();
+                        UI::Text(tostring(p.CpCount));
+                        UI::TableNextColumn();
+                        UI::Text(Time::Format(p.LastCpOrRespawnTime));
+                        UI::TableNextColumn();
+                        auto best = p.BestRaceTimes;
+                        if (best !is null && p.CpCount <= int(best.Length)) {
+                            bool isBehind = false;
+                            // best player times start with index 0 being CP 1 time
+                            auto cpBest = p.CpCount == 0 ? 0 : int(best[p.CpCount - 1]);
+                            auto lastCpTimeVirtual = p.LastCpOrRespawnTime;
+                            // account for current race time via next cp
+                            if (p.CpCount < int(best.Length) && p.CurrentRaceTime > best[p.CpCount]) {
+                                // delta = last CP time - best CP time (for that CP)
+                                // we are ahead when last < best
+                                // so if we're behind, last > best, and the minimum difference to our pb is given by (last = current race time, and best = next CP time)
+                                isBehind = true;
+                                lastCpTimeVirtual = p.CurrentRaceTime;
+                                cpBest = best[p.CpCount];
+                            }
+                            string time = (p.IsFinished ?  (lastCpTimeVirtual <= cpBest ? "\\$5f5" : "\\$f53") : (lastCpTimeVirtual <= cpBest && !isBehind) ? "\\$48f-" : "\\$f84+")
+                                + Time::Format(p.IsFinished ? p.LastCpTime : Math::Abs(lastCpTimeVirtual - cpBest))
+                                + (isBehind ? " (*)" : "");
+                            UI::Text(time);
+                        } else {
+                            UI::Text("\\$888-:--.---");
+                        }
+                        UI::PopID();
+                    }
+                }
+                UI::EndTable();
+            }
+            UI::Unindent();
+#else
+            // shouldn't show up, but w/e
+            UI::Text("MLFeed required.");
+#endif
+        }
+    }
 }
 
 class RMTPlayerScore {
