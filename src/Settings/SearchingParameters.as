@@ -100,6 +100,9 @@ namespace PluginSettings
     [Setting hidden]
     string Difficulty = SearchingDifficultys[0];
 
+    [Setting hidden]
+    bool SkipSeenMaps = false;
+
     [SettingsTab name="Searching" order="2" icon="Search"]
     void RenderSearchingSettingTab()
     {
@@ -231,6 +234,10 @@ namespace PluginSettings
             }
             UI::EndCombo();
         }
+
+        UI::NewLine();
+
+        SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID)
