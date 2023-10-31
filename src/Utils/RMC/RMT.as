@@ -181,12 +181,6 @@ class RMT : RMC
         res["PlayedAt"] = playedAt;
         @nextMap = MX::MapInfo(res);
         Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.TrackID + ")");
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
-            Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
-            @nextMap = null;
-            RMTFetchNextMap();
-            return;
-        }
 
         if (PluginSettings::SkipSeenMaps) {
             if (seenMaps.Exists(nextMap.TrackUID)) {
@@ -196,6 +190,13 @@ class RMT : RMC
             }
 
             seenMaps[nextMap.TrackUID] = nextMap.TrackUID;
+        }
+
+        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
+            Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
+            @nextMap = null;
+            RMTFetchNextMap();
+            return;
         }
 
         isFetchingNextMap = false;
