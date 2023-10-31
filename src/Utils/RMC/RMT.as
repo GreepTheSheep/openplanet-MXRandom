@@ -189,7 +189,7 @@ class RMT : RMC
         }
 
         if (PluginSettings::SkipSeenMaps) {
-            if (string(seenMaps[nextMap.TrackUID]).Length > 0) {
+            if (seenMaps.Exists(nextMap.TrackUID)) {
                 Log::Trace("Map has been seen, retrying...");
                 RMTFetchNextMap();
                 return;
