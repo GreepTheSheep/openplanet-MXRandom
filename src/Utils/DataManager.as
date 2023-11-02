@@ -93,7 +93,7 @@ namespace DataManager
                 Log::Error("Save file for " + gameMode + " is corrupted, missing key " + requiredKeys[i]);
                 return false;
             } else if (data[requiredKeys[i]].GetType() != requiredTypesOfKeys[i]) {
-                Log::Error("Save file for " + gameMode + " is corrupted, key '" + requiredKeys[i] + "'' is of wrong type\n(Expected " + tostring(
+                Log::Error("Save file for " + gameMode + " is corrupted, key '" + requiredKeys[i] + "' is of wrong type\n(Expected " + tostring(
                     Json::Type(requiredTypesOfKeys[i])) + ", got " + tostring(
                         Json::Type(data[requiredKeys[i]].GetType())) + ")");
                 return false;
