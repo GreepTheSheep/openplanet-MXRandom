@@ -63,11 +63,56 @@ namespace DataManager
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
     }
 
+    bool EnsureSaveDataIsLoadable(string gameMode, Json::Value data) {
+        array<string> requiredKeys = {
+            "PBOnMap",
+            "TimerRemaining",
+            "MapData",
+            "TimeSpentOnMap",
+            "PrimaryCounterValue",
+            "SecondaryCounterValue",
+            "CurrentRunTime",
+            "GotBelowMedalOnMap",
+            "GotGoalMedalOnMap",
+            "FreeSkipsUsed"
+        };
+        array<Json::Type> requiredTypesOfKeys = {
+            Json::Type::Number,
+            Json::Type::Number,
+            Json::Type::Object,
+            Json::Type::Number,
+            Json::Type::Number,
+            Json::Type::Number,
+            Json::Type::Number,
+            Json::Type::Boolean,
+            Json::Type::Boolean,
+            Json::Type::Number
+        };
+        for (uint i = 0; i < requiredKeys.Length; i++) {
+            if (!data.HasKey(requiredKeys[i])) {
+                Log::Error("Save file for " + gameMode + " is corrupted, missing key " + requiredKeys[i]);
+                return false;
+            } else if (data[requiredKeys[i]].GetType() != requiredTypesOfKeys[i]) {
+                Log::Error("Save file for " + gameMode + " is corrupted, key '" + requiredKeys[i] + "'' is of wrong type\n(Expected " + tostring(
+                    Json::Type(requiredTypesOfKeys[i])) + ", got " + tostring(
+                        Json::Type(data[requiredKeys[i]].GetType())) + ")");
+                return false;
+            }
+        }
+        return true;
+    }
+
     bool LoadRunData() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
             RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+            if (!EnsureSaveDataIsLoadable(gameMode, RMC::CurrentRunData)) {
+                Log::Error("Deleting the current" + gameMode + " save file, as it is corrupted!");
+                Log::Error("Please create an issue on github if this repeatedly happens with as much information as possible (when it happened, what you did, logs, etc.)");
+                RemoveCurrentSaveFile();
+                return false;
+            }
             if (RMC::CurrentRunData["TimerRemaining"] == 0) return false;
             return true;
         }
