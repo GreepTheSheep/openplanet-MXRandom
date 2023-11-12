@@ -15,6 +15,7 @@ class RMT : RMC
     bool isSwitchingMap = false;
     bool pressedStopButton = false;
     bool isFetchingNextMap = false;
+    dictionary seenMaps;
 
     string GetModeName() override { return "Random Map Together";}
 
@@ -121,6 +122,7 @@ class RMT : RMC
         res["PlayedAt"] = playedAt;
         @currentMap = MX::MapInfo(res);
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+        seenMaps[currentMap.TrackUID] = currentMap.TrackUID;
         UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#991703"));
 
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
@@ -179,12 +181,24 @@ class RMT : RMC
         res["PlayedAt"] = playedAt;
         @nextMap = MX::MapInfo(res);
         Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.TrackID + ")");
+
+        if (PluginSettings::SkipSeenMaps) {
+            if (seenMaps.Exists(nextMap.TrackUID)) {
+                Log::Trace("Map has been seen, retrying...");
+                RMTFetchNextMap();
+                return;
+            }
+
+            seenMaps[nextMap.TrackUID] = nextMap.TrackUID;
+        }
+
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
             Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
             @nextMap = null;
             RMTFetchNextMap();
             return;
         }
+
         isFetchingNextMap = false;
     }
 
