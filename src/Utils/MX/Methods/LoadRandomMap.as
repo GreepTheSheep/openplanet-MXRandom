@@ -329,7 +329,7 @@ namespace MX
 
 #if TMNEXT
             // prevent loading CharacterPilot maps
-            url += "&vehicles=1";
+            url += "&vehicles=1,2,3,4";
 #elif MP4
             // Fetch in the correct titlepack
             if (TM::CurrentTitlePack() == "TMAll") {
