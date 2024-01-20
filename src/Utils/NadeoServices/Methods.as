@@ -192,5 +192,36 @@ namespace MXNadeoServicesGlobal
         EditRoomPayloadSetTimeout(bodyJson, timerSec);
         RunClubRoomRequest(room, bodyJson, "ClubRoomSetCountdownTimer");
     }
+
+    int GetMapWorldRecord(const string &in mapUid) {
+        string url = NadeoServices::BaseURLLive()+"/api/token/leaderboard/group/Personal_Best/map/"+mapUid+"/top?length=1&onlyWorld=true&offset=0";
+        if (IS_DEV_MODE) Log::Trace("NadeoServices - Get Map WR: " + url);
+        Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
+        req.Start();
+        while (!req.Finished()) {
+            yield();
+        }
+        if (IS_DEV_MODE) Log::Trace("NadeoServices - Get Map WR Res: " + req.String());
+        auto res = Json::Parse(req.String());
+
+        if (res.GetType() != Json::Type::Object) {
+            if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {
+                string errorMsg = res[0];
+                if (errorMsg.Contains("notFound")) return -1;
+            }
+            Log::Error("NadeoServices - Error get map WR: " + req.String());
+            return -1;
+        }
+
+        try {
+            uint mapWR = res["tops"][0]["top"][0]["score"];
+            string mapWRPlayer =  res["tops"][0]["top"][0]["accountId"];
+            if (IS_DEV_MODE) Log::Trace("NadeoServices - Map WR: " + mapWR + " by accountid " + mapWRPlayer);
+            return mapWR;
+        } catch {
+            Log::Error("NadeoServices - Map WR failed: " + getExceptionInfo());
+            return -1;
+        }
+    }
 #endif
 }

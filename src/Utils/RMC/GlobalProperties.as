@@ -28,6 +28,9 @@ namespace RMC
         "Silver",
         "Gold",
         "Author"
+#if TMNEXT
+        ,"World Record"
+#endif
     };
 
     const array<string> allowedMapLengths = {
@@ -201,6 +204,7 @@ namespace RMC
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
         int medal = -1;
         if (map !is null && GamePlayground !is null){
+            int worldRecordTime = TM::GetWorldRecordFromCache(map.MapInfo.MapUid);
             int authorTime = map.TMObjective_AuthorTime;
             int goldTime = map.TMObjective_GoldTime;
             int silverTime = map.TMObjective_SilverTime;
@@ -227,7 +231,8 @@ namespace RMC
 #endif
             if (time != -1){
                 // run finished
-                if(time <= authorTime) medal = 3;
+                if(time <= worldRecordTime) medal = 4;
+                else if(time <= authorTime) medal = 3;
                 else if(time <= goldTime) medal = 2;
                 else if(time <= silverTime) medal = 1;
                 else if(time <= bronzeTime) medal = 0;
@@ -235,6 +240,7 @@ namespace RMC
 
                 if (IS_DEV_MODE) {
                     Log::Trace("Run finished with time " + FormatTimer(time));
+                    Log::Trace("World Record time: " + FormatTimer(worldRecordTime));
                     Log::Trace("Author time: " + FormatTimer(authorTime));
                     Log::Trace("Gold time: " + FormatTimer(goldTime));
                     Log::Trace("Silver time: " + FormatTimer(silverTime));
@@ -267,7 +273,7 @@ namespace RMC
             CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
         }
 
-        if (!endRun) {        
+        if (!endRun) {
             CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;  // don't use the copies here, they are only updated for game end.
         } else {
             CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;

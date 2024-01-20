@@ -114,8 +114,27 @@ namespace MX
             return;
         }
 
+#if TMNEXT
+        // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
+        if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
+            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.TrackUID)) {
+                Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
+                PreloadRandomMap();
+                return;
+            } else {
+                // if uploaded, get wr
+                uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.TrackUID);
+                if (mapWorldRecord == -1) {
+                    Log::Warn("Couldn't got map World Record, retrying another map...");
+                    PreloadRandomMap();
+                    return;
+                } else TM::SetWorldRecordToCache(map.TrackUID, mapWorldRecord);
+            }
+        }
+#endif
+
         if (
-            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch) 
+            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch)
             || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
         ) {
             string author = map.Username.ToLower();

@@ -5,6 +5,7 @@ class RMC
     bool UserEndedRun = false;
 
     UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
+    UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
     UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");
     UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
@@ -132,7 +133,9 @@ class RMC
 
     void RenderGoalMedal()
     {
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+        UI::AlignTextToFramePadding();
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(WRTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
@@ -150,7 +153,9 @@ class RMC
     {
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+            UI::AlignTextToFramePadding();
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else UI::Text(PluginSettings::RMC_GoalMedal);
@@ -259,7 +264,8 @@ class RMC
     void SkipButtons()
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) BelowMedal = RMC::Medals[3];
+        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) BelowMedal = RMC::Medals[1];
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
         else BelowMedal = PluginSettings::RMC_GoalMedal;
@@ -294,7 +300,7 @@ class RMC
             UI::NewLine();
         }
         if (!RMC::GotBelowMedalOnCurrentMap) UI::SetPreviousTooltip(
-            "Free Skips are if the map is finishable but you still want to skip it for any reason.\n"+ 
+            "Free Skips are if the map is finishable but you still want to skip it for any reason.\n"+
             "Standard RMC rules allow 1 Free skip. If the map is broken please use the button below."
         );
 

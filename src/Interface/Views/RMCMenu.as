@@ -17,7 +17,10 @@ namespace RMC
                 selectedGameMode = GameMode::Survival;
                 startnew(Start);
             }
-            UI::SetNextItemWidth(100);
+            UI::AlignTextToFramePadding();
+            UI::Text("Goal:");
+            UI::SameLine();
+            UI::SetNextItemWidth(150);
             if (UI::BeginCombo("##GoalMedalObjectiveMode", PluginSettings::RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
                     string goalMedal = RMC::Medals[i];
@@ -32,8 +35,6 @@ namespace RMC
                 }
                 UI::EndCombo();
             }
-            UI::SameLine();
-            UI::Text("medals");
 #if TMNEXT
             if (UI::TreeNode("\\$f50" + Icons::Fire + " \\$zChaos Mode")) {
 #if DEPENDENCY_CHAOSMODE
@@ -65,8 +66,6 @@ namespace RMC
                 PluginSettings::RMC_ObjectiveMode_Goal = UI::InputInt("##ObjectiveMedals", PluginSettings::RMC_ObjectiveMode_Goal);
                 if (PluginSettings::RMC_ObjectiveMode_Goal < 1)
                     PluginSettings::RMC_ObjectiveMode_Goal = 1;
-                UI::SameLine();
-                UI::Text("medals");
 
                 if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")){
                     selectedGameMode = GameMode::Objective;
