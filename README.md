@@ -8,7 +8,7 @@
 ---
 ## Usage:
 
-Select "MX Randomizer" on the "Scripts" pannel.
+Select "MX Randomizer" on the "Plugins" pannel.
 
 Select "Random Map Challenge" for the RMC timer.
 
