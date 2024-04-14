@@ -4,7 +4,11 @@ namespace PluginSettings
     bool closeOverlayOnMapLoaded = true;
 
     [Setting hidden]
+#if TMNEXT
+    string RMC_MX_Url = "https://map-monitor.xk.io";
+#else
     string RMC_MX_Url = "https://" + MX_URL;
+#endif
 
     // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
     [Setting hidden]
