@@ -5,6 +5,9 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Get;
         ret.Url = url;
+        if (url.StartsWith(RMCLeaderAPI::baseURL) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
+            ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
+        }
         Log::Trace("Get: " + url);
         ret.Start();
         return ret;
@@ -26,6 +29,9 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Post;
         ret.Url = url;
+        if (url.StartsWith(RMCLeaderAPI::baseURL) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
+            ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
+        }
         ret.Body = body;
         ret.Headers.Set("Content-Type", "application/json");
         Log::Trace("Post: " + url);
@@ -40,6 +46,8 @@ namespace API
         while (!req.Finished()) {
             yield();
         }
-        return Json::Parse(req.String());
+        string res = req.String();
+        if (IS_DEV_MODE) Log::Trace("Post Res: " + res);
+        return Json::Parse(res);
     }
 }

@@ -63,6 +63,10 @@ void Render()
 
 void Main()
 {
+#if TMNEXT
+    startnew(RMCLeaderAPI::Login);
+#endif
+
     @g_fontHeader = UI::LoadFont("DroidSans-Bold.ttf", 22);
     @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20);
 

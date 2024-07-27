@@ -107,13 +107,15 @@ class RMS : RMC
 
     void GameEndNotification() override
     {
-        if (RMC::selectedGameMode == RMC::GameMode::Survival)
-        UI::ShowNotification(
-            "\\$0f0Random Map Survival ended!",
-            "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +
-            ".\nYou got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
-            " medals and " + RMC::Survival.Skips + " skips."
-        );
+        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+            RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_GoalMedal);
+            UI::ShowNotification(
+                "\\$0f0Random Map Survival ended!",
+                "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +
+                ".\nYou got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
+                " medals and " + RMC::Survival.Skips + " skips."
+            );
+        }
 #if DEPENDENCY_CHAOSMODE
         if (RMC::selectedGameMode == RMC::GameMode::SurvivalChaos) {
             UI::ShowNotification(

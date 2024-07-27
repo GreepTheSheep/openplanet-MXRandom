@@ -363,7 +363,8 @@ class RMC
 
     void GameEndNotification()
     {
-        if (RMC::selectedGameMode == RMC::GameMode::Challenge)
+        if (RMC::selectedGameMode == RMC::GameMode::Challenge) {
+            RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_GoalMedal);
             UI::ShowNotification(
                 "\\$0f0Random Map Challenge ended!",
                 "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
@@ -372,6 +373,7 @@ class RMC
                     (" and "+ BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1])
                     : ""
                 ) + " medals!");
+        }
 #if DEPENDENCY_CHAOSMODE
         if (RMC::selectedGameMode == RMC::GameMode::ChallengeChaos) {
             UI::ShowNotification(

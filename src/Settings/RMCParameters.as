@@ -67,6 +67,13 @@ namespace PluginSettings
     [Setting hidden]
     int RMC_FreeSkipAmount = 1;  // one free skip as per official rules
 
+    [Setting hidden]
+#if TMNEXT
+    bool RMC_PushLeaderboardResults = true;
+#else
+    bool RMC_PushLeaderboardResults = false;
+#endif
+
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab(bool dontShowBaseInfos = false)
     {
@@ -88,6 +95,7 @@ namespace PluginSettings
                 RMC_PrepatchTagsWarns = true;
                 RMC_RUN_AUTOSAVE = true;
                 RMC_FreeSkipAmount = 1;
+                RMC_PushLeaderboardResults = true;
             }
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
@@ -118,6 +126,9 @@ namespace PluginSettings
 #if TMNEXT
             RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch maps warnings", RMC_PrepatchTagsWarns);
             UI::SetPreviousTooltip("Display a warning if the map is built before the new physics patches (eg the bobsleigh update)");
+
+            RMC_PushLeaderboardResults = UI::Checkbox("Send every RMC & RMS runs to the leaderboard", RMC_PushLeaderboardResults);
+            UI::SetPreviousTooltip("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif
 
             UI::EndTabItem();
