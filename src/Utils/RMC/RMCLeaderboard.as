@@ -55,7 +55,7 @@ namespace RMCLeaderAPI {
     }
 
     void postRMC(const int &in goal, const int &in belowGoal, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults) return;
+        if (!PluginSettings::RMC_PushLeaderboardResults || !connected) return;
 
         string objectiveFormatted = "author";
         if (objective == "World Record") objectiveFormatted = "wr";
@@ -89,7 +89,7 @@ namespace RMCLeaderAPI {
     }
 
     void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults) return;
+        if (!PluginSettings::RMC_PushLeaderboardResults || !connected) return;
 
         int survivedTimeSeconds = survivedTime / 1000;
         string objectiveFormatted = "author";
