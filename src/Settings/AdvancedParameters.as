@@ -10,6 +10,9 @@ namespace PluginSettings
     string RMC_MX_Url = "https://" + MX_URL;
 #endif
 
+    [Setting hidden]
+    string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
+
     // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
     [Setting hidden]
     bool UseLengthChecksInRequests = true;
@@ -49,6 +52,17 @@ namespace PluginSettings
         UI::SetPreviousTooltip("Much faster random API for TMX maps, and fixes TMX's broken randomization.\nAll TMX maps are cached and standard RMC map filtering applies.");
         if (clickedXertApi) {
             RMC_MX_Url = "https://map-monitor.xk.io";
+        }
+
+        if (PluginSettings::RMC_PushLeaderboardResults) {
+            UI::NewLine();
+            RMC_Leaderboard_Url = UI::InputText("RMC & RMS Leaderboard URL", RMC_Leaderboard_Url);
+            UI::SetPreviousTooltip("Use this URL for API calls to RMC & RMS Leaderboard. Useful for hosting your own service for storing your own scores.\nOnly change if you know what you're doing!");
+
+            if (RMC_Leaderboard_Url.Length > 0 && RMC_Leaderboard_Url[RMC_Leaderboard_Url.Length - 1] == 47) {  // 47 is the ASCII code for a forward slash
+                // Remove the last character if it's a forward slash
+                RMC_Leaderboard_Url = RMC_Leaderboard_Url.SubStr(0, RMC_Leaderboard_Url.Length - 1);
+            }
         }
 
         UI::Separator();
