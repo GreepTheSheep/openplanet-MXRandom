@@ -5,7 +5,7 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Get;
         ret.Url = url;
-        if (url.StartsWith(RMCLeaderAPI::baseURL) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
+        if (url.StartsWith(PluginSettings::RMC_Leaderboard_Url) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
             ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
         }
         Log::Trace("Get: " + url);
@@ -29,7 +29,7 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Post;
         ret.Url = url;
-        if (url.StartsWith(RMCLeaderAPI::baseURL) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
+        if (url.StartsWith(PluginSettings::RMC_Leaderboard_Url) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
             ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
         }
         ret.Body = body;

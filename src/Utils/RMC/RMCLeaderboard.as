@@ -30,7 +30,7 @@ namespace RMCLeaderAPI {
         serverJson["player_id"] = AccountId;
         serverJson["plugin_version"] = PLUGIN_VERSION;
 
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/auth.php", Json::Write(serverJson));
+        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/auth.php", Json::Write(serverJson));
 
         if (serverRes.HasKey("success")) {
             bool isSuccess = serverRes["success"];
@@ -67,7 +67,7 @@ namespace RMCLeaderAPI {
         serverJson["goal"] = goal;
         serverJson["below_goal"] = belowGoal;
 
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/rmc.php", Json::Write(serverJson));
+        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rmc.php", Json::Write(serverJson));
 
         if (serverRes.HasKey("success")) {
             bool isSuccess = serverRes["success"];
@@ -104,7 +104,7 @@ namespace RMCLeaderAPI {
         serverJson["skips"] = skips;
         serverJson["time_survived"] = survivedTimeSeconds;
 
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/rms.php", Json::Write(serverJson));
+        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rms.php", Json::Write(serverJson));
 
         if (serverRes.HasKey("success")) {
             bool isSuccess = serverRes["success"];
