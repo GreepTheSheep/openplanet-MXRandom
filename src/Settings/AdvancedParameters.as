@@ -24,6 +24,7 @@ namespace PluginSettings
         {
             closeOverlayOnMapLoaded = true;
             RMC_MX_Url = "https://" + MX_URL;
+            RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
             UseLengthChecksInRequests = true;
         }
 
