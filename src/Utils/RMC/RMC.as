@@ -431,8 +431,10 @@ class RMC
                                 RMC::EndTime = -1;
                                 RMC::IsRunning = false;
                                 RMC::ShowTimer = false;
-                                GameEndNotification();
-                                if (!UserEndedRun) DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
+                                if (!UserEndedRun) {
+                                    GameEndNotification();
+                                    DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
+                                }
                                 if (PluginSettings::RMC_ExitMapOnEndTime){
                                     CTrackMania@ app = cast<CTrackMania>(GetApp());
                                     app.BackToMainMenu();
