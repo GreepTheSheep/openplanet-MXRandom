@@ -64,7 +64,7 @@ namespace RMCLeaderAPI {
     }
 
     void postRMC(const int &in goal, const int &in belowGoal, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled
+        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
 
         string objectiveFormatted = "author";
         if (objective == "World Record") objectiveFormatted = "wr";
@@ -98,7 +98,7 @@ namespace RMCLeaderAPI {
     }
 
     void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled
+        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
 
         int survivedTimeSeconds = survivedTime / 1000;
         string objectiveFormatted = "author";
