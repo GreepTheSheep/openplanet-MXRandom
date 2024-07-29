@@ -170,7 +170,7 @@ namespace RMC
 #endif
         UI::Separator();
         if (UI::Button(Icons::Table + " Standings")) {
-            OpenBrowserURL("https://docs.google.com/spreadsheets/d/1Byoa0ZIakuhK02n3a5FcTNYIhJksX25tqU455Lg-vkI/edit?usp=sharing");
+            OpenBrowserURL("https://greep.fr/#/rmc");
         }
         UI::SameLine();
         if (UI::PurpleButton(Icons::Cog)) {
