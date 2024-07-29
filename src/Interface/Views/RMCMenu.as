@@ -170,7 +170,7 @@ namespace RMC
 #endif
         UI::Separator();
         if (UI::Button(Icons::Table + " Standings")) {
-            OpenBrowserURL("https://greep.fr/#/rmc");
+            OpenBrowserURL(PluginSettings::RMC_Leaderboard_Url);
         }
         UI::SameLine();
         if (UI::PurpleButton(Icons::Cog)) {
