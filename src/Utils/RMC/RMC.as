@@ -2,7 +2,6 @@ class RMC
 {
     int BelowMedalCount = 0;
     int ModeStartTimestamp = -1;
-    bool UserEndedRun = false;
 
     UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
@@ -34,7 +33,7 @@ class RMC
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
-                UserEndedRun = true;
+                RMC::UserEndedRun = true;
                 RMC::EndTimeCopyForSaveData = RMC::EndTime;
                 RMC::StartTimeCopyForSaveData = RMC::StartTime;
                 RMC::IsRunning = false;
@@ -431,7 +430,7 @@ class RMC
                                 RMC::EndTime = -1;
                                 RMC::IsRunning = false;
                                 RMC::ShowTimer = false;
-                                if (!UserEndedRun) {
+                                if (!RMC::UserEndedRun) {
                                     GameEndNotification();
                                     DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
                                 }

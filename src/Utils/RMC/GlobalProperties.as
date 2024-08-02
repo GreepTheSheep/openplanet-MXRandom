@@ -7,6 +7,7 @@ namespace RMC
     bool ClickedOnSkip = false;
     bool GotGoalMedalOnCurrentMap = false;
     bool GotBelowMedalOnCurrentMap = false;
+    bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
     int GoalMedalCount = 0;
     int StartTime = -1;
     int EndTime = -1;
@@ -109,6 +110,7 @@ namespace RMC
         ClickedOnSkip = false;
         ContinueSavedRun = false;
         HasCompletedCheckbox = false;
+        UserEndedRun = false;
 
         if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
