@@ -12,7 +12,7 @@ namespace RMCLeaderAPI {
 
     void Login() {
         if (connectionAttempts >= 5) {
-            Log::Error("Too many failed attempts, leaderboard will not be enabled for this time.");
+            Log::Error("Too many failed connection attempts on the leaderboard API. Sending records are disabled for this time.", true);
             connectionError = true;
             connected = false;
             return;
@@ -87,7 +87,7 @@ namespace RMCLeaderAPI {
                 RMCLeaderAPI::postRMC(goal, belowGoal, objective);
             } else {
                 string message = serverRes["message"];
-                Log::Log(message, Meta::IsDeveloperMode());
+                Log::Log(message, true);
             }
         } else {
             // failed, retry
@@ -124,7 +124,7 @@ namespace RMCLeaderAPI {
                 RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
             } else {
                 string message = serverRes["message"];
-                Log::Log(message, Meta::IsDeveloperMode());
+                Log::Log(message, true);
             }
         } else {
             // failed, retry
