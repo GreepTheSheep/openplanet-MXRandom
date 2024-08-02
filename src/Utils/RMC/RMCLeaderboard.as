@@ -7,6 +7,7 @@ namespace RMCLeaderAPI {
     bool connectionError = false;
     bool connectionInProgress = false;
     int connectionAttempts = 0;
+    int postingResultsAttempts = 0;
     string AccountToken = "";
     string AccountId = "";
 
@@ -66,6 +67,13 @@ namespace RMCLeaderAPI {
     void postRMC(const int &in goal, const int &in belowGoal, const string &in objective = "author") {
         if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
 
+        if (postingResultsAttempts >= 10) {
+            Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
+            postingResultsAttempts = 0;
+            return;
+        }
+
+        postingResultsAttempts++;
         string objectiveFormatted = "author";
         if (objective == "World Record") objectiveFormatted = "wr";
         else objectiveFormatted = objective.ToLower();
@@ -100,6 +108,13 @@ namespace RMCLeaderAPI {
     void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, const string &in objective = "author") {
         if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
 
+        if (postingResultsAttempts >= 10) {
+            Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
+            postingResultsAttempts = 0;
+            return;
+        }
+
+        postingResultsAttempts++;
         int survivedTimeSeconds = survivedTime / 1000;
         string objectiveFormatted = "author";
 
