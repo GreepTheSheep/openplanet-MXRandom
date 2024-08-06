@@ -108,7 +108,9 @@ class RMS : RMC
     void GameEndNotification() override
     {
         if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+#if TMNEXT
             RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_GoalMedal);
+#endif
             UI::ShowNotification(
                 "\\$0f0Random Map Survival ended!",
                 "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +

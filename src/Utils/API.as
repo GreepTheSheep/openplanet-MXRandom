@@ -5,9 +5,11 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Get;
         ret.Url = url;
+#if TMNEXT
         if (url.StartsWith(PluginSettings::RMC_Leaderboard_Url) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
             ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
         }
+#endif
         Log::Trace("Get: " + url);
         ret.Start();
         return ret;
@@ -29,9 +31,11 @@ namespace API
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Post;
         ret.Url = url;
+#if TMNEXT
         if (url.StartsWith(PluginSettings::RMC_Leaderboard_Url) && RMCLeaderAPI::connected && RMCLeaderAPI::AccountToken.Length > 0) {
             ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
         }
+#endif
         ret.Body = body;
         ret.Headers.Set("Content-Type", "application/json");
         Log::Trace("Post: " + url);

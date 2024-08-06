@@ -363,7 +363,9 @@ class RMC
     void GameEndNotification()
     {
         if (RMC::selectedGameMode == RMC::GameMode::Challenge) {
+#if TMNEXT
             RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_GoalMedal);
+#endif
             UI::ShowNotification(
                 "\\$0f0Random Map Challenge ended!",
                 "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
