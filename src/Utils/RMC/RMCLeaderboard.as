@@ -86,6 +86,13 @@ namespace RMCLeaderAPI {
 
         Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rmc.php", Json::Write(serverJson));
 
+        if (serverRes.GetType() != Json::Type::Object) {
+            // failed, retry
+            Log::Warn("Posting RMC results failed. Retrying...");
+            sleep(5000);
+            RMCLeaderAPI::postRMC(goal, belowGoal, objective);
+        }
+
         if (serverRes.HasKey("success")) {
             bool isSuccess = serverRes["success"];
             if (!isSuccess) {
@@ -129,6 +136,13 @@ namespace RMCLeaderAPI {
         serverJson["time_survived"] = survivedTimeSeconds;
 
         Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rms.php", Json::Write(serverJson));
+
+        if (serverRes.GetType() != Json::Type::Object) {
+            // failed, retry
+            Log::Warn("Posting RMS results failed. Retrying...");
+            sleep(5000);
+            RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
+        }
 
         if (serverRes.HasKey("success")) {
             bool isSuccess = serverRes["success"];
