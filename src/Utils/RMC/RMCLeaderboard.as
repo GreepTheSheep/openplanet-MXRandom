@@ -61,6 +61,7 @@ namespace RMCLeaderAPI {
             Log::Warn("Login failed. Retrying...");
             sleep(5000);
             RMCLeaderAPI::Login();
+            return;
         }
     }
 
@@ -79,7 +80,7 @@ namespace RMCLeaderAPI {
         else objectiveFormatted = objective.ToLower();
 
         Json::Value@ serverJson = Json::Object();
-        serverJson["accountId"] = AccountToken;
+        serverJson["accountId"] = AccountId;
         serverJson["objective"] = objectiveFormatted;
         serverJson["goal"] = goal;
         serverJson["below_goal"] = belowGoal;
@@ -91,6 +92,7 @@ namespace RMCLeaderAPI {
             Log::Warn("Posting RMC results failed. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMC(goal, belowGoal, objective);
+            return;
         }
 
         if (serverRes.HasKey("success")) {
@@ -109,6 +111,7 @@ namespace RMCLeaderAPI {
             Log::Warn("Posting RMC results failed. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMC(goal, belowGoal, objective);
+            return;
         }
     }
 
@@ -129,7 +132,7 @@ namespace RMCLeaderAPI {
         else objectiveFormatted = objective.ToLower();
 
         Json::Value@ serverJson = Json::Object();
-        serverJson["accountId"] = AccountToken;
+        serverJson["accountId"] = AccountId;
         serverJson["objective"] = objectiveFormatted;
         serverJson["goal"] = goal;
         serverJson["skips"] = skips;
@@ -142,6 +145,7 @@ namespace RMCLeaderAPI {
             Log::Warn("Posting RMS results failed. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
+            return;
         }
 
         if (serverRes.HasKey("success")) {
@@ -160,6 +164,7 @@ namespace RMCLeaderAPI {
             Log::Warn("Posting RMS results failed. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
+            return;
         }
     }
 }
