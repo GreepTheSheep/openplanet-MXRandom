@@ -22,7 +22,7 @@ namespace API
             yield();
         }
         string res = req.String();
-        if (IS_DEV_MODE) Log::Trace("Get Res: " + res);
+        if (IS_DEV_MODE) Log::Trace("Code: " + req.ResponseCode() + " - Get Res: " + res);
         return Json::Parse(res);
     }
 
@@ -51,7 +51,7 @@ namespace API
             yield();
         }
         string res = req.String();
-        if (IS_DEV_MODE) Log::Trace("Post Res: " + res);
+        if (IS_DEV_MODE) Log::Trace("Code: " + req.ResponseCode() + " - Post Res: " + res);
         return Json::Parse(res);
     }
 }
