@@ -62,6 +62,15 @@ namespace MX
         return retval;
     }
 
+    bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
+        int64 mapUploadedDate = DateFromStrTime(map.UploadedAt);
+        int64 mapUpdatedDate = DateFromStrTime(map.UpdatedAt);
+        int64 toDate = DateFromStrTime(PluginSettings::ToYear + "-" + Text::Format("%.02d", PluginSettings::ToMonth) + "-" + Text::Format("%.02d", PluginSettings::ToDay) + "T00:00:00.00");
+        int64 fromDate = DateFromStrTime(PluginSettings::FromYear + "-" + Text::Format("%.02d", PluginSettings::FromMonth) + "-" + Text::Format("%.02d", PluginSettings::FromDay) + "T00:00:00.00");
+        return (mapUpdatedDate < toDate && mapUpdatedDate > fromDate);
+    }
+
+
     void PreloadRandomMap()
     {
         isLoadingPreload = true;
@@ -107,6 +116,13 @@ namespace MX
         res["PlayedAt"] = playedAt;
 
         MX::MapInfo@ map = MX::MapInfo(res);
+        bool isValid = isMapInsideDateParams(map);
+
+        if(PluginSettings::CustomRules && !isValid){
+            Log::Warn("Looking for new map inside date params...");
+            PreloadRandomMap();
+            return;
+        }
 
         if (map is null){
             Log::Warn("Map is null, retrying...");
