@@ -116,13 +116,6 @@ namespace MX
         res["PlayedAt"] = playedAt;
 
         MX::MapInfo@ map = MX::MapInfo(res);
-        bool isValid = isMapInsideDateParams(map);
-
-        if(PluginSettings::CustomRules && !isValid){
-            Log::Warn("Looking for new map inside date params...");
-            PreloadRandomMap();
-            return;
-        }
 
         if (map is null){
             Log::Warn("Map is null, retrying...");
@@ -149,6 +142,18 @@ namespace MX
         }
 #endif
 
+        if (
+            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::UseDateInterval)
+            || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::UseDateInterval))
+        ) {
+            bool isValidDate = isMapInsideDateParams(map);
+            if(!isValidDate){
+                Log::Warn("Looking for new map inside date params...");
+                PreloadRandomMap();
+                return;
+            }
+        }
+        
         if (
             (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch)
             || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
