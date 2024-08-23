@@ -9,6 +9,13 @@ namespace RMC
 #if TMNEXT
         if (Permissions::PlayLocalMap()) {
 #endif
+
+#if SIG_SCHOOL
+        UI::Text("\\$fa0" + Icons::University + " \\$zSchool mode is enabled.");
+        if (!Meta::IsSchoolModeWhitelisted()) UI::Text("\\$f00" + Icons::TimesCircleO + " \\$zThe results will not be uploaded to the leaderboard.");
+        else UI::Text("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted, results will be uploaded to the leaderboard.");
+#endif
+
             if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")){
                 selectedGameMode = GameMode::Challenge;
                 startnew(Start);

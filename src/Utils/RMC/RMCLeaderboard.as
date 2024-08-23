@@ -66,7 +66,26 @@ namespace RMCLeaderAPI {
     }
 
     void postRMC(const int &in goal, const int &in belowGoal, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
+        if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
+
+        if (!connected) {
+            // Retry login
+            connectionError = false;
+            connectionAttempts = 0;
+            Login();
+        }
+
+#if SIG_SCHOOL
+        if (!Meta::IsSchoolModeWhitelisted()) {
+            Log::Error("School mode is enabled, the results will not be uploaded to the leaderboard", true);
+            return;
+        }
+#endif
+
+        if (PluginSettings::CustomRules) {
+            Log::Warn("Custom rules is enabled, the results will not be uploaded to the leaderboard", true);
+            return;
+        }
 
         if (postingResultsAttempts >= 10) {
             Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
@@ -116,7 +135,26 @@ namespace RMCLeaderAPI {
     }
 
     void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, const string &in objective = "author") {
-        if (!PluginSettings::RMC_PushLeaderboardResults || !connected || PluginSettings::CustomRules || goal == 0) return; // Do nothing if not connected, or setting disabled, or Custom Rules enabled, or goals number is 0
+        if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
+
+        if (!connected) {
+            // Retry login
+            connectionError = false;
+            connectionAttempts = 0;
+            Login();
+        }
+
+#if SIG_SCHOOL
+        if (!Meta::IsSchoolModeWhitelisted()) {
+            Log::Error("School mode is enabled, the results will not be uploaded to the leaderboard", true);
+            return;
+        }
+#endif
+
+        if (PluginSettings::CustomRules) {
+            Log::Warn("Custom rules is enabled, the results will not be uploaded to the leaderboard", true);
+            return;
+        }
 
         if (postingResultsAttempts >= 10) {
             Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
