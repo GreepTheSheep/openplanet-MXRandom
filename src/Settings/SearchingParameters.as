@@ -65,6 +65,28 @@ namespace PluginSettings
 
     [Setting hidden]
     string MapName = "";
+    
+    [Setting hidden]
+    bool UseDateInterval = false;
+
+    [Setting hidden]
+    int FromYear = 2020;
+
+    [Setting hidden]
+    int FromMonth = 1;
+
+    [Setting hidden]
+    int FromDay = 1;
+
+    Time::Info currentDate = Time::Parse();
+    [Setting hidden]
+    int ToYear = currentDate.Year;
+
+    [Setting hidden]
+    int ToMonth = currentDate.Month;
+
+    [Setting hidden]
+    int ToDay = currentDate.Day;
 
     [Setting hidden]
     int64 MapPackID = 0;
@@ -161,6 +183,32 @@ namespace PluginSettings
             UI::EndCombo();
         }
 
+        UI::NewLine();
+        UseDateInterval = UI::Checkbox("Use date interval for map search", UseDateInterval);
+        UI::SetPreviousTooltip("If enabled, you will only get maps uploaded or updated inside the set date interval.\nSetting a very small interval can end in no map being found for a very long time and the API being spammed.\nPlease use responsibly.");
+        if (UseDateInterval) {
+            if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
+                UI::TableNextColumn();
+                UI::Text("From date");
+                UI::SetNextItemWidth(150);
+                FromYear = UI::SliderInt("##From year", FromYear, 2020, currentDate.Year, "Year: %d");
+                UI::SetNextItemWidth(150);
+                FromMonth = UI::SliderInt("##From month", FromMonth, 1, 12, "Month: %.02d");
+                UI::SetNextItemWidth(150);
+                FromDay = UI::SliderInt("##From day", FromDay, 1, 31, "Day: %.02d");
+
+                UI::TableNextColumn();
+                UI::Text("To date");
+                UI::SetNextItemWidth(150);
+                ToYear = UI::SliderInt("##To year", ToYear, 2020, currentDate.Year, "Year: %d");
+                UI::SetNextItemWidth(150);
+                ToMonth = UI::SliderInt("##To month", ToMonth, 1, 12, "Month: %.02d");
+                UI::SetNextItemWidth(150);
+                ToDay = UI::SliderInt("##To day", ToDay, 1, 31, "Day: %.02d");
+                UI::EndTable();
+            }
+        }
+        
         UI::NewLine();
 
         UI::SetNextItemWidth(200);

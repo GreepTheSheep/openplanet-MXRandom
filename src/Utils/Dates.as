@@ -18,3 +18,13 @@ class Date
         return !isBefore(date);
     }
 }
+
+SQLite::Database@ cursedTimeDB = SQLite::Database(":memory:");
+int64 DateFromStrTime(const string &in inTime) {
+    auto st = cursedTimeDB.Prepare("SELECT unixepoch(?) as x");
+    st.Bind(1, inTime);
+    st.Execute();
+    st.NextRow();
+    st.NextRow();
+    return st.GetColumnInt64("x");
+}
