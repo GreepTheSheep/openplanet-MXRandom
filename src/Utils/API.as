@@ -39,7 +39,6 @@ namespace API
         ret.Body = body;
         ret.Headers.Set("Content-Type", "application/json");
         Log::Trace("Post: " + url);
-        Log::Trace("Body: " + body);
         ret.Start();
         return ret;
     }
