@@ -62,6 +62,15 @@ namespace MX
         return retval;
     }
 
+    bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
+        int64 mapUploadedDate = DateFromStrTime(map.UploadedAt);
+        int64 mapUpdatedDate = DateFromStrTime(map.UpdatedAt);
+        int64 toDate = DateFromStrTime(PluginSettings::ToYear + "-" + Text::Format("%.02d", PluginSettings::ToMonth) + "-" + Text::Format("%.02d", PluginSettings::ToDay) + "T00:00:00.00");
+        int64 fromDate = DateFromStrTime(PluginSettings::FromYear + "-" + Text::Format("%.02d", PluginSettings::FromMonth) + "-" + Text::Format("%.02d", PluginSettings::FromDay) + "T00:00:00.00");
+        return (mapUpdatedDate < toDate && mapUpdatedDate > fromDate);
+    }
+
+
     void PreloadRandomMap()
     {
         isLoadingPreload = true;
@@ -133,6 +142,18 @@ namespace MX
         }
 #endif
 
+        if (
+            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::UseDateInterval)
+            || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::UseDateInterval))
+        ) {
+            bool isValidDate = isMapInsideDateParams(map);
+            if(!isValidDate){
+                Log::Warn("Looking for new map inside date params...");
+                PreloadRandomMap();
+                return;
+            }
+        }
+        
         if (
             (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch)
             || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
