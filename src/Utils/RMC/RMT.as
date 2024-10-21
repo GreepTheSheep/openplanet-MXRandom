@@ -647,7 +647,7 @@ class RMT : RMC
                             auto cpBest = p.CpCount == 0 ? 0 : int(best[p.CpCount - 1]);
                             auto lastCpTimeVirtual = p.LastCpOrRespawnTime;
                             // account for current race time via next cp
-                            if (p.CpCount < int(best.Length) && p.CurrentRaceTime > best[p.CpCount]) {
+                            if (p.CpCount < int(best.Length) && p.CurrentRaceTime > int(best[p.CpCount])) {
                                 // delta = last CP time - best CP time (for that CP)
                                 // we are ahead when last < best
                                 // so if we're behind, last > best, and the minimum difference to our pb is given by (last = current race time, and best = next CP time)

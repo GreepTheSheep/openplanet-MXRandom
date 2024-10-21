@@ -63,7 +63,7 @@ namespace DataManager
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
     }
 
-    bool EnsureSaveDataIsLoadable(string gameMode, Json::Value data) {
+    bool EnsureSaveDataIsLoadable(const string &in gameMode, Json::Value data) {
         array<string> requiredKeys = {
             "PBOnMap",
             "TimerRemaining",
@@ -109,7 +109,7 @@ namespace DataManager
             RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
             if (!EnsureSaveDataIsLoadable(gameMode, RMC::CurrentRunData)) {
                 Log::Error("Deleting the current" + gameMode + " save file, as it is corrupted!");
-                Log::Error("Please create an issue on github if this repeatedly happens with as much information as possible (when it happened, what you did, logs, etc.)");
+                Log::Error("Please create an issue on github if this repeatedly happens");
                 RemoveCurrentSaveFile();
                 return false;
             }

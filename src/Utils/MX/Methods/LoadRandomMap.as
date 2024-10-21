@@ -133,7 +133,7 @@ namespace MX
             } else {
                 // if uploaded, get wr
                 uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.TrackUID);
-                if (mapWorldRecord == -1) {
+                if (int(mapWorldRecord) == -1) {
                     Log::Warn("Couldn't got map World Record, retrying another map...");
                     PreloadRandomMap();
                     return;
@@ -153,7 +153,7 @@ namespace MX
                 return;
             }
         }
-        
+
         if (
             (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch)
             || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
