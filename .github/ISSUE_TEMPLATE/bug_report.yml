@@ -1,0 +1,85 @@
+name: Bug report
+about: Create a report to help us improve
+labels: [bug]
+body:
+  - type: checkboxes
+    id: before-posting
+    attributes:
+      label: "This issue respects the following points:"
+      description: All conditions are **required**. Failure to comply with any of these conditions may cause your issue to be closed without comment.
+      options:
+        - label: This is a **bug**, not a question or a configuration issue.
+          required: true
+        - label: This issue is **not** already reported on [GitHub](https://github.com/GreepTheSheep/openplanet-MXRandom/issues?q=is%3Aopen+is%3Aissue) _(I've searched it)_.
+          required: true
+        - label: I'm using an up to date version of the plugin; I do not support previous older versions. If possible, please update to the latest version before opening an issue.
+          required: true
+        - label: This report addresses only a single issue; If you encounter multiple issues, kindly create separate reports for each one.
+          required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: **To Reproduce**
+      description: Steps to reproduce the behavior
+      render: markdown
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+      render: markdown
+  - type: input
+    attributes:
+      label: Openplanet version
+      description: Provide the Openplanet version number. You can find it on the Openplanet bar "Help" > "About"
+      placeholder: |
+        x.y.z
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Plugin version
+      description: Provide the version number.
+      placeholder: |
+        x.y.z
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Trackmania game edition
+      description: What edition of Trackmania are you using?
+      options:
+        - TMNEXT (Trackmania 2020)
+        - ManiaPlanet (Trackmania 2)
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Titlepack
+      description: If the edition chosen is ManiaPlanet, provide the titlepack name. (Stadium, Canyon, Valley, Lagoon, TMOne etc...)
+      placeholder: |
+        Stadium
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: Add any other context about the problem here.
+      render: markdown
