@@ -25,7 +25,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: **To Reproduce**
+      label: To Reproduce
       description: Steps to reproduce the behavior
       render: markdown
       placeholder: |
