@@ -81,5 +81,5 @@ body:
   - type: textarea
     attributes:
       label: Additional context
-      description: Add any other context about the problem here.
+      description: Any additional information that might be useful to this issue.
       render: markdown
