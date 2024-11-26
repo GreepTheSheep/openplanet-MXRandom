@@ -150,6 +150,7 @@ namespace RMC
                         Challenge.BelowMedalCount = 0;
                         Survival.Skips = 0;
                         FreeSkipsUsed = 0;
+                        CurrentTimeOnMap = -1;
                         GotBelowMedalOnCurrentMap = false;
                         GotGoalMedalOnCurrentMap = false;
                     } else {
@@ -274,7 +275,7 @@ namespace RMC
                     Log::Trace("Medal: " + medal);
                 }
 
-                if (CurrentTimeOnMap > time) {
+                if (CurrentTimeOnMap > time || CurrentTimeOnMap == -1) {
                     // PB
                     CurrentTimeOnMap = time;
                     CreateSave();
@@ -322,6 +323,7 @@ namespace RMC
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
+        CurrentTimeOnMap = -1;
         HandledRun = false;
         CurrentMedal = -1;
         LastRun = -1;
