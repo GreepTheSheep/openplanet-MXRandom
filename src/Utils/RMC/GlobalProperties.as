@@ -215,8 +215,13 @@ namespace RMC
             int time = -1;
 #if MP4
             CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
-            if (GameCtnPlayground.PlayerRecordedGhost !is null){
-                time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+            if (GameCtnPlayground !is null && GameCtnPlayground.GameTerminals.Length > 0) {
+                CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GameCtnPlayground.GameTerminals[0].ControlledPlayer);
+                if (player !is null && player.ScriptAPI.RaceState == CTrackManiaPlayer::ERaceState::Finished) {
+                    if (GameCtnPlayground.PlayerRecordedGhost !is null) {
+                        time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+                    } else time = -1;
+                } else time = -1;
             } else time = -1;
 #elif TMNEXT
             CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
