@@ -162,15 +162,14 @@ class RMObjective : RMC
 #endif
             }
 
-            if (RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !RMC::GotGoalMedalOnCurrentMap){
+            if (!RMC::GotGoalMedalOnCurrentMap && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
                 RMC::GoalMedalCount += 1;
                 RMC::GotGoalMedalOnCurrentMap = true;
                 GotGoalMedalNotification();
-            }
-            if (
-                RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1 &&
+            } else if (
                 !RMC::GotGoalMedalOnCurrentMap &&
-                PluginSettings::RMC_GoalMedal != RMC::Medals[0])
+                PluginSettings::RMC_GoalMedal != RMC::Medals[0] &&
+                RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1)
             {
                 GotBelowGoalMedalNotification();
                 RMC::GotBelowMedalOnCurrentMap = true;
