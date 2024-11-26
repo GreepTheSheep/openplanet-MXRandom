@@ -423,10 +423,8 @@ class RMT : RMC
     void SkipButtons() override
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) BelowMedal = RMC::Medals[1];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
-        else BelowMedal = PluginSettings::RMC_GoalMedal;
+        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
+        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
 
         UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
         if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
@@ -454,10 +452,9 @@ class RMT : RMC
     void RenderScores()
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) BelowMedal = RMC::Medals[1];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
-        else BelowMedal = PluginSettings::RMC_GoalMedal;
+        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
+        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
+
         int tableCols = 3;
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) tableCols = 2;
         if (UI::BeginTable("RMTScores", tableCols)) {

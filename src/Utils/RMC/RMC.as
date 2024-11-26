@@ -133,8 +133,10 @@ class RMC
     void RenderGoalMedal()
     {
         UI::AlignTextToFramePadding();
+#if TMNEXT
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(WRTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+#endif
+        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
@@ -153,8 +155,10 @@ class RMC
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
             UI::AlignTextToFramePadding();
+#if TMNEXT
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
-            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
+#endif
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else UI::Text(PluginSettings::RMC_GoalMedal);
@@ -263,11 +267,8 @@ class RMC
     void SkipButtons()
     {
         string BelowMedal = PluginSettings::RMC_GoalMedal;
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) BelowMedal = RMC::Medals[3];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) BelowMedal = RMC::Medals[2];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) BelowMedal = RMC::Medals[1];
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) BelowMedal = RMC::Medals[0];
-        else BelowMedal = PluginSettings::RMC_GoalMedal;
+        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
+        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
 
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed){
