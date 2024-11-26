@@ -463,6 +463,7 @@ class RMC
                 RMC::CreateSave();
             } else if (
                 !RMC::GotGoalMedalOnCurrentMap &&
+                !RMC::GotBelowMedalOnCurrentMap &&
                 PluginSettings::RMC_GoalMedal != RMC::Medals[0] &&
                 RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1)
             {
