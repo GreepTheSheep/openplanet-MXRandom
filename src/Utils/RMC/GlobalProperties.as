@@ -23,6 +23,9 @@ namespace RMC
     RMCConfig@ config;
     int FreeSkipsUsed = 0;
     int CurrentTimeOnMap = -1; // for autosaves on PBs
+    int CurrentMedal = -1;
+    bool HandledRun = false;
+    int LastRun = -1;
 
     array<string> Medals = {
         "Bronze",
@@ -111,6 +114,9 @@ namespace RMC
         ContinueSavedRun = false;
         HasCompletedCheckbox = false;
         UserEndedRun = false;
+        HandledRun = false;
+        CurrentMedal = -1;
+        LastRun = -1;
 
         if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
@@ -144,6 +150,7 @@ namespace RMC
                         Challenge.BelowMedalCount = 0;
                         Survival.Skips = 0;
                         FreeSkipsUsed = 0;
+                        CurrentTimeOnMap = -1;
                         GotBelowMedalOnCurrentMap = false;
                         GotGoalMedalOnCurrentMap = false;
                     } else {
@@ -215,14 +222,20 @@ namespace RMC
             int time = -1;
 #if MP4
             CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
-            if (GameCtnPlayground.PlayerRecordedGhost !is null){
-                time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+            if (GameCtnPlayground !is null && GameCtnPlayground.PlayerRecordedGhost !is null) {
+                if (GameCtnPlayground.PlayerRecordedGhost.RaceTime != LastRun) {
+                    HandledRun = false;
+                    time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
+                } else time = -1;
             } else time = -1;
 #elif TMNEXT
             CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
             if (PlaygroundScript !is null && GamePlayground.GameTerminals.Length > 0) {
                 CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-                if (GamePlayground.GameTerminals[0].UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Finish && player !is null) {
+                if (player !is null && HandledRun && GamePlayground.GameTerminals[0].UISequence_Current != SGamePlaygroundUIConfig::EUISequence::Finish) {
+                    HandledRun = false;
+                    time = -1;
+                } else if (player !is null && !HandledRun && GamePlayground.GameTerminals[0].UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Finish) {
                     CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
                     auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(playerScriptAPI);
                     if (ghost !is null) {
@@ -232,7 +245,9 @@ namespace RMC
                 } else time = -1;
             } else time = -1;
 #endif
-            if (time != -1){
+            if (HandledRun || time == LastRun) {
+                return CurrentMedal;
+            } else if (time != -1) {
                 // run finished
                 if(time <= worldRecordTime) medal = 4;
                 else if(time <= authorTime) medal = 3;
@@ -240,6 +255,10 @@ namespace RMC
                 else if(time <= silverTime) medal = 1;
                 else if(time <= bronzeTime) medal = 0;
                 else medal = -1;
+
+                HandledRun = true;
+                CurrentMedal = medal;
+                LastRun = time;
 
                 if (IS_DEV_MODE) {
                     Log::Trace("Run finished with time " + FormatTimer(time));
@@ -251,7 +270,7 @@ namespace RMC
                     Log::Trace("Medal: " + medal);
                 }
 
-                if (CurrentTimeOnMap > time) {
+                if (CurrentTimeOnMap > time || CurrentTimeOnMap == -1) {
                     // PB
                     CurrentTimeOnMap = time;
                     CreateSave();
@@ -299,6 +318,10 @@ namespace RMC
         GotBelowMedalOnCurrentMap = false;
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
+        CurrentTimeOnMap = -1;
+        HandledRun = false;
+        CurrentMedal = -1;
+        LastRun = -1;
 
         MX::PreloadRandomMap();
     }
