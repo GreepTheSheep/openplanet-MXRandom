@@ -54,6 +54,12 @@ namespace PluginSettings
 
     array<string> MapAuthorNamesArr = {};
 
+#if TMNEXT
+    const int releaseYear = 2020;
+#else
+    const int releaseYear = 2011;
+#endif
+
     [Setting hidden]
     string MapLength = SearchingMapLengths[0];
 
@@ -70,7 +76,7 @@ namespace PluginSettings
     bool UseDateInterval = false;
 
     [Setting hidden]
-    int FromYear = 2020;
+    int FromYear = releaseYear;
 
     [Setting hidden]
     int FromMonth = 1;
@@ -128,12 +134,21 @@ namespace PluginSettings
     [SettingsTab name="Searching" order="2" icon="Search"]
     void RenderSearchingSettingTab()
     {
-        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse these parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
+        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse custom parameters. Forbidden on official leaderboards.", CustomRules);
         UI::Separator();
+
+        UI::BeginDisabled(!CustomRules);
 
         if (UI::OrangeButton("Reset to default")){
             MapLengthOperator = SearchingMapLengthOperators[0];
             MapLength = SearchingMapLengths[0];
+            UseDateInterval = false;
+            FromYear = releaseYear;
+            FromMonth = 1;
+            FromDay = 1;
+            ToYear = currentDate.Year;
+            ToMonth = currentDate.Month;
+            ToDay = currentDate.Day;
             TagInclusiveSearch = false;
             MapAuthor = "";
             MapName = "";
@@ -187,20 +202,22 @@ namespace PluginSettings
         UseDateInterval = UI::Checkbox("Use date interval for map search", UseDateInterval);
         UI::SetPreviousTooltip("If enabled, you will only get maps uploaded or updated inside the set date interval.\nSetting a very small interval can end in no map being found for a very long time and the API being spammed.\nPlease use responsibly.");
         if (UseDateInterval) {
-            if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
+            if (UI::BeginTable("DateIntervals", 2, UI::TableFlags::SizingFixedFit)) {
                 UI::TableNextColumn();
+                UI::AlignTextToFramePadding();
                 UI::Text("From date");
                 UI::SetNextItemWidth(150);
-                FromYear = UI::SliderInt("##From year", FromYear, 2020, currentDate.Year, "Year: %d");
+                FromYear = UI::SliderInt("##From year", FromYear, releaseYear, currentDate.Year, "Year: %d");
                 UI::SetNextItemWidth(150);
                 FromMonth = UI::SliderInt("##From month", FromMonth, 1, 12, "Month: %.02d");
                 UI::SetNextItemWidth(150);
                 FromDay = UI::SliderInt("##From day", FromDay, 1, 31, "Day: %.02d");
 
                 UI::TableNextColumn();
+                UI::AlignTextToFramePadding();
                 UI::Text("To date");
                 UI::SetNextItemWidth(150);
-                ToYear = UI::SliderInt("##To year", ToYear, 2020, currentDate.Year, "Year: %d");
+                ToYear = UI::SliderInt("##To year", ToYear, releaseYear, currentDate.Year, "Year: %d");
                 UI::SetNextItemWidth(150);
                 ToMonth = UI::SliderInt("##To month", ToMonth, 1, 12, "Month: %.02d");
                 UI::SetNextItemWidth(150);
@@ -234,9 +251,11 @@ namespace PluginSettings
 
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
             UI::TableNextColumn();
-            UI::Text("Include Tags");
+            UI::AlignTextToFramePadding();
+            UI::Text("Include Tags" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
             UI::TableNextColumn();
-            UI::Text("Exclude Tags");
+            UI::AlignTextToFramePadding();
+            UI::Text("Exclude Tags" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))){
@@ -261,6 +280,7 @@ namespace PluginSettings
         }
 
         TagInclusiveSearch = UI::Checkbox("Tag inclusive search", TagInclusiveSearch);
+        UI::SetPreviousTooltip("If enabled, maps must contain all selected tags.");
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
@@ -286,6 +306,9 @@ namespace PluginSettings
         UI::NewLine();
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
+        UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");
+
+        UI::EndDisabled();
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID)
