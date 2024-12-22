@@ -54,6 +54,12 @@ namespace PluginSettings
 
     array<string> MapAuthorNamesArr = {};
 
+#if TMNEXT
+    const int releaseYear = 2020;
+#else
+    const int releaseYear = 2011;
+#endif
+
     [Setting hidden]
     string MapLength = SearchingMapLengths[0];
 
@@ -70,7 +76,7 @@ namespace PluginSettings
     bool UseDateInterval = false;
 
     [Setting hidden]
-    int FromYear = 2020;
+    int FromYear = releaseYear;
 
     [Setting hidden]
     int FromMonth = 1;
@@ -191,7 +197,7 @@ namespace PluginSettings
                 UI::TableNextColumn();
                 UI::Text("From date");
                 UI::SetNextItemWidth(150);
-                FromYear = UI::SliderInt("##From year", FromYear, 2020, currentDate.Year, "Year: %d");
+                FromYear = UI::SliderInt("##From year", FromYear, releaseYear, currentDate.Year, "Year: %d");
                 UI::SetNextItemWidth(150);
                 FromMonth = UI::SliderInt("##From month", FromMonth, 1, 12, "Month: %.02d");
                 UI::SetNextItemWidth(150);
@@ -200,7 +206,7 @@ namespace PluginSettings
                 UI::TableNextColumn();
                 UI::Text("To date");
                 UI::SetNextItemWidth(150);
-                ToYear = UI::SliderInt("##To year", ToYear, 2020, currentDate.Year, "Year: %d");
+                ToYear = UI::SliderInt("##To year", ToYear, releaseYear, currentDate.Year, "Year: %d");
                 UI::SetNextItemWidth(150);
                 ToMonth = UI::SliderInt("##To month", ToMonth, 1, 12, "Month: %.02d");
                 UI::SetNextItemWidth(150);
