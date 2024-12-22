@@ -200,7 +200,7 @@ namespace PluginSettings
         UseDateInterval = UI::Checkbox("Use date interval for map search", UseDateInterval);
         UI::SetPreviousTooltip("If enabled, you will only get maps uploaded or updated inside the set date interval.\nSetting a very small interval can end in no map being found for a very long time and the API being spammed.\nPlease use responsibly.");
         if (UseDateInterval) {
-            if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
+            if (UI::BeginTable("DateIntervals", 2, UI::TableFlags::SizingFixedFit)) {
                 UI::TableNextColumn();
                 UI::Text("From date");
                 UI::SetNextItemWidth(150);
