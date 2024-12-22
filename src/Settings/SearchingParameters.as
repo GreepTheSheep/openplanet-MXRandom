@@ -247,9 +247,9 @@ namespace PluginSettings
 
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
             UI::TableNextColumn();
-            UI::Text("Include Tags");
+            UI::Text("Include Tags" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
             UI::TableNextColumn();
-            UI::Text("Exclude Tags");
+            UI::Text("Exclude Tags" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))){
