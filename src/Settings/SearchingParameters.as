@@ -204,6 +204,7 @@ namespace PluginSettings
         if (UseDateInterval) {
             if (UI::BeginTable("DateIntervals", 2, UI::TableFlags::SizingFixedFit)) {
                 UI::TableNextColumn();
+                UI::AlignTextToFramePadding();
                 UI::Text("From date");
                 UI::SetNextItemWidth(150);
                 FromYear = UI::SliderInt("##From year", FromYear, releaseYear, currentDate.Year, "Year: %d");
@@ -213,6 +214,7 @@ namespace PluginSettings
                 FromDay = UI::SliderInt("##From day", FromDay, 1, 31, "Day: %.02d");
 
                 UI::TableNextColumn();
+                UI::AlignTextToFramePadding();
                 UI::Text("To date");
                 UI::SetNextItemWidth(150);
                 ToYear = UI::SliderInt("##To year", ToYear, releaseYear, currentDate.Year, "Year: %d");
@@ -249,8 +251,10 @@ namespace PluginSettings
 
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
             UI::TableNextColumn();
+            UI::AlignTextToFramePadding();
             UI::Text("Include Tags" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
             UI::TableNextColumn();
+            UI::AlignTextToFramePadding();
             UI::Text("Exclude Tags" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
 
             UI::TableNextColumn();
