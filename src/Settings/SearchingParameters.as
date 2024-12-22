@@ -137,6 +137,8 @@ namespace PluginSettings
         CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse these parameters in RMC. Forbidden on official Leaderboard.", CustomRules);
         UI::Separator();
 
+        UI::BeginDisabled(!CustomRules);
+
         if (UI::OrangeButton("Reset to default")){
             MapLengthOperator = SearchingMapLengthOperators[0];
             MapLength = SearchingMapLengths[0];
@@ -301,6 +303,8 @@ namespace PluginSettings
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
         UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");
+
+        UI::EndDisabled();
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID)
