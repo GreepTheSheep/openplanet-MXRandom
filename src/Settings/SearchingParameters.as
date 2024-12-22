@@ -140,6 +140,13 @@ namespace PluginSettings
         if (UI::OrangeButton("Reset to default")){
             MapLengthOperator = SearchingMapLengthOperators[0];
             MapLength = SearchingMapLengths[0];
+            UseDateInterval = false;
+            FromYear = releaseYear;
+            FromMonth = 1;
+            FromDay = 1;
+            ToYear = currentDate.Year;
+            ToMonth = currentDate.Month;
+            ToDay = currentDate.Day;
             TagInclusiveSearch = false;
             MapAuthor = "";
             MapName = "";
