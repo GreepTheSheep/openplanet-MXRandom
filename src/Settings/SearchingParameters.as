@@ -274,6 +274,7 @@ namespace PluginSettings
         }
 
         TagInclusiveSearch = UI::Checkbox("Tag inclusive search", TagInclusiveSearch);
+        UI::SetPreviousTooltip("If enabled, maps must contain all selected tags.");
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
@@ -299,6 +300,7 @@ namespace PluginSettings
         UI::NewLine();
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
+        UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID)
