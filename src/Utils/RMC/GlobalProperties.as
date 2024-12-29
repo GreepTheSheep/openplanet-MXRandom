@@ -145,7 +145,7 @@ namespace RMC
             if (GamePlayground !is null){
                 if (!IsInited) {
                     if (!ContinueSavedRun) {
-                        TimeSpawnedMap = -1;
+                        TimeSpentMap = -1;
                         GoalMedalCount = 0;
                         Challenge.BelowMedalCount = 0;
                         Survival.Skips = 0;
@@ -195,7 +195,7 @@ namespace RMC
                     } else if (RMC::selectedGameMode == GameMode::Objective){
                         Objective.StartTimer();
                     }
-                    TimeSpawnedMap = int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
+                    TimeSpawnedMap = !RMC::ContinueSavedRun ? Time::Now : int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
                     // Clear the currently saved data so you cannot load into the same state multiple times
                     DataManager::RemoveCurrentSaveFile();
                     DataManager::CreateSaveFile();
