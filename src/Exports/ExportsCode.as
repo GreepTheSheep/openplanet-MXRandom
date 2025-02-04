@@ -24,6 +24,6 @@ namespace MXRandom
         playedAt["Second"] = date.Second;
         res["PlayedAt"] = playedAt;
         MX::MapInfo@ map = MX::MapInfo(res);
-        return PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID;
+        return PluginSettings::RMC_MX_Url+"/maps/download/"+map.MapId;
     }
 }

@@ -84,7 +84,7 @@ namespace MX
                 // if we do not detect that there are no matching results, we will enter an infinite loop with errors
                 // that will force the user to reload the plugin
                 Json::Value check = CheckCustomRulesParametersNoResults();
-                if (check.HasKey("TrackID")) {
+                if (check.HasKey("MapId")) {
                     // we found a single map that matches the parameters, so we can just return it
                     res = check;
                 } else if (check.HasKey("hasMaps")) {
@@ -126,18 +126,18 @@ namespace MX
 #if TMNEXT
         // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
         if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
-            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.TrackUID)) {
+            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
                 Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
                 PreloadRandomMap();
                 return;
             } else {
                 // if uploaded, get wr
-                uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.TrackUID);
+                uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
                 if (int(mapWorldRecord) == -1) {
                     Log::Warn("Couldn't got map World Record, retrying another map...");
                     PreloadRandomMap();
                     return;
-                } else TM::SetWorldRecordToCache(map.TrackUID, mapWorldRecord);
+                } else TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
             }
         }
 #endif
@@ -307,10 +307,10 @@ namespace MX
 #if DEPENDENCY_CHAOSMODE
             if (ChaosMode::IsInRMCMode()) {
                 Log::Trace("Loading map in Chaos Mode");
-                app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, "TrackMania/ChaosModeRMC", "");
+                app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.MapId, "TrackMania/ChaosModeRMC", "");
             } else
 #endif
-            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID, DEFAULT_MODE, "");
+            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/maps/download/"+map.MapId, DEFAULT_MODE, "");
             RMC::CurrentMapJsonData = map.ToJson();
         }
         catch

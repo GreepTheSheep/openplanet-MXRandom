@@ -32,9 +32,9 @@ namespace Render
 
                 if (UI::ButtonColored(Icons::ExternalLink, 0.55, 1, 0.5)) {
 #if DEPENDENCY_MANIAEXCHANGE
-                    ManiaExchange::ShowMapInfo(map.TrackID);
+                    ManiaExchange::ShowMapInfo(map.MapId);
 #else
-                    OpenBrowserURL("https://"+MX_URL+"/maps/"+map.TrackID);
+                    OpenBrowserURL("https://"+MX_URL+"/maps/"+map.MapId);
 #endif
                 }
                 UI::SameLine();
@@ -45,7 +45,7 @@ namespace Render
 #else
                 if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
-                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID;
+                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/maps/download/"+map.MapId;
                     startnew(TM::LoadMap);
                 }
 

@@ -20,7 +20,7 @@ namespace MX
                 yield();
             }
 
-            if (_fileName.Length > 0) _fileName = map.TrackID + " - " + map.Name;
+            if (_fileName.Length > 0) _fileName = map.MapId + " - " + map.Name;
             netMap.SaveToFile(mxDLFolder + "/" + _fileName + ".Map.Gbx");
             Log::Log("Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
         } catch {
