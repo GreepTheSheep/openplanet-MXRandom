@@ -123,133 +123,59 @@ namespace MX
             return;
         }
 
-#if TMNEXT
-        // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
-        if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
-            if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
-                Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
-                PreloadRandomMap();
-                return;
-            } else {
-                // if uploaded, get wr
-                uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
-                if (int(mapWorldRecord) == -1) {
-                    Log::Warn("Couldn't got map World Record, retrying another map...");
-                    PreloadRandomMap();
-                    return;
-                } else TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
-            }
-        }
-#endif
-
-        if (
-            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::UseDateInterval)
-            || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::UseDateInterval))
-        ) {
-            bool isValidDate = isMapInsideDateParams(map);
-            if(!isValidDate){
-                Log::Warn("Looking for new map inside date params...");
-                PreloadRandomMap();
-                return;
-            }
-        }
-
-        if (
-            (((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules && PluginSettings::MapAuthorNameNeedsExactMatch)
-            || (!RMC::IsRunning && !RMC::IsStarting && PluginSettings::MapAuthorNameNeedsExactMatch)) && PluginSettings::MapAuthor != ""
-        ) {
-            string author = map.Username.ToLower();
-            print(PluginSettings::MapAuthorNamesArr.Find(author));
-            if (PluginSettings::MapAuthorNamesArr.Find(author) == -1) {
-                Log::Warn("Map author does not match, retrying...");
-                PreloadRandomMap();
-                return;
-            }
-        }
-
-        if (!PluginSettings::UseLengthChecksInRequests) {
-            if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
-                if (RMC::allowedMapLengths.Find(map.LengthName) == -1) {
+        if (RMC::IsRunning || RMC::IsStarting) {
+            if (!PluginSettings::CustomRules) {
+                if (map.AuthorTime > RMC::allowedMaxLength) {
                     Log::Warn("Map is too long, retrying...");
                     PreloadRandomMap();
                     return;
                 }
-            } else if (PluginSettings::MapLength != "Anything") {
-                int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
-                switch (PluginSettings::SearchingMapLengthOperators.Find(PluginSettings::MapLengthOperator)) {
-                    case 0:  // exact is prorbably a bit too strict so we'll allow an about 15 seconds difference
-                        if (requiredLength == 100000000) {
-                            if (map.AuthorTime <= 300000+15000) {
-                                Log::Warn("Map is too short, retrying...");
-                                PreloadRandomMap();
-                                return;
-                            } else {
-                                break;
-                            }
-                        } else if ((map.AuthorTime < requiredLength-15000) || (map.AuthorTime > requiredLength+15000)) {
-                            Log::Warn("Map is not the correct length, retrying...");
-                            PreloadRandomMap();
-                            return;
-                        }
-                        break;
+            }
 
-                    case 1:
-                        if (requiredLength == 100000000) {
-                            if (map.AuthorTime > 300000) {
-                                Log::Warn("Map is too long, retrying...");
-                                PreloadRandomMap();
-                                return;
-                            } else {
-                                break;
-                            }
-                        } else if (!(map.AuthorTime < requiredLength)) {
-                            Log::Warn("Map is not the correct length, retrying...");
-                            PreloadRandomMap();
-                            return;
-                        }
-                        break;
+#if TMNEXT
+            if (RMC::selectedGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
+                Log::Warn("Map is too big to play in servers, retrying...");
+                PreloadRandomMap();
+                return;
+            }
 
-                    case 2:
-                        if (requiredLength == 100000000) {
-                            if (map.AuthorTime < 300000+10000) {
-                                Log::Warn("Map is too short, retrying...");
-                                PreloadRandomMap();
-                                return;
-                            } else {
-                                break;
-                            }
-                        } else if (!(map.AuthorTime > requiredLength)) {
-                            Log::Warn("Map is not the correct length, retrying...");
-                            PreloadRandomMap();
-                            return;
-                        }
-                        break;
+            // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
+                if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
+                    Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
+                    PreloadRandomMap();
+                    return;
+                } else {
+                    // if uploaded, get wr
+                    uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
+                    if (int(mapWorldRecord) == -1) {
+                        Log::Warn("Couldn't get map World Record, retrying another map...");
+                        PreloadRandomMap();
+                        return;
+                    } else TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
+                }
+            }
+#endif
+        }
 
-                    case 3:
-                        if (requiredLength == 100000000) {
-                            // everything is shorter than long, do nothing
-                        } else if (!(map.AuthorTime <= requiredLength)) {
-                            Log::Warn("Map is not the correct length, retrying...");
-                            PreloadRandomMap();
-                            return;
-                        }
-                        break;
+        if (PluginSettings::CustomRules) {
+            if (PluginSettings::UseDateInterval) {
+                bool isValidDate = isMapInsideDateParams(map);
+                if(!isValidDate) {
+                    Log::Warn("Looking for new map inside date params...");
+                    PreloadRandomMap();
+                    return;
+                }
+            }
 
-                    case 4:
-                        if (requiredLength == 100000000) {
-                            if (map.AuthorTime <= 300000) {
-                                Log::Warn("Map is too long, retrying...");
-                                PreloadRandomMap();
-                                return;
-                            } else {
-                                break;
-                            }
-                        } else if (!(map.AuthorTime >= requiredLength)) {
-                            Log::Warn("Map is not the correct length, retrying...");
-                            PreloadRandomMap();
-                            return;
-                        }
-                        break;
+            if (PluginSettings::MapLength != "Anything") {
+                int minAuthor = GetMinimumLength();
+                int maxAuthor = GetMaxLength();
+
+                if ((minAuthor != -1 && map.AuthorTime < minAuthor) || (maxAuthor != -1 && map.AuthorTime > maxAuthor)) {
+                    Log::Warn("Map is not the correct length, retrying...");
+                    PreloadRandomMap();
+                    return;
                 }
             }
         }
@@ -383,5 +309,41 @@ namespace MX
         url += "&mtype="+SUPPORTED_MAP_TYPE;
 
         return url;
+    }
+
+    int GetMinimumLength() {
+        if (PluginSettings::MapLengthOperator == "Anything" || PluginSettings::MapLengthOperator == "Shorter than" || PluginSettings::MapLengthOperator == "Exacts or shorter to") {
+            // no minimum required
+            return -1;
+        }
+
+        int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
+
+        if (PluginSettings::MapLengthOperator == "Exactly") {
+            // Exactly is probably a bit too strict so we'll allow an about 5 seconds difference
+            return requiredLength - 5000;
+        } else if (PluginSettings::MapLengthOperator == "Longer than") {
+            return requiredLength + 1;
+        } else {
+            return requiredLength;
+        }
+    }
+
+    int GetMaxLength() {
+        if (PluginSettings::MapLengthOperator == "Anything" || PluginSettings::MapLengthOperator == "Longer than" || PluginSettings::MapLengthOperator == "Exacts or longer to") {
+            // no max required
+            return -1;
+        }
+
+        int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
+
+        if (PluginSettings::MapLengthOperator == "Exactly") {
+            // Exactly is probably a bit too strict so we'll allow an about 5 seconds difference
+            return requiredLength + 5000;
+        } else if (PluginSettings::MapLengthOperator == "Shorter than") {
+            return requiredLength - 1;
+        } else {
+            return requiredLength;
+        }
     }
 }

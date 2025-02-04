@@ -67,9 +67,6 @@ namespace PluginSettings
     string MapAuthor = "";
 
     [Setting hidden]
-    bool MapAuthorNameNeedsExactMatch = true;
-
-    [Setting hidden]
     string MapName = "";
     
     [Setting hidden]
@@ -155,7 +152,6 @@ namespace PluginSettings
             MapPackID = 0;
             MapTagsArr = {};
             MapAuthorNamesArr = {};
-            MapAuthorNameNeedsExactMatch = true;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40};
 #else
@@ -235,9 +231,6 @@ namespace PluginSettings
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
         UI::SetNextItemWidth(200);
         MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
-        UI::SameLine();
-        MapAuthorNameNeedsExactMatch = UI::Checkbox("Exact name matches", MapAuthorNameNeedsExactMatch);
-        UI::SetPreviousTooltip("If disabled, you will get results for any author that contains the text you entered.\nIf you search for \"Nadeo\", you will get results for \"Nadeo\", \"Nadeo123\", \"Nadeo_\", etc.\nIf enabled, you will only get results for \"Nadeo\".\nHowever this can lead to issues if the author has changed their MX username since uploading the map. This can be avoided by specifying all the names the author has used.");
         UI::NewLine();
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
