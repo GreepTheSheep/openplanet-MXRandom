@@ -38,3 +38,24 @@ Json::Value DataJson                    = Json::FromFile(DATA_JSON_LOCATION);
 Json::Value DataJsonOldVersion          = Json::FromFile(IO::FromDataFolder("TMXRandom_Data.json"));
 const string DATA_JSON_LOCATION_DATADIR = IO::FromDataFolder("MXRandom_Data.json");
 Json::Value DataJsonFromDataFolder      = Json::FromFile(DATA_JSON_LOCATION_DATADIR);
+
+const array<string> MAP_FIELDS_ARRAY = {
+	"MapId",
+	"MapUid",
+	"OnlineMapId",
+	"Uploader.UserId",
+	"Uploader.Name",
+	"MapType",
+	"UploadedAt",
+	"UpdatedAt",
+	"Name",
+	"GbxMapName",
+	"TitlePack",
+	"Length",
+	"Medals.Author",
+	"AwardCount",
+	"ServerSizeExceeded",
+	"Tags",
+	"Exebuild"
+};
+const string MAP_FIELDS = string::Join(MAP_FIELDS_ARRAY, ",");
