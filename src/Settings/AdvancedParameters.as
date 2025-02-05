@@ -9,10 +9,6 @@ namespace PluginSettings
     [Setting hidden]
     string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
 
-    // add a setting that people can toggle to switch between to the old length checks and manual length checks, in case the API starts failing.
-    [Setting hidden]
-    bool UseLengthChecksInRequests = true;
-
     [SettingsTab name="Advanced" order="3" icon="Wrench"]
     void RenderAdvancedSettings()
     {
@@ -21,7 +17,6 @@ namespace PluginSettings
             closeOverlayOnMapLoaded = true;
             RMC_MX_Url = "https://" + MX_URL;
             RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
-            UseLengthChecksInRequests = true;
         }
 
         UI::SetNextItemWidth(300);
@@ -60,8 +55,5 @@ namespace PluginSettings
 #endif
 
         closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
-
-        UseLengthChecksInRequests = UI::Checkbox("Use length filters in API requests", UseLengthChecksInRequests);
-        UI::SetPreviousTooltip("Length filter setting. Toggle this when TMX gives super long response times.");
     }
 }

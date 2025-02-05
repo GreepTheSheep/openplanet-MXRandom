@@ -107,7 +107,7 @@ class RMT : RMC
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
         try {
-            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...", true);
             SetupMapStart();
@@ -166,7 +166,7 @@ class RMT : RMC
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
         try {
-            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...");
             RMTFetchNextMap();

@@ -22,7 +22,7 @@ namespace Migration
     void StartRequestMapsInfo(array<int> MXIds)
     {
         array<MX::MapInfo@> Maps;
-        string url = PluginSettings::RMC_MX_Url+"/api/maps/get_map_info/multi/";
+        string url = PluginSettings::RMC_MX_Url + "/api/maps?fields=" + MAP_FIELDS + "&count=50&id=";
         string mapIdsStr = "";
 
         for (uint i = 0; i < MXIds.Length; i++)
@@ -42,23 +42,24 @@ namespace Migration
             Log::Trace("Migration::CheckRequest : " + res);
             auto json = Json::Parse(res);
 
-            if (json.GetType() != Json::Type::Array) {
-                print("Migration::CheckRequest : Json is not an array");
+            if (json.GetType() != Json::Type::Object) {
+                print("Migration::CheckRequest : Json is not an object");
                 requestError = true;
                 return;
             }
 
-            if (json.Length < 1) {
+            if (json.Length == 0 || !json.HasKey("Results") || json["Results"].Length == 0) {
                 print("Migration::CheckRequest : Error parsing response");
                 requestError = true;
                 return;
             }
 
+            Json::Value@ maps = json["Results"];
+
             // Handle the response
-            for (uint i = 0; i < json.Length; i++)
+            for (uint i = 0; i < maps.Length; i++)
             {
-                Json::Value MapJson = json[i];
-                MX::MapInfo@ Map = MX::MapInfo(MapJson);
+                MX::MapInfo@ Map = MX::MapInfo(maps[i]);
                 RecentlyPlayed.InsertLast(Map);
             }
             @n_request = null;

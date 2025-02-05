@@ -17,6 +17,10 @@ class Date
     bool isAfter(const Date@ &in date) {
         return !isBefore(date);
     }
+
+    string ToString() {
+        return year + "-" + Text::Format("%.02d", month) + "-" + Text::Format("%.02d", day);
+    }
 }
 
 SQLite::Database@ cursedTimeDB = SQLite::Database(":memory:");

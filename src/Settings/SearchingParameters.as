@@ -29,8 +29,7 @@ namespace PluginSettings
         "3 minutes and 30 seconds",
         "4 minutes",
         "4 minutes and 30 seconds",
-        "5 minutes",
-        "Longer than 5 minutes"
+        "5 minutes"
     };
 
     const array<int> SearchingMapLengthsMilliseconds = {
@@ -48,8 +47,7 @@ namespace PluginSettings
         210000,
         240000,
         270000,
-        300000,
-        100000000,  // infinity, I guess.
+        300000
     };
 
     array<string> MapAuthorNamesArr = {};
