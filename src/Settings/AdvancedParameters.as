@@ -4,11 +4,7 @@ namespace PluginSettings
     bool closeOverlayOnMapLoaded = true;
 
     [Setting hidden]
-#if TMNEXT
-    string RMC_MX_Url = "https://map-monitor.xk.io";
-#else
     string RMC_MX_Url = "https://" + MX_URL;
-#endif
 
     [Setting hidden]
     string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
@@ -48,12 +44,6 @@ namespace PluginSettings
         // if (clickedDanApi) {
         //     RMC_MX_Url = "https://mx.danonthemoon.dev/mx";
         // }
-
-        bool clickedXertApi = UI::Button("Use XertroV's API w/ Fixed Randomization");
-        UI::SetPreviousTooltip("Much faster random API for TMX maps, and fixes TMX's broken randomization.\nAll TMX maps are cached and standard RMC map filtering applies.");
-        if (clickedXertApi) {
-            RMC_MX_Url = "https://map-monitor.xk.io";
-        }
 
         if (PluginSettings::RMC_PushLeaderboardResults) {
             UI::NewLine();
