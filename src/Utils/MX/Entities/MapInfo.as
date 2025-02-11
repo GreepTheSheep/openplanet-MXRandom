@@ -31,7 +31,7 @@ namespace MX
                 MapType = json["MapType"];
                 ExeBuild = json["Exebuild"];
                 UploadedAt = json["UploadedAt"];
-                if (json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
+                if (json.HasKey("PlayedAt") && json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
                 if (json["GbxMapName"].GetType() != Json::Type::Null) GbxMapName = json["GbxMapName"];
                 if (json["TitlePack"].GetType() != Json::Type::Null) TitlePack = json["TitlePack"];
                 AwardCount = json["AwardCount"];
