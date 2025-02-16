@@ -89,6 +89,14 @@ void Main()
         DataManager::CheckData();
     }
     DataManager::EnsureSaveFileFolderPresent();
+
+    if (!Migration::MigratedToMX2) {
+        Migration::MigrateMX1Settings();
+        Renderables::Add(MX2MigrationWizardModalDialog());
+
+        Migration::MigratedToMX2 = true;
+    }
+
     MX::FetchMapTags();
     RMC::FetchConfig();
     RMC::InitModes();
