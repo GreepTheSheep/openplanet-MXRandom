@@ -229,6 +229,7 @@ namespace PluginSettings
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
         UI::SetNextItemWidth(200);
         MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
+        if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
         UI::NewLine();
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);

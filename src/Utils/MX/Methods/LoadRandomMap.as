@@ -309,7 +309,8 @@ namespace MX
                 params.Set("difficulty", tostring(PluginSettings::SearchingDifficultys.Find(PluginSettings::Difficulty)-1));
             }
             if (PluginSettings::MapAuthor != "") {
-                params.Set("author", Net::UrlEncode(PluginSettings::MapAuthor)); // TODO this won't work with multiple authors
+                if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
+                params.Set("author", Net::UrlEncode(PluginSettings::MapAuthor));
             }
             if (PluginSettings::MapName != "") {
                 params.Set("name", Net::UrlEncode(PluginSettings::MapName));
