@@ -391,7 +391,7 @@ namespace MX
                 params.Get(key, value);
 
                 urlParams += (i == 0 ? "?" : "&");
-                urlParams += key + "=" + Net::UrlEncode(value);
+                urlParams += key + "=" + Net::UrlEncode(value.Trim());
             }
         }
 
