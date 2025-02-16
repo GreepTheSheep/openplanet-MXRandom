@@ -113,6 +113,7 @@ namespace MX
                 }
             } else {
                 Log::Error("ManiaExchange API returned an error, retrying...");
+                sleep(3000);
                 PreloadRandomMap();
                 return;
             }
