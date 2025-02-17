@@ -3,6 +3,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
     int m_stage = 0;
     int m_migrationStep = 0;
     bool migrationCompleted = false;
+    bool createBackup = false;
     array<int> m_MXIds;
     array<MX::MapInfo@> m_MapsFetched;
 
@@ -51,12 +52,15 @@ class MX2MigrationWizardModalDialog : ModalDialog
         UI::PopFont();
         UI::NewLine();
 
+        if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zBacking up old data...");
         UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of recently played maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
         UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
         UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Hourglass  + " \\$zMigrating data...");
 
         switch (m_migrationStep) {
             case 0:
+                if (createBackup) Migration::BackupData();
+
                 m_MXIds = Migration::GetMX1MapsId();
                 if (m_MXIds.Length == 0) m_migrationStep = 2;
                 else m_migrationStep++;
@@ -85,6 +89,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
             UI::Separator();
             UI::NewLine();
             UI::TextWrapped("\\$0f0" + Icons::Check + " \\$zYour data has been successfully migrated to ManiaExchange 2.0.");
+            if (createBackup) UI::TextWrapped(Icons::Kenney::Save + " You can find your backup at " + MX_V1_BACKUP_LOCATION);
         }
         UI::NewLine();
         if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
@@ -119,7 +124,10 @@ class MX2MigrationWizardModalDialog : ModalDialog
             }
             UI::SameLine();
             vec2 currentPos = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(UI::GetWindowSize().x - 90 * scale, currentPos.y));
+            UI::SetCursorPos(vec2(UI::GetWindowSize().x - 230 * scale, currentPos.y));
+            createBackup = UI::Checkbox("Back up old data", createBackup);
+            UI::SetItemTooltip("If enabled, the old data will be backed up in another folder.\n\nUseful if you want to use an old version of the plugin.");
+            UI::SameLine();
             if (UI::GreenButton("Migrate " + Icons::ArrowRight)) {
                 m_stage++;
             }

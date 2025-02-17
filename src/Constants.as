@@ -38,6 +38,7 @@ Json::Value DataJson                    = Json::FromFile(DATA_JSON_LOCATION);
 Json::Value DataJsonOldVersion          = Json::FromFile(IO::FromDataFolder("TMXRandom_Data.json"));
 const string DATA_JSON_LOCATION_DATADIR = IO::FromDataFolder("MXRandom_Data.json");
 Json::Value DataJsonFromDataFolder      = Json::FromFile(DATA_JSON_LOCATION_DATADIR);
+const string MX_V1_BACKUP_LOCATION      = IO::FromStorageFolder("Old/");
 
 const array<string> MAP_FIELDS_ARRAY = {
 	"MapId",

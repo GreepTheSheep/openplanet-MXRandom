@@ -229,6 +229,27 @@ namespace Migration
         DataManager::SaveData();
     }
 
+    void BackupData() {
+        if (!IO::FolderExists(MX_V1_BACKUP_LOCATION)) {
+            IO::CreateFolder(MX_V1_BACKUP_LOCATION);
+        }
+
+        IO::Copy(DATA_JSON_LOCATION, Path::Join(MX_V1_BACKUP_LOCATION, "MXRandom_Data.json"));
+
+        string backupSavePath = Path::Join(MX_V1_BACKUP_LOCATION, "Save/");
+
+        if (!IO::FolderExists(backupSavePath)) {
+            IO::CreateFolder(backupSavePath);
+        }
+
+        for (uint f = 0; f < oldSaves.Length; f++) {
+            string fileName = Path::GetFileName(oldSaves[f]);
+            IO::Copy(oldSaves[f], backupSavePath + fileName);
+        }
+
+        Log::Log("Succesfully backed up old data at " + MX_V1_BACKUP_LOCATION);
+    }
+
     void RemoveMX1SaveFiles() {
         for (uint f = 0; f < oldSaves.Length; f++) {
             IO::Delete(oldSaves[f]);
