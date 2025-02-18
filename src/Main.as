@@ -85,25 +85,27 @@ void Main()
                 Renderables::Add(DataMigrationWizardModalDialog());
             }
         }
+
+        // Migration is not needed
+        Migration::MigratedToMX2 = true;
     } else {
         DataManager::CheckData();
+
+        if (!Migration::MigratedToMX2) {
+            Migration::MigrateMX1Settings();
+            MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
+            Renderables::Add(migrationDialog);
+
+            while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
+                yield();
+            }
+
+            if (migrationDialog.migrationCompleted) {
+                Migration::MigratedToMX2 = true;
+            }
+        }
     }
     DataManager::EnsureSaveFileFolderPresent();
-
-    if (!Migration::MigratedToMX2) {
-        Migration::MigrateMX1Settings();
-        MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
-        Renderables::Add(migrationDialog);
-
-        while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
-            yield();
-        }
-
-        if (migrationDialog.migrationCompleted) {
-            Migration::MigratedToMX2 = true;
-        }
-    }
-
     MX::FetchMapTags();
     RMC::FetchConfig();
     RMC::InitModes();
