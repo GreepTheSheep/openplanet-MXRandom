@@ -92,9 +92,16 @@ void Main()
 
     if (!Migration::MigratedToMX2) {
         Migration::MigrateMX1Settings();
-        Renderables::Add(MX2MigrationWizardModalDialog());
+        MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
+        Renderables::Add(migrationDialog);
 
-        Migration::MigratedToMX2 = true;
+        while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
+            yield();
+        }
+
+        if (migrationDialog.migrationCompleted) {
+            Migration::MigratedToMX2 = true;
+        }
     }
 
     MX::FetchMapTags();

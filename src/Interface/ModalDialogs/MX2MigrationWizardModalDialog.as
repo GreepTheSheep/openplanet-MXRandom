@@ -47,57 +47,73 @@ class MX2MigrationWizardModalDialog : ModalDialog
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
 
         UI::PushFont(g_fontHeader);
-        if (!migrationCompleted) UI::Text("Please wait...");
-        else UI::Text("Data migration complete!");
+        if (migrationCompleted) UI::Text("Data migration complete!");
+        else if (Migration::v2_requestError) UI::Text("Data migration failed!");
+        else UI::Text("Please wait...");
         UI::PopFont();
         UI::NewLine();
 
-        if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zBacking up old data...");
-        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of recently played maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
-        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
-        UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Hourglass  + " \\$zMigrating data...");
+        if (Migration::v2_requestError) {
+            UI::TextWrapped("\\$f00" + Icons::Times + " \\$z Failed to get the maps from the API.");
+            UI::NewLine();
+            UI::TextWrapped("If this issue persists, report it to the developers.");
 
-        switch (m_migrationStep) {
-            case 0:
-                if (createBackup) Migration::BackupData();
-
-                m_MXIds = Migration::GetMX1MapsId();
-                if (m_MXIds.Length == 0) m_migrationStep = 2;
-                else m_migrationStep++;
-                break;
-            case 1:
-                Migration::CheckMX2MigrationRequest();
-                if (Migration::v2_request is null) {
-                    if (Migration::v2_maps.Length == 0) {
-                        Migration::StartMX2RequestMapsInfo(m_MXIds);
-                    } else {
-                        m_MapsFetched = Migration::v2_maps;
-                        m_migrationStep++;
-                    }
-                }
-                break;
-            case 2:
-                if (m_MapsFetched.Length > 0 && !migrationCompleted) {
-                    Migration::UpdateData();
-                }
-                migrationCompleted = true;
-                break;
-        }
-
-        if (migrationCompleted) {
             UI::NewLine();
             UI::Separator();
             UI::NewLine();
-            UI::TextWrapped("\\$0f0" + Icons::Check + " \\$zYour data has been successfully migrated to ManiaExchange 2.0.");
-            if (createBackup) UI::TextWrapped(Icons::Kenney::Save + " You can find your backup at " + MX_V1_BACKUP_LOCATION);
-        }
-        UI::NewLine();
-        if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
-            for (uint i = 0; i < m_MapsFetched.Length; i++){
-                UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
-                if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);
+
+            UI::TextWrapped(
+                "Failed to migrate data to the new version.\n\n"
+                "You can click \"Delete data\" to remove your data if the error persists."
+            );
+        } else {
+            if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zBacking up old data...");
+            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
+            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
+            UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Hourglass  + " \\$zMigrating data...");
+
+            switch (m_migrationStep) {
+                case 0:
+                    if (createBackup) Migration::BackupData();
+
+                    m_MXIds = Migration::GetMX1MapsId();
+                    if (m_MXIds.Length == 0) m_migrationStep = 2;
+                    else m_migrationStep++;
+                    break;
+                case 1:
+                    Migration::CheckMX2MigrationRequest();
+                    if (Migration::v2_request is null) {
+                        if (Migration::v2_maps.Length == 0) {
+                            Migration::StartMX2RequestMapsInfo(m_MXIds);
+                        } else {
+                            m_MapsFetched = Migration::v2_maps;
+                            m_migrationStep++;
+                        }
+                    }
+                    break;
+                case 2:
+                    if (m_MapsFetched.Length > 0 && !migrationCompleted) {
+                        Migration::UpdateData();
+                    }
+                    migrationCompleted = true;
+                    break;
             }
-            UI::TreePop();
+
+            if (migrationCompleted) {
+                UI::NewLine();
+                UI::Separator();
+                UI::NewLine();
+                UI::TextWrapped("\\$0f0" + Icons::Check + " \\$zYour data has been successfully migrated to ManiaExchange 2.0.");
+                if (createBackup) UI::TextWrapped(Icons::Kenney::Save + " You can find your backup at " + MX_V1_BACKUP_LOCATION);
+            }
+            UI::NewLine();
+            if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
+                for (uint i = 0; i < m_MapsFetched.Length; i++){
+                    UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
+                    if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);
+                }
+                UI::TreePop();
+            }
         }
     }
 
@@ -131,10 +147,23 @@ class MX2MigrationWizardModalDialog : ModalDialog
             if (UI::GreenButton("Migrate " + Icons::ArrowRight)) {
                 m_stage++;
             }
-        }
-
-        if (migrationCompleted && UI::GreenButton(Icons::Check + "Finish")) {
-            Close();
+        } else {
+            if (Migration::v2_requestError) {
+                if (UI::RedButton(Icons::Times + " Delete data")) {
+                    Migration::BackupData();
+                    DataManager::InitData();
+                    Migration::RemoveMX1SaveFiles();
+                    Close();
+                }
+                UI::SameLine();
+                vec2 currentPos = UI::GetCursorPos();
+                UI::SetCursorPos(vec2(UI::GetWindowSize().x - 60 * scale, currentPos.y));
+                if (UI::GreyButton("Close")) {
+                    Close();
+                }
+            } else if (migrationCompleted && UI::GreenButton(Icons::Check + "Finish")) {
+                Close();
+            }
         }
     }
 }
