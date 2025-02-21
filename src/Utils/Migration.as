@@ -236,7 +236,7 @@ namespace Migration
 
         IO::Copy(DATA_JSON_LOCATION, Path::Join(MX_V1_BACKUP_LOCATION, "MXRandom_Data.json"));
 
-        string backupSavePath = Path::Join(MX_V1_BACKUP_LOCATION, "Save/");
+        string backupSavePath = Path::Join(MX_V1_BACKUP_LOCATION, "Saves/");
 
         if (!IO::FolderExists(backupSavePath)) {
             IO::CreateFolder(backupSavePath);
