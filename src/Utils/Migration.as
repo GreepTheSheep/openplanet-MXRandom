@@ -199,30 +199,21 @@ namespace Migration
             }
         }
 
-        dictionary playedMap;
-
-        for (uint p = 0; p < oldPlayed.Length; p++) {
-            Json::Value@ map = oldPlayed[p];
-
-            if (map.HasKey("TrackID")) {
-                string trackId = tostring(int(map["TrackID"]));
-
-                if (!playedMap.Exists(trackId)) {
-                    playedMap.Set(trackId, Json::Write(map["PlayedAt"]));
-                }
-            }
-        }
-
         DataManager::InitData(false);
 
-        for (uint i = 0; i < v2_maps.Length; i++) {
-            MX::MapInfo@ currMap = v2_maps[i];
-            string playedAt;
+        for (uint p = 0; p < oldPlayed.Length; p++) {
+            Json::Value@ oldMap = oldPlayed[p];
 
-            if (playedMap.Get(tostring(currMap.MapId), playedAt)) {
-                currMap.PlayedAt = Json::Parse(playedAt);
-                Json::Value MapJson = currMap.ToJson();
-                DataJson["recentlyPlayed"].Add(MapJson);
+            if (oldMap.HasKey("TrackID")) {
+                for (uint i = 0; i < v2_maps.Length; i++) {
+                    MX::MapInfo@ map = v2_maps[i];                    
+
+                    if (map.MapId == oldMap["TrackID"]) {
+                        map.PlayedAt = map["PlayedAt"];
+                        DataJson["recentlyPlayed"].Add(map.ToJson());
+                        break;
+                    }
+                }
             }
         }
 
