@@ -188,7 +188,7 @@ namespace Migration
                         MX::MapInfo@ currMap = v2_maps[i];
 
                         if (mapData["TrackID"] == currMap.MapId) {
-                            currMap.PlayedAt = mapData["PlayedAt"];
+                            currMap.PlayedAt = TimestampFromObject(mapData["PlayedAt"]);
                             save["MapData"] = currMap.ToJson();
 
                             Json::ToFile(oldSaves[f], save);
@@ -209,7 +209,7 @@ namespace Migration
                     MX::MapInfo@ map = v2_maps[i];                    
 
                     if (map.MapId == oldMap["TrackID"]) {
-                        map.PlayedAt = map["PlayedAt"];
+                        map.PlayedAt = TimestampFromObject(oldMap["PlayedAt"]);
                         DataJson["recentlyPlayed"].Add(map.ToJson());
                         break;
                     }

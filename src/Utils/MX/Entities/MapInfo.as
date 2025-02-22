@@ -11,7 +11,7 @@ namespace MX
         string ExeBuild;
         string UploadedAt;
         string UpdatedAt;
-        Json::Value PlayedAt;
+        int PlayedAt;
         string Name;
         string GbxMapName;
         string TitlePack;
@@ -31,11 +31,13 @@ namespace MX
                 MapType = json["MapType"];
                 ExeBuild = json["Exebuild"];
                 UploadedAt = json["UploadedAt"];
-                if (json.HasKey("PlayedAt") && json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
                 if (json["GbxMapName"].GetType() != Json::Type::Null) GbxMapName = json["GbxMapName"];
                 if (json["TitlePack"].GetType() != Json::Type::Null) TitlePack = json["TitlePack"];
                 AwardCount = json["AwardCount"];
                 ServerSizeExceeded = json["ServerSizeExceeded"];
+
+                if (json.HasKey("PlayedAt") && json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
+                else PlayedAt = Time::Stamp;
 
                 if (json["UpdatedAt"].GetType() != Json::Type::Null) {
                     UpdatedAt = json["UpdatedAt"];

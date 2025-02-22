@@ -113,15 +113,6 @@ class RMT : RMC
             SetupMapStart();
             return;
         }
-        Json::Value playedAt = Json::Object();
-        Time::Info date = Time::Parse();
-        playedAt["Year"] = date.Year;
-        playedAt["Month"] = date.Month;
-        playedAt["Day"] = date.Day;
-        playedAt["Hour"] = date.Hour;
-        playedAt["Minute"] = date.Minute;
-        playedAt["Second"] = date.Second;
-        res["PlayedAt"] = playedAt;
         @currentMap = MX::MapInfo(res);
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
         seenMaps[currentMap.MapUid] = currentMap.MapUid;
@@ -172,15 +163,6 @@ class RMT : RMC
             RMTFetchNextMap();
             return;
         }
-        Json::Value playedAt = Json::Object();
-        Time::Info date = Time::Parse();
-        playedAt["Year"] = date.Year;
-        playedAt["Month"] = date.Month;
-        playedAt["Day"] = date.Day;
-        playedAt["Hour"] = date.Hour;
-        playedAt["Minute"] = date.Minute;
-        playedAt["Second"] = date.Second;
-        res["PlayedAt"] = playedAt;
         @nextMap = MX::MapInfo(res);
         Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.MapId + ")");
 

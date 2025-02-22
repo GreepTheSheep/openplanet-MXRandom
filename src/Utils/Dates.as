@@ -22,3 +22,15 @@ class Date
         return year + "-" + Text::Format("%.02d", month) + "-" + Text::Format("%.02d", day);
     }
 }
+
+int TimestampFromObject(Json::Value@ obj) {
+    string year = tostring(int(obj["Year"]));
+    string month = Text::Format("%02d", int(obj["Month"]));
+    string day = Text::Format("%02d", int(obj["Day"]));
+    string hour = Text::Format("%02d", int(obj["Hour"]));
+    string minute = Text::Format("%02d", int(obj["Minute"]));
+    string second = Text::Format("%02d", int(obj["Second"]));
+    
+    string date = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+    return Time::ParseFormatString('%F %T', date);
+}
