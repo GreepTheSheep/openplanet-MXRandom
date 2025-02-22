@@ -40,7 +40,7 @@ namespace Log
 
     void LoadingMapNotification(MX::MapInfo@ map)
     {
-        Log("Loading map: " + map.Name + " (" + map.TrackID + ")");
+        Log("Loading map: " + map.Name + " (" + map.MapId + ")");
         vec4 color = UI::HSV(0.25, 1, 0.7);
         UI::ShowNotification(Icons::Kenney::ReloadInverse + " Loading map", map.Name + "\nby: "+map.Username, color, 5000);
     }

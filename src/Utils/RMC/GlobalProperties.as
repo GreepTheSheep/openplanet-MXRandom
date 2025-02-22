@@ -37,18 +37,7 @@ namespace RMC
 #endif
     };
 
-    const array<string> allowedMapLengths = {
-        "15 secs",
-        "30 secs",
-        "45 secs",
-        "1 min",
-        "1 m 15 s",
-        "1 m 30 s",
-        "1 m 45 s",
-        "2 min",
-        "2 m 30 s",
-        "3 min"
-    };
+    const int allowedMaxLength = 180000;
 
     RMC@ Challenge;
     RMS@ Survival;

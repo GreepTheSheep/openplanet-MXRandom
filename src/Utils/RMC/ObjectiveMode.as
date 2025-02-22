@@ -132,7 +132,7 @@ class RMObjective : RMC
                 if (currentMap !is null) {
                     CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
                     if (currentMapInfo !is null) {
-                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
                             RMC::StartTime = Time::get_Now();
                             PendingTimerLoop();
 

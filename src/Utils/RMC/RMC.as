@@ -178,7 +178,7 @@ class RMC
         if (currentMap !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
             if (currentMapInfo !is null) {
-                if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+                if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
                     UI::Separator();
                     MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
                     if (CurrentMapFromJson !is null) {
@@ -239,7 +239,7 @@ class RMC
         CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
         if (currentMap !is null) {
             CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-            if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+            if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
                 PausePlayButton();
                 UI::SameLine();
                 SkipButtons();
@@ -423,7 +423,7 @@ class RMC
                 if (currentMap !is null) {
                     CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
                     if (currentMapInfo !is null) {
-                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["TrackUID"]) {
+                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
                             RMC::StartTime = Time::Now;
                             RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
                             PendingTimerLoop();

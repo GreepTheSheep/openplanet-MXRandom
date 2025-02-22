@@ -107,35 +107,26 @@ class RMT : RMC
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
         try {
-            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...", true);
             SetupMapStart();
             return;
         }
-        Json::Value playedAt = Json::Object();
-        Time::Info date = Time::Parse();
-        playedAt["Year"] = date.Year;
-        playedAt["Month"] = date.Month;
-        playedAt["Day"] = date.Day;
-        playedAt["Hour"] = date.Hour;
-        playedAt["Minute"] = date.Minute;
-        playedAt["Second"] = date.Second;
-        res["PlayedAt"] = playedAt;
         @currentMap = MX::MapInfo(res);
-        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
-        seenMaps[currentMap.TrackUID] = currentMap.TrackUID;
+        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
+        seenMaps[currentMap.MapUid] = currentMap.MapUid;
         UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#420399"));
 
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.TrackUID)) {
+        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
             Log::Trace("RMT: Map is not on NadeoServices, retrying...");
             SetupMapStart();
             return;
         }
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
-        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.TrackUID);
-        while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
+        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
+        while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit() / 1000);
         while (GetApp().CurrentPlayground is null) yield();
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
@@ -166,35 +157,26 @@ class RMT : RMC
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
         try {
-            res = API::GetAsync(MX::CreateQueryURL())["results"][0];
+            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
         } catch {
             Log::Error("ManiaExchange API returned an error, retrying...");
             RMTFetchNextMap();
             return;
         }
-        Json::Value playedAt = Json::Object();
-        Time::Info date = Time::Parse();
-        playedAt["Year"] = date.Year;
-        playedAt["Month"] = date.Month;
-        playedAt["Day"] = date.Day;
-        playedAt["Hour"] = date.Hour;
-        playedAt["Minute"] = date.Minute;
-        playedAt["Second"] = date.Second;
-        res["PlayedAt"] = playedAt;
         @nextMap = MX::MapInfo(res);
-        Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.TrackID + ")");
+        Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.MapId + ")");
 
         if (PluginSettings::SkipSeenMaps) {
-            if (seenMaps.Exists(nextMap.TrackUID)) {
+            if (seenMaps.Exists(nextMap.MapUid)) {
                 Log::Trace("Map has been seen, retrying...");
                 RMTFetchNextMap();
                 return;
             }
 
-            seenMaps[nextMap.TrackUID] = nextMap.TrackUID;
+            seenMaps[nextMap.MapUid] = nextMap.MapUid;
         }
 
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.TrackUID)) {
+        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.MapUid)) {
             Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
             @nextMap = null;
             RMTFetchNextMap();
@@ -216,12 +198,12 @@ class RMT : RMC
         while (isFetchingNextMap) yield();
         @currentMap = nextMap;
         @nextMap = null;
-        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.TrackID + ")");
+        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
         UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#420399"));
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
-        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.TrackUID);
-        while (!TM::IsMapCorrect(currentMap.TrackUID)) sleep(1000);
+        MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
+        while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, RMTTimerMapChange / 1000);
         while (GetApp().CurrentPlayground is null) yield();
         CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);

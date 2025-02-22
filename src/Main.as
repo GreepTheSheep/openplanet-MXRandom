@@ -70,6 +70,11 @@ void Main()
     @g_fontHeader = UI::LoadFont("DroidSans-Bold.ttf", 22);
     @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20);
 
+    DataManager::EnsureSaveFileFolderPresent();
+
+    Meta::PluginCoroutine@ tagLoad = startnew(MX::FetchMapTags);
+    await(tagLoad);
+
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonFromDataFolder.GetType() != Json::Type::Null) {
             DataManager::InitData(false);
@@ -85,11 +90,26 @@ void Main()
                 Renderables::Add(DataMigrationWizardModalDialog());
             }
         }
+
+        // Migration is not needed
+        Migration::MigratedToMX2 = true;
     } else {
         DataManager::CheckData();
+
+        if (!Migration::MigratedToMX2) {
+            Migration::MigrateMX1Settings();
+            MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
+            Renderables::Add(migrationDialog);
+
+            while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
+                yield();
+            }
+
+            if (migrationDialog.migrationCompleted) {
+                Migration::MigratedToMX2 = true;
+            }
+        }
     }
-    DataManager::EnsureSaveFileFolderPresent();
-    MX::FetchMapTags();
     RMC::FetchConfig();
     RMC::InitModes();
 #if DEPENDENCY_NADEOSERVICES

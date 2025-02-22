@@ -5,7 +5,7 @@ namespace MX
         m_mapTags.RemoveRange(0, m_mapTags.Length);
         APIRefreshing = true;
 
-        Json::Value resNet = API::GetAsync(PluginSettings::RMC_MX_Url+"/api/tags/gettags");
+        Json::Value resNet = API::GetAsync(PluginSettings::RMC_MX_Url+"/api/meta/tags");
 
         try {
             for (uint i = 0; i < resNet.Length; i++)
