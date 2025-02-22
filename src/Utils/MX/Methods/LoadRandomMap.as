@@ -77,10 +77,10 @@ namespace MX
     }
 
     bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
-        int64 mapUploadedDate = DateFromStrTime(map.UploadedAt);
-        int64 mapUpdatedDate = DateFromStrTime(map.UpdatedAt);
-        int64 toDate = DateFromStrTime(PluginSettings::ToYear + "-" + Text::Format("%.02d", PluginSettings::ToMonth) + "-" + Text::Format("%.02d", PluginSettings::ToDay) + "T00:00:00.00");
-        int64 fromDate = DateFromStrTime(PluginSettings::FromYear + "-" + Text::Format("%.02d", PluginSettings::FromMonth) + "-" + Text::Format("%.02d", PluginSettings::FromDay) + "T00:00:00.00");
+        int64 mapUploadedDate = Time::ParseFormatString('%FT%T', map.UploadedAt);
+        int64 mapUpdatedDate = Time::ParseFormatString('%FT%T', map.UpdatedAt);
+        int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToYear + "-" + Text::Format("%.02d", PluginSettings::ToMonth) + "-" + Text::Format("%.02d", PluginSettings::ToDay));
+        int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromYear + "-" + Text::Format("%.02d", PluginSettings::FromMonth) + "-" + Text::Format("%.02d", PluginSettings::FromDay));
         return (mapUpdatedDate < toDate && mapUpdatedDate > fromDate);
     }
 
