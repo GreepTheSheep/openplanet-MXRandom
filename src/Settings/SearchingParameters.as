@@ -29,8 +29,7 @@ namespace PluginSettings
         "3 minutes and 30 seconds",
         "4 minutes",
         "4 minutes and 30 seconds",
-        "5 minutes",
-        "Longer than 5 minutes"
+        "5 minutes"
     };
 
     const array<int> SearchingMapLengthsMilliseconds = {
@@ -48,8 +47,7 @@ namespace PluginSettings
         210000,
         240000,
         270000,
-        300000,
-        100000000,  // infinity, I guess.
+        300000
     };
 
     array<string> MapAuthorNamesArr = {};
@@ -65,9 +63,6 @@ namespace PluginSettings
 
     [Setting hidden]
     string MapAuthor = "";
-
-    [Setting hidden]
-    bool MapAuthorNameNeedsExactMatch = true;
 
     [Setting hidden]
     string MapName = "";
@@ -155,7 +150,6 @@ namespace PluginSettings
             MapPackID = 0;
             MapTagsArr = {};
             MapAuthorNamesArr = {};
-            MapAuthorNameNeedsExactMatch = true;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40};
 #else
@@ -235,9 +229,7 @@ namespace PluginSettings
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
         UI::SetNextItemWidth(200);
         MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
-        UI::SameLine();
-        MapAuthorNameNeedsExactMatch = UI::Checkbox("Exact name matches", MapAuthorNameNeedsExactMatch);
-        UI::SetPreviousTooltip("If disabled, you will get results for any author that contains the text you entered.\nIf you search for \"Nadeo\", you will get results for \"Nadeo\", \"Nadeo123\", \"Nadeo_\", etc.\nIf enabled, you will only get results for \"Nadeo\".\nHowever this can lead to issues if the author has changed their MX username since uploading the map. This can be avoided by specifying all the names the author has used.");
+        if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
         UI::NewLine();
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);

@@ -17,5 +17,19 @@ namespace MX
                 Log::Warn("Error parsing tag: "+Name);
             }
         }
+
+        Json::Value ToJson()
+        {
+            Json::Value json = Json::Object();
+            try {
+                json["TagId"] = ID;
+                json["Name"] = Name;
+                json["Color"] = Color;
+            } catch {
+                Log::Warn("Error converting tag info to json for tag " + Name);
+            }
+
+            return json;
+        }
     }
 }

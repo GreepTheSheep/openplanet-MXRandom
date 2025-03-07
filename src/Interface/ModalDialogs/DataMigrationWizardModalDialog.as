@@ -95,8 +95,8 @@ class DataMigrationWizardModalDialog : ModalDialog
         UI::NewLine();
         if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
             for (uint i = 0; i < m_MapsFetched.Length; i++){
-                UI::Text(m_MapsFetched[i].TrackID + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
-                if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/maps/"+m_MapsFetched[i].TrackID);
+                UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
+                if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);
             }
             UI::TreePop();
         }

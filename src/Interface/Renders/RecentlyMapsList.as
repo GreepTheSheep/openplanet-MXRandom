@@ -15,7 +15,7 @@ namespace Render
                 UI::TableSetColumnIndex(1);
                 UI::Text(map.Username);
                 UI::TableSetColumnIndex(2);
-                if (map.PlayedAt.GetType() == Json::Type::Object) UI::Text(GeneratePlayedAtString(map.PlayedAt));
+                if (map.PlayedAt > 0) UI::Text(GeneratePlayedAtString(map.PlayedAt));
                 else {
                     UI::Text("Unknown");
                     UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
@@ -32,9 +32,9 @@ namespace Render
 
                 if (UI::ButtonColored(Icons::ExternalLink, 0.55, 1, 0.5)) {
 #if DEPENDENCY_MANIAEXCHANGE
-                    ManiaExchange::ShowMapInfo(map.TrackID);
+                    ManiaExchange::ShowMapInfo(map.MapId);
 #else
-                    OpenBrowserURL("https://"+MX_URL+"/maps/"+map.TrackID);
+                    OpenBrowserURL("https://"+MX_URL+"/mapshow/"+map.MapId);
 #endif
                 }
                 UI::SameLine();
@@ -45,7 +45,7 @@ namespace Render
 #else
                 if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
-                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/maps/download/"+map.TrackID;
+                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/mapgbx/"+map.MapId;
                     startnew(TM::LoadMap);
                 }
 
@@ -54,13 +54,7 @@ namespace Render
         }
     }
 
-    string GeneratePlayedAtString(Json::Value playedAt){
-        int playedAtYear = playedAt["Year"];
-        int playedAtMonth = playedAt["Month"];
-        int playedAtDay = playedAt["Day"];
-        int playedAtHour = playedAt["Hour"];
-        int playedAtMinute = playedAt["Minute"];
-        int playedAtSecond = playedAt["Second"];
-        return playedAtYear + "-" + (playedAtMonth < 10 ? "0":"") + playedAtMonth + "-" + (playedAtDay < 10 ? "0":"") + playedAtDay + " " + (playedAtHour < 10 ? "0":"") + playedAtHour + ":" + (playedAtMinute < 10 ? "0":"") + playedAtMinute + ":" + (playedAtSecond < 10 ? "0":"") + playedAtSecond;
+    string GeneratePlayedAtString(int stamp) {
+        return Time::FormatString("%F %T", stamp);
     }
 }
