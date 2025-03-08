@@ -5,7 +5,6 @@ class RMT : RMC
     NadeoServices::ClubRoom@ RMTRoom;
     MX::MapInfo@ currentMap;
     MX::MapInfo@ nextMap;
-    uint lastPbUpdate = 0;
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
     bool m_CurrentlyLoadingRecords = false;
@@ -514,45 +513,27 @@ class RMT : RMC
     }
 
     void UpdateRecords() {
-        lastPbUpdate = Time::Now;
         auto newPBs = GetPlayersPBsMLFeed();
         if (newPBs.Length > 0) // empty arrays are returned on e.g., http error
             m_mapPersonalBests = newPBs;
-    }
-
-    string GetLocalPlayerWSID() {
-        try {
-            return GetApp().Network.ClientManiaAppPlayground.LocalUser.WebServicesUserId;
-        } catch {
-            return "";
-        }
     }
 
     array<PBTime@> GetPlayersPBsMLFeed() {
         array<PBTime@> ret;
 #if DEPENDENCY_MLFEEDRACEDATA
         try {
-            auto mapg = cast<CTrackMania>(GetApp()).Network.ClientManiaAppPlayground;
-            if (mapg is null) return {};
-            auto scoreMgr = mapg.ScoreMgr;
-            auto userMgr = mapg.UserMgr;
-            if (scoreMgr is null || userMgr is null) return {};
-            auto raceData = MLFeed::GetRaceData_V2();
-            auto players = GetPlayersInServer();
+            auto app = cast<CTrackMania>(GetApp());
+            if (app.Network is null || app.Network.ClientManiaAppPlayground is null) return {};
+            auto raceData = MLFeed::GetRaceData_V4();
+            if (raceData is null) return {};
+            auto @players = raceData.SortedPlayers_TimeAttack;
             if (players.Length == 0) return {};
-            auto playerWSIDs = MwFastBuffer<wstring>();
-            dictionary wsidToPlayer;
             for (uint i = 0; i < players.Length; i++) {
-                auto SMPlayer = players[i];
-                auto player = raceData.GetPlayer_V2(SMPlayer.User.Name);
+                auto player = cast<MLFeed::PlayerCpInfo_V4>(players[i]);
                 if (player is null) continue;
                 if (player.bestTime < 1) continue;
                 if (player.BestRaceTimes is null || player.BestRaceTimes.Length != raceData.CPsToFinish) continue;
-                auto pbTime = PBTime(SMPlayer, null, SMPlayer.User.WebServicesUserId == GetLocalPlayerWSID());
-                pbTime.time = player.bestTime;
-                pbTime.recordTs = Time::Stamp;
-                pbTime.replayUrl = "";
-                pbTime.UpdateCachedStrings();
+                auto pbTime = PBTime(player);
                 ret.InsertLast(pbTime);
             }
             ret.SortAsc();
@@ -560,17 +541,6 @@ class RMT : RMC
             warn("Error while getting player PBs: " + getExceptionInfo());
         }
 #endif
-        return ret;
-    }
-
-    array<CSmPlayer@>@ GetPlayersInServer() {
-        auto cp = cast<CTrackMania>(GetApp()).CurrentPlayground;
-        if (cp is null) return {};
-        array<CSmPlayer@> ret;
-        for (uint i = 0; i < cp.Players.Length; i++) {
-            auto player = cast<CSmPlayer>(cp.Players[i]);
-            if (player !is null) ret.InsertLast(player);
-        }
         return ret;
     }
 
@@ -594,9 +564,11 @@ class RMT : RMC
     void DrawPlayerProgress() {
         if (UI::CollapsingHeader("Current Runs")) {
 #if DEPENDENCY_MLFEEDRACEDATA
+            auto rd = MLFeed::GetRaceData_V4();
+            if (rd is null) return;
+
             UI::Indent();
 
-            auto rd = MLFeed::GetRaceData_V4();
             UI::ListClipper clip(rd.SortedPlayers_TimeAttack.Length);
             if (UI::BeginTable("player-curr-runs", 4, UI::TableFlags::SizingStretchProp | UI::TableFlags::ScrollY)) {
                 UI::TableSetupColumn("name", UI::TableColumnFlags::WidthStretch);
@@ -657,7 +629,6 @@ class RMT : RMC
 
 class RMTPlayerScore {
     string name;
-    string club;
     string wsid;
     int goals;
     int belowGoals;
@@ -665,7 +636,6 @@ class RMTPlayerScore {
     RMTPlayerScore(PBTime@ _player) {
         wsid = _player.wsid; // rare null pointer exception here
         name = _player.name;
-        club = _player.club;
     }
 
     int AddGoal() {
