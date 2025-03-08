@@ -176,10 +176,12 @@ namespace RMC
         }
 #endif
         UI::Separator();
+#if TMNEXT
         if (UI::Button(Icons::Table + " Standings")) {
             OpenBrowserURL(PluginSettings::RMC_Leaderboard_Url);
         }
         UI::SameLine();
+#endif
         if (UI::PurpleButton(Icons::Cog)) {
             Renderables::Add(RMCSettingsModalDialog());
         }
