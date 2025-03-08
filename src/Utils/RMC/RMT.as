@@ -593,7 +593,7 @@ class RMT : RMC
                         UI::Text(Time::Format(p.LastCpOrRespawnTime));
                         UI::TableNextColumn();
                         auto best = p.BestRaceTimes;
-                        if (best !is null && p.CpCount <= int(best.Length)) {
+                        if (best !is null && best.Length == rd.CPsToFinish) {
                             bool isBehind = false;
                             // best player times start with index 0 being CP 1 time
                             auto cpBest = p.CpCount == 0 ? 0 : int(best[p.CpCount - 1]);
