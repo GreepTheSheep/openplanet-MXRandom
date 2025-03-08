@@ -14,7 +14,7 @@ class RMT : RMC
     bool isSwitchingMap = false;
     bool pressedStopButton = false;
     bool isFetchingNextMap = false;
-    dictionary seenMaps;
+    array<string> seenMaps;
 
     string GetModeName() override { return "Random Map Together";}
 
@@ -80,6 +80,7 @@ class RMT : RMC
     {
         m_mapPersonalBests = {};
         m_playerScores = {};
+        if (!seenMaps.IsEmpty()) seenMaps.RemoveRange(0, seenMaps.Length);
         RMC::GoalMedalCount = 0;
         BelowMedalCount = 0;
         RMC::ShowTimer = true;
@@ -114,7 +115,7 @@ class RMT : RMC
         }
         @currentMap = MX::MapInfo(res);
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
-        seenMaps[currentMap.MapUid] = currentMap.MapUid;
+        seenMaps.InsertLast(currentMap.MapUid);
         UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#420399"));
 
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
@@ -166,13 +167,13 @@ class RMT : RMC
         Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.MapId + ")");
 
         if (PluginSettings::SkipSeenMaps) {
-            if (seenMaps.Exists(nextMap.MapUid)) {
-                Log::Trace("Map has been seen, retrying...");
+            if (seenMaps.Find(nextMap.MapUid) != -1) {
+                Log::Trace("Map has been played already, retrying...");
                 RMTFetchNextMap();
                 return;
             }
 
-            seenMaps[nextMap.MapUid] = nextMap.MapUid;
+            seenMaps.InsertLast(nextMap.MapUid);
         }
 
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.MapUid)) {
