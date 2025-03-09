@@ -106,9 +106,11 @@ namespace MX
                     // maps with parameters exist but we still got an error, just retry
                     // (from testing usually TMX doing weird stuff and not returning a map even though there is multiple, just retry and it will find one after a few tries)
                     Log::Error("ManiaExchange API returned an error, retrying...");
+                    sleep(3000);
                     PreloadRandomMap();
                     return;
                 } else {  // no maps found, retrying without parameters
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 }
@@ -124,6 +126,7 @@ namespace MX
 
         if (map is null){
             Log::Warn("Map is null, retrying...");
+            sleep(1000);
             PreloadRandomMap();
             return;
         }
@@ -132,6 +135,7 @@ namespace MX
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::allowedMaxLength) {
                     Log::Warn("Map is too long, retrying...");
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 }
@@ -140,6 +144,7 @@ namespace MX
 #if TMNEXT
             if (RMC::selectedGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
                 Log::Warn("Map is too big to play in servers, retrying...");
+                sleep(1000);
                 PreloadRandomMap();
                 return;
             }
@@ -148,6 +153,7 @@ namespace MX
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
                 if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
                     Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 } else {
@@ -155,6 +161,7 @@ namespace MX
                     uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
                     if (int(mapWorldRecord) == -1) {
                         Log::Warn("Couldn't get map World Record, retrying another map...");
+                        sleep(1000);
                         PreloadRandomMap();
                         return;
                     } else TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
@@ -168,6 +175,7 @@ namespace MX
                 bool isValidDate = isMapInsideDateParams(map);
                 if(!isValidDate) {
                     Log::Warn("Looking for new map inside date params...");
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 }
@@ -179,6 +187,7 @@ namespace MX
 
                 if ((minAuthor != -1 && map.AuthorTime < minAuthor) || (maxAuthor != -1 && map.AuthorTime > maxAuthor)) {
                     Log::Warn("Map is not the correct length, retrying...");
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 }
@@ -194,6 +203,7 @@ namespace MX
 
                 if (Regex::Contains(map.Name, termsRegex, Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map contains an excluded term, retrying...");
+                    sleep(1000);
                     PreloadRandomMap();
                     return;
                 }
@@ -203,6 +213,7 @@ namespace MX
                 foreach (string author : PluginSettings::ExcludedAuthorsArr) {
                     if (map.Username.ToLower() == author) {
                         Log::Warn("Map is uploaded by an excluded author, retrying...");
+                        sleep(1000);
                         PreloadRandomMap();
                         return;
                     }
