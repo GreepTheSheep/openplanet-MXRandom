@@ -64,6 +64,11 @@ void Render()
 void Main()
 {
 #if TMNEXT
+    if (!OpenplanetHasPaidPermissions()) {
+        Log::Error("You need Club / Standard access to use this plugin!", true);
+        return;
+    }
+
     startnew(RMCLeaderAPI::Login);
 #endif
 
