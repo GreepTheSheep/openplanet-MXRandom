@@ -23,7 +23,7 @@ namespace API
         }
         string res = req.String();
         if (IS_DEV_MODE) Log::Trace("Code: " + req.ResponseCode() + " - Get Res: " + res);
-        return Json::Parse(res);
+        return req.Json();
     }
 
     Net::HttpRequest@ Post(const string &in url, const string &in body)
@@ -51,6 +51,6 @@ namespace API
         }
         string res = req.String();
         if (IS_DEV_MODE) Log::Trace("Code: " + req.ResponseCode() + " - Post Res: " + res);
-        return Json::Parse(res);
+        return req.Json();
     }
 }

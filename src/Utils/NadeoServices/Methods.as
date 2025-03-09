@@ -44,7 +44,7 @@ namespace MXNadeoServicesGlobal
             yield();
         }
         if (IS_DEV_MODE) Log::Trace("NadeoServices - Check server: " + req.String());
-        auto res = Json::Parse(req.String());
+        auto res = req.Json();
         isCheckingRoom = false;
 
         if (res.GetType() == Json::Type::Array) {
@@ -87,7 +87,7 @@ namespace MXNadeoServicesGlobal
         while (!req.Finished()) {
             yield();
         }
-        auto res = Json::Parse(req.String());
+        auto res = req.Json();
 
         if (res.GetType() != Json::Type::Object) {
             if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {
@@ -202,7 +202,7 @@ namespace MXNadeoServicesGlobal
             yield();
         }
         if (IS_DEV_MODE) Log::Trace("NadeoServices - Get Map WR Res: " + req.String());
-        auto res = Json::Parse(req.String());
+        auto res = req.Json();
 
         if (res.GetType() != Json::Type::Object) {
             if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {

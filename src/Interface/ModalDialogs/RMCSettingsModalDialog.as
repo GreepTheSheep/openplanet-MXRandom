@@ -60,9 +60,10 @@ class RMCSettingsModalDialog : ModalDialog
         if (m_request !is null && m_request.Finished()) {
             // Parse the response
             string res = m_request.String();
-            Log::Trace("Rules::CheckRequest : " + res);
-            auto json = Json::Parse(res);
+            auto json = m_request.Json();
             @m_request = null;
+
+            Log::Trace("Rules::CheckRequest : " + res);
 
             if (json.GetType() != Json::Type::Object) {
                 Log::Error("Rules::CheckRequest : Error parsing response");

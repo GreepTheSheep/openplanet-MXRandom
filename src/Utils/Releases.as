@@ -42,9 +42,10 @@ namespace GH
         if (ReleasesReq !is null && ReleasesReq.Finished()) {
             // Parse the response
             string res = ReleasesReq.String();
-            Log::Trace("Releases::CheckRequest : " + res);
-            auto json = Json::Parse(res);
+            auto json = ReleasesReq.Json();
             @ReleasesReq = null;
+
+            Log::Trace("Releases::CheckRequest : " + res);
 
             if (json.GetType() != Json::Type::Array || json.Length == 0) {
                 print("Releases::CheckRequest : Error parsing response");

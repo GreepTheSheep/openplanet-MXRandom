@@ -41,8 +41,9 @@ namespace Migration
         if (n_request !is null && n_request.Finished()) {
             // Parse the response
             string res = n_request.String();
+            auto json = n_request.Json();
+
             Log::Trace("Migration::CheckRequest : " + res);
-            auto json = Json::Parse(res);
 
             if (json.GetType() != Json::Type::Object) {
                 print("Migration::CheckRequest : Json is not an object");
@@ -150,8 +151,9 @@ namespace Migration
     void CheckMX2MigrationRequest() {
         if (v2_request !is null && v2_request.Finished()) {
             string res = v2_request.String();
+            auto json = v2_request.Json();
+
             Log::Trace("Migration::CheckV2MXRequest: " + res);
-            auto json = Json::Parse(res);
 
             if (json.GetType() != Json::Type::Object) {
                 print("Migration::CheckV2MXRequest: Json is not an object");
