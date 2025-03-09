@@ -88,6 +88,7 @@ namespace MX
     void PreloadRandomMap()
     {
         isLoadingPreload = true;
+
         string URL = CreateQueryURL();
         Json::Value res;
         try {
@@ -180,6 +181,31 @@ namespace MX
                     Log::Warn("Map is not the correct length, retrying...");
                     PreloadRandomMap();
                     return;
+                }
+            }
+
+            if (PluginSettings::ExcludedTerms != "") {
+                string termsRegex = string::Join(PluginSettings::ExcludedTermsArr, "|");
+
+                if (PluginSettings::TermsExactMatch) {
+                    // Use word boundaries to only find exact matches
+                    termsRegex = "\\b(" + termsRegex + ")\\b";
+                }
+
+                if (Regex::Contains(map.Name, termsRegex, Regex::Flags::CaseInsensitive)) {
+                    Log::Warn("Map contains an excluded term, retrying...");
+                    PreloadRandomMap();
+                    return;
+                }
+            }
+
+            if (PluginSettings::ExcludedAuthors != "") {
+                foreach (string author : PluginSettings::ExcludedAuthorsArr) {
+                    if (map.Username.ToLower() == author) {
+                        Log::Warn("Map is uploaded by an excluded author, retrying...");
+                        PreloadRandomMap();
+                        return;
+                    }
                 }
             }
         }

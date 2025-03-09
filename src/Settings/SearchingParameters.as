@@ -52,6 +52,10 @@ namespace PluginSettings
 
     array<string> MapAuthorNamesArr = {};
 
+    array<string> ExcludedTermsArr = {};
+
+    array<string> ExcludedAuthorsArr = {};
+
 #if TMNEXT
     const int releaseYear = 2020;
 #else
@@ -67,6 +71,15 @@ namespace PluginSettings
     [Setting hidden]
     string MapName = "";
     
+    [Setting hidden]
+    string ExcludedTerms = "";
+
+    [Setting hidden]
+    bool TermsExactMatch = false;
+
+    [Setting hidden]
+    string ExcludedAuthors = "";
+
     [Setting hidden]
     bool UseDateInterval = false;
 
@@ -146,10 +159,15 @@ namespace PluginSettings
             ToDay = currentDate.Day;
             TagInclusiveSearch = false;
             MapAuthor = "";
+            ExcludedAuthors = "";
             MapName = "";
+            ExcludedTerms = "";
             MapPackID = 0;
             MapTagsArr = {};
             MapAuthorNamesArr = {};
+            ExcludedTermsArr = {};
+            ExcludedAuthorsArr = {};
+            TermsExactMatch = false;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40};
 #else
@@ -225,14 +243,25 @@ namespace PluginSettings
         UI::SetNextItemWidth(200);
         MapName = UI::InputText("Map Name Filter", MapName, false);
         UI::SetNextItemWidth(200);
+        ExcludedTerms = UI::InputText("Excluded term(s)", ExcludedTerms, false);
+        UI::SetPreviousTooltip("Filter out maps that contain specific words/phrases in their name.\nFor example, you can filter out \"slop\", \"yeet\", or \"random generated\".\n\nWhen filtering multiple terms, they must be comma-separated.");
+        UI::SameLine();
+        TermsExactMatch = UI::Checkbox("Exact match", TermsExactMatch);
+        UI::SetPreviousTooltip("If enabled, terms will only be excluded when there's an exact match.\n\nExample: If you exclude the word \"AI\", it won't filter out maps with the words \"Air\" or \"Fail\".");
+        UI::SetNextItemWidth(200);
         MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", false));
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
         UI::SetNextItemWidth(200);
-        MapAuthor = UI::InputText("Map Author(s) Filter", MapAuthor, false);
+        MapAuthor = UI::InputText("Map Author Filter", MapAuthor, false);
         if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
+        UI::SetNextItemWidth(200);
+        ExcludedAuthors = UI::InputText("Excluded Author(s)", ExcludedAuthors, false);
+        UI::SetPreviousTooltip("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
         UI::NewLine();
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
+        ExcludedTermsArr = ConvertStringToArray(ExcludedTerms);
+        ExcludedAuthorsArr = ConvertStringToArray(ExcludedAuthors);
 
 
         if (!initArrays) {
