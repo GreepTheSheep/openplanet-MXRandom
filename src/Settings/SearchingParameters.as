@@ -341,7 +341,7 @@ namespace PluginSettings
     array<string> ConvertStringToArray(const string &in str, const string &in separator = ",") {
         array<string> res = str.Split(separator);
         for (uint i = 0; i < res.Length; i++) {
-            res[i] = res[i].ToLower();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase
+            res[i] = res[i].ToLower().Trim();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase
         }
         return res;
     }
