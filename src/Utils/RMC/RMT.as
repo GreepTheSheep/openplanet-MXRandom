@@ -284,7 +284,7 @@ class RMT : RMC
                     }
                 }
 
-                if (isObjectiveCompleted() && !RMC::GotGoalMedalOnCurrentMap) {
+                if (!RMC::GotGoalMedalOnCurrentMap && isObjectiveCompleted()) {
                     Log::Log(playerGotGoalActualMap.name + " got goal medal with a time of " + playerGotGoalActualMap.time);
                     UI::ShowNotification(Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
                     RMC::GoalMedalCount += 1;
@@ -301,7 +301,7 @@ class RMT : RMC
 
                     RMTSwitchMap();
                 }
-                if (isBelowObjectiveCompleted() && !RMC::GotBelowMedalOnCurrentMap && PluginSettings::RMC_GoalMedal != RMC::Medals[0]) {
+                if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedalOnCurrentMap && isBelowObjectiveCompleted()) {
                     Log::Log(playerGotBelowGoalActualMap.name + " got below goal medal with a time of " + playerGotBelowGoalActualMap.time);
                     UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
                     RMC::GotBelowMedalOnCurrentMap = true;
