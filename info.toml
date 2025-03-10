@@ -4,7 +4,7 @@ author = "Greep"
 category = "TMX"
 siteid = 124
 
-version = "2.6.0"
+version = "2.6.1"
 
 [script]
 optional_dependencies = [ "ManiaExchange", "ChaosMode", "NadeoServices", "MLHook", "MLFeedRaceData", "BetterChat", "BetterRoomManager" ]
