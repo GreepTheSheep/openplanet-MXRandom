@@ -25,7 +25,7 @@ namespace MX
 #endif
 
         if (PluginSettings::MapAuthor != "") {
-            params.Set("author", Net::UrlEncode(PluginSettings::MapAuthor));
+            params.Set("author", PluginSettings::MapAuthor);
             string urlParams = DictToApiParams(params);
 
             Json::Value _res = API::GetAsync(check_url + urlParams);
@@ -40,7 +40,7 @@ namespace MX
             }
         }
         if (PluginSettings::MapName != "") {
-            params.Set("name", Net::UrlEncode(PluginSettings::MapName));
+            params.Set("name", PluginSettings::MapName);
             string urlParams = DictToApiParams(params);
 
             Json::Value _res = API::GetAsync(check_url + urlParams);
@@ -55,8 +55,8 @@ namespace MX
             }
         }
         if (PluginSettings::MapAuthor != "" && PluginSettings::MapName != "") {
-            params.Set("name", Net::UrlEncode(PluginSettings::MapName));
-            params.Set("author", Net::UrlEncode(PluginSettings::MapAuthor));
+            params.Set("name", PluginSettings::MapName);
+            params.Set("author", PluginSettings::MapAuthor);
             string urlParams = DictToApiParams(params);
 
             Json::Value _res = API::GetAsync(check_url + urlParams);
@@ -328,10 +328,10 @@ namespace MX
             }
             if (PluginSettings::MapAuthor != "") {
                 if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
-                params.Set("author", Net::UrlEncode(PluginSettings::MapAuthor));
+                params.Set("author", PluginSettings::MapAuthor);
             }
             if (PluginSettings::MapName != "") {
-                params.Set("name", Net::UrlEncode(PluginSettings::MapName));
+                params.Set("name", PluginSettings::MapName);
             }
             if (PluginSettings::MapPackID != 0) {
                 params.Set("mappackid", tostring(PluginSettings::MapPackID));
