@@ -55,7 +55,7 @@ void RenderAboutTab()
 
     UI::Separator();
 
-    UI::Text(MX_COLOR_STR + Icons::Exchange);
+    UI::Text(MX_COLOR_STR + Icons::ManiaExchange);
     UI::SameLine();
     UI::PushFont(g_fontHeaderSub);
     UI::Text("ManiaExchange");
