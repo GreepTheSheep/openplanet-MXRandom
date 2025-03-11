@@ -1,9 +1,8 @@
 namespace Render
 {
-    const vec4 TAG_COLOR         = vec4( 30/255.0f,  32/255.0f,  33/255.0f, 1);
-
-    const vec2 TAG_PADDING = vec2(8, 4);
-    const float TAG_ROUNDING = 4;
+    const vec4 TAG_COLOR      = vec4( 66/255.0f,  66/255.0f,  66/255.0f, 1);
+    const vec2 TAG_PADDING    = vec2(8, 4);
+    const float TAG_ROUNDING  = 4;
 
     vec4 DrawTag(const vec4 &in rect, const string &in text, const vec4 &in color = TAG_COLOR)
     {
@@ -29,7 +28,12 @@ namespace Render
 
     void MapTag(MX::MapTag@ tag)
     {
-        vec4 color = Text::ParseHexColor(tag.Color);
-        Render::Tag(tag.Name, color);
+        vec4 color;
+
+        if (Text::TryParseHexColor(tag.Color, color)) {
+            Render::Tag(tag.Name, color);
+        } else {
+            Render::Tag(tag.Name);
+        }
     }
 }
