@@ -33,7 +33,7 @@ class Window
         UI::PushStyleVar(UI::StyleVar::WindowRounding, 10.0);
         UI::PushStyleVar(UI::StyleVar::FramePadding, vec2(10, 6));
         UI::PushStyleVar(UI::StyleVar::WindowTitleAlign, vec2(.5, .5));
-        UI::SetNextWindowSize(600,400);
+        UI::SetNextWindowSize(600, 400, UI::Cond::FirstUseEver);
         if (UI::Begin(GetWindowTitle(), isOpened, GetFlags()))
         {
             if (!isInRMCMode)
