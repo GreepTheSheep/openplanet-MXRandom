@@ -21,6 +21,7 @@ namespace MX
             }
 
             if (_fileName.Length > 0) _fileName = map.MapId + " - " + map.Name;
+            _fileName = Path::SanitizeFileName(_fileName);
             netMap.SaveToFile(mxDLFolder + "/" + _fileName + ".Map.Gbx");
             Log::Log("Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
         } catch {
