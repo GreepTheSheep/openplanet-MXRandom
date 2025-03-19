@@ -453,12 +453,12 @@ class RMT : RMC
                     UI::TableNextRow();
                     UI::PushID("RMTScore"+i);
                     RMTPlayerScore@ s = m_playerScores[i];
-                    UI::TableSetColumnIndex(0);
+                    UI::TableNextColumn();
                     UI::Text(s.name);
-                    UI::TableSetColumnIndex(1);
+                    UI::TableNextColumn();
                     UI::Text(tostring(s.goals));
                     if (PluginSettings::RMC_GoalMedal != RMC::Medals[0]) {
-                        UI::TableSetColumnIndex(2);
+                        UI::TableNextColumn();
                         UI::Text(tostring(s.belowGoals));
                     }
                     UI::PopID();
