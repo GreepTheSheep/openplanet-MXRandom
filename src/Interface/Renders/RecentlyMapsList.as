@@ -10,17 +10,17 @@ namespace Render
                 UI::PushID("RecentlyPlayedMap"+i);
                 UI::TableNextRow();
 
-                UI::TableSetColumnIndex(0);
+                UI::TableNextColumn();
                 UI::Text(map.Name);
-                UI::TableSetColumnIndex(1);
+                UI::TableNextColumn();
                 UI::Text(map.Username);
-                UI::TableSetColumnIndex(2);
+                UI::TableNextColumn();
                 if (map.PlayedAt > 0) UI::Text(GeneratePlayedAtString(map.PlayedAt));
                 else {
                     UI::Text("Unknown");
                     UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
                 }
-                UI::TableSetColumnIndex(3);
+                UI::TableNextColumn();
                 if (map.Tags.Length == 0) UI::Text("No tags");
                 else {
                     for (uint j = 0; j < map.Tags.Length; j++) {
@@ -28,7 +28,7 @@ namespace Render
                         UI::SameLine();
                     }
                 }
-                UI::TableSetColumnIndex(4);
+                UI::TableNextColumn();
 
                 if (UI::ButtonColored(Icons::ExternalLink, 0.55, 1, 0.5)) {
 #if DEPENDENCY_MANIAEXCHANGE
