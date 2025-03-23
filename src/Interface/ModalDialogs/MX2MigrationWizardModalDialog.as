@@ -161,8 +161,13 @@ class MX2MigrationWizardModalDialog : ModalDialog
                 if (UI::GreyButton("Close")) {
                     Close();
                 }
-            } else if (migrationCompleted && UI::GreenButton(Icons::Check + "Finish")) {
-                Close();
+            } else if (migrationCompleted) {
+                vec2 currentPos = UI::GetCursorPos();
+                UI::SetCursorPos(vec2(UI::GetWindowSize().x - 90 * scale, currentPos.y));
+
+                if (UI::GreenButton(Icons::Check + "Finish")) {
+                    Close();
+                }
             }
         }
     }

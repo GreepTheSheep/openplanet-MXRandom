@@ -89,7 +89,6 @@ namespace Migration
     Net::HttpRequest@ v2_request;
     bool v2_requestError;
     array<string> oldSaves = IO::IndexFolder(SAVE_DATA_LOCATION, true);
-    Json::Value oldPlayed = DataJson["recentlyPlayed"];
     array<MX::MapInfo@> v2_maps;
 
     void MigrateMX1Settings() {
@@ -201,6 +200,7 @@ namespace Migration
             }
         }
 
+        Json::Value oldPlayed = DataJson["recentlyPlayed"];
         DataManager::InitData(false);
 
         for (uint p = 0; p < oldPlayed.Length; p++) {
