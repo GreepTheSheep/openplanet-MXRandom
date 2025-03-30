@@ -136,6 +136,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
             if (UI::RedButton(Icons::Times + " Skip")) {
                 DataManager::InitData();
                 Migration::RemoveMX1SaveFiles();
+                migrationCompleted = true;
                 Close();
             }
             UI::SameLine();
@@ -153,6 +154,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
                     Migration::BackupData();
                     DataManager::InitData();
                     Migration::RemoveMX1SaveFiles();
+                    migrationCompleted = true;
                     Close();
                 }
                 UI::SameLine();
