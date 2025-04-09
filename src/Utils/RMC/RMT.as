@@ -568,15 +568,14 @@ class RMT : RMC
             auto rd = MLFeed::GetRaceData_V4();
             if (rd is null) return;
 
-            UI::Indent();
-
             UI::ListClipper clip(rd.SortedPlayers_TimeAttack.Length);
             if (UI::BeginTable("player-curr-runs", 4, UI::TableFlags::SizingStretchProp | UI::TableFlags::ScrollY)) {
-                UI::TableSetupColumn("name", UI::TableColumnFlags::WidthStretch);
-                UI::TableSetupColumn("cp", UI::TableColumnFlags::WidthStretch);
-                UI::TableSetupColumn("time", UI::TableColumnFlags::WidthStretch);
-                UI::TableSetupColumn("delta", UI::TableColumnFlags::WidthStretch);
-                // UI::TableHeadersRow();
+                UI::TableSetupScrollFreeze(0, 1);
+                UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("CP", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("Time", UI::TableColumnFlags::WidthStretch);
+                UI::TableSetupColumn("Delta", UI::TableColumnFlags::WidthStretch);
+                UI::TableHeadersRow();
 
                 while (clip.Step()) {
                     for (int i = clip.DisplayStart; i < clip.DisplayEnd; i++) {
@@ -586,6 +585,7 @@ class RMT : RMC
                         UI::TableNextRow();
 
                         UI::TableNextColumn();
+                        UI::AlignTextToFramePadding();
                         UI::Text(p.Name);
                         UI::TableNextColumn();
                         UI::Text(tostring(p.CpCount));
