@@ -250,25 +250,8 @@ namespace MX
 
             DataManager::SaveMapToRecentlyPlayed(map);
             RandomMapIsLoading = false;
-            if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
 
-#if TMNEXT
-            TM::ClosePauseMenu();
-#endif
-
-            CTrackMania@ app = cast<CTrackMania>(GetApp());
-            app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
-            while(!app.ManiaTitleControlScriptAPI.IsReady) {
-                yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
-            }
-
-#if DEPENDENCY_CHAOSMODE
-            if (ChaosMode::IsInRMCMode()) {
-                Log::Trace("Loading map in Chaos Mode");
-                app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/mapgbx/"+map.MapId, "TrackMania/ChaosModeRMC", "");
-            } else
-#endif
-            app.ManiaTitleControlScriptAPI.PlayMap(PluginSettings::RMC_MX_Url+"/mapgbx/"+map.MapId, DEFAULT_MODE, "");
+            await(startnew(TM::LoadMap, map));
             RMC::CurrentMapJsonData = map.ToJson();
         }
         catch
@@ -295,7 +278,7 @@ namespace MX
             params.Set("authortimemax", tostring(RMC::allowedMaxLength));
         }
         else
-        {		
+        {
             if (PluginSettings::MapLength != "Anything") {
                 int minAuthor = GetMinimumLength();
                 int maxAuthor = GetMaxLength();

@@ -45,8 +45,7 @@ namespace Render
 #else
                 if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
 #endif
-                    TM::loadMapURL = PluginSettings::RMC_MX_Url+"/mapgbx/"+map.MapId;
-                    startnew(TM::LoadMap);
+                    startnew(TM::LoadMap, map);
                 }
 
                 UI::PopID();
