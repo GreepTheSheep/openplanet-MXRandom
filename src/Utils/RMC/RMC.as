@@ -89,7 +89,9 @@ class RMC
             RenderCurrentMap();
         }
 
+#if TMNEXT
         RenderCustomSearchWarning();
+#endif
 
         if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
             UI::Separator();

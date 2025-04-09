@@ -121,7 +121,7 @@ namespace RMC
         if (RMC::ContinueSavedRun) {
             RMC::CurrentMapJsonData = CurrentRunData["MapData"];
         }
-        if (!(MX::preloadedMap is null)) {
+        if (MX::preloadedMap !is null) {
             @MX::preloadedMap = null;
         }
         MX::LoadRandomMap();

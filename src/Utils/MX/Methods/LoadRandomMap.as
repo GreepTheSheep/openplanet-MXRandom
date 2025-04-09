@@ -228,10 +228,12 @@ namespace MX
     {
         try
         {
+#if MP4
             if (TM::CurrentTitlePack() == "") {
                 Log::Warn("Please load a title pack first.", true);
                 return;
             }
+#endif
             RandomMapIsLoading = true;
             MX::MapInfo@ map;
             if (RMC::ContinueSavedRun && !RMC::IsInited) {
