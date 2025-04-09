@@ -200,39 +200,49 @@ namespace RMC
     {
         auto app = cast<CTrackMania>(GetApp());
         auto map = app.RootMap;
-        CGamePlayground@ GamePlayground = cast<CGamePlayground>(app.CurrentPlayground);
         int medal = -1;
-        if (map !is null && GamePlayground !is null){
+
+        if (map !is null) {
             int worldRecordTime = TM::GetWorldRecordFromCache(map.MapInfo.MapUid);
             int authorTime = map.TMObjective_AuthorTime;
             int goldTime = map.TMObjective_GoldTime;
             int silverTime = map.TMObjective_SilverTime;
             int bronzeTime = map.TMObjective_BronzeTime;
             int time = -1;
+
 #if MP4
-            CGameCtnPlayground@ GameCtnPlayground = cast<CGameCtnPlayground>(app.CurrentPlayground);
-            if (GameCtnPlayground !is null && GameCtnPlayground.PlayerRecordedGhost !is null) {
-                if (GameCtnPlayground.PlayerRecordedGhost.RaceTime != LastRun) {
+            CGameCtnPlayground@ playground = cast<CGameCtnPlayground>(app.CurrentPlayground);
+
+            if (playground !is null && playground.PlayerRecordedGhost !is null) {
+                if (playground.PlayerRecordedGhost.RaceTime != LastRun) {
                     HandledRun = false;
-                    time = GameCtnPlayground.PlayerRecordedGhost.RaceTime;
-                } else time = -1;
-            } else time = -1;
+                    time = playground.PlayerRecordedGhost.RaceTime;
+                }
+            }
 #elif TMNEXT
-            CSmArenaRulesMode@ PlaygroundScript = cast<CSmArenaRulesMode>(app.PlaygroundScript);
-            if (PlaygroundScript !is null && GamePlayground.GameTerminals.Length > 0) {
-                CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-                if (player !is null && HandledRun && GamePlayground.GameTerminals[0].UISequence_Current != SGamePlaygroundUIConfig::EUISequence::Finish) {
-                    HandledRun = false;
-                    time = -1;
-                } else if (player !is null && !HandledRun && GamePlayground.GameTerminals[0].UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Finish) {
-                    CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-                    auto ghost = PlaygroundScript.Ghost_RetrieveFromPlayer(playerScriptAPI);
-                    if (ghost !is null) {
-                        if (ghost.Result.Time > 0 && ghost.Result.Time < 4294967295) time = ghost.Result.Time;
-                        PlaygroundScript.DataFileMgr.Ghost_Release(ghost.Id);
-                    } else time = -1;
-                } else time = -1;
-            } else time = -1;
+            CGamePlayground@ playground = cast<CGamePlayground>(app.CurrentPlayground);
+            CSmArenaRulesMode@ script = cast<CSmArenaRulesMode>(app.PlaygroundScript);
+
+            if (playground !is null && script !is null && playground.GameTerminals.Length > 0) {
+                CSmPlayer@ player = cast<CSmPlayer>(playground.GameTerminals[0].ControlledPlayer);
+
+                if (player !is null) {
+                    auto UISequence = playground.GameTerminals[0].UISequence_Current;
+                    bool finished = UISequence == SGamePlaygroundUIConfig::EUISequence::Finish || UISequence == SGamePlaygroundUIConfig::EUISequence::UIInteraction;
+
+                    if (HandledRun && !finished) {
+                        HandledRun = false;
+                    } else if (!HandledRun && finished) {
+                        CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
+                        auto ghost = script.Ghost_RetrieveFromPlayer(playerScriptAPI);
+
+                        if (ghost !is null) {
+                            if (ghost.Result.Time > 0 && ghost.Result.Time < uint(-1)) time = ghost.Result.Time;
+                            script.DataFileMgr.Ghost_Release(ghost.Id);
+                        }
+                    }
+                }
+            }
 #endif
             if (HandledRun || time == LastRun) {
                 return CurrentMedal;
