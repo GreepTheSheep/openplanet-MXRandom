@@ -619,7 +619,6 @@ class RMT : RMC
                 }
                 UI::EndTable();
             }
-            UI::Unindent();
 #else
             // shouldn't show up, but w/e
             UI::Text("MLFeed required.");

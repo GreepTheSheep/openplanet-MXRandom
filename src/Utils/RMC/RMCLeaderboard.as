@@ -58,7 +58,7 @@ namespace RMCLeaderAPI {
             }
         } else {
             // failed, retry
-            Log::Warn("Login failed: API returned expected values. Retrying...");
+            Log::Warn("Login failed: API returned unexpected values. Retrying...");
             sleep(5000);
             RMCLeaderAPI::Login();
             return;
