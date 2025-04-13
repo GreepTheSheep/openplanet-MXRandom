@@ -101,20 +101,22 @@ void Main()
     } else {
         DataManager::CheckData();
 
-        if (DataManager::IsDataMX2()) {
-            // something weird happened when saving the settings, we can ignore
-            Migration::MigratedToMX2 = true;
-        } else if (!Migration::MigratedToMX2) {
-            Migration::MigrateMX1Settings();
-            MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
-            Renderables::Add(migrationDialog);
-
-            while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
-                yield();
-            }
-
-            if (migrationDialog.migrationCompleted) {
+        if (!Migration::MigratedToMX2) {
+            if (DataManager::IsDataMX2()) {
+                // Setting didn't save after migrating, we can ignore
                 Migration::MigratedToMX2 = true;
+            } else {
+                Migration::MigrateMX1Settings();
+                MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
+                Renderables::Add(migrationDialog);
+
+                while (!migrationDialog.migrationCompleted && !Migration::v2_requestError) {
+                    yield();
+                }
+
+                if (migrationDialog.migrationCompleted) {
+                    Migration::MigratedToMX2 = true;
+                }
             }
         }
     }
