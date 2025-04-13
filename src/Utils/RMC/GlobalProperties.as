@@ -307,6 +307,7 @@ namespace RMC
     void SwitchMap()
     {
         IsPaused = true;
+        yield(30);
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
             sleep(100);
