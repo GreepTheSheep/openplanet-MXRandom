@@ -58,7 +58,7 @@ namespace RMCLeaderAPI {
             }
         } else {
             // failed, retry
-            Log::Warn("Login failed. Retrying...");
+            Log::Warn("Login failed: API returned expected values. Retrying...");
             sleep(5000);
             RMCLeaderAPI::Login();
             return;
@@ -108,7 +108,7 @@ namespace RMCLeaderAPI {
 
         if (serverRes.GetType() != Json::Type::Object) {
             // failed, retry
-            Log::Warn("Posting RMC results failed. Retrying...");
+            Log::Warn("Posting RMC results failed: API didn't return an object. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMC(goal, belowGoal, objective);
             return;
@@ -127,7 +127,7 @@ namespace RMCLeaderAPI {
             }
         } else {
             // failed, retry
-            Log::Warn("Posting RMC results failed. Retrying...");
+            Log::Warn("Posting RMC results failed: API returned unexpected values. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMC(goal, belowGoal, objective);
             return;
@@ -180,7 +180,7 @@ namespace RMCLeaderAPI {
 
         if (serverRes.GetType() != Json::Type::Object) {
             // failed, retry
-            Log::Warn("Posting RMS results failed. Retrying...");
+            Log::Warn("Posting RMS results failed: API didn't return an object. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
             return;
@@ -199,7 +199,7 @@ namespace RMCLeaderAPI {
             }
         } else {
             // failed, retry
-            Log::Warn("Posting RMS results failed. Retrying...");
+            Log::Warn("Posting RMS results failed: API returned unexpected values. Retrying...");
             sleep(5000);
             RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
             return;
