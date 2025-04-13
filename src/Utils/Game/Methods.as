@@ -2,6 +2,13 @@ namespace TM
 {
     void LoadMap(ref@ mapData)
     {
+#if TMNEXT
+        if (!Permissions::PlayLocalMap()) {
+            Log::Error("Missing permission to play local maps. Club / Standard access is required.", true);
+            return;
+        }
+#endif
+
         MX::MapInfo@ map = cast<MX::MapInfo@>(mapData);
 
         if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
