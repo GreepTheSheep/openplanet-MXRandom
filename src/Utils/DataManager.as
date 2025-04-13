@@ -15,6 +15,27 @@ namespace DataManager
         }
     }
 
+    bool IsDataMX2() {
+        if (DataJson.GetType() == Json::Type::Null || DataJson.Length == 0) return true;
+
+        if (DataJson["recentlyPlayed"].Length > 0) {
+            return DataJson["recentlyPlayed"][0].HasKey("MapId");
+        } else {
+            array<string> oldSaves = IO::IndexFolder(SAVE_DATA_LOCATION, true);
+
+            if (oldSaves.IsEmpty()) return true;
+
+            Json::Value@ save = Json::FromFile(oldSaves[0]);
+
+            if (save.HasKey("MapData")) {
+                Json::Value@ mapData = save["MapData"];
+                return mapData.HasKey("MapId");
+            }
+        }
+
+        return true;
+    }
+
     void InitData(bool save = true)
     {
         DataJson = Json::Object();

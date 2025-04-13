@@ -101,7 +101,10 @@ void Main()
     } else {
         DataManager::CheckData();
 
-        if (!Migration::MigratedToMX2) {
+        if (DataManager::IsDataMX2()) {
+            // something weird happened when saving the settings, we can ignore
+            Migration::MigratedToMX2 = true;
+        } else if (!Migration::MigratedToMX2) {
             Migration::MigrateMX1Settings();
             MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
             Renderables::Add(migrationDialog);

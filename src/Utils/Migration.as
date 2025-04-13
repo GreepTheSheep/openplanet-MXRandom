@@ -189,7 +189,12 @@ namespace Migration
                         MX::MapInfo@ currMap = v2_maps[i];
 
                         if (mapData["TrackID"] == currMap.MapId) {
-                            currMap.PlayedAt = TimestampFromObject(mapData["PlayedAt"]);
+                            if (mapData["PlayedAt"].GetType() == Json::Type::Object) {
+                                currMap.PlayedAt = TimestampFromObject(mapData["PlayedAt"]);
+                            } else {
+                                // Rare case where PlayedAt isn't an object
+                                currMap.PlayedAt = Time::Stamp;
+                            }
                             save["MapData"] = currMap.ToJson();
 
                             Json::ToFile(oldSaves[f], save);
@@ -208,10 +213,15 @@ namespace Migration
 
             if (oldMap.HasKey("TrackID")) {
                 for (uint i = 0; i < v2_maps.Length; i++) {
-                    MX::MapInfo@ map = v2_maps[i];                    
+                    MX::MapInfo@ map = v2_maps[i];
 
                     if (map.MapId == oldMap["TrackID"]) {
-                        map.PlayedAt = TimestampFromObject(oldMap["PlayedAt"]);
+                        if (oldMap["PlayedAt"].GetType() == Json::Type::Object) {
+                            map.PlayedAt = TimestampFromObject(oldMap["PlayedAt"]);
+                        } else {
+                            // Rare case where PlayedAt isn't an object
+                            map.PlayedAt = Time::Stamp;
+                        }
                         DataJson["recentlyPlayed"].Add(map.ToJson());
                         break;
                     }
