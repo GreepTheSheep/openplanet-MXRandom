@@ -102,11 +102,12 @@ void Main()
         DataManager::CheckData();
 
         if (!Migration::MigratedToMX2) {
+            Migration::MigrateMX1Settings();
+
             if (DataManager::IsDataMX2()) {
                 // Setting didn't save after migrating, we can ignore
                 Migration::MigratedToMX2 = true;
             } else {
-                Migration::MigrateMX1Settings();
                 MX2MigrationWizardModalDialog migrationDialog = MX2MigrationWizardModalDialog();
                 Renderables::Add(migrationDialog);
 
