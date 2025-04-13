@@ -228,7 +228,7 @@ namespace RMC
 
                 if (player !is null) {
                     auto UISequence = playground.GameTerminals[0].UISequence_Current;
-                    bool finished = UISequence == SGamePlaygroundUIConfig::EUISequence::Finish || UISequence == SGamePlaygroundUIConfig::EUISequence::UIInteraction;
+                    bool finished = UISequence == SGamePlaygroundUIConfig::EUISequence::Finish;
 
                     if (HandledRun && !finished) {
                         HandledRun = false;
