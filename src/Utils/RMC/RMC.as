@@ -156,6 +156,8 @@ class RMC
     {
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
+            vec2 pos_orig = UI::GetCursorPos();
+            UI::SetCursorPos(vec2(pos_orig.x + (13 * tostring(RMC::GoalMedalCount).get_Length()), pos_orig.y));
             UI::AlignTextToFramePadding();
 #if TMNEXT
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
@@ -165,7 +167,7 @@ class RMC
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
             else UI::Text(PluginSettings::RMC_GoalMedal);
             UI::SameLine();
-            vec2 pos_orig = UI::GetCursorPos();
+            pos_orig = UI::GetCursorPos();
             UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
             UI::PushFont(TimerFont);
             UI::Text(tostring(BelowMedalCount));

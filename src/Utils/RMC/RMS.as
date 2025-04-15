@@ -45,9 +45,12 @@ class RMS : RMC
 
     void RenderBelowGoalMedal() override
     {
+        vec2 pos_orig = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(pos_orig.x + (13 * tostring(RMC::GoalMedalCount).get_Length()), pos_orig.y));
+        UI::AlignTextToFramePadding();
         UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize*2,PluginSettings::RMC_ImageSize*2));
         UI::SameLine();
-        vec2 pos_orig = UI::GetCursorPos();
+        pos_orig = UI::GetCursorPos();
         UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
         UI::PushFont(TimerFont);
         UI::Text(tostring(Skips));
