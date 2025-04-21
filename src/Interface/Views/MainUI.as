@@ -54,7 +54,10 @@ namespace MainUIView
 
     void RecentlyPlayedMapsTab()
     {
-        if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible)) {
+        UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.10f, 0.10f, 0.10f, 1));
+        UI::PushStyleColor(UI::Col::TableRowBg, vec4(0.13f, 0.13f, 0.13f, 1));
+
+        if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg)) {
             float scale = UI::GetScale();
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
@@ -68,6 +71,8 @@ namespace MainUIView
         } else {
             UI::Text("No recently played maps");
         }
+
+        UI::PopStyleColor(2);
     }
 
     void ChangelogTabs()
