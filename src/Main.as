@@ -3,6 +3,9 @@ UI::Font@ g_fontHeaderSub;
 
 void RenderMenu()
 {
+#if TMNEXT
+    if (!OpenplanetHasPaidPermissions()) return;
+#endif
     if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
         if (MX::APIDown && !IS_DEV_MODE) {
             if (!MX::APIRefreshing) {
@@ -52,11 +55,17 @@ void RenderMenu()
 
 void RenderInterface()
 {
+#if TMNEXT
+    if (!OpenplanetHasPaidPermissions()) return;
+#endif
     if (!window.isInRMCMode) window.Render();
 }
 
 void Render()
 {
+#if TMNEXT
+    if (!OpenplanetHasPaidPermissions()) return;
+#endif
     if (window.isInRMCMode) window.Render();
     Renderables::Render();
 }
