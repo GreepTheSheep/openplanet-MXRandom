@@ -316,8 +316,7 @@ class RMT : RMC
         if (m_playerScores.Length > 0) {
             RMTPlayerScore@ p = m_playerScores[0];
             UI::Text("MVP: " + p.name + " (" + p.goals + ")");
-            if (UI::IsItemHovered()) {
-                UI::BeginTooltip();
+            if (UI::BeginItemTooltip()) {
                 RenderScores();
                 UI::EndTooltip();
             }
@@ -451,6 +450,7 @@ class RMT : RMC
                     UI::PushID("RMTScore"+i);
                     RMTPlayerScore@ s = m_playerScores[i];
                     UI::TableNextColumn();
+                    UI::AlignTextToFramePadding();
                     UI::Text(s.name);
                     UI::TableNextColumn();
                     UI::Text(tostring(s.goals));

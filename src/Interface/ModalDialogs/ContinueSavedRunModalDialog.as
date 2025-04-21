@@ -14,7 +14,7 @@ class ContinueSavedRunModalDialog : ModalDialog
         string gameMode = "RM" + lastLetter;
         int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
         UI::Text(
-            "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + PluginSettings::RMC_GoalMedal + "s"
+            "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + " " + PluginSettings::RMC_GoalMedal + "s"
             "\n\nDo you want to continue this run or start a new one?\n"
             "\nNOTE: Starting a new run will delete the current save!"
         );

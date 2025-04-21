@@ -153,7 +153,7 @@ namespace RMC
                     if (MXNadeoServicesGlobal::foundRoom !is null) {
                         RMT_isServerOK = true;
                         UI::Text("Room found:");
-                        UI::Text("'"+ColoredString(MXNadeoServicesGlobal::foundRoom.name)+"', in club '"+ColoredString(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
+                        UI::Text("'"+Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.name)+"', in club '"+Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
                     }
                 }
                 if (RMT_isServerOK && !TM::IsInServer()) {
@@ -172,7 +172,7 @@ namespace RMC
 #endif
 #if TMNEXT
         } else {
-            UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
+            UI::Text(Icons::TimesCircle + " You don't have the permissions to play local maps");
         }
 #endif
         UI::Separator();

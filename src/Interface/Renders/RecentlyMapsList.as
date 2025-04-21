@@ -11,6 +11,7 @@ namespace Render
                 UI::TableNextRow();
 
                 UI::TableNextColumn();
+                UI::AlignTextToFramePadding();
                 UI::Text(map.Name);
                 UI::TableNextColumn();
                 UI::Text(map.Username);

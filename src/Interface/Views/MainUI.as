@@ -44,7 +44,7 @@ namespace MainUIView
 #if TMNEXT
             } else {
                 UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.30, 45*scale));
-                UI::Text(Icons::TimesCircle + " You have not the permissions to play local maps");
+                UI::Text(Icons::TimesCircle + "You don't have the permissions to play local maps");
             }
 #endif
         }
