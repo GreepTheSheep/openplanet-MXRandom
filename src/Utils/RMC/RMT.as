@@ -46,12 +46,9 @@ class RMT : RMC
         RenderTimer();
         if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
-        vec2 pos_orig = UI::GetCursorPos();
         RenderGoalMedal();
-        vec2 pos_orig_goal = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig_goal.x+50, pos_orig_goal.y));
+        UI::HPadding(25);
         RenderBelowGoalMedal();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
         RenderMVPPlayer();
 
        if (PluginSettings::RMC_DisplayPace) {

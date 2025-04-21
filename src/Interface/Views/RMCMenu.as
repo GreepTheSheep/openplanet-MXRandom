@@ -199,24 +199,21 @@ namespace RMC
             if (!UI::IsOverlayShown()) UI::Dummy(vec2(0, 10));
             UI::Separator();
             UI::Text("Last run stats:");
-            vec2 pos_orig = UI::GetCursorPos();
             if (selectedGameMode == GameMode::Challenge) {
                 Challenge.RenderGoalMedal();
-                UI::SetCursorPos(vec2(UI::GetCursorPos().x+50, UI::GetCursorPos().y));
+                UI::HPadding(25);
                 Challenge.RenderBelowGoalMedal();
             }
             else if (selectedGameMode == GameMode::Survival) {
                 Survival.RenderGoalMedal();
-                UI::SetCursorPos(vec2(UI::GetCursorPos().x+50, UI::GetCursorPos().y));
+                UI::HPadding(25);
                 Survival.RenderBelowGoalMedal();
-                UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
                 UI::Text("Survived time: " + RMC::FormatTimer(Survival.SurvivedTime));
             }
             else if (selectedGameMode == GameMode::Objective) {
                 Objective.RenderGoalMedal();
-                UI::SetCursorPos(vec2(UI::GetCursorPos().x+50, UI::GetCursorPos().y));
+                UI::HPadding(25);
                 Objective.RenderBelowGoalMedal();
-                UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
                 UI::Text("Total time:");
                 UI::SameLine();
                 UI::PushFont(Objective.TimerFont);
@@ -225,11 +222,9 @@ namespace RMC
             }
 #if TMNEXT
             else if (selectedGameMode == GameMode::Together) {
-                pos_orig = UI::GetCursorPos();
                 Together.RenderGoalMedal();
-                UI::SetCursorPos(vec2(pos_orig.x+100, pos_orig.y));
+                UI::HPadding(25);
                 Together.RenderBelowGoalMedal();
-                UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
                 Together.RenderScores();
             }
 #endif

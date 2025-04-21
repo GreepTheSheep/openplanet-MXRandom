@@ -37,36 +37,24 @@ class RMObjective : RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         else UI::Text(PluginSettings::RMC_GoalMedal);
         UI::SameLine();
-        vec2 pos_orig = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
-        UI::PushFont(TimerFont);
+
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {
-            UI::Text("-"+tostring(PluginSettings::RMC_ObjectiveMode_Goal-RMC::GoalMedalCount));
-            UI::PopFont();
+            UI::AlignTextToImage("-"+tostring(PluginSettings::RMC_ObjectiveMode_Goal-RMC::GoalMedalCount), TimerFont);
             UI::SetPreviousTooltip("Remaining medals. Click to set to total count.");
         } else {
-            UI::Text(tostring(RMC::GoalMedalCount) + "/" + tostring(PluginSettings::RMC_ObjectiveMode_Goal));
-            UI::PopFont();
+            UI::AlignTextToImage(tostring(RMC::GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), TimerFont);
             UI::SetPreviousTooltip("Medal count. Click to set to remaining medals.");
         }
         if (UI::IsItemClicked()) {
             PluginSettings::RMC_ObjectiveMode_DisplayRemaininng = !PluginSettings::RMC_ObjectiveMode_DisplayRemaininng;
         }
-        UI::SetCursorPos(pos_orig);
     }
 
     void RenderBelowGoalMedal() override
     {
-        vec2 pos_orig = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig.x+(PluginSettings::RMC_ObjectiveMode_DisplayRemaininng ? 8:24), pos_orig.y));
         UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
-        pos_orig = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
-        UI::PushFont(TimerFont);
-        UI::Text(tostring(Skips));
-        UI::PopFont();
-        UI::SetCursorPos(pos_orig);
+        UI::AlignTextToImage(tostring(Skips), TimerFont);
     }
 
     void SkipButtons() override

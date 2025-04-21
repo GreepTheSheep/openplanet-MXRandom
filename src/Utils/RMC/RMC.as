@@ -68,12 +68,9 @@ class RMC
         RenderTimer();
         if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
-        vec2 pos_orig = UI::GetCursorPos();
         RenderGoalMedal();
-        vec2 pos_orig_goal = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig_goal.x+50, pos_orig_goal.y));
+        UI::HPadding(25);
         RenderBelowGoalMedal();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+60));
 
         if (PluginSettings::RMC_DisplayPace) {
             try {
@@ -134,7 +131,6 @@ class RMC
 
     void RenderGoalMedal()
     {
-        UI::AlignTextToFramePadding();
 #if TMNEXT
         if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(WRTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
 #endif
@@ -144,21 +140,13 @@ class RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         else UI::Text(PluginSettings::RMC_GoalMedal);
         UI::SameLine();
-        vec2 pos_orig = UI::GetCursorPos();
-        UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
-        UI::PushFont(TimerFont);
-        UI::Text(tostring(RMC::GoalMedalCount));
-        UI::PopFont();
-        UI::SetCursorPos(pos_orig);
+        UI::AlignTextToImage(tostring(RMC::GoalMedalCount), TimerFont);
     }
 
     void RenderBelowGoalMedal()
     {
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
-            vec2 pos_orig = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(pos_orig.x + (13 * tostring(RMC::GoalMedalCount).get_Length()), pos_orig.y));
-            UI::AlignTextToFramePadding();
 #if TMNEXT
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
 #endif
@@ -167,12 +155,7 @@ class RMC
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             else UI::Text(PluginSettings::RMC_GoalMedal);
             UI::SameLine();
-            pos_orig = UI::GetCursorPos();
-            UI::SetCursorPos(vec2(pos_orig.x, pos_orig.y+8));
-            UI::PushFont(TimerFont);
-            UI::Text(tostring(BelowMedalCount));
-            UI::PopFont();
-            UI::SetCursorPos(pos_orig);
+            UI::AlignTextToImage(tostring(RMC::GoalMedalCount), TimerFont);
         }
     }
 
