@@ -70,6 +70,18 @@ void Render()
     Renderables::Render();
 }
 
+bool held = false;
+void OnKeyPress(bool down, VirtualKey key)
+{
+#if TMNEXT
+    if (!OpenplanetHasPaidPermissions()) return;
+#endif
+    if (!MX::APIDown && !held && key == PluginSettings::S_QuickMapKey) {
+        startnew(MX::LoadRandomMap);
+    }
+    held = down;
+}
+
 void Main()
 {
 #if TMNEXT
