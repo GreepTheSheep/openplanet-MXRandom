@@ -44,7 +44,17 @@ namespace Render
 #elif FALSE
                 }
 #else
-                if (TM::CurrentTitlePack() == map.TitlePack && UI::GreenButton(Icons::Play)) {
+                if (TM::CurrentTitlePack() != map.TitlePack) {
+                    if (UI::OrangeButton(Icons::Play)) {
+                        startnew(TM::LoadMap, map);
+                    }
+                    if (UI::BeginItemTooltip()) {
+                        UI::Text(Icons::ExclamationTriangle + " Loaded titlepack doesn't match the map's titlepack,\nmap might fail to load or return you to the menu.");
+                        UI::Separator();
+                        UI::TextDisabled("Titlepack: " + map.TitlePack);
+                        UI::EndTooltip();
+                    }
+                } else if (UI::GreenButton(Icons::Play)) {
 #endif
                     startnew(TM::LoadMap, map);
                 }
