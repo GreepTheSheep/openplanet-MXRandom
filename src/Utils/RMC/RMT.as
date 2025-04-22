@@ -282,8 +282,8 @@ class RMT : RMC
                 }
 
                 if (!RMC::GotGoalMedalOnCurrentMap && isObjectiveCompleted()) {
-                    Log::Log(playerGotGoalActualMap.name + " got goal medal with a time of " + playerGotGoalActualMap.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
+                    Log::Log(playerGotGoalActualMap.name + " got the goal medal with a time of " + playerGotGoalActualMap.time);
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoalActualMap.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
                     RMC::GoalMedalCount += 1;
                     RMC::GotGoalMedalOnCurrentMap = true;
                     RMTPlayerScore@ playerScored = findOrCreatePlayerScore(playerGotGoalActualMap);
@@ -291,7 +291,7 @@ class RMT : RMC
                     m_playerScores.SortDesc();
 
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoalActualMap.name + " got "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoalActualMap.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
                     sleep(200);
                     BetterChat::SendChatMessage(Icons::Users + " Switching map...");
 #endif
@@ -299,13 +299,13 @@ class RMT : RMC
                     RMTSwitchMap();
                 }
                 if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedalOnCurrentMap && isBelowObjectiveCompleted()) {
-                    Log::Log(playerGotBelowGoalActualMap.name + " got below goal medal with a time of " + playerGotBelowGoalActualMap.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
+                    Log::Log(playerGotBelowGoalActualMap.name + " got the below goal medal with a time of " + playerGotBelowGoalActualMap.time);
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
                     RMC::GotBelowMedalOnCurrentMap = true;
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr);
                     sleep(200);
-                    BetterChat::SendChatMessage(Icons::Users + " You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal");
+                    BetterChat::SendChatMessage(Icons::Users + " You can skip and take the " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal");
 #endif
                 }
             }

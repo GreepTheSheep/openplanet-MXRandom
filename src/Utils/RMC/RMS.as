@@ -128,12 +128,12 @@ class RMS : RMC
 
     void GotGoalMedalNotification() override
     {
-        Log::Trace("RMC: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
+        Log::Trace("RMC: Got the "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
-            UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
+            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "We're searching for another map...");
             RMC::EndTime += (3*60*1000);
             startnew(RMC::SwitchMap);
-        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "Select 'Next map' to change the map");
     }
 
     void GotBelowGoalMedalNotification() override {}

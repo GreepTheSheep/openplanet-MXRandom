@@ -380,19 +380,19 @@ class RMC
 
     void GotGoalMedalNotification()
     {
-        Log::Trace("RMC: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
+        Log::Trace("RMC: Got the "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
-            UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
+            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "We're searching for another map...");
             startnew(RMC::SwitchMap);
-        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "Select 'Next map' to change the map");
     }
 
     void GotBelowGoalMedalNotification()
     {
-        Log::Trace("RMC: Got "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
+        Log::Trace("RMC: Got the "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
         if (!RMC::GotBelowMedalOnCurrentMap)
             UI::ShowNotification(
-                "\\$db4" + Icons::Trophy + " You got "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal",
+                "\\$db4" + Icons::Trophy + " You got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal",
                 "You can take the medal and skip the map"
             );
     }

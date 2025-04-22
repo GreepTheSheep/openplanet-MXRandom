@@ -97,12 +97,12 @@ class RMObjective : RMC
 
     void GotGoalMedalNotification() override
     {
-        Log::Trace("ObjectiveMode: Got "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
+        Log::Trace("ObjectiveMode: Got the "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
         if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
             if (PluginSettings::RMC_AutoSwitch) {
-                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "We're searching for another map...");
+                UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "We're searching for another map...");
                 startnew(RMC::SwitchMap);
-            } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "Select 'Next map' to change the map");
+            } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "Select 'Next map' to change the map");
         }
     }
 
@@ -125,7 +125,7 @@ class RMObjective : RMC
                             PendingTimerLoop();
 
                             if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
-                                UI::ShowNotification("\\$071" + Icons::Trophy + " You got "+tostring(PluginSettings::RMC_GoalMedal)+" time!", "You have reached your goal in "+RMC::FormatTimer(RunTime));
+                                UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "You have reached your goal in "+RMC::FormatTimer(RunTime));
                                 RMC::StartTime = -1;
                                 RMC::EndTime = -1;
                                 RMC::IsRunning = false;
