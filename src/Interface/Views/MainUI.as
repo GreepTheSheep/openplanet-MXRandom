@@ -5,50 +5,41 @@ namespace MainUIView
         float scale = UI::GetScale();
         if (MX::APIDown) {
             if (!MX::APIRefreshing) {
-                UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.20, 35*scale));
-                UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
-                UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.45, 70*scale));
-                if (UI::Button("Retry")) {
+                UI::CenteredText("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
+                if (UI::CenteredButton("Retry")) {
                     startnew(MX::FetchMapTags);
                 }
             } else {
                 int HourGlassValue = Time::Stamp % 3;
                 string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.44, 35*scale));
-                UI::TextDisabled(Hourglass + " Loading...");
+                UI::CenteredText(Hourglass + " Loading...", true);
             }
         } else {
 #if TMNEXT
             if (Permissions::PlayLocalMap()) {
 #endif
                 if (TM::CurrentTitlePack() == "") {
-                    UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.36, 55*scale));
-                    UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$zPlease select a title pack.");
+                    UI::CenteredText("\\$fc0"+Icons::ExclamationTriangle+" \\$zPlease select a title pack.");
                 } else {
                     if (!MX::RandomMapIsLoading) {
-                        UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.36, 35*scale));
-                        if (UI::GreenButton(Icons::Play + " Play a random map")) {
+                        if (UI::CenteredButton(Icons::Play + " Play a random map", 0.33f)) {
                             startnew(MX::LoadRandomMap);
                         }
                     } else {
-                        UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.42, 35*scale));
                         int HourGlassValue = Time::Stamp % 3;
                         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                        UI::Text(Hourglass + " Loading...");
+                        UI::CenteredText(Hourglass + " Loading...");
                     }
-                    UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.34, 70*scale));
-                    if (UI::ButtonColored(Icons::ClockO +" Random Map Challenge", 0.155)) {
+                    if (UI::CenteredButton(Icons::ClockO +" Random Map Challenge", 0.155)) {
                         window.isInRMCMode = !window.isInRMCMode;
                     }
                 }
 #if TMNEXT
             } else {
-                UI::SetCursorPos(vec2(UI::GetWindowSize().x*0.30, 45*scale));
-                UI::Text(Icons::TimesCircle + "You don't have the permissions to play local maps");
+                UI::CenteredText(Icons::TimesCircle + " You don't have the permissions to play local maps");
             }
 #endif
         }
-        UI::SetCursorPos(vec2(0, 100) * scale);
         UI::Separator();
     }
 
