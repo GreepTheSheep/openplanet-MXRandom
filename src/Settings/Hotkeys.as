@@ -1,5 +1,24 @@
 namespace PluginSettings
 {
-    [Setting category="Hotkeys" name="Quick map hotkey"]
+    [Setting hidden]
     VirtualKey S_QuickMapKey = VirtualKey(0);
+
+    [SettingsTab name="Hotkeys" icon="KeyboardO" order="4"]
+    void RenderSettings()
+    {
+        if (UI::OrangeButton("Reset to default")) {
+            S_QuickMapKey = VirtualKey(0);
+        }
+
+        UI::SetNextItemWidth(225);
+        if (UI::BeginCombo("Quick map hotkey", tostring(S_QuickMapKey))) {
+            for (int i = 0; i <= 254; i++) {
+                if (tostring(VirtualKey(i)) == tostring(i)) continue;
+                if (UI::Selectable(tostring(VirtualKey(i)), S_QuickMapKey == VirtualKey(i))) {
+                    S_QuickMapKey = VirtualKey(i);
+                }
+            }
+            UI::EndCombo();
+        }
+    }
 }
