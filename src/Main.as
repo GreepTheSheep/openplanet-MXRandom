@@ -4,7 +4,7 @@ UI::Font@ g_fontHeaderSub;
 void RenderMenu()
 {
 #if TMNEXT
-    if (!OpenplanetHasPaidPermissions()) return;
+    if (!hasPermissions) return;
 #endif
     if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
         if (MX::APIDown && !IS_DEV_MODE) {
@@ -56,7 +56,7 @@ void RenderMenu()
 void RenderInterface()
 {
 #if TMNEXT
-    if (!OpenplanetHasPaidPermissions()) return;
+    if (!hasPermissions) return;
 #endif
     if (!window.isInRMCMode) window.Render();
 }
@@ -64,7 +64,7 @@ void RenderInterface()
 void Render()
 {
 #if TMNEXT
-    if (!OpenplanetHasPaidPermissions()) return;
+    if (!hasPermissions) return;
 #endif
     if (window.isInRMCMode) window.Render();
     Renderables::Render();
@@ -74,7 +74,7 @@ bool held = false;
 void OnKeyPress(bool down, VirtualKey key)
 {
 #if TMNEXT
-    if (!OpenplanetHasPaidPermissions()) return;
+    if (!hasPermissions) return;
 #endif
     if (!MX::APIDown && !held && key == PluginSettings::S_QuickMapKey) {
         startnew(MX::LoadRandomMap);
@@ -85,7 +85,7 @@ void OnKeyPress(bool down, VirtualKey key)
 void Main()
 {
 #if TMNEXT
-    if (!OpenplanetHasPaidPermissions()) {
+    if (!hasPermissions) {
         Log::Error("You need Club / Standard access to use this plugin!", true);
         return;
     }

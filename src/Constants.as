@@ -15,6 +15,7 @@ const string MX_COLOR_STR               = "\\$9fc";
 const vec4   MX_COLOR_VEC               = vec4(0.3, 0.7, 0.4, 1);
 const string MX_URL                     = "trackmania.exchange";
 const string SUPPORTED_MAP_TYPE         = "TM_Race";
+const bool hasPermissions               = OpenplanetHasPaidPermissions();
 #endif
 
 const string PLUGIN_NAME                = MX_NAME + " Random Map Picker";
