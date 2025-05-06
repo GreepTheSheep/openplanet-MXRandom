@@ -308,8 +308,8 @@ namespace MX
             if (PluginSettings::TagInclusiveSearch){
                 params.Set("taginclusive", "1");
             }
-            if (PluginSettings::Difficulty != "Anything"){
-                params.Set("difficulty", tostring(PluginSettings::SearchingDifficultys.Find(PluginSettings::Difficulty)-1));
+            if (!PluginSettings::DifficultiesArray.IsEmpty()){
+                params.Set("difficulty", PluginSettings::Difficulties);
             }
             if (PluginSettings::MapAuthor != "") {
                 if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];

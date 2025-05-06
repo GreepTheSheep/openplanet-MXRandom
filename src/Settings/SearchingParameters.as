@@ -123,18 +123,9 @@ namespace PluginSettings
     [Setting hidden]
     bool TagInclusiveSearch = false;
 
-    const array<string> SearchingDifficultys = {
-        "Anything",
-        "Beginner",
-        "Intermediate",
-        "Advanced",
-        "Expert",
-        "Lunatic",
-        "Impossible"
-    };
-
     [Setting hidden]
-    string Difficulty = SearchingDifficultys[0];
+    string Difficulties = "";
+    array<int> DifficultiesArray = {};
 
     [Setting hidden]
     bool SkipSeenMaps = false;
@@ -162,11 +153,13 @@ namespace PluginSettings
             ExcludedAuthors = "";
             MapName = "";
             ExcludedTerms = "";
+            Difficulties = "";
             MapPackID = 0;
             MapTagsArr = {};
             MapAuthorNamesArr = {};
             ExcludedTermsArr = {};
             ExcludedAuthorsArr = {};
+            DifficultiesArray = {};
             TermsExactMatch = false;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40};
@@ -267,6 +260,7 @@ namespace PluginSettings
         if (!initArrays) {
             MapTagsArr = ConvertListToArray(MapTags);
             ExcludeMapTagsArr = ConvertListToArray(ExcludeMapTags);
+            DifficultiesArray = ConvertListToArray(Difficulties);
             initArrays = true;
         }
 
@@ -308,21 +302,35 @@ namespace PluginSettings
 
         UI::NewLine();
 
+        string difficultyText;
+        switch (DifficultiesArray.Length) {
+            case 0: difficultyText = "Any"; break;
+            case 1: difficultyText = tostring(MX::Difficulties(DifficultiesArray[0])); break;
+            default: difficultyText = tostring(DifficultiesArray.Length) + " difficulties"; break;
+        }
+
         UI::SetNextItemWidth(160);
-        if (UI::BeginCombo("Difficulty", Difficulty)){
-            for (uint i = 0; i < SearchingDifficultys.Length; i++) {
-                string difficulty = SearchingDifficultys[i];
+        if (UI::BeginCombo("Difficulties###DifficultyFilter", difficultyText)) {
+            for (uint i = 0; i <= MX::Difficulties::Impossible; i++) {
+                UI::PushID("DifficultyBtn" + i);
 
-                if (UI::Selectable(difficulty, Difficulty == difficulty)) {
-                    Difficulty = difficulty;
+                bool inArray = DifficultiesArray.Find(MX::Difficulties(i)) != -1;
+
+                if (UI::Checkbox(tostring(MX::Difficulties(i)), inArray)) {
+                    if (!inArray) {
+                        DifficultiesArray.InsertLast(MX::Difficulties(i));
+                    }
+                } else if (inArray) {
+                    DifficultiesArray.RemoveAt(DifficultiesArray.Find(MX::Difficulties(i)));
                 }
 
-                if (Difficulty == difficulty) {
-                    UI::SetItemDefaultFocus();
-                }
+                UI::PopID();
             }
+
             UI::EndCombo();
         }
+
+        Difficulties = ConvertArrayToList(DifficultiesArray);
 
         UI::NewLine();
 
