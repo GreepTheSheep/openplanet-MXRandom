@@ -9,7 +9,7 @@ class RMObjective : RMC
 
     void RenderTimer() override
     {
-        UI::PushFont(TimerFont);
+        UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning || RMC::EndTime > 0 || RMC::StartTime > 0) {
             RunTime = RMC::StartTime - RunTimeStart;
 
@@ -22,7 +22,7 @@ class RMObjective : RMC
         UI::PopFont();
         UI::Dummy(vec2(0, 8));
         if (PluginSettings::RMC_DisplayMapTimeSpent) {
-            UI::PushFont(g_fontHeaderSub);
+            UI::PushFont(Fonts::HeaderSub);
             UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
             UI::SetPreviousTooltip("Time spent on this map");
             UI::PopFont();
@@ -39,10 +39,10 @@ class RMObjective : RMC
         UI::SameLine();
 
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {
-            UI::AlignTextToImage("-"+tostring(PluginSettings::RMC_ObjectiveMode_Goal-RMC::GoalMedalCount), TimerFont);
+            UI::AlignTextToImage("-"+tostring(PluginSettings::RMC_ObjectiveMode_Goal-RMC::GoalMedalCount), Fonts::TimerFont);
             UI::SetPreviousTooltip("Remaining medals. Click to set to total count.");
         } else {
-            UI::AlignTextToImage(tostring(RMC::GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), TimerFont);
+            UI::AlignTextToImage(tostring(RMC::GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), Fonts::TimerFont);
             UI::SetPreviousTooltip("Medal count. Click to set to remaining medals.");
         }
         if (UI::IsItemClicked()) {
@@ -54,7 +54,7 @@ class RMObjective : RMC
     {
         UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
-        UI::AlignTextToImage(tostring(Skips), TimerFont);
+        UI::AlignTextToImage(tostring(Skips), Fonts::TimerFont);
     }
 
     void SkipButtons() override

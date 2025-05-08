@@ -11,7 +11,7 @@ class RMS : RMC
 
     void RenderTimer() override
     {
-        UI::PushFont(TimerFont);
+        UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning || RMC::EndTime > 0 || RMC::StartTime > 0) {
             if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
             else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
@@ -20,7 +20,7 @@ class RMS : RMC
             if (SurvivedTime > 0 && PluginSettings::RMC_SurvivalShowSurvivedTime) {
                 UI::PopFont();
                 UI::Dummy(vec2(0, 8));
-                UI::PushFont(g_fontHeaderSub);
+                UI::PushFont(Fonts::HeaderSub);
                 UI::Text(RMC::FormatTimer(SurvivedTime));
                 UI::SetPreviousTooltip("Total time survived");
             } else {
@@ -30,7 +30,7 @@ class RMS : RMC
                 if(SurvivedTime > 0 && PluginSettings::RMC_SurvivalShowSurvivedTime) {
                     UI::SameLine();
                 }
-                UI::PushFont(g_fontHeaderSub);
+                UI::PushFont(Fonts::HeaderSub);
                 UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
                 UI::SetPreviousTooltip("Time spent on this map");
                 UI::PopFont();
@@ -47,7 +47,7 @@ class RMS : RMC
     {
         UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
-        UI::AlignTextToImage(tostring(Skips), TimerFont);
+        UI::AlignTextToImage(tostring(Skips), Fonts::TimerFont);
     }
 
     void SkipButtons() override

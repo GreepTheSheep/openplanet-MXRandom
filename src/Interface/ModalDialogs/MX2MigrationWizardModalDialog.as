@@ -15,7 +15,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
 
     void RenderStep1()
     {
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::TextWrapped("Thanks for updating " + PLUGIN_NAME +"!");
         UI::PopFont();
 
@@ -46,7 +46,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
         int HourGlassValue = Time::Stamp % 3;
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
 
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         if (migrationCompleted) UI::Text("Data migration complete!");
         else if (Migration::v2_requestError) UI::Text("Data migration failed!");
         else UI::Text("Please wait...");

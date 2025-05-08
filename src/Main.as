@@ -1,6 +1,3 @@
-UI::Font@ g_fontHeader;
-UI::Font@ g_fontHeaderSub;
-
 void RenderMenu()
 {
 #if TMNEXT
@@ -93,8 +90,7 @@ void Main()
     startnew(RMCLeaderAPI::Login);
 #endif
 
-    @g_fontHeader = UI::LoadFont("DroidSans-Bold.ttf", 22, -1, -1, true, true, true);
-    @g_fontHeaderSub = UI::LoadFont("DroidSans.ttf", 20, -1, -1, true, true, true);
+    Fonts::Load();
 
     DataManager::EnsureSaveFileFolderPresent();
 

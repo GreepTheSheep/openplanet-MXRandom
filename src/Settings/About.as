@@ -7,7 +7,7 @@ void RenderAboutTab()
         {
             UI::Text("\\$fc0"+Icons::ExclamationTriangle);
             UI::SameLine();
-            UI::PushFont(g_fontHeaderSub);
+            UI::PushFont(Fonts::HeaderSub);
             UI::Text("\\$fc0"+MX_NAME + " is not responding. It might be down.");
             UI::PopFont();
             if (UI::Button("Retry")) startnew(MX::FetchMapTags);
@@ -21,7 +21,7 @@ void RenderAboutTab()
         UI::Separator();
     }
 
-    UI::PushFont(g_fontHeader);
+    UI::PushFont(Fonts::Header);
     UI::SeparatorText(MX_COLOR_STR + Icons::Random + " \\$z " + PLUGIN_NAME);
     UI::PopFont();
     UI::Text("Made by \\$777" + Meta::ExecutingPlugin().Author + " \\$aaaand its contributors");
@@ -42,12 +42,12 @@ void RenderAboutTab()
     UI::SameLine();
     if (UI::Button(Icons::Heartbeat + " Plugin Home")) OpenBrowserURL("https://openplanet.nl/files/" + Meta::ExecutingPlugin().SiteID);
 
-    UI::PushFont(g_fontHeaderSub);
+    UI::PushFont(Fonts::HeaderSub);
     UI::SeparatorText("\\$f39" + Icons::Heartbeat + " \\$z " + "Openplanet");
     UI::PopFont();
     UI::Text("Version \\$777" + Meta::OpenplanetBuildInfo());
 
-    UI::PushFont(g_fontHeaderSub);
+    UI::PushFont(Fonts::HeaderSub);
     UI::SeparatorText(MX_COLOR_STR + Icons::ManiaExchange + " \\$z " + "ManiaExchange");
     UI::PopFont();
     if (UI::Button(Icons::KeyboardO + " \\$zContact ManiaExchange")) OpenBrowserURL("https://"+MX_URL+"/postcreate?PmTargetUserId=11");

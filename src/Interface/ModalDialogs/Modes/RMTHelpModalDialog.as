@@ -15,7 +15,7 @@ class RMTHelpModalDialog : ModalDialog
     {
         float scale = UI::GetScale();
         UI::BeginChild("Content", vec2(0, -32) * scale);
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::Text("Random Map Together");
         UI::PopFont();
         UI::Markdown(
@@ -24,7 +24,7 @@ class RMTHelpModalDialog : ModalDialog
         );
         UI::NewLine();
         UI::Separator();
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::Text("Prerequisites for a good functioning of the RMT mode");
         UI::PopFont();
         UI::Markdown(
@@ -37,7 +37,7 @@ class RMTHelpModalDialog : ModalDialog
         );
         UI::NewLine();
         UI::Separator();
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::Text("Setting up a Room");
         UI::PopFont();
         UI::Markdown(
@@ -47,7 +47,7 @@ class RMTHelpModalDialog : ModalDialog
         );
         UI::NewLine();
         UI::Separator();
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::Text("Finding your Club and Room ID");
         UI::PopFont();
         UI::Markdown(

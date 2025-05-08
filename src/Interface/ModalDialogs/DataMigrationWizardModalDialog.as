@@ -14,7 +14,7 @@ class DataMigrationWizardModalDialog : ModalDialog
 
     void RenderStep1()
     {
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::TextWrapped("Thanks for updating " + PLUGIN_NAME +"!");
         UI::PopFont();
 
@@ -48,7 +48,7 @@ class DataMigrationWizardModalDialog : ModalDialog
         int HourGlassValue = Time::Stamp % 3;
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
 
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         if (!migrationCompleted) UI::Text("Please wait...");
         else UI::Text("Data migration complete!");
         UI::PopFont();

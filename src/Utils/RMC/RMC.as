@@ -3,7 +3,6 @@ class RMC
     int BelowMedalCount = 0;
     int ModeStartTimestamp = -1;
 
-    UI::Font@ TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
     UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");
@@ -106,7 +105,7 @@ class RMC
 
     void RenderTimer()
     {
-        UI::PushFont(TimerFont);
+        UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning || RMC::EndTime > 0) {
             if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
             else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
@@ -116,7 +115,7 @@ class RMC
         UI::PopFont();
         UI::Dummy(vec2(0, 8));
         if (PluginSettings::RMC_DisplayMapTimeSpent) {
-            UI::PushFont(g_fontHeaderSub);
+            UI::PushFont(Fonts::HeaderSub);
             UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
             UI::SetPreviousTooltip("Time spent on this map");
             UI::PopFont();
@@ -140,7 +139,7 @@ class RMC
         else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         else UI::Text(PluginSettings::RMC_GoalMedal);
         UI::SameLine();
-        UI::AlignTextToImage(tostring(RMC::GoalMedalCount), TimerFont);
+        UI::AlignTextToImage(tostring(RMC::GoalMedalCount), Fonts::TimerFont);
     }
 
     void RenderBelowGoalMedal()
@@ -155,7 +154,7 @@ class RMC
             else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             else UI::Text(PluginSettings::RMC_GoalMedal);
             UI::SameLine();
-            UI::AlignTextToImage(tostring(RMC::GoalMedalCount), TimerFont);
+            UI::AlignTextToImage(tostring(RMC::GoalMedalCount), Fonts::TimerFont);
         }
     }
 

@@ -216,7 +216,7 @@ namespace RMC
                 Objective.RenderBelowGoalMedal();
                 UI::Text("Total time:");
                 UI::SameLine();
-                UI::PushFont(Objective.TimerFont);
+                UI::PushFont(Fonts::TimerFont);
                 UI::Text(RMC::FormatTimer(Objective.RunTime));
                 UI::PopFont();
             }
@@ -241,7 +241,7 @@ namespace RMC
 
     void RenderBaseInfos()
     {
-        UI::PushFont(g_fontHeader);
+        UI::PushFont(Fonts::Header);
         UI::Text("Random Map Challenge / Survival");
         UI::PopFont();
         UI::TextWrapped("In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour.");
