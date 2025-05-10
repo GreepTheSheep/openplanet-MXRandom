@@ -77,10 +77,10 @@ namespace MX
     }
 
     bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
-        int64 mapUploadedDate = Time::ParseFormatString('%FT%T', map.UploadedAt);
         int64 mapUpdatedDate = Time::ParseFormatString('%FT%T', map.UpdatedAt);
-        int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToYear + "-" + Text::Format("%.02d", PluginSettings::ToMonth) + "-" + Text::Format("%.02d", PluginSettings::ToDay));
-        int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromYear + "-" + Text::Format("%.02d", PluginSettings::FromMonth) + "-" + Text::Format("%.02d", PluginSettings::FromDay));
+        int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
+        int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
+
         return (mapUpdatedDate < toDate && mapUpdatedDate > fromDate);
     }
 
@@ -172,8 +172,11 @@ namespace MX
 
         if (PluginSettings::CustomRules) {
             if (PluginSettings::UseDateInterval) {
-                bool isValidDate = isMapInsideDateParams(map);
-                if(!isValidDate) {
+                int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
+                int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
+
+                // only check if date range is valid
+                if (fromDate < toDate && !isMapInsideDateParams(map)) {
                     Log::Warn("Looking for new map inside date params...");
                     sleep(1000);
                     PreloadRandomMap();
@@ -181,16 +184,18 @@ namespace MX
                 }
             }
 
-            if (PluginSettings::MapLength != "Anything") {
-                int minAuthor = GetMinimumLength();
-                int maxAuthor = GetMaxLength();
+            if (PluginSettings::MinLength != 0 && map.AuthorTime < PluginSettings::MinLength) {
+                Log::Warn("Map is shorter than the requested length, retrying...");
+                sleep(1000);
+                PreloadRandomMap();
+                return;
+            }
 
-                if ((minAuthor != -1 && map.AuthorTime < minAuthor) || (maxAuthor != -1 && map.AuthorTime > maxAuthor)) {
-                    Log::Warn("Map is not the correct length, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
-                }
+            if (PluginSettings::MaxLength != 0 && map.AuthorTime > PluginSettings::MaxLength) {
+                Log::Warn("Map is longer than the requested length, retrying...");
+                sleep(1000);
+                PreloadRandomMap();
+                return;
             }
 
             if (PluginSettings::ExcludedTerms != "") {
@@ -281,31 +286,30 @@ namespace MX
         }
         else
         {
-            if (PluginSettings::MapLength != "Anything") {
-                int minAuthor = GetMinimumLength();
-                int maxAuthor = GetMaxLength();
-
-                if (minAuthor != -1) params.Set("authortimemin", tostring(minAuthor));
-                if (maxAuthor != -1) params.Set("authortimemax", tostring(maxAuthor));
+            if (PluginSettings::MinLength != 0) {
+                params.Set("authortimemin", tostring(PluginSettings::MinLength));
+            }
+            if (PluginSettings::MaxLength != 0) {
+                params.Set("authortimemax", tostring(PluginSettings::MaxLength));
             }
             if (PluginSettings::UseDateInterval) {
-                Date@ afterDate = Date(PluginSettings::FromYear, PluginSettings::FromMonth, PluginSettings::FromDay);
-                Date@ beforeDate = Date(PluginSettings::ToYear, PluginSettings::ToMonth, PluginSettings::ToDay);
+                int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
+                int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
 
-                if (afterDate.isBefore(beforeDate)) {
-                    params.Set("uploadedafter", afterDate.ToString());
-                    params.Set("uploadedbefore", beforeDate.ToString());
+                if (fromDate < toDate) {
+                    params.Set("uploadedafter", PluginSettings::FromDate);
+                    params.Set("uploadedbefore", PluginSettings::ToDate);
                 } else {
                     Log::Warn("Invalid date interval selected, ignoring...");
                 }
             }
-            if (!PluginSettings::MapTagsArr.IsEmpty()){
+            if (!PluginSettings::MapTagsArr.IsEmpty()) {
                 params.Set("tag", PluginSettings::MapTags);
             }
-            if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()){
+            if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()) {
                 params.Set("etag", PluginSettings::ExcludeMapTags);
             }
-            if (PluginSettings::TagInclusiveSearch){
+            if (PluginSettings::TagInclusiveSearch) {
                 params.Set("taginclusive", "1");
             }
             if (!PluginSettings::DifficultiesArray.IsEmpty()){
@@ -345,42 +349,6 @@ namespace MX
 
         string urlParams = DictToApiParams(params);
         return url + urlParams;
-    }
-
-    int GetMinimumLength() {
-        if (PluginSettings::MapLengthOperator == "Anything" || PluginSettings::MapLengthOperator == "Shorter than" || PluginSettings::MapLengthOperator == "Exacts or shorter to") {
-            // no minimum required
-            return -1;
-        }
-
-        int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
-
-        if (PluginSettings::MapLengthOperator == "Exactly") {
-            // Exactly is probably a bit too strict so we'll allow an about 5 seconds difference
-            return requiredLength - 5000;
-        } else if (PluginSettings::MapLengthOperator == "Longer than") {
-            return requiredLength + 1;
-        } else {
-            return requiredLength;
-        }
-    }
-
-    int GetMaxLength() {
-        if (PluginSettings::MapLengthOperator == "Anything" || PluginSettings::MapLengthOperator == "Longer than" || PluginSettings::MapLengthOperator == "Exacts or longer to") {
-            // no max required
-            return -1;
-        }
-
-        int requiredLength = PluginSettings::SearchingMapLengthsMilliseconds[PluginSettings::SearchingMapLengths.Find(PluginSettings::MapLength)];
-
-        if (PluginSettings::MapLengthOperator == "Exactly") {
-            // Exactly is probably a bit too strict so we'll allow an about 5 seconds difference
-            return requiredLength + 5000;
-        } else if (PluginSettings::MapLengthOperator == "Shorter than") {
-            return requiredLength - 1;
-        } else {
-            return requiredLength;
-        }
     }
 
     string DictToApiParams(dictionary params) {

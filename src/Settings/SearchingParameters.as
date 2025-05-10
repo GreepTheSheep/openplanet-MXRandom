@@ -3,67 +3,17 @@ namespace PluginSettings
     [Setting hidden]
     bool CustomRules = false;
 
-    const array<string> SearchingMapLengthOperators = {
-        "Exacts",
-        "Shorter than",
-        "Longer than",
-        "Exacts or shorter to",
-        "Exacts or longer to"
-    };
-
-    [Setting hidden]
-    string MapLengthOperator = SearchingMapLengthOperators[0];
-
-    const array<string> SearchingMapLengths = {
-        "Anything",
-        "15 seconds",
-        "30 seconds",
-        "45 seconds",
-        "1 minute",
-        "1 minutes and 15 seconds",
-        "1 minutes and 30 seconds",
-        "1 minutes and 45 seconds",
-        "2 minutes",
-        "2 minutes and 30 seconds",
-        "3 minutes",
-        "3 minutes and 30 seconds",
-        "4 minutes",
-        "4 minutes and 30 seconds",
-        "5 minutes"
-    };
-
-    const array<int> SearchingMapLengthsMilliseconds = {
-        0,
-        15000,
-        30000,
-        45000,
-        60000,
-        75000,
-        90000,
-        105000,
-        120000,
-        150000,
-        180000,
-        210000,
-        240000,
-        270000,
-        300000
-    };
-
     array<string> MapAuthorNamesArr = {};
 
     array<string> ExcludedTermsArr = {};
 
     array<string> ExcludedAuthorsArr = {};
 
-#if TMNEXT
-    const int releaseYear = 2020;
-#else
-    const int releaseYear = 2011;
-#endif
+    [Setting hidden]
+    int MinLength = 0;
 
     [Setting hidden]
-    string MapLength = SearchingMapLengths[0];
+    int MaxLength = 0;
 
     [Setting hidden]
     string MapAuthor = "";
@@ -83,24 +33,19 @@ namespace PluginSettings
     [Setting hidden]
     bool UseDateInterval = false;
 
-    [Setting hidden]
-    int FromYear = releaseYear;
+#if TMNEXT
+    const string releaseDate = "2020-01-01";
+#else
+    const string releaseDate = "2011-01-01";
+#endif
 
     [Setting hidden]
-    int FromMonth = 1;
+    string FromDate = releaseDate;
+
+    const string currentDate = Time::FormatString("%F", Time::Stamp);
 
     [Setting hidden]
-    int FromDay = 1;
-
-    Time::Info currentDate = Time::Parse();
-    [Setting hidden]
-    int ToYear = currentDate.Year;
-
-    [Setting hidden]
-    int ToMonth = currentDate.Month;
-
-    [Setting hidden]
-    int ToDay = currentDate.Day;
+    string ToDate = currentDate;
 
     [Setting hidden]
     int64 MapPackID = 0;
@@ -138,16 +83,12 @@ namespace PluginSettings
 
         UI::BeginDisabled(!CustomRules);
 
-        if (UI::OrangeButton("Reset to default")){
-            MapLengthOperator = SearchingMapLengthOperators[0];
-            MapLength = SearchingMapLengths[0];
+        if (UI::OrangeButton("Reset to default")) {
+            MinLength = 0;
+            MaxLength = 0;
             UseDateInterval = false;
-            FromYear = releaseYear;
-            FromMonth = 1;
-            FromDay = 1;
-            ToYear = currentDate.Year;
-            ToMonth = currentDate.Month;
-            ToDay = currentDate.Day;
+            FromDate = releaseDate;
+            ToDate = currentDate;
             TagInclusiveSearch = false;
             MapAuthor = "";
             ExcludedAuthors = "";
@@ -167,95 +108,109 @@ namespace PluginSettings
             ExcludeMapTagsArr = {20};
 #endif
         }
+    
+        UI::PaddedHeaderSeparator("Length");
 
-        // Length Operator
-        UI::SetNextItemWidth(160);
-        if (UI::BeginCombo("##LengthOperator", MapLengthOperator)){
-            for (uint i = 0; i < SearchingMapLengthOperators.Length; i++) {
-                string operator = SearchingMapLengthOperators[i];
+        UI::SetItemText("From:");
+        MinLength = UI::InputInt("##FromLengthFilter", MinLength, 0);
+        UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.");
 
-                if (UI::Selectable(operator, MapLengthOperator == operator)) {
-                    MapLengthOperator = operator;
-                }
-
-                if (MapLengthOperator == operator) {
-                    UI::SetItemDefaultFocus();
-                }
-            }
-            UI::EndCombo();
+        if (MinLength != 0 && UI::ResetButton()) {
+            MinLength = 0;
         }
 
-        UI::SameLine();
-        UI::SetNextItemWidth(200);
-        // Length
-        if (UI::BeginCombo("Map length", MapLength)){
-            for (uint i = 0; i < SearchingMapLengths.Length; i++) {
-                string length = SearchingMapLengths[i];
+        UI::SetCenteredItemText("To:");
+        MaxLength = UI::InputInt("##ToLengthFilter", MaxLength, 0);
+        UI::SetItemTooltip("Maximum duration of the map, based on the author medal, in milliseconds.");
 
-                if (UI::Selectable(length, MapLength == length)) {
-                    MapLength = length;
-                }
-
-                if (MapLength == length) {
-                    UI::SetItemDefaultFocus();
-                }
-            }
-            UI::EndCombo();
+        if (MaxLength != 0 && UI::ResetButton()) {
+            MaxLength = 0;
         }
 
-        UI::NewLine();
+        UI::BeginDisabled();
+
+        UI::SetItemText("Time:");
+        UI::Text(Time::Format(MinLength));
+
+        UI::SetCenteredItemText("Time:");
+        UI::Text(Time::Format(MaxLength));
+
+        UI::EndDisabled();
+
+        UI::PaddedHeaderSeparator("Date");
+
         UseDateInterval = UI::Checkbox("Use date interval for map search", UseDateInterval);
-        UI::SetPreviousTooltip("If enabled, you will only get maps uploaded or updated inside the set date interval.\nSetting a very small interval can end in no map being found for a very long time and the API being spammed.\nPlease use responsibly.");
-        if (UseDateInterval) {
-            if (UI::BeginTable("DateIntervals", 2, UI::TableFlags::SizingFixedFit)) {
-                UI::TableNextColumn();
-                UI::AlignTextToFramePadding();
-                UI::Text("From date");
-                UI::SetNextItemWidth(150);
-                FromYear = UI::SliderInt("##From year", FromYear, releaseYear, currentDate.Year, "Year: %d");
-                UI::SetNextItemWidth(150);
-                FromMonth = UI::SliderInt("##From month", FromMonth, 1, 12, "Month: %.02d");
-                UI::SetNextItemWidth(150);
-                FromDay = UI::SliderInt("##From day", FromDay, 1, 31, "Day: %.02d");
 
-                UI::TableNextColumn();
-                UI::AlignTextToFramePadding();
-                UI::Text("To date");
-                UI::SetNextItemWidth(150);
-                ToYear = UI::SliderInt("##To year", ToYear, releaseYear, currentDate.Year, "Year: %d");
-                UI::SetNextItemWidth(150);
-                ToMonth = UI::SliderInt("##To month", ToMonth, 1, 12, "Month: %.02d");
-                UI::SetNextItemWidth(150);
-                ToDay = UI::SliderInt("##To day", ToDay, 1, 31, "Day: %.02d");
-                UI::EndTable();
-            }
+        UI::BeginDisabled(!UseDateInterval);
+
+        UI::SetItemText("From:");
+        FromDate = UI::InputText("##FromDateFilter", FromDate, UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::DateCallback));
+        UI::SetItemTooltip("Minimum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
+
+        if ((!UI::IsItemActive() && !Date::IsValid(FromDate)) || (FromDate != releaseDate && UI::ResetButton())) {
+            FromDate = releaseDate;
         }
+
+        UI::SetCenteredItemText("To:");
+        ToDate = UI::InputText("##ToDateFilter", ToDate, UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::DateCallback));
+        UI::SetItemTooltip("Maximum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
+
+        if ((!UI::IsItemActive() && !Date::IsValid(ToDate)) || (ToDate != currentDate && UI::ResetButton())) {
+            ToDate = currentDate;
+        }
+
+        UI::EndDisabled();
         
-        UI::NewLine();
+        UI::PaddedHeaderSeparator("Map");
 
         UI::SetNextItemWidth(200);
         MapName = UI::InputText("Map Name Filter", MapName, false);
+
+        if (MapName != "" && UI::ResetButton()) {
+            MapName = "";
+        }
+
         UI::SetNextItemWidth(200);
         ExcludedTerms = UI::InputText("Excluded term(s)", ExcludedTerms, false);
         UI::SetPreviousTooltip("Filter out maps that contain specific words/phrases in their name.\nFor example, you can filter out \"slop\", \"yeet\", or \"random generated\".\n\nWhen filtering multiple terms, they must be comma-separated.");
+
+        if (ExcludedTerms != "" && UI::ResetButton()) {
+            ExcludedTerms = "";
+        }
+
         UI::SameLine();
+
         TermsExactMatch = UI::Checkbox("Exact match", TermsExactMatch);
         UI::SetPreviousTooltip("If enabled, terms will only be excluded when there's an exact match.\n\nExample: If you exclude the word \"AI\", it won't filter out maps with the words \"Air\" or \"Fail\".");
+
         UI::SetNextItemWidth(200);
-        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", false));
         // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
+        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::MXIdCallback)));
+
+        if (MapPackID != 0 && UI::ResetButton()) {
+            MapPackID = 0;
+        }
+
         UI::SetNextItemWidth(200);
         MapAuthor = UI::InputText("Map Author Filter", MapAuthor, false);
+
+        if (MapAuthor != "" && UI::ResetButton()) {
+            MapAuthor = "";
+        }
+
         if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
+
         UI::SetNextItemWidth(200);
         ExcludedAuthors = UI::InputText("Excluded Author(s)", ExcludedAuthors, false);
         UI::SetPreviousTooltip("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
-        UI::NewLine();
+
+        if (ExcludedAuthors != "" && UI::ResetButton()) {
+            ExcludedAuthors = "";
+        }
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
         ExcludedTermsArr = ConvertStringToArray(ExcludedTerms);
         ExcludedAuthorsArr = ConvertStringToArray(ExcludedAuthors);
-
 
         if (!initArrays) {
             MapTagsArr = ConvertListToArray(MapTags);
@@ -264,16 +219,18 @@ namespace PluginSettings
             initArrays = true;
         }
 
+        UI::PaddedHeaderSeparator("Tags");
+
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
             UI::TableNextColumn();
             UI::AlignTextToFramePadding();
-            UI::Text("Include Tags" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
+            UI::Text("Include" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
             UI::TableNextColumn();
             UI::AlignTextToFramePadding();
-            UI::Text("Exclude Tags" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
+            UI::Text("Exclude" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
 
             UI::TableNextColumn();
-            if (UI::BeginListBox("##Include Tags", vec2(200, 300))){
+            if (UI::BeginListBox("##Include Tags", vec2(200, 300))) {
                 for (uint i = 0; i < MX::m_mapTags.Length; i++)
                 {
                     MX::MapTag@ tag = MX::m_mapTags[i];
@@ -283,7 +240,7 @@ namespace PluginSettings
             }
 
             UI::TableNextColumn();
-            if (UI::BeginListBox("##Exclude Tags", vec2(200, 300))){
+            if (UI::BeginListBox("##Exclude Tags", vec2(200, 300))) {
                 for (uint i = 0; i < MX::m_mapTags.Length; i++)
                 {
                     MX::MapTag@ tag = MX::m_mapTags[i];
@@ -300,7 +257,7 @@ namespace PluginSettings
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
 
-        UI::NewLine();
+        UI::PaddedHeaderSeparator("Other");
 
         string difficultyText;
         switch (DifficultiesArray.Length) {
@@ -330,9 +287,11 @@ namespace PluginSettings
             UI::EndCombo();
         }
 
-        Difficulties = ConvertArrayToList(DifficultiesArray);
+        if (!DifficultiesArray.IsEmpty() && UI::ResetButton()) {
+            DifficultiesArray.RemoveRange(0, DifficultiesArray.Length);
+        }
 
-        UI::NewLine();
+        Difficulties = ConvertArrayToList(DifficultiesArray);
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
         UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");

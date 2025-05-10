@@ -96,10 +96,6 @@ namespace Migration
             PluginSettings::RMC_MX_Url = "https://" + MX_URL;
         }
 
-        if (PluginSettings::MapLength == "Longer than 5 minutes") {
-            PluginSettings::MapLength = "Anything";
-        }
-
         if (PluginSettings::MapAuthor.Contains(",")) {
             // MX 2.0 doesn't allow filtering by multiple authors yet
             PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
@@ -190,7 +186,7 @@ namespace Migration
 
                         if (mapData["TrackID"] == currMap.MapId) {
                             if (mapData["PlayedAt"].GetType() == Json::Type::Object) {
-                                currMap.PlayedAt = TimestampFromObject(mapData["PlayedAt"]);
+                                currMap.PlayedAt = Date::TimestampFromObject(mapData["PlayedAt"]);
                             } else {
                                 // Rare case where PlayedAt isn't an object
                                 currMap.PlayedAt = Time::Stamp;
@@ -217,7 +213,7 @@ namespace Migration
 
                     if (map.MapId == oldMap["TrackID"]) {
                         if (oldMap["PlayedAt"].GetType() == Json::Type::Object) {
-                            map.PlayedAt = TimestampFromObject(oldMap["PlayedAt"]);
+                            map.PlayedAt = Date::TimestampFromObject(oldMap["PlayedAt"]);
                         } else {
                             // Rare case where PlayedAt isn't an object
                             map.PlayedAt = Time::Stamp;

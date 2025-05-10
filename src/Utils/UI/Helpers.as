@@ -17,7 +17,26 @@ namespace UI {
         UI::PopStyleVar();
     }
 
+    void PaddedSeparator(const string &in text) {
+        UI::VPadding(5);
+        UI::SeparatorText(text);
+        UI::VPadding(5);
+    }
+
+    void PaddedHeaderSeparator(const string &in text) {
+        UI::PushFont(Fonts::MidBold);
+        UI::PaddedSeparator(text);
+        UI::PopFont();
+    }
+
     // Alignment
+
+    void CenterAlign()
+    {
+        vec2 region = UI::GetWindowSize();
+        vec2 position = UI::GetCursorPos();
+        UI::SetCursorPos(vec2(region.x / 2, position.y));
+    }
 
     void CenterAlign(float elementWidth)
     {
@@ -63,5 +82,29 @@ namespace UI {
         UI::PushFont(font);
         UI::Text(text);
         UI::PopFont();
+    }
+
+    void SetItemText(const string &in text, int width = 300) {
+        UI::AlignTextToFramePadding();
+        UI::Text(text);
+        UI::SameLine();
+        UI::SetNextItemWidth(width - Draw::MeasureString(text).x);
+    }
+
+    void SetCenteredItemText(const string &in text, int width = 300) {
+        UI::SameLine();
+        UI::CenterAlign();
+        SetItemText(text, width);
+    }
+
+    // Buttons
+
+    bool ResetButton() {
+        UI::SameLine();
+        UI::Text(Icons::Times);
+        if (UI::IsItemHovered()) UI::SetMouseCursor(UI::MouseCursor::Hand);
+        UI::SetItemTooltip("Reset field");
+
+        return UI::IsItemClicked();
     }
 }
