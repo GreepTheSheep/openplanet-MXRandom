@@ -5,7 +5,6 @@ namespace MX
 
     int mapToLoad = -1;
 
-
     bool APIDown = false;
     bool APIRefreshing = false;
 

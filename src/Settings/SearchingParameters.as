@@ -310,27 +310,33 @@ namespace PluginSettings
         return tags;
     }
 
-    string ConvertArrayToList(array<int> tags)
+    string ConvertArrayToList(array<int> arr)
     {
         string res = "";
-        for (uint i = 0; i < tags.Length; i++)
+        for (uint i = 0; i < arr.Length; i++)
         {
-            res += tags[i] + ",";
+            res += arr[i] + ",";
         }
 
-        if (tags.Length > 0) res = res.SubStr(0, res.Length - 1);
+        if (arr.Length > 0) res = res.SubStr(0, res.Length - 1);
         return res;
     }
 
-    array<int> ConvertListToArray(string _tags)
+    array<int> ConvertListToArray(const string &in arrStr)
     {
         array<int> res = {};
-        int i = 0;
-        while ((i = _tags.IndexOf(",")) > 0) {
-            res.InsertLast(Text::ParseInt(_tags.SubStr(0, i)));
-            _tags = _tags.SubStr(i + 1);
+        if (arrStr.Length == 0) return res;
+
+        array<string> values = arrStr.Split(",");
+
+        for (uint i = 0; i < values.Length; i++) {
+            int n;
+
+            if (Text::TryParseInt(values[i], n)) {
+                res.InsertLast(n);
+            }
         }
-        if (_tags != "") res.InsertLast(Text::ParseInt(_tags));
+
         return res;
     }
 
