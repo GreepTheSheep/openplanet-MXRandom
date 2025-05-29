@@ -169,6 +169,47 @@ namespace RMC
 #endif
                 UI::TreePop();
             }
+            if (Permissions::CreateActivity() && UI::TreeNode(MX_COLOR_STR + Icons::Heart + " \\$zRandom Map Survival Together \\$f33(BETA)")) {
+                UI::TextDisabled(Icons::InfoCircle + " Hover for infos");
+                UI::SetPreviousTooltip("Random Map Survival Together is a collaborative multiplayer survival mode where players work as a team to survive as long as possible. When any team member gets a goal medal, the entire team gets +3 minutes. When anyone skips, the team loses -1 minute. True teamwork!");
+                
+                UI::AlignTextToFramePadding();
+                UI::Text("Club ID:");
+                UI::SameLine();
+                UI::SetNextItemWidth(150);
+                PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMSTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
+                UI::SameLine();
+                UI::Text("Room ID:");
+                UI::SameLine();
+                UI::SetNextItemWidth(150);
+                PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMSTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
+
+                bool RMST_isServerOK = false;
+                if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
+                    RMST_isServerOK = true;
+                    if (UI::Button(Icons::Search + " Auto-detect room")) {
+                        startnew(BRMStartAutoDetectRoomRMST);
+                    }
+                    UI::SameLine();
+                    if (UI::Button(Icons::InfoCircle + " Help")) {
+                        Renderables::Add(RMSTHelpModalDialog());
+                    }
+                } else {
+                    UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease set a Club ID and Room ID");
+                }
+
+                if (RMST_isServerOK && !TM::IsInServer()) {
+                    UI::BeginDisabled();
+                    UI::GreyButton(Icons::Heart + " Start Random Map Survival Together");
+                    UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
+                    UI::EndDisabled();
+                }
+                if (RMST_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Heart + " Start Random Map Survival Together")){
+                    selectedGameMode = GameMode::SurvivalTogether;
+                    startnew(CoroutineFunc(SurvivalTogether.StartRMST));
+                }
+                UI::TreePop();
+            }
 #endif
 #if TMNEXT
         } else {
@@ -220,14 +261,18 @@ namespace RMC
                 UI::Text(RMC::FormatTimer(Objective.RunTime));
                 UI::PopFont();
             }
-#if TMNEXT
             else if (selectedGameMode == GameMode::Together) {
                 Together.RenderGoalMedal();
-                UI::HPadding(25);
+                UI::SameLine();
                 Together.RenderBelowGoalMedal();
                 Together.RenderScores();
             }
-#endif
+            else if (selectedGameMode == GameMode::SurvivalTogether) {
+                SurvivalTogether.RenderGoalMedal();
+                UI::SameLine();
+                SurvivalTogether.RenderBelowGoalMedal();
+                SurvivalTogether.RenderScores();
+            }
         }
     }
 
@@ -237,6 +282,7 @@ namespace RMC
         else if (selectedGameMode == GameMode::Survival || selectedGameMode == GameMode::SurvivalChaos) Survival.Render();
         else if (selectedGameMode == GameMode::Objective) Objective.Render();
         else if (selectedGameMode == GameMode::Together) Together.Render();
+        else if (selectedGameMode == GameMode::SurvivalTogether) SurvivalTogether.Render();
     }
 
     void RenderBaseInfos()
@@ -251,58 +297,31 @@ namespace RMC
 
 #if DEPENDENCY_BETTERROOMMANAGER
     void BRMStartAutoDetectRoomRMT() {
-        MXNadeoServicesGlobal::isCheckingRoom = true;
         autodetectError = false;
-        autodetectStatus = "Detecting... ";
-        auto cs = BRM::GetCurrentServerInfo(GetApp());
+        autodetectStatus = "Detecting...";
+        ClubServerInfo@ cs = MXNadeoServicesGlobal::GetClubServerInfo();
         if (cs is null) {
-            MXNadeoServicesGlobal::roomCheckError = "Couldn't get current server info";
             autodetectError = true;
+            autodetectStatus = "Error: Could not detect room";
             return;
         }
-        if (cs.clubId <= 0) {
-            MXNadeoServicesGlobal::roomCheckError = "Could not detect club ID for this server (" + cs.name + " / " + cs.login + ")";
-            autodetectError = true;
-            return;
-        }
-
-        autodetectStatus = "Found Club ID: " + cs.clubId;
-
-        auto myClubs = BRM::GetMyClubs();
-        const Json::Value@ foundClub = null;
-
-        for (uint i = 0; i < myClubs.Length; i++) {
-            if (cs.clubId == int(myClubs[i]['id'])) {
-                @foundClub = myClubs[i];
-                break;
-            }
-        }
-
-        if (foundClub is null) {
-            MXNadeoServicesGlobal::roomCheckError = "Club not found in your list of clubs (refresh from Better Room Manager if you joined the club recently).";
-            autodetectError = true;
-            return;
-        }
-
-        if (!bool(foundClub['isAnyAdmin'])) {
-            MXNadeoServicesGlobal::roomCheckError = "Club was found but your role isn't enough to edit rooms (refresh from Better Room Manager if this changed recently).";
-            autodetectError = true;
-            return;
-        }
-
-        autodetectStatus = "Checking for matching rooms...";
-
-        if (cs.roomId <= 0) {
-            MXNadeoServicesGlobal::roomCheckError = "Room not found in club";
-            autodetectError = true;
-            return;
-        }
-
+        autodetectStatus = "Found room: " + cs.name;
         PluginSettings::RMC_Together_ClubId = cs.clubId;
         PluginSettings::RMC_Together_RoomId = cs.roomId;
+    }
 
-        autodetectStatus = "Done";
-        MXNadeoServicesGlobal::isCheckingRoom = false;
+    void BRMStartAutoDetectRoomRMST() {
+        autodetectError = false;
+        autodetectStatus = "Detecting...";
+        ClubServerInfo@ cs = MXNadeoServicesGlobal::GetClubServerInfo();
+        if (cs is null) {
+            autodetectError = true;
+            autodetectStatus = "Error: Could not detect room";
+            return;
+        }
+        autodetectStatus = "Found room: " + cs.name;
+        PluginSettings::RMC_Together_ClubId = cs.clubId;
+        PluginSettings::RMC_Together_RoomId = cs.roomId;
     }
 #endif
 }
