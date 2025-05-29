@@ -85,7 +85,7 @@ class RMSTHelpModalDialog : ModalDialog
         UI::EndChild();
         
         if (UI::Button("Close")) {
-            m_shouldClose = true;
+            m_visible = false;
         }
     }
 } 

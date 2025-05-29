@@ -14,8 +14,6 @@ class RMST : RMS
     bool pressedStopButton = false;
     bool isFetchingNextMap = false;
     array<string> seenMaps;
-    int SurvivedTimeStart = -1;
-    int SurvivedTime = -1;
 
     string GetModeName() override { return "Random Map Survival Together";}
 
@@ -393,54 +391,87 @@ class RMST : RMS
     }
 
     void UpdateRecords() {
-        if (currentMap is null) {
-            m_CurrentlyLoadingRecords = false;
-            return;
-        }
+        auto newPBs = GetPlayersPBsMLFeed();
+        if (newPBs.Length > 0) // empty arrays are returned on e.g., http error
+            m_mapPersonalBests = newPBs;
 
-        array<PBTime@> records = MXNadeoServicesGlobal::GetMapRecords(currentMap.MapUid);
-        if (records.Length == 0) {
-            m_CurrentlyLoadingRecords = false;
-            return;
-        }
+        // Check for goal medals
+        if (GetApp().RootMap !is null) {
+            uint objectiveTime = uint(-1);
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_GoldTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_SilverTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_BronzeTime;
+#if TMNEXT
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) objectiveTime = TM::GetWorldRecordFromCache(GetApp().RootMap.MapInfo.MapUid);
+#endif
 
-        m_mapPersonalBests = records;
-
-        for (uint i = 0; i < m_mapPersonalBests.Length; i++) {
-            PBTime@ record = m_mapPersonalBests[i];
-            if (record is null) continue;
-
-            bool foundPlayer = false;
-            for (uint j = 0; j < m_playerScores.Length; j++) {
-                if (m_playerScores[j].wsid == record.wsid) {
-                    foundPlayer = true;
-                    break;
-                }
-            }
-
-            if (!foundPlayer) {
-                m_playerScores.InsertLast(RMSTPlayerScore(record));
-            }
-
-            // Collaborative mode: Any player getting the goal medal benefits the entire team
-            if (record.medal >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal) && !RMC::GotGoalMedalOnCurrentMap) {
-                @playerGotGoalActualMap = record;
-                RMC::GotGoalMedalOnCurrentMap = true;
-                RMC::GoalMedalCount++;
-                
-                // Update the specific player's goal count for leaderboard tracking
-                for (uint j = 0; j < m_playerScores.Length; j++) {
-                    if (m_playerScores[j].wsid == record.wsid) {
-                        m_playerScores[j].AddGoal();
-                        break;
+            if (m_mapPersonalBests.Length > 0 && !RMC::GotGoalMedalOnCurrentMap) {
+                for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
+                    PBTime@ record = m_mapPersonalBests[r];
+                    if (record is null || record.time <= 0) continue;
+                    
+                    // Collaborative mode: Any player getting the goal medal benefits the entire team
+                    if (record.time <= objectiveTime) {
+                        @playerGotGoalActualMap = record;
+                        RMC::GotGoalMedalOnCurrentMap = true;
+                        RMC::GoalMedalCount++;
+                        
+                        // Update the specific player's goal count for leaderboard tracking
+                        for (uint j = 0; j < m_playerScores.Length; j++) {
+                            if (m_playerScores[j].wsid == record.wsid) {
+                                m_playerScores[j].AddGoal();
+                                break;
+                            }
+                        }
+                        
+                        GotGoalMedalNotification();
+                        break; // Only count one goal medal per update
                     }
                 }
-                
-                GotGoalMedalNotification();
             }
         }
 
         m_CurrentlyLoadingRecords = false;
+    }
+
+    array<PBTime@> GetPlayersPBsMLFeed() {
+        array<PBTime@> ret;
+#if DEPENDENCY_MLFEEDRACEDATA
+        try {
+            auto app = cast<CTrackMania>(GetApp());
+            if (app.Network is null || app.Network.ClientManiaAppPlayground is null) return {};
+            auto raceData = MLFeed::GetRaceData_V4();
+            if (raceData is null) return {};
+            auto @players = raceData.SortedPlayers_TimeAttack;
+            if (players.Length == 0) return {};
+            
+            // Update player scores list
+            for (uint i = 0; i < players.Length; i++) {
+                auto player = cast<MLFeed::PlayerCpInfo_V4>(players[i]);
+                if (player is null) continue;
+                if (player.bestTime < 1) continue;
+                if (player.BestRaceTimes is null || player.BestRaceTimes.Length != raceData.CPsToFinish) continue;
+                auto pbTime = PBTime(player);
+                ret.InsertLast(pbTime);
+                
+                // Ensure player is in our scores list
+                bool foundPlayer = false;
+                for (uint j = 0; j < m_playerScores.Length; j++) {
+                    if (m_playerScores[j].wsid == pbTime.wsid) {
+                        foundPlayer = true;
+                        break;
+                    }
+                }
+                if (!foundPlayer) {
+                    m_playerScores.InsertLast(RMSTPlayerScore(pbTime));
+                }
+            }
+            ret.SortAsc();
+        } catch {
+            warn("Error while getting player PBs: " + getExceptionInfo());
+        }
+#endif
+        return ret;
     }
 
     void RenderMVPPlayer() {
@@ -503,7 +534,7 @@ class RMST : RMS
     void RenderCurrentMap() {
         if (currentMap !is null) {
             UI::Text("Current Map: " + currentMap.Name);
-            UI::Text("Author: " + currentMap.AuthorName);
+            UI::Text("Author: " + currentMap.Username);
         }
     }
 
