@@ -299,29 +299,35 @@ namespace RMC
     void BRMStartAutoDetectRoomRMT() {
         autodetectError = false;
         autodetectStatus = "Detecting...";
-        ClubServerInfo@ cs = MXNadeoServicesGlobal::GetClubServerInfo();
-        if (cs is null) {
+        
+        // Use BRM to get current server info
+        if (!BRM::IsInAServer(GetApp())) {
             autodetectError = true;
-            autodetectStatus = "Error: Could not detect room";
+            autodetectStatus = "Error: Not in a server";
             return;
         }
-        autodetectStatus = "Found room: " + cs.name;
-        PluginSettings::RMC_Together_ClubId = cs.clubId;
-        PluginSettings::RMC_Together_RoomId = cs.roomId;
+        
+        // For now, show a message that manual setup is required
+        // This would need proper BRM integration to get club/room IDs
+        autodetectError = true;
+        autodetectStatus = "Please set Club ID and Room ID manually";
     }
 
     void BRMStartAutoDetectRoomRMST() {
         autodetectError = false;
         autodetectStatus = "Detecting...";
-        ClubServerInfo@ cs = MXNadeoServicesGlobal::GetClubServerInfo();
-        if (cs is null) {
+        
+        // Use BRM to get current server info
+        if (!BRM::IsInAServer(GetApp())) {
             autodetectError = true;
-            autodetectStatus = "Error: Could not detect room";
+            autodetectStatus = "Error: Not in a server";
             return;
         }
-        autodetectStatus = "Found room: " + cs.name;
-        PluginSettings::RMC_Together_ClubId = cs.clubId;
-        PluginSettings::RMC_Together_RoomId = cs.roomId;
+        
+        // For now, show a message that manual setup is required
+        // This would need proper BRM integration to get club/room IDs
+        autodetectError = true;
+        autodetectStatus = "Please set Club ID and Room ID manually";
     }
 #endif
 }
