@@ -297,37 +297,58 @@ namespace RMC
 
 #if DEPENDENCY_BETTERROOMMANAGER
     void BRMStartAutoDetectRoomRMT() {
+        MXNadeoServicesGlobal::isCheckingRoom = true;
         autodetectError = false;
-        autodetectStatus = "Detecting...";
-        
-        // Use BRM to get current server info
-        if (!BRM::IsInAServer(GetApp())) {
+        autodetectStatus = "Detecting... ";
+        auto cs = BRM::GetCurrentServerInfo(GetApp());
+        if (cs is null) {
+            MXNadeoServicesGlobal::roomCheckError = "Couldn't get current server info";
             autodetectError = true;
-            autodetectStatus = "Error: Not in a server";
             return;
         }
-        
-        // For now, show a message that manual setup is required
-        // This would need proper BRM integration to get club/room IDs
-        autodetectError = true;
-        autodetectStatus = "Please set Club ID and Room ID manually";
-    }
+        if (cs.clubId <= 0) {
+            MXNadeoServicesGlobal::roomCheckError = "Could not detect club ID for this server (" + cs.name + " / " + cs.login + ")";
+            autodetectError = true;
+            return;
+        }
 
-    void BRMStartAutoDetectRoomRMST() {
-        autodetectError = false;
-        autodetectStatus = "Detecting...";
-        
-        // Use BRM to get current server info
-        if (!BRM::IsInAServer(GetApp())) {
+        autodetectStatus = "Found Club ID: " + cs.clubId;
+
+        auto myClubs = BRM::GetMyClubs();
+        const Json::Value@ foundClub = null;
+
+        for (uint i = 0; i < myClubs.Length; i++) {
+            if (cs.clubId == int(myClubs[i]['id'])) {
+                @foundClub = myClubs[i];
+                break;
+            }
+        }
+
+        if (foundClub is null) {
+            MXNadeoServicesGlobal::roomCheckError = "Club not found in your list of clubs (refresh from Better Room Manager if you joined the club recently).";
             autodetectError = true;
-            autodetectStatus = "Error: Not in a server";
             return;
         }
-        
-        // For now, show a message that manual setup is required
-        // This would need proper BRM integration to get club/room IDs
-        autodetectError = true;
-        autodetectStatus = "Please set Club ID and Room ID manually";
+
+        if (!bool(foundClub['isAnyAdmin'])) {
+            MXNadeoServicesGlobal::roomCheckError = "Club was found but your role isn't enough to edit rooms (refresh from Better Room Manager if this changed recently).";
+            autodetectError = true;
+            return;
+        }
+
+        autodetectStatus = "Checking for matching rooms...";
+
+        if (cs.roomId <= 0) {
+            MXNadeoServicesGlobal::roomCheckError = "Room not found in club";
+            autodetectError = true;
+            return;
+        }
+
+        PluginSettings::RMC_Together_ClubId = cs.clubId;
+        PluginSettings::RMC_Together_RoomId = cs.roomId;
+
+        autodetectStatus = "Done";
+        MXNadeoServicesGlobal::isCheckingRoom = false;
     }
 #endif
 }
