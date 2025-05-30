@@ -261,7 +261,7 @@ namespace RMC
                 UI::Text(RMC::FormatTimer(Objective.RunTime));
                 UI::PopFont();
             }
-        #if TMNEXT
+#if TMNEXT
             else if (selectedGameMode == GameMode::Together) {
                 Together.RenderGoalMedal();
                 UI::HPadding(25);
@@ -274,7 +274,7 @@ namespace RMC
                 SurvivalTogether.RenderBelowGoalMedal();
                 SurvivalTogether.RenderScores();
             }
-        #endif
+#endif
         }
     }
 
