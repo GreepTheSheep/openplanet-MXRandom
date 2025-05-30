@@ -263,7 +263,7 @@ namespace RMC
             }
             else if (selectedGameMode == GameMode::Together) {
                 Together.RenderGoalMedal();
-                UI::SameLine();
+                UI::HPadding(25);
                 Together.RenderBelowGoalMedal();
                 Together.RenderScores();
             }
