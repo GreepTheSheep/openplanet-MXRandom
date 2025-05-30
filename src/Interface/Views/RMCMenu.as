@@ -166,38 +166,6 @@ namespace RMC
                     selectedGameMode = GameMode::Together;
                     startnew(CoroutineFunc(Together.StartRMT));
                 }
-#endif
-                UI::TreePop();
-            }
-            if (Permissions::CreateActivity() && UI::TreeNode(MX_COLOR_STR + Icons::Heart + " \\$zRandom Map Survival Together \\$f33(BETA)")) {
-                UI::TextDisabled(Icons::InfoCircle + " Hover for infos");
-                UI::SetPreviousTooltip("Random Map Survival Together is a collaborative multiplayer survival mode where players work as a team to survive as long as possible. When any team member gets a goal medal, the entire team gets +3 minutes. When anyone skips, the team loses -1 minute. True teamwork!");
-                
-                UI::AlignTextToFramePadding();
-                UI::Text("Club ID:");
-                UI::SameLine();
-                UI::SetNextItemWidth(150);
-                PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMSTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
-                UI::SameLine();
-                UI::Text("Room ID:");
-                UI::SameLine();
-                UI::SetNextItemWidth(150);
-                PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMSTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
-
-                bool RMST_isServerOK = false;
-                if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
-                    RMST_isServerOK = true;
-                    if (UI::Button(Icons::Search + " Auto-detect room")) {
-                        startnew(BRMStartAutoDetectRoomRMST);
-                    }
-                    UI::SameLine();
-                    if (UI::Button(Icons::InfoCircle + " Help")) {
-                        Renderables::Add(RMSTHelpModalDialog());
-                    }
-                } else {
-                    UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease set a Club ID and Room ID");
-                }
-
                 if (RMST_isServerOK && !TM::IsInServer()) {
                     UI::BeginDisabled();
                     UI::GreyButton(Icons::Heart + " Start Random Map Survival Together");
@@ -208,6 +176,7 @@ namespace RMC
                     selectedGameMode = GameMode::SurvivalTogether;
                     startnew(CoroutineFunc(SurvivalTogether.StartRMST));
                 }
+#endif
                 UI::TreePop();
             }
 #endif
