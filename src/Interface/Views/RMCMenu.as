@@ -172,7 +172,7 @@ namespace RMC
                     UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
                     UI::EndDisabled();
                 }
-                if (RMST_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Heart + " Start Random Map Survival Together")){
+                if (RMT_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Heart + " Start Random Map Survival Together")){
                     selectedGameMode = GameMode::SurvivalTogether;
                     startnew(CoroutineFunc(SurvivalTogether.StartRMST));
                 }
