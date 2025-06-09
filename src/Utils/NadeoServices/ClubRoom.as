@@ -69,7 +69,7 @@ namespace NadeoServices
                 playerCount = json["playerCount"];
                 script = json["script"];
                 scalable = json["scalable"];
-                if (json["scriptSettings"]["S_TimeLimit"].GetType() != Json::Type::Null) timeLimit = json["scriptSettings"]["S_TimeLimit"]["value"];
+                if (json["scriptSettings"].HasKey("S_TimeLimit")) timeLimit = json["scriptSettings"]["S_TimeLimit"]["value"];
                 if (json["serverInfo"].GetType() != Json::Type::Null) {
                     joinLink = json["serverInfo"]["joinLink"];
                     currentMapUid = json["serverInfo"]["currentMapUid"];
