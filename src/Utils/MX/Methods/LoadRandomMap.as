@@ -339,7 +339,7 @@ namespace MX
 #elif MP4
             // Fetch in the correct titlepack
             if (TM::CurrentTitlePack() == "TMAll") {
-                int envi = Math::Rand(0,6);
+                int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
                 params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
             } else {
                 params.Set("titlepack", TM::CurrentTitlePack());
