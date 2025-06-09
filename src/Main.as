@@ -94,8 +94,7 @@ void Main()
 
     DataManager::EnsureSaveFileFolderPresent();
 
-    Meta::PluginCoroutine@ tagLoad = startnew(MX::FetchMapTags);
-    await(tagLoad);
+    await(startnew(MX::FetchMapTags));
 
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonFromDataFolder.GetType() != Json::Type::Null) {
