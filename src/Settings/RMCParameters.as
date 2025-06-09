@@ -117,7 +117,7 @@ namespace PluginSettings
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the state of the current run when stopping the run", RMC_RUN_AUTOSAVE);
 
             UI::SetNextItemWidth(300);
-            RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 10, 120);
+            RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 5, 300);
             UI::SetNextItemWidth(300);
             RMC_FreeSkipAmount = UI::SliderInt("Amount of free skips in RMC runs", RMC_FreeSkipAmount, 1, 200);
             UI::SetNextItemWidth(300);
