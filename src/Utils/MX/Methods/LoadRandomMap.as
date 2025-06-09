@@ -2,7 +2,8 @@ namespace MX
 {
     MX::MapInfo@ preloadedMap;
     bool isLoadingPreload = false;
-
+    // "Unassigned" = MP1 Canyon and TMF Stadium maps. They are guaranteed to be compatible as editing the map would change the title ID.
+    const array<string> tmAllCompatibleTitlepacks = { "TMAll", "TMCanyon", "TMStadium", "TMValley", "TMLagoon", "Unassigned" };
     Json::Value CheckCustomRulesParametersNoResults() {
         string check_url = PluginSettings::RMC_MX_Url + "/api/maps";
 
@@ -337,8 +338,9 @@ namespace MX
             }
 #elif MP4
             // Fetch in the correct titlepack
-            if (TM::CurrentTitlePack() == "TMAll" && false) {
-                params.Set("titlepack", TM::CurrentTitlePack()+"&titlepack=TMCanyon&titlepack=TMValley&titlepack=TMStadium&titlepack=TMLagoon"); // TODO doesn't work
+            if (TM::CurrentTitlePack() == "TMAll") {
+                int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
+                params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
             } else {
                 params.Set("titlepack", TM::CurrentTitlePack());
             }
