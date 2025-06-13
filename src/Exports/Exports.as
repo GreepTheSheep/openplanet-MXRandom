@@ -8,6 +8,7 @@ namespace MXRandom
     import bool RMCGotBelowMedalOnCurrentMap() from "MXRandom";
     import int RMCGoalMedalCount() from "MXRandom";
     import int RMCActualGameMode() from "MXRandom";
+    import bool get_WithCustomParameters() from "MXRandom";
 
     import void LoadRandomMap() from "MXRandom";
     import string GetRandomMapUrlAsync() from "MXRandom";

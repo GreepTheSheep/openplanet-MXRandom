@@ -23,6 +23,7 @@ Select "Random Map Challenge" for the RMC timer.
 - `MXRandom::RMCGotBelowMedalOnCurrentMap()` - Returns true if the current map has a medal below the user-defined goal medal.
 - `MXRandom::RMCGoalMedalCount()` - Returns the number of goal medals on a current RMC run.
 - `MXRandom::RMCActualGameMode()` - Returns the actual game mode of the current RMC run. (See "Game Modes" table below)
+- `MXRandom::CustomParameters` - Returns true if the player is using custom searching parameters.
 
 ### Utils
 - `MXRandom::LoadRandomMap()` - Loads a random map from (T)MX.
