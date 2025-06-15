@@ -208,17 +208,15 @@ namespace RMC
                 Survival.RenderGoalMedal();
                 UI::HPadding(25);
                 Survival.RenderBelowGoalMedal();
+                UI::AlignTextToFramePadding();
                 UI::Text("Survived time: " + RMC::FormatTimer(Survival.SurvivedTime));
             }
             else if (selectedGameMode == GameMode::Objective) {
                 Objective.RenderGoalMedal();
                 UI::HPadding(25);
                 Objective.RenderBelowGoalMedal();
-                UI::Text("Total time:");
-                UI::SameLine();
-                UI::PushFont(Fonts::TimerFont);
-                UI::Text(RMC::FormatTimer(Objective.RunTime));
-                UI::PopFont();
+                UI::AlignTextToFramePadding();
+                UI::Text("Total time: " + RMC::FormatTimer(Objective.RunTime));
             }
 #if TMNEXT
             else if (selectedGameMode == GameMode::Together) {
