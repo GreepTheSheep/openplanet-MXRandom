@@ -11,7 +11,7 @@ namespace PluginSettings
         }
 
         UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Quick map hotkey", tostring(S_QuickMapKey))) {
+        if (UI::BeginCombo("Quick map hotkey", S_QuickMapKey == VirtualKey(0) ? "None" : tostring(S_QuickMapKey))) {
             for (int i = 0; i <= 254; i++) {
                 if (tostring(VirtualKey(i)) == tostring(i)) continue;
                 if (UI::Selectable(tostring(VirtualKey(i)), S_QuickMapKey == VirtualKey(i))) {
