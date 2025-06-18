@@ -280,13 +280,10 @@ namespace MX
         params.Set("random", "1");
         params.Set("count", "1");
 
-        if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules)
-        {
+        if ((RMC::IsRunning || RMC::IsStarting) && !PluginSettings::CustomRules) {
             params.Set("etag", RMC::config.etags);
             params.Set("authortimemax", tostring(RMC::allowedMaxLength));
-        }
-        else
-        {
+        } else if (PluginSettings::CustomRules) {
             if (PluginSettings::MinLength != 0) {
                 params.Set("authortimemin", tostring(PluginSettings::MinLength));
             }
