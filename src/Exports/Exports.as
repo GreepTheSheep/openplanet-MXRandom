@@ -10,6 +10,7 @@ namespace MXRandom
     import int RMCActualGameMode() from "MXRandom";
     import bool get_WithCustomParameters() from "MXRandom";
 
-    import void LoadRandomMap() from "MXRandom";
-    import string GetRandomMapUrlAsync() from "MXRandom";
+    import void LoadRandomMap(bool customParameters = false) from "MXRandom";
+    import string GetRandomMapUrlAsync(bool customParameters = false) from "MXRandom";
+    import Json::Value@ GetRandomMapInfoAsync(bool customParameters = false) from "MXRandom";
 }

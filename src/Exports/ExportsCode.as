@@ -10,12 +10,46 @@ namespace MXRandom
     int RMCActualGameMode() { return RMC::selectedGameMode; }
     bool get_WithCustomParameters() { return PluginSettings::CustomRules; }
 
-    void LoadRandomMap() { startnew(MX::LoadRandomMap); }
+    void LoadRandomMap(bool customParameters = false) { 
+        MX::MapInfo@ map = GetMap(customParameters);
 
-    string GetRandomMapUrlAsync() {
-        string URL = MX::CreateQueryURL();
-        Json::Value res = API::GetAsync(URL)["Results"][0];
-        MX::MapInfo@ map = MX::MapInfo(res);
-        return PluginSettings::RMC_MX_Url+"/mapgbx/"+map.MapId;
+        if (map is null) {
+            Log::Error("Failed to load a random map: Couldn't find a map.");
+            return;
+        }
+
+        startnew(TM::LoadMap, map);
+    }
+
+    string GetRandomMapUrlAsync(bool customParameters = false) {
+        MX::MapInfo@ map = GetMap(customParameters);
+
+        if (map is null) {
+            return "";
+        }
+
+        return PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
+    }
+
+    Json::Value@ GetRandomMapInfoAsync(bool customParameters = false) {
+        MX::MapInfo@ map = GetMap(customParameters);
+
+        if (map is null) {
+            return null;
+        }
+
+        return map.ToJson();
+    }
+
+    MX::MapInfo@ GetMap(bool customParameters = false) {
+        string URL = MX::CreateQueryURL(customParameters);
+        Json::Value res = API::GetAsync(URL);
+
+        if (res.GetType() == Json::Type::Null || !res.HasKey("Results") || res["Results"].Length == 0) {
+            Log::Error("Failed to find a random map from TMX.");
+            return null;
+        }
+
+        return MX::MapInfo(res["Results"][0]);
     }
 }
