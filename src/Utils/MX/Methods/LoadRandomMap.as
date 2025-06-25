@@ -150,6 +150,13 @@ namespace MX
                 return;
             }
 
+            if (RMC::selectedGameMode == RMC::GameMode::SurvivalTogether && map.ServerSizeExceeded) {
+                Log::Warn("Map is too big to play in servers, retrying...");
+                sleep(1000);
+                PreloadRandomMap();
+                return;
+            }
+
             // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
                 if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
