@@ -11,14 +11,11 @@ namespace MXRandom
     bool get_WithCustomParameters() { return PluginSettings::CustomRules; }
 
     void LoadRandomMap(bool customParameters = false) { 
-        MX::MapInfo@ map = GetMap(customParameters);
-
-        if (map is null) {
-            Log::Error("Failed to load a random map: Couldn't find a map.");
-            return;
+        if (customParameters) {
+            startnew(LoadCustomMap);
+        } else {
+            startnew(LoadMap);
         }
-
-        startnew(TM::LoadMap, map);
     }
 
     string GetRandomMapUrlAsync(bool customParameters = false) {
@@ -51,5 +48,27 @@ namespace MXRandom
         }
 
         return MX::MapInfo(res["Results"][0]);
+    }
+
+    void LoadMap() {
+        MX::MapInfo@ map = GetMap();
+
+        if (map is null) {
+            Log::Error("Failed to load a random map: Couldn't find a map.");
+            return;
+        }
+
+        startnew(TM::LoadMap, map);
+    }
+
+    void LoadCustomMap() {
+        MX::MapInfo@ map = GetMap(true);
+
+        if (map is null) {
+            Log::Error("Failed to load a random map with custom parameters: Couldn't find a map.");
+            return;
+        }
+
+        startnew(TM::LoadMap, map);
     }
 }
