@@ -308,7 +308,7 @@ namespace MX
                 params.Set("etag", PluginSettings::ExcludeMapTags);
             }
             if (PluginSettings::TagInclusiveSearch) {
-                params.Set("taginclusive", "1");
+                params.Set("taginclusive", "true");
             }
             if (!PluginSettings::DifficultiesArray.IsEmpty()){
                 params.Set("difficulty", PluginSettings::Difficulties);
