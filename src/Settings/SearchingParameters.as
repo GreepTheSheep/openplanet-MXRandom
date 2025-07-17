@@ -332,7 +332,7 @@ namespace PluginSettings
         for (uint i = 0; i < values.Length; i++) {
             int n;
 
-            if (Text::TryParseInt(values[i], n)) {
+            if (values[i] != "" && Text::TryParseInt(values[i], n)) {
                 res.InsertLast(n);
             }
         }
@@ -342,8 +342,12 @@ namespace PluginSettings
 
     array<string> ConvertStringToArray(const string &in str, const string &in separator = ",") {
         array<string> res = str.Split(separator);
-        for (uint i = 0; i < res.Length; i++) {
-            res[i] = res[i].ToLower().Trim();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase
+        for (uint i = res.Length - 1; i >= 0; i--) {
+            if (res[i] == "") {
+                res.RemoveAt(i);
+            } else {
+                res[i] = res[i].ToLower().Trim();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase
+            }
         }
         return res;
     }
