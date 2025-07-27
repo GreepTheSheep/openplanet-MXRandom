@@ -66,7 +66,7 @@ class RMObjective : RMC
             UI::ShowNotification("Please wait...");
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
 #if TMNEXT
-            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(CurrentMapFromJson)) {
                 RMC::EndTime += RMC::TimeSpentMap;
             }
 #endif
@@ -88,8 +88,8 @@ class RMObjective : RMC
 
     void StartTimer() override
     {
-        RMC::StartTime = Time::get_Now();
-        RunTimeStart = Time::get_Now();
+        RMC::StartTime = Time::Now;
+        RunTimeStart = Time::Now;
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
@@ -121,7 +121,7 @@ class RMObjective : RMC
                     CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
                     if (currentMapInfo !is null) {
                         if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
-                            RMC::StartTime = Time::get_Now();
+                            RMC::StartTime = Time::Now;
                             PendingTimerLoop();
 
                             if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
@@ -143,8 +143,8 @@ class RMObjective : RMC
                 }
             } else {
                 // pause timer
-                RMC::StartTime = Time::get_Now() - (Time::get_Now() - RMC::StartTime);
-                RMC::EndTime = Time::get_Now() - (Time::get_Now() - RMC::EndTime);
+                RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
+                RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCPaused(true);
 #endif

@@ -179,10 +179,10 @@ class RMC
                         }
                         UI::TextDisabled("by " + CurrentMapFromJson.Username);
 #if TMNEXT
-                        if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) {
-                            RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(CurrentMapFromJson);
-                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z"+prepatchTag.title);
-                            UI::SetPreviousTooltip(prepatchTag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
+                        if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(CurrentMapFromJson)) {
+                            RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(CurrentMapFromJson);
+                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z" + tag.title);
+                            UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
                         }
 #endif
                         if (PluginSettings::RMC_TagsLength != 0) {
@@ -244,7 +244,7 @@ class RMC
         int HourGlassValue = Time::Stamp % 3;
         string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
         if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
-            if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::get_Now() - RMC::StartTime);
+            if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
             RMC::IsPaused = !RMC::IsPaused;
         }
     }
@@ -287,7 +287,7 @@ class RMC
         }
         if (!RMC::GotBelowMedalOnCurrentMap) UI::SetPreviousTooltip(
             "Free Skips are if the map is finishable but you still want to skip it for any reason.\n"+
-            "Standard RMC rules allow 1 Free skip. If the map is broken please use the button below."
+            "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
         );
 
         if (UI::OrangeButton(Icons::PlayCircleO + "Skip broken Map")) {
@@ -337,7 +337,7 @@ class RMC
             ModeStartTimestamp = RMC::StartTime - (Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]));
 
         } else {
-            ModeStartTimestamp = Time::get_Now();
+            ModeStartTimestamp = Time::Now;
         }
         RMC::IsPaused = false;
         RMC::IsRunning = true;
@@ -436,8 +436,8 @@ class RMC
                 }
             } else {
                 // pause timer
-                RMC::StartTime = Time::get_Now() - (Time::get_Now() - RMC::StartTime);
-                RMC::EndTime = Time::get_Now() - (Time::get_Now() - RMC::EndTime);
+                RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
+                RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCPaused(true);
 #endif

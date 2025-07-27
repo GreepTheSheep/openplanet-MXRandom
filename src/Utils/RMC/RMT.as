@@ -8,8 +8,8 @@ class RMT : RMC
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
     bool m_CurrentlyLoadingRecords = false;
-    PBTime@ playerGotGoalActualMap;
-    PBTime@ playerGotBelowGoalActualMap;
+    PBTime@ playerGotGoal;
+    PBTime@ playerGotBelowGoal;
     uint RMTTimerMapChange = 0;
     bool isSwitchingMap = false;
     bool pressedStopButton = false;
@@ -113,7 +113,6 @@ class RMT : RMC
         @currentMap = MX::MapInfo(res);
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
         seenMaps.InsertLast(currentMap.MapUid);
-        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#420399"));
 
         if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
             Log::Trace("RMT: Map is not on NadeoServices, retrying...");
@@ -196,7 +195,7 @@ class RMT : RMC
         @currentMap = nextMap;
         @nextMap = null;
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
-        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.", Text::ParseHexColor("#420399"));
+        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
@@ -282,16 +281,16 @@ class RMT : RMC
                 }
 
                 if (!RMC::GotGoalMedalOnCurrentMap && isObjectiveCompleted()) {
-                    Log::Log(playerGotGoalActualMap.name + " got the goal medal with a time of " + playerGotGoalActualMap.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoalActualMap.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
+                    Log::Log(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
                     RMC::GoalMedalCount += 1;
                     RMC::GotGoalMedalOnCurrentMap = true;
-                    RMTPlayerScore@ playerScored = findOrCreatePlayerScore(playerGotGoalActualMap);
+                    RMTPlayerScore@ playerScored = GetPlayerScore(playerGotGoal);
                     playerScored.AddGoal();
                     m_playerScores.SortDesc();
 
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoalActualMap.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoalActualMap.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoal.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoal.timeStr);
                     sleep(200);
                     BetterChat::SendChatMessage(Icons::Users + " Switching map...");
 #endif
@@ -299,11 +298,11 @@ class RMT : RMC
                     RMTSwitchMap();
                 }
                 if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedalOnCurrentMap && isBelowObjectiveCompleted()) {
-                    Log::Log(playerGotBelowGoalActualMap.name + " got the below goal medal with a time of " + playerGotBelowGoalActualMap.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
+                    Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
                     RMC::GotBelowMedalOnCurrentMap = true;
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoalActualMap.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoalActualMap.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr);
                     sleep(200);
                     BetterChat::SendChatMessage(Icons::Users + " You can skip and take the " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal");
 #endif
@@ -339,33 +338,40 @@ class RMT : RMC
 
     void RenderCurrentMap() override
     {
-        CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (!isSwitchingMap && currentMapChallenge !is null) {
-            CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
-            if (currentMapInfo !is null) {
+
+        if (!isSwitchingMap) {
+            auto app = GetApp();
+
+            if (app.RootMap !is null) {
                 UI::Separator();
                 if (currentMap !is null) {
                     UI::Text(currentMap.Name);
+
                     if (PluginSettings::RMC_ShowAwards) {
                         UI::SameLine();
                         UI::Text("\\$db4" + Icons::Trophy + "\\$z " + currentMap.AwardCount);
                     }
+
                     if(PluginSettings::RMC_DisplayMapDate) {
                         UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
                         UI::SameLine();
                     }
+
                     UI::TextDisabled("by " + currentMap.Username);
-                    if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.isMapHasPrepatchMapTags(currentMap)) {
-                        RMCConfigMapTag@ prepatchTag = RMC::config.getMapPrepatchMapTag(currentMap);
-                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z"+prepatchTag.title);
-                        UI::SetPreviousTooltip(prepatchTag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
+
+                    if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
+                        RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
+
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z" + tag.title);
+                        UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
+
                     if (PluginSettings::RMC_TagsLength != 0) {
-                        if (currentMap.Tags.Length == 0) UI::TextDisabled("No tags");
-                        else {
-                            uint tagsLength = currentMap.Tags.Length;
-                            if (currentMap.Tags.Length > PluginSettings::RMC_TagsLength) tagsLength = PluginSettings::RMC_TagsLength;
-                            for (uint i = 0; i < tagsLength; i++) {
+                        if (currentMap.Tags.IsEmpty()) {
+                            UI::TextDisabled("No tags");
+                        } else {
+                            uint tagsRender = Math::Min(currentMap.Tags.Length, PluginSettings::RMC_TagsLength);
+                            for (uint i = 0; i < tagsRender; i++) {
                                 Render::MapTag(currentMap.Tags[i]);
                                 UI::SameLine();
                             }
@@ -381,9 +387,9 @@ class RMT : RMC
             UI::Separator();
             UI::AlignTextToFramePadding();
             UI::Text("Switching map...");
-            UI::AlignTextToFramePadding();
-            UI::Text(Icons::InfoCircle + " hover for infos");
-            UI::SetPreviousTooltip("Nadeo prevent sometimes when switching map too often and will not change map.\nIf after 10 seconds the podium screen is not shown, you can start a vote to change to next map in the game pause menu.");
+            UI::SameLine();
+            UI::Text(Icons::InfoCircle);
+            UI::SetPreviousTooltip("Map switch might be prevented by Nadeo if done too quickly.\n\nIf the podium screen is not shown after 10 seconds, you can \nstart a vote to change to the next map in the game pause menu.");
         }
     }
 
@@ -410,13 +416,13 @@ class RMT : RMC
             if (RMC::IsPaused) RMC::IsPaused = false;
             if (RMC::GotBelowMedalOnCurrentMap) {
                 BelowMedalCount += 1;
-                RMTPlayerScore@ playerScored = findOrCreatePlayerScore(playerGotBelowGoalActualMap);
+                RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
                 playerScored.AddBelowGoal();
             }
             MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             if (
                 (PluginSettings::RMC_PrepatchTagsWarns &&
-                RMC::config.isMapHasPrepatchMapTags(CurrentMapFromJson)) &&
+                RMC::config.HasPrepatchTags(CurrentMapFromJson)) &&
                 !RMC::GotBelowMedalOnCurrentMap
             ) RMC::EndTime += RMC::TimeSpentMap;
 #if DEPENDENCY_BETTERCHAT
@@ -433,14 +439,14 @@ class RMT : RMC
         int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
         if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
 
-        int tableCols = 3;
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) tableCols = 2;
-        if (UI::BeginTable("RMTScores", tableCols)) {
+        if (UI::BeginTable("RMTScores", 3)) {
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn(PluginSettings::RMC_GoalMedal, UI::TableColumnFlags::WidthFixed, 40);
-            if (tableCols == 3) UI::TableSetupColumn(BelowMedal, UI::TableColumnFlags::WidthFixed, 40);
+            UI::TableSetupColumn(BelowMedal, UI::TableColumnFlags::WidthFixed, 40);
             UI::TableHeadersRow();
+
+            UI::TableSetColumnEnabled(2, PluginSettings::RMC_GoalMedal != RMC::Medals[0]);
 
             UI::ListClipper clipper(m_playerScores.Length);
             while(clipper.Step()) {
@@ -454,8 +460,8 @@ class RMT : RMC
                     UI::Text(s.name);
                     UI::TableNextColumn();
                     UI::Text(tostring(s.goals));
+                    UI::TableNextColumn();
                     if (PluginSettings::RMC_GoalMedal != RMC::Medals[0]) {
-                        UI::TableNextColumn();
                         UI::Text(tostring(s.belowGoals));
                     }
                     UI::PopID();
@@ -479,7 +485,7 @@ class RMT : RMC
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
                     if (m_mapPersonalBests[r].time <= objectiveTime) {
-                        @playerGotGoalActualMap = m_mapPersonalBests[r];
+                        @playerGotGoal = m_mapPersonalBests[r];
                         return true;
                     }
                 }
@@ -501,7 +507,7 @@ class RMT : RMC
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
                     if (m_mapPersonalBests[r].time <= objectiveTime) {
-                        @playerGotBelowGoalActualMap = m_mapPersonalBests[r];
+                        @playerGotBelowGoal = m_mapPersonalBests[r];
                         return true;
                     }
                 }
@@ -549,14 +555,16 @@ class RMT : RMC
         }
     }
 
-    RMTPlayerScore@ findOrCreatePlayerScore(PBTime@ _player) {
+    RMTPlayerScore@ GetPlayerScore(PBTime@ _player) {
         for (uint i = 0; i < m_playerScores.Length; i++) {
-            RMTPlayerScore@ playerScore = m_playerScores[i];
-            if (playerScore.wsid == _player.wsid) return playerScore;
+            RMTPlayerScore@ score = m_playerScores[i];
+            if (score.wsid == _player.wsid) return score;
         }
-        RMTPlayerScore@ newPlayerScore = RMTPlayerScore(_player);
-        m_playerScores.InsertLast(newPlayerScore);
-        return newPlayerScore;
+
+        auto newPlayer = RMTPlayerScore(_player);
+        m_playerScores.InsertLast(newPlayer);
+
+        return newPlayer;
     }
 
     void DrawPlayerProgress() {
@@ -631,23 +639,25 @@ class RMTPlayerScore {
     int belowGoals;
 
     RMTPlayerScore(PBTime@ _player) {
-        wsid = _player.wsid; // rare null pointer exception here
-        name = _player.name;
+        this.wsid = _player.wsid;
+        this.name = _player.name;
     }
 
     int AddGoal() {
-        goals = goals + 1;
-        return goals;
+        this.goals++;
+
+        return this.goals;
     }
 
     int AddBelowGoal() {
-        belowGoals = belowGoals + 1;
-        return belowGoals;
+        this.belowGoals++;
+
+        return this.belowGoals;
     }
 
     int opCmp(RMTPlayerScore@ other) const {
-        if (goals < other.goals) return -1;
-        if (goals == other.goals) return 0;
+        if (this.goals < other.goals) return -1;
+        if (this.goals == other.goals) return 0;
         return 1;
     }
 #else

@@ -83,9 +83,9 @@ class RMS : RMC
 
     void StartTimer() override
     {
-        RMC::StartTime = Time::get_Now();
+        RMC::StartTime = Time::Now;
         RMC::EndTime =  !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
-        SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::get_Now() : Time::get_Now() - int(RMC::CurrentRunData["CurrentRunTime"]);
+        SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::Now : Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]);
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         if (RMC::GotGoalMedalOnCurrentMap) GotGoalMedalNotification();

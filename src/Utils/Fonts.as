@@ -5,8 +5,8 @@ namespace Fonts {
     UI::Font@ MidBold;
 
     void Load() {
-        @Header = UI::LoadFont("DroidSans-Bold.ttf", 22, -1, -1, true, true, true);
-        @HeaderSub = UI::LoadFont("DroidSans.ttf", 20, -1, -1, true, true, true);
+        @Header = UI::LoadFont("DroidSans-Bold.ttf", 22);
+        @HeaderSub = UI::LoadFont("DroidSans.ttf", 20);
         @TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
         @MidBold = UI::LoadFont("DroidSans-Bold.ttf", 18);
     }

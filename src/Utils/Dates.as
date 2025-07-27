@@ -1,25 +1,39 @@
 class Date
 {
-    int year;
-    int month;
-    int day;
+    int timestamp;
+    Time::Info info;
 
-    Date(const int &in _year, const int &in _month, const int &in _day) {
-        year = _year;
-        month = _month;
-        day = _day;
+    Date(const string &in time, const string &in format) {
+        timestamp = Time::ParseFormatString(format, time);
+        info = Time::Parse(timestamp);
+        print(timestamp);
     }
 
-    bool isBefore(const Date@ &in date) {
-        return year < date.year || (year == date.year && (month < date.month || (month == date.month && day <= date.day)));
+    Date(const int &in stamp) {
+        timestamp = stamp;
+        info = Time::Parse(stamp);
     }
 
-    bool isAfter(const Date@ &in date) {
-        return !isBefore(date);
+    bool isBefore(const Date@ &in date) const {
+        return this < date;
     }
 
-    string ToString() {
-        return year + "-" + Text::Format("%.02d", month) + "-" + Text::Format("%.02d", day);
+    bool isAfter(const Date@ &in date) const {
+        return this > date;
+    }
+
+    string ToString() const {
+        return Time::FormatString("%F", timestamp);
+    }
+
+    int opCmp(const Date@ &in other) const {
+        if (this.timestamp < other.timestamp) {
+            return -1;
+        } else if (this.timestamp > other.timestamp) {
+            return 1;
+        }
+
+        return 0;
     }
 }
 

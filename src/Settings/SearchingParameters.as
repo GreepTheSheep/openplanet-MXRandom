@@ -346,7 +346,7 @@ namespace PluginSettings
             if (res[i] == "") {
                 res.RemoveAt(i);
             } else {
-                res[i] = res[i].ToLower().Trim();  // It does not look like TMX considers case when searching for author names, so we can just use lowercase
+                res[i] = res[i].ToLower().Trim();
             }
         }
         return res;

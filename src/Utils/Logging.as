@@ -1,5 +1,9 @@
 namespace Log
 {
+    const vec4 WARN_COLOR    = UI::HSV(0.11, 1.0, 1.0);
+    const vec4 ERROR_COLOR   = UI::HSV(1.0, 1.0, 1.0);
+    const vec4 LOADING_COLOR = UI::HSV(0.25, 1, 0.7);
+
     void Log(const string &in message, bool showNotification = false)
     {
         print(message);
@@ -23,8 +27,7 @@ namespace Log
         warn(message);
         if (showNotification)
         {
-            vec4 color = UI::HSV(0.11, 1.0, 1.0);
-            UI::ShowNotification(Icons::Kenney::ExclamationCircle + " " + PLUGIN_NAME + " - Warning", message, color, 5000);
+            UI::ShowNotification(Icons::Kenney::ExclamationCircle + " " + PLUGIN_NAME + " - Warning", message, WARN_COLOR, 5000);
         }
     }
 
@@ -33,15 +36,14 @@ namespace Log
         error(message);
         if (showNotification)
         {
-            vec4 color = UI::HSV(1.0, 1.0, 1.0);
-            UI::ShowNotification(Icons::Kenney::TimesCircle + " " + PLUGIN_NAME + " - Error", message, color, 8000);
+            UI::ShowNotification(Icons::Kenney::TimesCircle + " " + PLUGIN_NAME + " - Error", message, ERROR_COLOR, 8000);
         }
     }
 
     void LoadingMapNotification(MX::MapInfo@ map)
     {
         Log("Loading map: " + map.Name + " (" + map.MapId + ")");
-        vec4 color = UI::HSV(0.25, 1, 0.7);
-        UI::ShowNotification(Icons::Kenney::ReloadInverse + " Loading map", map.Name + "\nby: "+map.Username, color, 5000);
+
+        UI::ShowNotification(Icons::Kenney::ReloadInverse + " Loading map", map.Name + "\nby: "+map.Username, LOADING_COLOR, 5000);
     }
 }
