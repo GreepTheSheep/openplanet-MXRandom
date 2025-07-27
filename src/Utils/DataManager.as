@@ -74,7 +74,10 @@ namespace DataManager
     void RemoveCurrentSaveFile() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
-        IO::Delete(SAVE_DATA_LOCATION + gameMode + ".json");
+        string fileName = SAVE_DATA_LOCATION + gameMode + ".json";
+        if (IO::FileExists(fileName)) {
+            IO::Delete(fileName);
+        }
         RMC::CurrentRunData = Json::Object();
     }
 

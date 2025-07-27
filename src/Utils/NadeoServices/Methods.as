@@ -74,8 +74,12 @@ namespace MXNadeoServicesGlobal
         else if (regScript.HasSucceeded)
             trace("UploadMapFromLocal: Map uploaded: " + AddMapToServer_MapUid);
         dfm.TaskResult_Release(regScript.Id);
-        string downloadedMapFolder = IO::FromUserGameFolder("Maps/Downloaded");
-        IO::Delete(downloadedMapFolder + "/" + AddMapToServer_MapUid + ".Map.Gbx");
+
+        string mapLocation = IO::FromUserGameFolder("Maps/Downloaded") + "/" + AddMapToServer_MapUid + ".Map.Gbx";
+
+        if (IO::FileExists(mapLocation)) {
+            IO::Delete(mapLocation);
+        }
     }
 
     bool CheckIfMapExistsAsync(const string &in mapUid)

@@ -78,7 +78,12 @@ namespace Migration
             DataJson["recentlyPlayed"].Add(MapJson);
         }
         DataManager::SaveData();
-        IO::Delete(IO::FromDataFolder("TMXRandom_PlayedMaps.json"));
+
+        string oldFile = IO::FromDataFolder("TMXRandom_PlayedMaps.json");
+
+        if (IO::FileExists(oldFile)) {
+            IO::Delete(oldFile);
+        }
     }
 
     // Migrates data and settings to MX 2.0
@@ -251,7 +256,9 @@ namespace Migration
 
     void RemoveMX1SaveFiles() {
         for (uint f = 0; f < oldSaves.Length; f++) {
-            IO::Delete(oldSaves[f]);
+            if (IO::FileExists(oldSaves[f])) {
+                IO::Delete(oldSaves[f]);
+            }
         }
     }
 }
