@@ -342,7 +342,7 @@ namespace PluginSettings
 
     array<string> ConvertStringToArray(const string &in str, const string &in separator = ",") {
         array<string> res = str.Split(separator);
-        for (uint i = res.Length - 1; i >= 0; i--) {
+        for (int i = int(res.Length) - 1; i >= 0; i--) {
             if (res[i] == "") {
                 res.RemoveAt(i);
             } else {
