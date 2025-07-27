@@ -43,7 +43,7 @@ namespace MXNadeoServicesGlobal
         while (!req.Finished()) {
             yield();
         }
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - Check server: " + req.String());
+        Log::Trace("NadeoServices - Check server: " + req.String());
         auto res = req.Json();
         isCheckingRoom = false;
 
@@ -72,7 +72,7 @@ namespace MXNadeoServicesGlobal
         if (regScript.HasFailed)
             Log::Error("Uploading map failed: " + regScript.ErrorType + ", " + regScript.ErrorCode + ", " + regScript.ErrorDescription);
         else if (regScript.HasSucceeded)
-            trace("UploadMapFromLocal: Map uploaded: " + AddMapToServer_MapUid);
+            Log::Trace("UploadMapFromLocal: Map uploaded: " + AddMapToServer_MapUid);
         dfm.TaskResult_Release(regScript.Id);
 
         string mapLocation = IO::FromUserGameFolder("Maps/Downloaded") + "/" + AddMapToServer_MapUid + ".Map.Gbx";
@@ -85,7 +85,7 @@ namespace MXNadeoServicesGlobal
     bool CheckIfMapExistsAsync(const string &in mapUid)
     {
         string url = NadeoServices::BaseURLLive()+"/api/token/map/"+mapUid;
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - Check if map exists: " + url);
+        Log::Trace("NadeoServices - Check if map exists: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
         req.Start();
         while (!req.Finished()) {
@@ -136,14 +136,14 @@ namespace MXNadeoServicesGlobal
     void RunClubRoomRequest(const NadeoServices::ClubRoom@ &in room, Json::Value@ bodyJson, const string &in callingFuncName) {
         string url = NadeoServices::BaseURLLive()+"/api/token/club/"+room.clubId+"/room/"+room.activityId+"/edit";
         string body = Json::Write(bodyJson);
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - "+callingFuncName+": " + url + " - " + body);
+        Log::Trace("NadeoServices - "+callingFuncName+": " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
         req.Start();
         while (!req.Finished()) {
             yield();
         }
         auto res = req.String();
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - "+callingFuncName+"::Res: " + res);
+        Log::Trace("NadeoServices - "+callingFuncName+"::Res: " + res);
     }
 
     void SetMapToClubRoomAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID)
@@ -153,14 +153,14 @@ namespace MXNadeoServicesGlobal
         bodyJson["maps"] = Json::Array();
         bodyJson["maps"].Add(mapUID);
         string body = Json::Write(bodyJson);
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - SetMapToClubRoom: " + url + " - " + body);
+        Log::Trace("NadeoServices - SetMapToClubRoom: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
         req.Start();
         while (!req.Finished()) {
             yield();
         }
         auto res = req.String();
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - SetMapToClubRoom::Res: " + res);
+        Log::Trace("NadeoServices - SetMapToClubRoom::Res: " + res);
     }
 
     void ClubRoomSwitchMapAsync(const NadeoServices::ClubRoom@ &in room)
@@ -179,14 +179,14 @@ namespace MXNadeoServicesGlobal
         bodyJson["settings"] = bodyJsonSettings;
         string body = Json::Write(bodyJson);
 
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - ClubRoomSwitchMapAsync: " + url + " - " + body);
+        Log::Trace("NadeoServices - ClubRoomSwitchMapAsync: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
         req.Start();
         while (!req.Finished()) {
             yield();
         }
         auto res = req.String();
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - ClubRoomSwitchMapAsync::Res: " + res);
+        Log::Trace("NadeoServices - ClubRoomSwitchMapAsync::Res: " + res);
     }
 
     void ClubRoomSetCountdownTimer(const NadeoServices::ClubRoom@ &in room, const int &in timerSec)
@@ -199,13 +199,13 @@ namespace MXNadeoServicesGlobal
 
     int GetMapWorldRecord(const string &in mapUid) {
         string url = NadeoServices::BaseURLLive()+"/api/token/leaderboard/group/Personal_Best/map/"+mapUid+"/top?length=1&onlyWorld=true&offset=0";
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - Get Map WR: " + url);
+        Log::Trace("NadeoServices - Get Map WR: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
         req.Start();
         while (!req.Finished()) {
             yield();
         }
-        if (IS_DEV_MODE) Log::Trace("NadeoServices - Get Map WR Res: " + req.String());
+        Log::Trace("NadeoServices - Get Map WR Res: " + req.String());
         auto res = req.Json();
 
         if (res.GetType() != Json::Type::Object) {
@@ -220,7 +220,7 @@ namespace MXNadeoServicesGlobal
         try {
             uint mapWR = res["tops"][0]["top"][0]["score"];
             string mapWRPlayer =  res["tops"][0]["top"][0]["accountId"];
-            if (IS_DEV_MODE) Log::Trace("NadeoServices - Map WR: " + mapWR + " by accountid " + mapWRPlayer);
+            Log::Trace("NadeoServices - Map WR: " + mapWR + " by accountid " + mapWRPlayer);
             return mapWR;
         } catch {
             Log::Error("NadeoServices - Map WR failed: " + getExceptionInfo());
