@@ -92,7 +92,9 @@ namespace PluginSettings
                 RMC_ExitMapOnEndTime = false;
                 RMC_Duration = 60;
                 RMC_SurvivalMaxTime = 15;
+#if TMNEXT
                 RMC_PrepatchTagsWarns = true;
+#endif
                 RMC_RUN_AUTOSAVE = true;
                 RMC_FreeSkipAmount = 1;
                 RMC_PushLeaderboardResults = true;

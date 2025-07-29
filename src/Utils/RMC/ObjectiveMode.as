@@ -64,9 +64,9 @@ class RMObjective : RMC
             Skips += 1;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
-            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+            MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
 #if TMNEXT
-            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(CurrentMapFromJson)) {
+            if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
                 RMC::EndTime += RMC::TimeSpentMap;
             }
 #endif
@@ -150,18 +150,18 @@ class RMObjective : RMC
 #endif
             }
 
-            if (!RMC::GotGoalMedalOnCurrentMap && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
+            if (!RMC::GotGoalMedal && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
                 RMC::GoalMedalCount += 1;
-                RMC::GotGoalMedalOnCurrentMap = true;
+                RMC::GotGoalMedal = true;
                 GotGoalMedalNotification();
             } else if (
-                !RMC::GotGoalMedalOnCurrentMap &&
-                !RMC::GotBelowMedalOnCurrentMap &&
+                !RMC::GotGoalMedal &&
+                !RMC::GotBelowMedal &&
                 PluginSettings::RMC_GoalMedal != RMC::Medals[0] &&
                 RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1)
             {
                 GotBelowGoalMedalNotification();
-                RMC::GotBelowMedalOnCurrentMap = true;
+                RMC::GotBelowMedal = true;
             }
         }
     }

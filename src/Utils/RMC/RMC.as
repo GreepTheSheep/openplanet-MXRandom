@@ -45,7 +45,7 @@ class RMC
                 ChaosMode::SetRMCMode(false);
 #endif
                 int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
-                if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedalOnCurrentMap || RMC::GotGoalMedalOnCurrentMap) {
+                if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                         Renderables::Add(SaveRunQuestionModalDialog());
                         // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy
@@ -229,7 +229,7 @@ class RMC
                 PausePlayButton();
                 UI::SameLine();
                 SkipButtons();
-                if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedalOnCurrentMap) {
+                if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedal) {
                     NextMapButton();
                 }
             }
@@ -259,10 +259,10 @@ class RMC
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed){
             int skipsLeft = PluginSettings::RMC_FreeSkipAmount - RMC::FreeSkipsUsed;
-            if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedalOnCurrentMap ? " Take " + BelowMedal + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
+            if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedal ? " Take " + BelowMedal + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
-                if (RMC::GotBelowMedalOnCurrentMap) {
+                if (RMC::GotBelowMedal) {
                     BelowMedalCount += 1;
                 } else {
                     RMC::FreeSkipsUsed += 1;
@@ -273,7 +273,7 @@ class RMC
                 UI::ShowNotification("Please wait...");
                 startnew(RMC::SwitchMap);
             }
-        } else if (RMC::GotBelowMedalOnCurrentMap) {
+        } else if (RMC::GotBelowMedal) {
             if (UI::Button(Icons::PlayCircleO + " Take " + BelowMedal + " medal")) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
@@ -285,7 +285,7 @@ class RMC
         } else {
             UI::NewLine();
         }
-        if (!RMC::GotBelowMedalOnCurrentMap) UI::SetPreviousTooltip(
+        if (!RMC::GotBelowMedal) UI::SetPreviousTooltip(
             "Free Skips are if the map is finishable but you still want to skip it for any reason.\n"+
             "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
         );
@@ -341,9 +341,9 @@ class RMC
         }
         RMC::IsPaused = false;
         RMC::IsRunning = true;
-        if (RMC::GotBelowMedalOnCurrentMap && RMC::GotGoalMedalOnCurrentMap) RMC::GotBelowMedalOnCurrentMap = false;
-        if (RMC::GotBelowMedalOnCurrentMap) GotBelowGoalMedalNotification();
-        if (RMC::GotGoalMedalOnCurrentMap) GotGoalMedalNotification();
+        if (RMC::GotBelowMedal && RMC::GotGoalMedal) RMC::GotBelowMedal = false;
+        if (RMC::GotBelowMedal) GotBelowGoalMedalNotification();
+        if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
     }
 
@@ -389,7 +389,7 @@ class RMC
     void GotBelowGoalMedalNotification()
     {
         Log::Trace("RMC: Got the "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
-        if (!RMC::GotBelowMedalOnCurrentMap)
+        if (!RMC::GotBelowMedal)
             UI::ShowNotification(
                 "\\$db4" + Icons::Trophy + " You got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal",
                 "You can take the medal and skip the map"
@@ -443,19 +443,19 @@ class RMC
 #endif
             }
 
-            if (!RMC::GotGoalMedalOnCurrentMap && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
+            if (!RMC::GotGoalMedal && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
                 GotGoalMedalNotification();
                 RMC::GoalMedalCount += 1;
-                RMC::GotGoalMedalOnCurrentMap = true;
+                RMC::GotGoalMedal = true;
                 RMC::CreateSave();
             } else if (
-                !RMC::GotGoalMedalOnCurrentMap &&
-                !RMC::GotBelowMedalOnCurrentMap &&
+                !RMC::GotGoalMedal &&
+                !RMC::GotBelowMedal &&
                 PluginSettings::RMC_GoalMedal != RMC::Medals[0] &&
                 RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1)
             {
                 GotBelowGoalMedalNotification();
-                RMC::GotBelowMedalOnCurrentMap = true;
+                RMC::GotBelowMedal = true;
                 RMC::CreateSave();
             }
         }

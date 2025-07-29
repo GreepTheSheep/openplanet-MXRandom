@@ -43,14 +43,14 @@ namespace TM
 
     bool IsMapLoaded(){
         CTrackMania@ app = cast<CTrackMania>(GetApp());
-        if (app.RootMap is null) return false;
-        else return true;
+        return app.RootMap !is null;
     }
 
     bool IsMapCorrect(const string &in mapUid){
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.RootMap is null) return false;
-        else return app.RootMap.MapInfo.MapUid == mapUid;
+
+        return app.RootMap.MapInfo.MapUid == mapUid;
     }
 
     string CurrentTitlePack()

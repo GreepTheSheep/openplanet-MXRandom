@@ -136,8 +136,8 @@ class RMT : RMC
         RMC::StartTime = Time::Now;
         RMC::EndTime = RMC::StartTime + TimeLimit();
         RMC::IsPaused = false;
-        RMC::GotGoalMedalOnCurrentMap = false;
-        RMC::GotBelowMedalOnCurrentMap = false;
+        RMC::GotGoalMedal = false;
+        RMC::GotBelowMedal = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(UpdateRecordsLoop));
@@ -188,8 +188,8 @@ class RMT : RMC
         m_mapPersonalBests = {};
         RMTTimerMapChange = RMC::EndTime - RMC::StartTime;
         RMC::IsPaused = true;
-        RMC::GotGoalMedalOnCurrentMap = false;
-        RMC::GotBelowMedalOnCurrentMap = false;
+        RMC::GotGoalMedal = false;
+        RMC::GotBelowMedal = false;
         if (nextMap is null && !isFetchingNextMap) RMTFetchNextMap();
         while (isFetchingNextMap) yield();
         @currentMap = nextMap;
@@ -280,11 +280,11 @@ class RMT : RMC
                     }
                 }
 
-                if (!RMC::GotGoalMedalOnCurrentMap && isObjectiveCompleted()) {
+                if (!RMC::GotGoalMedal && isObjectiveCompleted()) {
                     Log::Log(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
                     UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
                     RMC::GoalMedalCount += 1;
-                    RMC::GotGoalMedalOnCurrentMap = true;
+                    RMC::GotGoalMedal = true;
                     RMTPlayerScore@ playerScored = GetPlayerScore(playerGotGoal);
                     playerScored.AddGoal();
                     m_playerScores.SortDesc();
@@ -297,10 +297,10 @@ class RMT : RMC
 
                     RMTSwitchMap();
                 }
-                if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedalOnCurrentMap && isBelowObjectiveCompleted()) {
+                if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedal && isBelowObjectiveCompleted()) {
                     Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
                     UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
-                    RMC::GotBelowMedalOnCurrentMap = true;
+                    RMC::GotBelowMedal = true;
 #if DEPENDENCY_BETTERCHAT
                     BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr);
                     sleep(200);
@@ -411,20 +411,17 @@ class RMT : RMC
         if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
 
         UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
-        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedalOnCurrentMap ? " and take " + BelowMedal + " medal" : ""))) {
+        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + BelowMedal + " medal" : ""))) {
             RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
-            if (RMC::GotBelowMedalOnCurrentMap) {
+
+            if (RMC::GotBelowMedal) {
                 BelowMedalCount += 1;
                 RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
                 playerScored.AddBelowGoal();
+            } else if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
+                RMC::EndTime += RMC::TimeSpentMap;
             }
-            MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-            if (
-                (PluginSettings::RMC_PrepatchTagsWarns &&
-                RMC::config.HasPrepatchTags(CurrentMapFromJson)) &&
-                !RMC::GotBelowMedalOnCurrentMap
-            ) RMC::EndTime += RMC::TimeSpentMap;
 #if DEPENDENCY_BETTERCHAT
             BetterChat::SendChatMessage(Icons::Users + " Skipping map...");
 #endif

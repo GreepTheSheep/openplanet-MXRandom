@@ -24,12 +24,12 @@ Select "Random Map Challenge" to play one of the following game modes:
 ### RMC
 - `bool MXRandom::IsRMCRunning()` - Returns true if RMC is running.
 - `bool MXRandom::IsRMCPaused()` - Returns true if RMC is paused.
-- `int MXRandom::RMCDefinedGoalMedal()` - Returns the user-defined medal number setting for the RMC goal. (See [Goal Medals table](#rmc-goal-medals))
-- `string MXRandom::RMCDefinedGoalMedalName()` - Returns the user-defined medal name setting for the RMC goal. (See [Goal Medals table](#rmc-goal-medals))
-- `bool MXRandom::RMCGotGoalMedalOnCurrentMap()` - Returns true if the current map has a goal medal.
-- `bool MXRandom::RMCGotBelowMedalOnCurrentMap()` - Returns true if the current map has a medal below the user-defined goal medal.
-- `int MXRandom::RMCGoalMedalCount()` - Returns the number of goal medals on a current RMC run.
-- `int MXRandom::RMCActualGameMode()` - Returns the actual game mode of the current RMC run. (See [Game Modes table](#game-modes))
+- `int MXRandom::RMCGoalMedal()` - Returns the medal chosen as the RMC goal. (See [Goal Medals table](#rmc-goal-medals))
+- `string MXRandom::RMCGoalMedalName()` - Returns the name of the medal chosen as the RMC goal. (See [Goal Medals table](#rmc-goal-medals))
+- `bool MXRandom::RMCGotGoalMedal()` - Returns true if the player got the goal medal on the current map.
+- `bool MXRandom::RMCGotBelowMedal()` - Returns true if the player got the previous medal to the goal (e.g. Gold if goal is Author) on the current map.
+- `int MXRandom::RMCGoalMedalCount()` - Returns the number of goal medals achieved on a current RMC run.
+- `int MXRandom::RMCGameMode()` - Returns the game mode of the current RMC run. (See [Game Modes table](#game-modes))
 
 ### Searching parameters
 - `bool MXRandom::CustomParameters` - Returns true if the player is using custom searching parameters.

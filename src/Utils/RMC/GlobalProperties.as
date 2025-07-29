@@ -5,8 +5,8 @@ namespace RMC
     bool IsRunning = false;
     bool IsPaused = false;
     bool ClickedOnSkip = false;
-    bool GotGoalMedalOnCurrentMap = false;
-    bool GotBelowMedalOnCurrentMap = false;
+    bool GotGoalMedal = false;
+    bool GotBelowMedal = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
     int GoalMedalCount = 0;
     int StartTime = -1;
@@ -140,14 +140,14 @@ namespace RMC
                         Survival.Skips = 0;
                         FreeSkipsUsed = 0;
                         CurrentTimeOnMap = -1;
-                        GotBelowMedalOnCurrentMap = false;
-                        GotGoalMedalOnCurrentMap = false;
+                        GotBelowMedal = false;
+                        GotGoalMedal = false;
                     } else {
                         GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
                         if (selectedGameMode == GameMode::Challenge) {
                             Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
                             Survival.Skips = 0;
-                            GotBelowMedalOnCurrentMap = CurrentRunData["GotBelowMedalOnMap"];
+                            GotBelowMedal = CurrentRunData["GotBelowMedalOnMap"];
                             FreeSkipsUsed = CurrentRunData["FreeSkipsUsed"];
                         } else {
                             Challenge.BelowMedalCount = 0;
@@ -155,7 +155,7 @@ namespace RMC
                             Survival.SurvivedTime = CurrentRunData["CurrentRunTime"];
                             Challenge.ModeStartTimestamp = -1;
                         }
-                        GotGoalMedalOnCurrentMap = CurrentRunData["GotGoalMedalOnMap"];
+                        GotGoalMedal = CurrentRunData["GotGoalMedalOnMap"];
                         CurrentTimeOnMap = CurrentRunData["PBOnMap"];
                     }
                     UI::ShowNotification("\\$080Random Map "+ tostring(RMC::selectedGameMode) + " started!", "Good Luck!");
@@ -284,13 +284,13 @@ namespace RMC
         CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
-        CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedalOnCurrentMap;
+        CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedal;
         CurrentRunData["PBOnMap"] = RMC::CurrentTimeOnMap;
 
         if (RMC::selectedGameMode == RMC::GameMode::Survival) {
             CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
         } else {
-            CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedalOnCurrentMap;
+            CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedal;
             CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
         }
 
@@ -314,8 +314,8 @@ namespace RMC
         }
         EndTime = EndTime + (Time::Now - StartTime);
         IsPaused = false;
-        GotGoalMedalOnCurrentMap = false;
-        GotBelowMedalOnCurrentMap = false;
+        GotGoalMedal = false;
+        GotBelowMedal = false;
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
         CurrentTimeOnMap = -1;
