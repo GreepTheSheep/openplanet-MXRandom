@@ -53,6 +53,31 @@ namespace TM
         return app.RootMap.MapInfo.MapUid == mapUid;
     }
 
+    bool HasEditedMedals() {
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        if (app.RootMap is null) return false;
+
+        auto map = app.RootMap;
+
+        uint normalGold = uint((map.TMObjective_AuthorTime * 1.06) / 1000 + 1) * 1000;
+        uint normalSilver = uint((map.TMObjective_AuthorTime * 1.2) / 1000 + 1) * 1000;
+        uint normalBronze = uint((map.TMObjective_AuthorTime * 1.5) / 1000 + 1) * 1000;
+
+        if (map.TMObjective_GoldTime < normalGold) {
+            return true;
+        }
+
+        if (map.TMObjective_SilverTime < normalSilver) {
+            return true;
+        }
+
+        if (map.TMObjective_BronzeTime < normalBronze) {
+            return true;
+        }
+
+        return false;
+    }
+
     string CurrentTitlePack()
     {
         CTrackMania@ app = cast<CTrackMania>(GetApp());

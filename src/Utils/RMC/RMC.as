@@ -185,6 +185,11 @@ class RMC
                             UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
                         }
 #endif
+                        if (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals()) {
+                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
+                            UI::SetPreviousTooltip("The map has medal times that differ from the default.\n\nYou can broken skip it if preferred.");
+                        }
+
                         if (PluginSettings::RMC_TagsLength != 0) {
                             if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
                             else {

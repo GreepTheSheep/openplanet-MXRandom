@@ -366,6 +366,11 @@ class RMT : RMC
                         UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
 
+                    if (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals()) {
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
+                        UI::SetPreviousTooltip("The map has medal times that differ from the default.\n\nYou can skip it if preferred.");
+                    }
+
                     if (PluginSettings::RMC_TagsLength != 0) {
                         if (currentMap.Tags.IsEmpty()) {
                             UI::TextDisabled("No tags");
@@ -419,7 +424,10 @@ class RMT : RMC
                 BelowMedalCount += 1;
                 RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
                 playerScored.AddBelowGoal();
-            } else if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
+            } else if (
+                (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) ||
+                (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
+            ) {
                 RMC::EndTime += RMC::TimeSpentMap;
             }
 #if DEPENDENCY_BETTERCHAT

@@ -47,6 +47,9 @@ namespace PluginSettings
 #endif
 
     [Setting hidden]
+    bool RMC_EditedMedalsWarns = true;
+
+    [Setting hidden]
     int RMC_ImageSize = 25;
 
     [Setting hidden]
@@ -95,6 +98,7 @@ namespace PluginSettings
 #if TMNEXT
                 RMC_PrepatchTagsWarns = true;
 #endif
+                RMC_EditedMedalsWarns = true;
                 RMC_RUN_AUTOSAVE = true;
                 RMC_FreeSkipAmount = 1;
                 RMC_PushLeaderboardResults = true;
@@ -128,6 +132,9 @@ namespace PluginSettings
 #if TMNEXT
             RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch map warnings", RMC_PrepatchTagsWarns);
             UI::SetPreviousTooltip("Display a warning if the map was built before the new physics patches (e.g. the bobsleigh update)");
+
+            RMC_EditedMedalsWarns = UI::Checkbox("Edited medals warnings", RMC_EditedMedalsWarns);
+            UI::SetPreviousTooltip("Display a warning if the map has medal times that differ from the default formula.");
 
             RMC_PushLeaderboardResults = UI::Checkbox("Send every RMC & RMS runs to the leaderboard", RMC_PushLeaderboardResults);
             UI::SetPreviousTooltip("The leaderboard is available on https://flinkblog.de/RMC/");
