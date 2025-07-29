@@ -195,7 +195,11 @@ class RMT : RMC
         @currentMap = nextMap;
         @nextMap = null;
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
-        UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
+
+        if (RMC::TimeSpentMap < 15000) {
+            // Only notify if the server has spent fewer than 15 secs on the map
+            UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
+        }
 
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
