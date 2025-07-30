@@ -41,7 +41,7 @@ namespace TM
         app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
     }
 
-    bool IsMapLoaded(){
+    bool IsMapLoaded() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         return app.RootMap !is null;
     }
@@ -51,6 +51,12 @@ namespace TM
         if (app.RootMap is null) return false;
 
         return app.RootMap.MapInfo.MapUid == mapUid;
+    }
+
+    bool InRMCMap() {
+        if (!IsMapLoaded() || DataJson["recentlyPlayed"].Length == 0) return false;
+
+        return IsMapCorrect(string(DataJson["recentlyPlayed"][0]["MapUid"]));
     }
 
     bool HasEditedMedals() {

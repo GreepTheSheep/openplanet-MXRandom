@@ -45,18 +45,15 @@ class DataMigrationWizardModalDialog : ModalDialog
 
     void RenderStep2()
     {
-        int HourGlassValue = Time::Stamp % 3;
-        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-
         UI::PushFont(Fonts::Header);
         if (!migrationCompleted) UI::Text("Please wait...");
         else UI::Text("Data migration complete!");
         UI::PopFont();
         UI::NewLine();
 
-        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.Length == 0 ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
-        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
-        UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData saved to the file! \\$444" + DATA_JSON_LOCATION : "\\$f80" + Hourglass  + " \\$zSaving the data to the new file...");
+        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.Length == 0 ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
+        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the missing data from the server" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
+        UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData saved to the file! \\$444" + DATA_JSON_LOCATION : "\\$f80" + Icons::AnimatedHourglass()  + " \\$zSaving the data to the new file...");
 
         switch (m_migrationStep) {
             case 0:

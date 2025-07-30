@@ -15,9 +15,7 @@ class RMCSettingsModalDialog : ModalDialog
     void RenderRulesContent()
     {
         if (m_request !is null) {
-            int HourGlassValue = Time::Stamp % 3;
-            string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-            UI::Text(Hourglass + " Loading...");
+            UI::Text(Icons::AnimatedHourglass() + " Loading...");
         } else {
             if (m_requestError) {
                 UI::Text("Error loading rules!");
@@ -87,7 +85,7 @@ class RMCSettingsModalDialog : ModalDialog
     void RenderDialog() override
     {
         UI::BeginTabBar("RMCModalMainTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-        if (UI::BeginTabItem(Icons::InfoCircle + " Informations"))
+        if (UI::BeginTabItem(Icons::InfoCircle + " Information"))
         {
             RMC::RenderBaseInfos();
             CheckRulesRequest();

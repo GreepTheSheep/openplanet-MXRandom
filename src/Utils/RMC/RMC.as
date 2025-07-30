@@ -29,7 +29,7 @@ class RMC
     void Render()
     {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
-        if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
+        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
                 RMC::UserEndedRun = true;
@@ -89,7 +89,7 @@ class RMC
         RenderCustomSearchWarning();
 #endif
 
-        if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
+        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             UI::Separator();
             RenderPlayingButtons();
         }
@@ -160,58 +160,60 @@ class RMC
 
     void RenderCurrentMap()
     {
-        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (currentMap !is null) {
-            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-            if (currentMapInfo !is null) {
-                if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
-                    UI::Separator();
-                    MX::MapInfo@ CurrentMapFromJson = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-                    if (CurrentMapFromJson !is null) {
-                        UI::Text(CurrentMapFromJson.Name);
-                        if (PluginSettings::RMC_ShowAwards) {
-                            UI::SameLine();
-                            UI::Text("\\$db4" + Icons::Trophy + "\\$z " + CurrentMapFromJson.AwardCount);
-                        }
-                        if(PluginSettings::RMC_DisplayMapDate) {
-                            UI::TextDisabled(IsoDateToDMY(CurrentMapFromJson.UpdatedAt));
-                            UI::SameLine();
-                        }
-                        UI::TextDisabled("by " + CurrentMapFromJson.Username);
-#if TMNEXT
-                        if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(CurrentMapFromJson)) {
-                            RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(CurrentMapFromJson);
-                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z" + tag.title);
-                            UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + CurrentMapFromJson.ExeBuild) : ""));
-                        }
-#endif
-                        if (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals()) {
-                            UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
-                            UI::SetPreviousTooltip("The map has medal times that differ from the default.\n\nYou can broken skip it if preferred.");
-                        }
+        if (TM::IsMapLoaded()) {
+            if (TM::InRMCMap()) {
+                UI::Separator();
+                MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
 
-                        if (PluginSettings::RMC_TagsLength != 0) {
-                            if (CurrentMapFromJson.Tags.Length == 0) UI::TextDisabled("No tags");
-                            else {
-                                uint tagsLength = CurrentMapFromJson.Tags.Length;
-                                if (CurrentMapFromJson.Tags.Length > PluginSettings::RMC_TagsLength) tagsLength = PluginSettings::RMC_TagsLength;
-                                for (uint i = 0; i < tagsLength; i++) {
-                                    Render::MapTag(CurrentMapFromJson.Tags[i]);
-                                    UI::SameLine();
-                                }
-                                UI::NewLine();
+                if (currentMap !is null) {
+                    UI::Text(currentMap.Name);
+
+                    if (PluginSettings::RMC_ShowAwards) {
+                        UI::SameLine();
+                        UI::Text("\\$db4" + Icons::Trophy + "\\$z " + currentMap.AwardCount);
+                    }
+
+                    if(PluginSettings::RMC_DisplayMapDate) {
+                        UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
+                        UI::SameLine();
+                    }
+
+                    UI::TextDisabled("by " + currentMap.Username);
+
+#if TMNEXT
+                    if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
+                        RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z" + tag.title);
+                        UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
+                    }
+#endif
+
+                    if (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals()) {
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
+                        UI::SetPreviousTooltip("The map has medal times that differ from the default.\n\nYou can broken skip it if preferred.");
+                    }
+
+                    if (PluginSettings::RMC_TagsLength != 0) {
+                        if (currentMap.Tags.IsEmpty()) {
+                            UI::TextDisabled("No tags");
+                        } else {
+                            uint tagsRender = Math::Min(currentMap.Tags.Length, PluginSettings::RMC_TagsLength);
+                            for (uint i = 0; i < tagsRender; i++) {
+                                Render::MapTag(currentMap.Tags[i]);
+                                UI::SameLine();
                             }
+                            UI::NewLine();
                         }
-                    } else {
-                        UI::Separator();
-                        UI::TextDisabled("Map info unavailable");
                     }
                 } else {
                     UI::Separator();
-                    UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
-                    UI::Text("Please change the map.");
-                    if (UI::Button("Change map")) startnew(RMC::SwitchMap);
+                    UI::TextDisabled("Map info unavailable");
                 }
+            } else {
+                UI::Separator();
+                UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
+                UI::Text("Please change the map.");
+                if (UI::Button("Change map")) startnew(RMC::SwitchMap);
             }
         } else {
             UI::Separator();
@@ -227,17 +229,14 @@ class RMC
 
     void RenderPlayingButtons()
     {
-        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (currentMap !is null) {
-            CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-            if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
-                PausePlayButton();
-                UI::SameLine();
-                SkipButtons();
-                if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedal) {
-                    NextMapButton();
-                }
+        if (TM::InRMCMap()) {
+            PausePlayButton();
+            UI::SameLine();
+            SkipButtons();
+            if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedal) {
+                NextMapButton();
             }
+
             if (IS_DEV_MODE) {
                 DevButtons();
             }
@@ -246,9 +245,7 @@ class RMC
 
     void PausePlayButton()
     {
-        int HourGlassValue = Time::Stamp % 3;
-        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Hourglass + Icons::Pause))) {
+        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass() + Icons::Pause))) {
             if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
             RMC::IsPaused = !RMC::IsPaused;
         }
@@ -410,34 +407,28 @@ class RMC
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCPaused(false);
 #endif
-                CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-                if (currentMap !is null) {
-                    CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-                    if (currentMapInfo !is null) {
-                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
-                            RMC::StartTime = Time::Now;
-                            RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
-                            PendingTimerLoop();
+                if (TM::InRMCMap()) {
+                    RMC::StartTime = Time::Now;
+                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
+                    PendingTimerLoop();
 
-                            if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
-                                RMC::StartTime = -1;
-                                RMC::EndTime = -1;
-                                RMC::IsRunning = false;
-                                RMC::ShowTimer = false;
-                                if (!RMC::UserEndedRun) {
-                                    GameEndNotification();
-                                    DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
-                                }
-                                if (PluginSettings::RMC_ExitMapOnEndTime){
-                                    CTrackMania@ app = cast<CTrackMania>(GetApp());
-                                    app.BackToMainMenu();
-                                }
-                                @MX::preloadedMap = null;
-                            }
-                        } else {
-                            RMC::IsPaused = true;
+                    if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
+                        RMC::StartTime = -1;
+                        RMC::EndTime = -1;
+                        RMC::IsRunning = false;
+                        RMC::ShowTimer = false;
+                        if (!RMC::UserEndedRun) {
+                            GameEndNotification();
+                            DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
                         }
+                        if (PluginSettings::RMC_ExitMapOnEndTime){
+                            CTrackMania@ app = cast<CTrackMania>(GetApp());
+                            app.BackToMainMenu();
+                        }
+                        @MX::preloadedMap = null;
                     }
+                } else {
+                    RMC::IsPaused = true;
                 }
             } else {
                 // pause timer

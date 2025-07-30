@@ -11,9 +11,7 @@ void RenderMenu()
                     startnew(MX::FetchMapTags);
                 }
             } else {
-                int HourGlassValue = Time::Stamp % 3;
-                string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                UI::TextDisabled(Hourglass + " Loading...");
+                UI::TextDisabled(Icons::AnimatedHourglass() + " Loading...");
             }
         } else {
             if (TM::CurrentTitlePack() == "") {

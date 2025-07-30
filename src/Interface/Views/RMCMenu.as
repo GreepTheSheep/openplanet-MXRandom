@@ -146,9 +146,7 @@ namespace RMC
                     }
                     UI::EndDisabled();
                     if (MXNadeoServicesGlobal::isCheckingRoom) {
-                        int HourGlassValue = Time::Stamp % 3;
-                        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                        UI::TextDisabled(Hourglass + " Checking...");
+                        UI::TextDisabled(Icons::AnimatedHourglass() + " Checking...");
                     }
                     if (MXNadeoServicesGlobal::foundRoom !is null) {
                         RMT_isServerOK = true;
@@ -244,7 +242,7 @@ namespace RMC
         UI::PopFont();
         UI::TextWrapped("In the Random Map Challenge, you have to grab the maximum number of author medals in 1 hour.");
         UI::TextWrapped("In the Random Map Survival, you have to grab the maximum number of author medals before the timer reaches 0. You gain 3 minutes per medal won, you can skip but you lose 1 minute of your time limit");
-        if (UI::GreenButton(Icons::ExternalLink + " More informations")) OpenBrowserURL("https://flinkblog.de/RMC/");
+        if (UI::GreenButton(Icons::ExternalLink + " More information")) OpenBrowserURL("https://flinkblog.de/RMC/");
     }
 
 #if DEPENDENCY_BETTERROOMMANAGER

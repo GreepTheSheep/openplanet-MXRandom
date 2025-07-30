@@ -43,9 +43,6 @@ class MX2MigrationWizardModalDialog : ModalDialog
 
     void RenderStep2()
     {
-        int HourGlassValue = Time::Stamp % 3;
-        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-
         UI::PushFont(Fonts::Header);
         if (migrationCompleted) UI::Text("Data migration complete!");
         else if (Migration::v2_requestError) UI::Text("Data migration failed!");
@@ -67,10 +64,10 @@ class MX2MigrationWizardModalDialog : ModalDialog
                 "You can click \"Delete data\" to remove your data if the error persists."
             );
         } else {
-            if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zBacking up old data...");
-            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
-            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Hourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
-            UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Hourglass  + " \\$zMigrating data...");
+            if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zBacking up old data...");
+            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
+            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
+            UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Icons::AnimatedHourglass()  + " \\$zMigrating data...");
 
             switch (m_migrationStep) {
                 case 0:

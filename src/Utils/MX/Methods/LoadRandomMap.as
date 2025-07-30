@@ -134,7 +134,7 @@ namespace MX
 
         if (RMC::IsRunning || RMC::IsStarting) {
             if (!PluginSettings::CustomRules) {
-                if (map.AuthorTime > RMC::allowedMaxLength) {
+                if (map.AuthorTime > RMC::config.length) {
                     Log::Warn("Map is too long, retrying...");
                     sleep(1000);
                     PreloadRandomMap();
@@ -157,16 +157,19 @@ namespace MX
                     sleep(1000);
                     PreloadRandomMap();
                     return;
-                } else {
-                    // if uploaded, get wr
-                    uint mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
-                    if (int(mapWorldRecord) == -1) {
-                        Log::Warn("Couldn't get map World Record, retrying another map...");
-                        sleep(1000);
-                        PreloadRandomMap();
-                        return;
-                    } else TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
                 }
+
+                // if uploaded, get wr
+                int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
+
+                if (mapWorldRecord == -1) {
+                    Log::Warn("Couldn't get map World Record, retrying another map...");
+                    sleep(1000);
+                    PreloadRandomMap();
+                    return;
+                }
+
+                TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
             }
 #endif
         }
@@ -282,7 +285,7 @@ namespace MX
 
         if ((RMC::IsRunning || RMC::IsStarting) && (!customParameters || !PluginSettings::CustomRules)) {
             params.Set("etag", RMC::config.etags);
-            params.Set("authortimemax", tostring(RMC::allowedMaxLength));
+            params.Set("authortimemax", tostring(RMC::config.length));
         } else if (customParameters && PluginSettings::CustomRules) {
             if (PluginSettings::MinLength != 0) {
                 params.Set("authortimemin", tostring(PluginSettings::MinLength));

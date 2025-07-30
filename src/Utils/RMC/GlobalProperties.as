@@ -37,8 +37,6 @@ namespace RMC
 #endif
     };
 
-    const int allowedMaxLength = 180000;
-
     RMC@ Challenge;
     RMS@ Survival;
     RMObjective@ Objective;

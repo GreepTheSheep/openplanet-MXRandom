@@ -191,7 +191,6 @@ namespace MXNadeoServicesGlobal
 
     void ClubRoomSetCountdownTimer(const NadeoServices::ClubRoom@ &in room, const int &in timerSec)
     {
-        string url = NadeoServices::BaseURLLive()+"/api/token/club/"+room.clubId+"/room/"+room.activityId+"/edit";
         Json::Value bodyJson = Json::Object();
         EditRoomPayloadSetTimeout(bodyJson, timerSec);
         RunClubRoomRequest(room, bodyJson, "ClubRoomSetCountdownTimer");

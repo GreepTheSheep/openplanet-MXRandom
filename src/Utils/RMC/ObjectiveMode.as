@@ -113,36 +113,31 @@ class RMObjective : RMC
 
     void TimerYield() override
     {
-        while (RMC::IsRunning){
+        auto app = cast<CTrackMania>(GetApp());
+
+        while (RMC::IsRunning) {
             yield();
             if (!RMC::IsPaused) {
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCPaused(false);
 #endif
-                CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-                if (currentMap !is null) {
-                    CGameCtnChallengeInfo@ currentMapInfo = currentMap.MapInfo;
-                    if (currentMapInfo !is null) {
-                        if (DataJson["recentlyPlayed"].Length > 0 && currentMapInfo.MapUid == DataJson["recentlyPlayed"][0]["MapUid"]) {
-                            RMC::StartTime = Time::Now;
-                            PendingTimerLoop();
+                if (TM::InRMCMap()) {
+                    RMC::StartTime = Time::Now;
+                    PendingTimerLoop();
 
-                            if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
-                                UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "You have reached your goal in "+RMC::FormatTimer(RunTime));
-                                RMC::StartTime = -1;
-                                RMC::EndTime = -1;
-                                RMC::IsRunning = false;
-                                RMC::ShowTimer = false;
-                                if (PluginSettings::RMC_ExitMapOnEndTime){
-                                    CTrackMania@ app = cast<CTrackMania>(GetApp());
-                                    app.BackToMainMenu();
-                                }
-                                @MX::preloadedMap = null;
-                            }
-                        } else {
-                            RMC::IsPaused = true;
+                    if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
+                        UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "You have reached your goal in "+RMC::FormatTimer(RunTime));
+                        RMC::StartTime = -1;
+                        RMC::EndTime = -1;
+                        RMC::IsRunning = false;
+                        RMC::ShowTimer = false;
+                        if (PluginSettings::RMC_ExitMapOnEndTime){
+                            app.BackToMainMenu();
                         }
+                        @MX::preloadedMap = null;
                     }
+                } else {
+                    RMC::IsPaused = true;
                 }
             } else {
                 // pause timer

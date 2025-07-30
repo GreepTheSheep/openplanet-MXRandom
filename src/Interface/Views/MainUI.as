@@ -10,9 +10,7 @@ namespace MainUIView
                     startnew(MX::FetchMapTags);
                 }
             } else {
-                int HourGlassValue = Time::Stamp % 3;
-                string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                UI::CenteredText(Hourglass + " Loading...", true);
+                UI::CenteredText(Icons::AnimatedHourglass() + " Loading...", true);
             }
         } else {
 #if TMNEXT
@@ -26,9 +24,7 @@ namespace MainUIView
                             startnew(MX::LoadRandomMap);
                         }
                     } else {
-                        int HourGlassValue = Time::Stamp % 3;
-                        string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-                        UI::CenteredText(Hourglass + " Loading...");
+                        UI::CenteredText(Icons::AnimatedHourglass() + " Loading...");
                     }
                     if (UI::CenteredButton(Icons::ClockO +" Random Map Challenge", 0.155)) {
                         window.isInRMCMode = !window.isInRMCMode;
@@ -77,9 +73,7 @@ namespace MainUIView
             }
         }
         if (GH::ReleasesReq !is null) {
-            int HourGlassValue = Time::Stamp % 3;
-            string Hourglass = (HourGlassValue == 0 ? Icons::HourglassStart : (HourGlassValue == 1 ? Icons::HourglassHalf : Icons::HourglassEnd));
-            UI::Text(Hourglass + " Loading...");
+            UI::Text(Icons::AnimatedHourglass() + " Loading...");
         }
 
         if (GH::ReleasesReq is null && GH::Releases.Length > 0) {

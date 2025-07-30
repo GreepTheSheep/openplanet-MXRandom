@@ -22,7 +22,7 @@ class RMT : RMC
 
     void Render() override
     {
-        if (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns)) {
+        if (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns) {
             if (UI::RedButton(Icons::Times + " Stop RMT"))
             {
                 pressedStopButton = true;
@@ -65,7 +65,7 @@ class RMT : RMC
             RenderCurrentMap();
         }
 
-        if (RMC::IsRunning && (UI::IsOverlayShown() || (!UI::IsOverlayShown() && PluginSettings::RMC_AlwaysShowBtns))) {
+        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             UI::Separator();
             RenderPlayingButtons();
             UI::Separator();
@@ -257,30 +257,26 @@ class RMT : RMC
                 RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
                 RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
             } else {
-                CGameCtnChallenge@ currentMapChallenge = cast<CGameCtnChallenge>(GetApp().RootMap);
-                if (currentMapChallenge !is null) {
-                    CGameCtnChallengeInfo@ currentMapInfo = currentMapChallenge.MapInfo;
-                    if (currentMapInfo !is null) {
-                        RMC::StartTime = Time::Now;
-                        RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
-                        PendingTimerLoop();
+                if (TM::IsMapLoaded()) {
+                    RMC::StartTime = Time::Now;
+                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
+                    PendingTimerLoop();
 
-                        if (!pressedStopButton && (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0)) {
-                            RMC::StartTime = -1;
-                            RMC::EndTime = -1;
-                            RMC::IsRunning = false;
-                            RMC::ShowTimer = false;
-                            GameEndNotification();
-                            @nextMap = null;
-                            @MX::preloadedMap = null;
-                            m_playerScores.SortDesc();
+                    if (!pressedStopButton && (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0)) {
+                        RMC::StartTime = -1;
+                        RMC::EndTime = -1;
+                        RMC::IsRunning = false;
+                        RMC::ShowTimer = false;
+                        GameEndNotification();
+                        @nextMap = null;
+                        @MX::preloadedMap = null;
+                        m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
-                            BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
-                            sleep(200);
-                            BetterChatSendLeaderboard();
+                        BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
+                        sleep(200);
+                        BetterChatSendLeaderboard();
 #endif
-                            ResetToLobbyMap();
-                        }
+                        ResetToLobbyMap();
                     }
                 }
 
@@ -301,7 +297,7 @@ class RMT : RMC
 
                     RMTSwitchMap();
                 }
-                if (PluginSettings::RMC_GoalMedal != RMC::Medals[0] && !RMC::GotBelowMedal && isBelowObjectiveCompleted()) {
+                if (!RMC::GotBelowMedal && PluginSettings::RMC_GoalMedal != RMC::Medals[0] && isBelowObjectiveCompleted()) {
                     Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
                     UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
                     RMC::GotBelowMedal = true;
@@ -344,10 +340,9 @@ class RMT : RMC
     {
 
         if (!isSwitchingMap) {
-            auto app = GetApp();
-
-            if (app.RootMap !is null) {
+            if (TM::IsMapLoaded()) {
                 UI::Separator();
+
                 if (currentMap !is null) {
                     UI::Text(currentMap.Name);
 
@@ -404,8 +399,7 @@ class RMT : RMC
 
     void RenderPlayingButtons() override
     {
-        CGameCtnChallenge@ currentMap = cast<CGameCtnChallenge>(GetApp().RootMap);
-        if (currentMap !is null) {
+        if (TM::IsMapLoaded()) {
             SkipButtons();
             if (IS_DEV_MODE) {
                 DevButtons();
@@ -482,12 +476,14 @@ class RMT : RMC
 
     bool isObjectiveCompleted()
     {
-        if (GetApp().RootMap !is null) {
+        if (TM::IsMapLoaded()) {
+            auto map = GetApp().RootMap;
+
             uint objectiveTime = uint(-1);
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_AuthorTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_GoldTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_SilverTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_BronzeTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = map.TMObjective_AuthorTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = map.TMObjective_GoldTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = map.TMObjective_SilverTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) objectiveTime = map.TMObjective_BronzeTime;
 
 
             if (m_mapPersonalBests.Length > 0) {
@@ -505,11 +501,13 @@ class RMT : RMC
 
     bool isBelowObjectiveCompleted()
     {
-        if (GetApp().RootMap !is null) {
+        if (TM::IsMapLoaded()) {
+            auto map = GetApp().RootMap;
+
             uint objectiveTime = uint(-1);
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_GoldTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_SilverTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = GetApp().RootMap.MapInfo.TMObjective_BronzeTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = map.TMObjective_GoldTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = map.TMObjective_SilverTime;
+            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = map.TMObjective_BronzeTime;
 
 
             if (m_mapPersonalBests.Length > 0) {
