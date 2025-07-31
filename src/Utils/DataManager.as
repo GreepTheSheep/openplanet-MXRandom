@@ -56,6 +56,12 @@ namespace DataManager
     void CreateSaveFile() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
+        
+        // Handle SurvivalTogether mode separately to avoid conflict with Survival
+        if (RMC::selectedGameMode == RMC::GameMode::SurvivalTogether) {
+            gameMode = "RMST";
+        }
+        
         Json::Value SaveFileData = Json::Object();
         SaveFileData["PBOnMap"] = -1;
         SaveFileData["TimerRemaining"] = 0;
@@ -74,6 +80,12 @@ namespace DataManager
     void RemoveCurrentSaveFile() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
+        
+        // Handle SurvivalTogether mode separately to avoid conflict with Survival
+        if (RMC::selectedGameMode == RMC::GameMode::SurvivalTogether) {
+            gameMode = "RMST";
+        }
+        
         IO::Delete(SAVE_DATA_LOCATION + gameMode + ".json");
         RMC::CurrentRunData = Json::Object();
     }
@@ -81,6 +93,12 @@ namespace DataManager
     void SaveCurrentRunData() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
+        
+        // Handle SurvivalTogether mode separately to avoid conflict with Survival
+        if (RMC::selectedGameMode == RMC::GameMode::SurvivalTogether) {
+            gameMode = "RMST";
+        }
+        
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
     }
 
@@ -126,8 +144,15 @@ namespace DataManager
     bool LoadRunData() {
         string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
-        if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
-            RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+        
+        // Handle SurvivalTogether mode separately to avoid conflict with Survival
+        if (RMC::selectedGameMode == RMC::GameMode::SurvivalTogether) {
+            gameMode = "RMST";
+        }
+        
+        string saveFilePath = SAVE_DATA_LOCATION + gameMode + ".json";
+        if (IO::FileExists(saveFilePath)) {
+            RMC::CurrentRunData = Json::FromFile(saveFilePath);
             if (!EnsureSaveDataIsLoadable(gameMode, RMC::CurrentRunData)) {
                 Log::Error("Deleting the current" + gameMode + " save file, as it is corrupted!");
                 Log::Error("Please create an issue on github if this repeatedly happens");
