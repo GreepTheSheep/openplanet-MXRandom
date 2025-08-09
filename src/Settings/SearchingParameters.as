@@ -56,8 +56,8 @@ namespace PluginSettings
 
     [Setting hidden]
 #if TMNEXT
-    string ExcludeMapTags = "23,37,40";
-    array<int> ExcludeMapTagsArr = {23, 37, 40};
+    string ExcludeMapTags = "23,37,40,49";
+    array<int> ExcludeMapTagsArr = {23, 37, 40, 49};
 #else
     string ExcludeMapTags = "20";
     array<int> ExcludeMapTagsArr = {20};
@@ -103,7 +103,7 @@ namespace PluginSettings
             DifficultiesArray = {};
             TermsExactMatch = false;
 #if TMNEXT
-            ExcludeMapTagsArr = {23, 37, 40};
+            ExcludeMapTagsArr = {23, 37, 40. 49};
 #else
             ExcludeMapTagsArr = {20};
 #endif

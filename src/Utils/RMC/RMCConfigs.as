@@ -1,7 +1,7 @@
 class RMCConfig {
     array<RMCConfigMapTag@> prepatchMapTags;
 #if TMNEXT
-    string etags = "23,37,40";
+    string etags = "23,37,40,49";
 #else
     string etags = "20";
 #endif
