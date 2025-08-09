@@ -1,13 +1,3 @@
-class RMCConfigs {
-    RMCConfig@ cfgNext;
-    RMCConfig@ cfgMP4;
-
-    RMCConfigs(const Json::Value &in json) {
-        if (json.HasKey("next")) @cfgNext = RMCConfig(json['next']);
-        if (json.HasKey("mp4")) @cfgMP4 = RMCConfig(json['mp4']);
-    }
-}
-
 class RMCConfig {
     array<RMCConfigMapTag@> prepatchMapTags;
 #if TMNEXT
@@ -18,19 +8,32 @@ class RMCConfig {
     int length = 180000;
 
     RMCConfig(const Json::Value &in json) {
-        if (json.HasKey("prepatch-maps-tags")) {
-            for (uint i = 0; i < json["prepatch-maps-tags"].Length; i++) {
-                prepatchMapTags.InsertLast(RMCConfigMapTag(json["prepatch-maps-tags"][i]));
+        if (json.GetType() == Json::Type::Null || !json.HasKey("next") || !json.HasKey("mp4")) {
+            Log::Warn("Failed to fetch RMC config, Openplanet might be down. Defaulting to offline config.", true);
+            return;
+        }
+
+#if TMNEXT
+        Json::Value@ data = json["next"];
+#else
+        Json::Value@ data = json["mp4"];
+#endif
+
+        if (data.HasKey("prepatch-maps-tags")) {
+            for (uint i = 0; i < data["prepatch-maps-tags"].Length; i++) {
+                prepatchMapTags.InsertLast(RMCConfigMapTag(data["prepatch-maps-tags"][i]));
             }
         }
 
-        if (json.HasKey("search-etags") && json["search-etags"].GetType() == Json::Type::String) {
-            etags = json["search-etags"];
+        if (data.HasKey("search-etags") && data["search-etags"].GetType() == Json::Type::String) {
+            etags = data["search-etags"];
         }
 
-        if (json.HasKey("search-maxlength") && json["search-maxlength"].GetType() == Json::Type::Number) {
-            length = json["search-maxlength"];
+        if (data.HasKey("search-maxlength") && data["search-maxlength"].GetType() == Json::Type::Number) {
+            length = data["search-maxlength"];
         }
+
+        Log::Trace("Fetched and loaded RMC configs!", IS_DEV_MODE);
     }
 
     bool HasPrepatchTags(const MX::MapInfo &in map) {

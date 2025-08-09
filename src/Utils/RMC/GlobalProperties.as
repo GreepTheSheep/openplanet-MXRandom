@@ -56,13 +56,9 @@ namespace RMC
     void FetchConfig() {
         Log::Trace("Fetching RMC configs from openplanet.dev...");
         string url = "https://openplanet.dev/plugin/mxrandom/config/rmc-config";
-        RMCConfigs@ cfgs = RMCConfigs(API::GetAsync(url));
-#if TMNEXT
-        @config = cfgs.cfgNext;
-#else
-        @config = cfgs.cfgMP4;
-#endif
-        Log::Trace("Fetched and loaded RMC configs!", IS_DEV_MODE);
+        Json::Value json = API::GetAsync(url);
+
+        @config = RMCConfig(json);
     }
 
     void InitModes() {
