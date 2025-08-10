@@ -14,9 +14,9 @@ class RMCConfig {
         }
 
 #if TMNEXT
-        Json::Value@ data = json["next"];
+        const Json::Value@ data = json["next"];
 #else
-        Json::Value@ data = json["mp4"];
+        const Json::Value@ data = json["mp4"];
 #endif
 
         if (data.HasKey("prepatch-maps-tags")) {
