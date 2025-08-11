@@ -4,6 +4,7 @@ namespace RMC
     bool IsStarting = false;
     bool IsRunning = false;
     bool IsPaused = false;
+    bool isSwitchingMap = false;
     bool ClickedOnSkip = false;
     bool GotGoalMedal = false;
     bool GotBelowMedal = false;
@@ -301,6 +302,7 @@ namespace RMC
     void SwitchMap()
     {
         IsPaused = true;
+        isSwitchingMap = true;
         yield(30);
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()){
@@ -308,6 +310,7 @@ namespace RMC
         }
         EndTime = EndTime + (Time::Now - StartTime);
         IsPaused = false;
+        isSwitchingMap = false;
         GotGoalMedal = false;
         GotBelowMedal = false;
         TimeSpawnedMap = Time::Now;

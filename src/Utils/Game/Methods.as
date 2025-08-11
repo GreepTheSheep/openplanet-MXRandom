@@ -59,6 +59,15 @@ namespace TM
         return IsMapCorrect(string(DataJson["recentlyPlayed"][0]["MapUid"]));
     }
 
+    void LoadRMCMap() {
+        if (DataJson["recentlyPlayed"].Length == 0) return;
+
+        MX::MapInfo@ map = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+        if (IsMapCorrect(map.MapUid)) return;
+
+        startnew(LoadMap, map);
+    }
+
     bool HasEditedMedals() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.RootMap is null) return false;

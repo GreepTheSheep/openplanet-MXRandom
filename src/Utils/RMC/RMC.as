@@ -160,7 +160,16 @@ class RMC
 
     void RenderCurrentMap()
     {
-        if (TM::IsMapLoaded()) {
+        if (RMC::isSwitchingMap) {
+            UI::Separator();
+            if (RMC::IsPaused) {
+                UI::AlignTextToFramePadding();
+                UI::Text("Switching map...");
+                UI::SameLine();
+                if (UI::Button("Force switch")) startnew(RMC::SwitchMap);
+            }
+            else RMC::IsPaused = true;
+        } else if (TM::IsMapLoaded()) {
             if (TM::InRMCMap()) {
                 UI::Separator();
                 MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
@@ -215,15 +224,13 @@ class RMC
                 UI::Text("Please change the map.");
                 if (UI::Button("Change map")) startnew(RMC::SwitchMap);
             }
-        } else {
+        } else if (!RMC::IsStarting) {
             UI::Separator();
-            if (RMC::IsPaused) {
-                UI::AlignTextToFramePadding();
-                UI::Text("Switching map...");
-                UI::SameLine();
-                if (UI::Button("Force switch")) startnew(RMC::SwitchMap);
+
+            if (UI::Button("Return to map")) {
+                UI::ShowNotification("Returning to current map...");
+                TM::LoadRMCMap();
             }
-            else RMC::IsPaused = true;
         }
     }
 
