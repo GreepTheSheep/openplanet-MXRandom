@@ -235,7 +235,7 @@ namespace RMC
         else if (selectedGameMode == GameMode::Together) Together.Render();
     }
 
-    void RenderBaseInfos()
+    void RenderBaseInfo()
     {
         UI::PushFont(Fonts::Header);
         UI::Text("Random Map Challenge / Survival");

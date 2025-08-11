@@ -9,7 +9,7 @@ namespace TM
         }
 #endif
 
-        MX::MapInfo@ map = cast<MX::MapInfo@>(mapData);
+        MX::MapInfo@ map = cast<MX::MapInfo>(mapData);
 
         if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
 #if TMNEXT

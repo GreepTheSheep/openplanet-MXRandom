@@ -114,7 +114,7 @@ class RMT : RMC
         Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
         seenMaps.InsertLast(currentMap.MapUid);
 
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
+        if (currentMap.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
             Log::Trace("RMT: Map is not on NadeoServices, retrying...");
             SetupMapStart();
             return;
@@ -172,7 +172,7 @@ class RMT : RMC
             seenMaps.InsertLast(nextMap.MapUid);
         }
 
-        if (!MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.MapUid)) {
+        if (currentMap.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.MapUid)) {
             Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
             @nextMap = null;
             RMTFetchNextMap();

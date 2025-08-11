@@ -82,7 +82,7 @@ namespace MX
         int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
         int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
 
-        return (mapUpdatedDate < toDate && mapUpdatedDate > fromDate);
+        return (mapUpdatedDate <= toDate && mapUpdatedDate >= fromDate);
     }
 
 
@@ -267,7 +267,7 @@ namespace MX
         }
         catch
         {
-            Log::Warn("Error while loading map ");
+            Log::Warn("Error while loading map: " + getExceptionInfo());
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
             RandomMapIsLoading = false;

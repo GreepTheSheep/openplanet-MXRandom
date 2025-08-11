@@ -78,10 +78,10 @@ namespace PluginSettings
 #endif
 
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
-    void RenderRMCSettingTab(bool dontShowBaseInfos = false)
+    void RenderRMCSettingTab(bool ShowBaseInfo = true)
     {
-        if (!dontShowBaseInfos) {
-            RMC::RenderBaseInfos();
+        if (ShowBaseInfo) {
+            RMC::RenderBaseInfo();
             UI::Separator();
         }
 
@@ -103,6 +103,8 @@ namespace PluginSettings
                 RMC_FreeSkipAmount = 1;
                 RMC_PushLeaderboardResults = true;
             }
+
+            UI::SetNextItemWidth(200);
             if (UI::BeginCombo("Goal", RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
                     string goalMedal = RMC::Medals[i];

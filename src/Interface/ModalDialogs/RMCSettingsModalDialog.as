@@ -87,7 +87,7 @@ class RMCSettingsModalDialog : ModalDialog
         UI::BeginTabBar("RMCModalMainTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
         if (UI::BeginTabItem(Icons::InfoCircle + " Information"))
         {
-            RMC::RenderBaseInfos();
+            RMC::RenderBaseInfo();
             CheckRulesRequest();
             RenderRulesContent();
             UI::EndTabItem();
@@ -95,7 +95,7 @@ class RMCSettingsModalDialog : ModalDialog
 
         if (UI::BeginTabItem(Icons::Cogs + " Settings##2"))
         {
-            PluginSettings::RenderRMCSettingTab(true);
+            PluginSettings::RenderRMCSettingTab(false);
             UI::EndTabItem();
         }
         UI::EndTabBar();
