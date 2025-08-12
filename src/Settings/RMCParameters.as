@@ -86,7 +86,7 @@ namespace PluginSettings
         }
 
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-        if (UI::BeginTabItem(Icons::Cogs + " Base Settings"))
+        if (UI::BeginTabItem(Icons::Cogs + " General"))
         {
             if (UI::OrangeButton("Reset to default"))
             {
@@ -121,19 +121,19 @@ namespace PluginSettings
             }
 
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
-            RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quits the map when the timer is up", RMC_ExitMapOnEndTime);
-            RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the state of the current run when stopping the run", RMC_RUN_AUTOSAVE);
+            RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quit the map when the timer is up", RMC_ExitMapOnEndTime);
+            RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
 
             UI::SetNextItemWidth(300);
             RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 5, 300);
             UI::SetNextItemWidth(300);
-            RMC_FreeSkipAmount = UI::SliderInt("Amount of free skips in RMC runs", RMC_FreeSkipAmount, 1, 200);
+            RMC_FreeSkipAmount = UI::SliderInt("Free skips per RMC run", RMC_FreeSkipAmount, 1, 200);
             UI::SetNextItemWidth(300);
-            RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer on Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
+            RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer in Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
 #if TMNEXT
             RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch map warnings", RMC_PrepatchTagsWarns);
-            UI::SetPreviousTooltip("Display a warning if the map was built before the new physics patches (e.g. the bobsleigh update)");
+            UI::SetPreviousTooltip("Display a warning if the map was built before certain physics patches (e.g. the bobsleigh update)");
 
             RMC_EditedMedalsWarns = UI::Checkbox("Edited medals warnings", RMC_EditedMedalsWarns);
             UI::SetPreviousTooltip("Display a warning if the map has medal times that differ from the default formula.");
@@ -145,7 +145,7 @@ namespace PluginSettings
             UI::EndTabItem();
         }
 
-        if (UI::BeginTabItem(Icons::WindowMaximize + " Display Settings"))
+        if (UI::BeginTabItem(Icons::WindowMaximize + " Display"))
         {
             if (UI::OrangeButton("Reset to default"))
             {
@@ -157,18 +157,29 @@ namespace PluginSettings
                 RMC_TagsLength = 1;
                 RMC_ImageSize = 20;
             }
-            RMC_DisplayCurrentMap = UI::Checkbox("Display the current map name, author and style (according to MX)", RMC_DisplayCurrentMap);
-            RMC_AlwaysShowBtns = UI::Checkbox("Always show the buttons (even when the Openplanet overlay is hidden)", RMC_AlwaysShowBtns);
-            RMC_DisplayPace = UI::Checkbox("Show goal pace during the run", RMC_DisplayPace);
-            RMC_SurvivalShowSurvivedTime = UI::Checkbox("Display the time survived in Survival mode", RMC_SurvivalShowSurvivedTime);
-            RMC_DisplayMapTimeSpent = UI::Checkbox("Display the time spent on the map", RMC_DisplayMapTimeSpent);
-            RMC_DisplayMapDate = UI::Checkbox("Display the date the map was last updated", RMC_DisplayMapDate);
-            RMC_ShowAwards = UI::Checkbox("Display the amount of awards the map has received", RMC_ShowAwards);
-            UI::SetNextItemWidth(100);
-            RMC_TagsLength = UI::SliderInt("Display Map Tags Length (0: hidden)", RMC_TagsLength, 0, 3);
 
+            UI::PaddedHeaderSeparator("Game modes");
+
+            RMC_DisplayMapTimeSpent = UI::Checkbox("Time spent on the map", RMC_DisplayMapTimeSpent);
+            RMC_AlwaysShowBtns = UI::Checkbox("Show buttons when the Openplanet overlay is hidden", RMC_AlwaysShowBtns);
+            RMC_DisplayPace = UI::Checkbox("Goal pace (Objective only)", RMC_DisplayPace);
+            RMC_SurvivalShowSurvivedTime = UI::Checkbox("Total time survived (Survival only)", RMC_SurvivalShowSurvivedTime);
             UI::SetNextItemWidth(300);
             RMC_ImageSize = UI::SliderInt("Medals size", RMC_ImageSize, 15, 35);
+
+            UI::PaddedHeaderSeparator("Map");
+
+            RMC_DisplayCurrentMap = UI::Checkbox("Display the current map information", RMC_DisplayCurrentMap);
+
+            UI::BeginDisabled(!RMC_DisplayCurrentMap);
+
+            RMC_DisplayMapDate = UI::Checkbox("Upload date", RMC_DisplayMapDate);
+            RMC_ShowAwards = UI::Checkbox("Award count", RMC_ShowAwards);
+            UI::SetNextItemWidth(200);
+            RMC_TagsLength = UI::SliderInt("Tags displayed (0: hidden)", RMC_TagsLength, 0, 3);
+
+            UI::EndDisabled();
+
             UI::EndTabItem();
         }
         UI::EndTabBar();

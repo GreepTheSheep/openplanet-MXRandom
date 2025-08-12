@@ -9,7 +9,7 @@ namespace PluginSettings
     [Setting hidden]
     string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
 
-    [SettingsTab name="Advanced" order="3" icon="Wrench"]
+    [SettingsTab name="Advanced" order="4" icon="Wrench"]
     void RenderAdvancedSettings()
     {
         if (UI::OrangeButton("Reset to default"))
