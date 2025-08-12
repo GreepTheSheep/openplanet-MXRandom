@@ -143,7 +143,7 @@ namespace MX
             }
 
 #if TMNEXT
-            if (RMC::selectedGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
+            if (RMC::currentGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
                 Log::Warn("Map is too big to play in servers, retrying...");
                 sleep(1000);
                 PreloadRandomMap();

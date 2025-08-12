@@ -53,13 +53,13 @@ The parameter `customParameters` decides if the plugin should use the custom sea
 
 ### Game Modes
 
-Game modes are in a enumurated list.
+Game modes are in an enumerated list.
 
 | Identifier | Mode             |
 |------------|------------------|
 | 0          | Challenge        |
 | 1          | Survival         |
-| 2          | ChallengeChaos   |
-| 3          | SurvivalChaos    |
-| 4          | Objective        |
-| 5          | Together         |
+| 2          | Objective        |
+| 3          | Together         |
+| 4          | ChallengeChaos   |
+| 5          | SurvivalChaos    |

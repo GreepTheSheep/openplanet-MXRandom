@@ -28,7 +28,7 @@ class RMC
 
     void Render()
     {
-        string lastLetter = tostring(RMC::selectedGameMode).SubStr(0,1);
+        string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
         if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
@@ -44,7 +44,7 @@ class RMC
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCMode(false);
 #endif
-                int secondaryCount = RMC::selectedGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
+                int secondaryCount = RMC::currentGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                         Renderables::Add(SaveRunQuestionModalDialog());
@@ -358,7 +358,7 @@ class RMC
 
     void GameEndNotification()
     {
-        if (RMC::selectedGameMode == RMC::GameMode::Challenge) {
+        if (RMC::currentGameMode == RMC::GameMode::Challenge) {
 #if TMNEXT
             RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_GoalMedal);
 #endif
@@ -372,7 +372,7 @@ class RMC
                 ) + " medals!");
         }
 #if DEPENDENCY_CHAOSMODE
-        if (RMC::selectedGameMode == RMC::GameMode::ChallengeChaos) {
+        if (RMC::currentGameMode == RMC::GameMode::ChallengeChaos) {
             UI::ShowNotification(
                 "\\$0f0Random Map Chaos Challenge ended!",
                 "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +

@@ -102,7 +102,7 @@ class RMS : RMC
 
     void GameEndNotification() override
     {
-        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+        if (RMC::currentGameMode == RMC::GameMode::Survival) {
 #if TMNEXT
             RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_GoalMedal);
 #endif
@@ -114,7 +114,7 @@ class RMS : RMC
             );
         }
 #if DEPENDENCY_CHAOSMODE
-        if (RMC::selectedGameMode == RMC::GameMode::SurvivalChaos) {
+        if (RMC::currentGameMode == RMC::GameMode::SurvivalChaos) {
             UI::ShowNotification(
                 "\\$0f0Random Map Chaos Survival ended!",
                 "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +

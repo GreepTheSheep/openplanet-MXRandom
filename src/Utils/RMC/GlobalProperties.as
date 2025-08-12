@@ -47,12 +47,12 @@ namespace RMC
     {
         Challenge,
         Survival,
-        ChallengeChaos,
-        SurvivalChaos,
         Objective,
-        Together
+        Together,
+        ChallengeChaos,
+        SurvivalChaos
     }
-    GameMode selectedGameMode;
+    GameMode currentGameMode;
 
     void FetchConfig() {
         Log::Trace("Fetching RMC configs from openplanet.dev...");
@@ -102,7 +102,7 @@ namespace RMC
         CurrentMedal = -1;
         LastRun = -1;
 
-        if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::Survival) {
+        if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
             if (!hasRun) {
                 DataManager::CreateSaveFile();
@@ -139,7 +139,7 @@ namespace RMC
                         GotGoalMedal = false;
                     } else {
                         GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
-                        if (selectedGameMode == GameMode::Challenge) {
+                        if (currentGameMode == GameMode::Challenge) {
                             Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
                             Survival.Skips = 0;
                             GotBelowMedal = CurrentRunData["GotBelowMedalOnMap"];
@@ -153,7 +153,7 @@ namespace RMC
                         GotGoalMedal = CurrentRunData["GotGoalMedalOnMap"];
                         CurrentTimeOnMap = CurrentRunData["PBOnMap"];
                     }
-                    UI::ShowNotification("\\$080Random Map "+ tostring(RMC::selectedGameMode) + " started!", "Good Luck!");
+                    UI::ShowNotification("\\$080Random Map "+ tostring(RMC::currentGameMode) + " started!", "Good Luck!");
                     IsInited = true;
                 }
 #if MP4
@@ -172,11 +172,11 @@ namespace RMC
                         yield();
                     }
 #endif
-                    if (RMC::selectedGameMode == GameMode::Challenge || RMC::selectedGameMode == GameMode::ChallengeChaos){
+                    if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos){
                         Challenge.StartTimer();
-                    } else if (RMC::selectedGameMode == GameMode::Survival || RMC::selectedGameMode == GameMode::SurvivalChaos){
+                    } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos){
                         Survival.StartTimer();
-                    } else if (RMC::selectedGameMode == GameMode::Objective){
+                    } else if (RMC::currentGameMode == GameMode::Objective){
                         Objective.StartTimer();
                     }
                     TimeSpawnedMap = !RMC::ContinueSavedRun ? Time::Now : int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
@@ -278,11 +278,11 @@ namespace RMC
         CurrentRunData["MapData"] = CurrentMapJsonData;
         CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
-        CurrentRunData["SecondaryCounterValue"] = selectedGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
+        CurrentRunData["SecondaryCounterValue"] = currentGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
         CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedal;
         CurrentRunData["PBOnMap"] = RMC::CurrentTimeOnMap;
 
-        if (RMC::selectedGameMode == RMC::GameMode::Survival) {
+        if (RMC::currentGameMode == RMC::GameMode::Survival) {
             CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
         } else {
             CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedal;
