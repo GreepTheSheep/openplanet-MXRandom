@@ -50,22 +50,7 @@ class Window
 
                 if (UI::BeginTabItem(Icons::Cogs + " Settings"))
                 {
-                    UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-                    if (UI::BeginTabItem(Icons::Cog + " Searching"))
-                    {
-                        UI::BeginChild("SearchingChild");
-                        PluginSettings::RenderSearchingSettingTab();
-                        UI::EndChild();
-                        UI::EndTabItem();
-                    }
-                    if (UI::BeginTabItem(Icons::Cog + " Advanced"))
-                    {
-                        UI::BeginChild("AdvancedChild");
-                        PluginSettings::RenderAdvancedSettings();
-                        UI::EndChild();
-                        UI::EndTabItem();
-                    }
-                    UI::EndTabBar();
+                    PluginSettings::Render();
                     UI::EndTabItem();
                 }
 

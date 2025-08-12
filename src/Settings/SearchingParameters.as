@@ -78,10 +78,10 @@ namespace PluginSettings
     [Setting hidden]
     bool SkipSeenMaps = false;
 
-    [SettingsTab name="Searching" order="2" icon="Search"]
+    [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab()
     {
-        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse custom parameters. Forbidden on official leaderboards.", CustomRules);
+        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
         UI::Separator();
 
         UI::BeginDisabled(!CustomRules);

@@ -78,13 +78,8 @@ namespace PluginSettings
 #endif
 
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
-    void RenderRMCSettingTab(bool ShowBaseInfo = true)
+    void RenderRMCSettingTab()
     {
-        if (ShowBaseInfo) {
-            RMC::RenderBaseInfo();
-            UI::Separator();
-        }
-
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
         if (UI::BeginTabItem(Icons::Cogs + " General"))
         {

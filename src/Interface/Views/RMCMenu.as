@@ -207,16 +207,32 @@ namespace RMC
 #endif
         UI::Separator();
 #if TMNEXT
-        if (UI::Button(Icons::Table + " Standings")) {
+        if (UI::Button(Icons::Table)) {
             OpenBrowserURL(PluginSettings::RMC_Leaderboard_Url);
         }
+        UI::SetPreviousTooltip("Leaderboard standings");
+
         UI::SameLine();
 #endif
         if (UI::PurpleButton(Icons::Cog)) {
-            Renderables::Add(RMCSettingsModalDialog());
+            Renderables::Add(SettingsModalDialog());
         }
+        UI::SetPreviousTooltip("Settings");
+
         UI::SameLine();
-        if (UI::IsOverlayShown() && UI::OrangeButton(Icons::Backward + " Go back")) {
+
+        if (UI::GreyButton(Icons::Book)) {
+            Renderables::Add(RMCRulesModalDialog());
+        }
+        UI::SetPreviousTooltip("Rules");
+
+        UI::SameLine();
+
+        if (UI::OrangeButton(Icons::Backward + " Go back")) {
+            if (!UI::IsOverlayShown()) {
+                UI::ShowOverlay();
+            }
+
             window.isInRMCMode = false;
         }
 

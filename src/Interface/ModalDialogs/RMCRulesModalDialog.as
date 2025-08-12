@@ -1,14 +1,14 @@
-class RMCSettingsModalDialog : ModalDialog
+class RMCRulesModalDialog : ModalDialog
 {
     Net::HttpRequest@ m_request;
     string resErrorString;
     Json::Value m_rulesJson;
     bool m_requestError = false;
 
-    RMCSettingsModalDialog()
+    RMCRulesModalDialog()
     {
-        super(MX_COLOR_STR + Icons::Cog + " \\$zRandom Map Challenge");
-        m_size = vec2(Draw::GetWidth()/2, Draw::GetHeight()/2);
+        super(MX_COLOR_STR + Icons::Book + " \\$zRandom Map Challenge Rules");
+        m_size = vec2(Draw::GetWidth() / 2, 600);
         StartRulesRequest();
     }
 
@@ -25,22 +25,33 @@ class RMCSettingsModalDialog : ModalDialog
                 }
             } else {
                 UI::BeginTabBar("RMCRulesTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-                if (UI::BeginTabItem(Icons::ClockO + " Random Map Challenge"))
-                {
+
+                UI::PushTextWrapPos(UI::GetWindowContentRegionWidth());
+
+                if (UI::BeginTabItem(Icons::ClockO + " Random Map Challenge")) {
+                    array<string> rules;
+
                     for (uint i = 0; i < m_rulesJson["challenge"].Length; i++) {
-                        string rule = m_rulesJson["challenge"][i];
-                        UI::Markdown("- " + rule);
+                        rules.InsertLast("- " + string(m_rulesJson["challenge"][i]));
                     }
+
+                    UI::Markdown(string::Join(rules, "\n\n"));
                     UI::EndTabItem();
                 }
-                if (UI::BeginTabItem(Icons::Heart + " Random Map Survival"))
-                {
+
+                if (UI::BeginTabItem(Icons::Heart + " Random Map Survival")) {
+                    array<string> rules;
+
                     for (uint i = 0; i < m_rulesJson["survival"].Length; i++) {
-                        string rule = m_rulesJson["survival"][i];
-                        UI::Markdown("- " + rule);
+                        rules.InsertLast("- " + string(m_rulesJson["survival"][i]));
                     }
+
+                    UI::Markdown(string::Join(rules, "\n\n"));
                     UI::EndTabItem();
                 }
+
+                UI::PopTextWrapPos();
+
                 UI::EndTabBar();
             }
         }
@@ -84,20 +95,8 @@ class RMCSettingsModalDialog : ModalDialog
 
     void RenderDialog() override
     {
-        UI::BeginTabBar("RMCModalMainTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-        if (UI::BeginTabItem(Icons::InfoCircle + " Information"))
-        {
-            RMC::RenderBaseInfo();
-            CheckRulesRequest();
-            RenderRulesContent();
-            UI::EndTabItem();
-        }
-
-        if (UI::BeginTabItem(Icons::Cogs + " Settings##2"))
-        {
-            PluginSettings::RenderRMCSettingTab(false);
-            UI::EndTabItem();
-        }
-        UI::EndTabBar();
+        RMC::RenderBaseInfo();
+        CheckRulesRequest();
+        RenderRulesContent();
     }
 }

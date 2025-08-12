@@ -4,7 +4,7 @@ namespace PluginSettings
     VirtualKey S_QuickMapKey = VirtualKey(0);
 
     [SettingsTab name="Hotkeys" order="3" icon="KeyboardO"]
-    void RenderSettings()
+    void RenderHotkeySettingTab()
     {
         if (UI::OrangeButton("Reset to default")) {
             S_QuickMapKey = VirtualKey(0);
