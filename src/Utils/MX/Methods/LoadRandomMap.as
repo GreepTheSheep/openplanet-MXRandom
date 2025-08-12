@@ -244,6 +244,9 @@ namespace MX
     {
         try
         {
+            while (RandomMapIsLoading) {
+                yield();
+            }
 #if MP4
             if (TM::CurrentTitlePack() == "") {
                 Log::Warn("Please load a title pack first.", true);
@@ -267,9 +270,10 @@ namespace MX
             Log::LoadingMapNotification(map);
 
             DataManager::SaveMapToRecentlyPlayed(map);
-            RandomMapIsLoading = false;
 
             await(startnew(TM::LoadMap, map));
+
+            RandomMapIsLoading = false;
             RMC::CurrentMapJsonData = map.ToJson();
         }
         catch
