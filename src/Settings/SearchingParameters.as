@@ -10,6 +10,9 @@ namespace PluginSettings
     array<string> ExcludedAuthorsArr = {};
 
     [Setting hidden]
+    bool UseCustomLength = false;
+
+    [Setting hidden]
     int MinLength = 0;
 
     [Setting hidden]
@@ -84,6 +87,7 @@ namespace PluginSettings
         UI::BeginDisabled(!CustomRules);
 
         if (UI::OrangeButton("Reset to default")) {
+            UseCustomLength = false;
             MinLength = 0;
             MaxLength = 0;
             UseDateInterval = false;
@@ -111,6 +115,10 @@ namespace PluginSettings
     
         UI::PaddedHeaderSeparator("Length");
 
+        UseCustomLength = UI::Checkbox("Use custom length range for map search", UseCustomLength);
+
+        UI::BeginDisabled(!UseCustomLength);
+
         UI::SetItemText("From:");
         MinLength = UI::InputInt("##FromLengthFilter", MinLength, 0);
         UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.");
@@ -126,6 +134,8 @@ namespace PluginSettings
         if (MaxLength != 0 && UI::ResetButton()) {
             MaxLength = 0;
         }
+
+        UI::EndDisabled();
 
         UI::BeginDisabled();
 

@@ -188,15 +188,22 @@ namespace MX
                 }
             }
 
-            if (PluginSettings::MinLength != 0 && map.AuthorTime < PluginSettings::MinLength) {
-                Log::Warn("Map is shorter than the requested length, retrying...");
-                sleep(1000);
-                PreloadRandomMap();
-                return;
-            }
+            if (PluginSettings::UseCustomLength) {
+                if (PluginSettings::MinLength != 0 && map.AuthorTime < PluginSettings::MinLength) {
+                    Log::Warn("Map is shorter than the requested length, retrying...");
+                    sleep(1000);
+                    PreloadRandomMap();
+                    return;
+                }
 
-            if (PluginSettings::MaxLength != 0 && map.AuthorTime > PluginSettings::MaxLength) {
-                Log::Warn("Map is longer than the requested length, retrying...");
+                if (PluginSettings::MaxLength != 0 && map.AuthorTime > PluginSettings::MaxLength) {
+                    Log::Warn("Map is longer than the requested length, retrying...");
+                    sleep(1000);
+                    PreloadRandomMap();
+                    return;
+                }
+            } else if (map.AuthorTime > RMC::config.length) {
+                Log::Warn("Map is too long, retrying...");
                 sleep(1000);
                 PreloadRandomMap();
                 return;
@@ -287,11 +294,15 @@ namespace MX
             params.Set("etag", RMC::config.etags);
             params.Set("authortimemax", tostring(RMC::config.length));
         } else if (customParameters && PluginSettings::CustomRules) {
-            if (PluginSettings::MinLength != 0) {
-                params.Set("authortimemin", tostring(PluginSettings::MinLength));
-            }
-            if (PluginSettings::MaxLength != 0) {
-                params.Set("authortimemax", tostring(PluginSettings::MaxLength));
+            if (PluginSettings::UseCustomLength) {
+                if (PluginSettings::MinLength != 0) {
+                    params.Set("authortimemin", tostring(PluginSettings::MinLength));
+                }
+                if (PluginSettings::MaxLength != 0) {
+                    params.Set("authortimemax", tostring(PluginSettings::MaxLength));
+                }
+            } else {
+                params.Set("authortimemax", tostring(RMC::config.length));
             }
             if (PluginSettings::UseDateInterval) {
                 int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
