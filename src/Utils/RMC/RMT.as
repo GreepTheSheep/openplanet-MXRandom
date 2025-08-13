@@ -442,7 +442,7 @@ class RMT : RMC
         int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
         if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
 
-        if (UI::BeginTable("RMTScores", 3)) {
+        if (UI::BeginTable("RMTScores", 3, UI::TableFlags::Hideable)) {
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn(PluginSettings::RMC_GoalMedal, UI::TableColumnFlags::WidthFixed, 40);
