@@ -18,10 +18,7 @@ namespace RMC
         if (!Meta::IsSchoolModeWhitelisted()) UI::Text("\\$f00" + Icons::TimesCircleO + " \\$zThe results will not be uploaded to the leaderboard.");
         else UI::Text("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted, results will be uploaded to the leaderboard.");
 #endif
-            UI::AlignTextToFramePadding();
-            UI::Text("Mode:");
-            UI::SameLine();
-            UI::SetNextItemWidth(150);
+            UI::SetItemText("Mode:", 200);
             if (UI::BeginCombo("##GamemodeSelect", tostring(selectedGameMode).Replace("_", " "))) {
 #if TMNEXT
                 for (uint i = 0; i <= GameMode::SurvivalChaos; i++) {
@@ -40,10 +37,7 @@ namespace RMC
                 UI::EndCombo();
             }
 
-            UI::AlignTextToFramePadding();
-            UI::Text("Medal:");
-            UI::SameLine();
-            UI::SetNextItemWidth(150);
+            UI::SetItemText("Medal:", 200);
             if (UI::BeginCombo("##GoalMedalObjectiveMode", PluginSettings::RMC_GoalMedal)){
                 for (uint i = 0; i < RMC::Medals.Length; i++) {
                     string goalMedal = RMC::Medals[i];
@@ -73,13 +67,8 @@ namespace RMC
                     }
                     break;
                 case GameMode::Objective:
-                    UI::AlignTextToFramePadding();
-                    UI::Text("Goal:");
-                    UI::SameLine();
-                    UI::SetNextItemWidth(150);
-                    PluginSettings::RMC_ObjectiveMode_Goal = UI::InputInt("##ObjectiveMedals", PluginSettings::RMC_ObjectiveMode_Goal);
-                    if (PluginSettings::RMC_ObjectiveMode_Goal < 1)
-                        PluginSettings::RMC_ObjectiveMode_Goal = 1;
+                    UI::SetItemText("Goal:", 200);
+                    PluginSettings::RMC_ObjectiveMode_Goal = Math::Max(1, UI::InputInt("##ObjectiveMedals", PluginSettings::RMC_ObjectiveMode_Goal));
 
                     if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")) {
                         currentGameMode = GameMode::Objective;
