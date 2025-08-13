@@ -11,7 +11,7 @@ void RenderMenu()
                     startnew(MX::FetchMapTags);
                 }
             } else {
-                UI::TextDisabled(Icons::AnimatedHourglass() + " Loading...");
+                UI::TextDisabled(Icons::AnimatedHourglass + " Loading...");
             }
         } else {
             if (TM::CurrentTitlePack() == "") {

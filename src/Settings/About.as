@@ -14,7 +14,7 @@ void RenderAboutTab()
         }
         else
         {
-            UI::TextDisabled(Icons::AnimatedHourglass() + " Loading...");
+            UI::TextDisabled(Icons::AnimatedHourglass + " Loading...");
         }
         UI::Separator();
     }

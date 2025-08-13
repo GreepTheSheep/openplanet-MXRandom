@@ -252,7 +252,7 @@ class RMC
 
     void PausePlayButton()
     {
-        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass() + Icons::Pause))) {
+        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
             if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
             RMC::IsPaused = !RMC::IsPaused;
         }

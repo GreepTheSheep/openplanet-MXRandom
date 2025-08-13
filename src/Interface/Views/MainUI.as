@@ -10,7 +10,7 @@ namespace MainUIView
                     startnew(MX::FetchMapTags);
                 }
             } else {
-                UI::CenteredText(Icons::AnimatedHourglass() + " Loading...", true);
+                UI::CenteredText(Icons::AnimatedHourglass + " Loading...", true);
             }
         } else {
 #if TMNEXT
@@ -24,7 +24,7 @@ namespace MainUIView
                             startnew(MX::LoadRandomMap);
                         }
                     } else {
-                        UI::CenteredText(Icons::AnimatedHourglass() + " Loading...");
+                        UI::CenteredText(Icons::AnimatedHourglass + " Loading...");
                     }
                     if (UI::CenteredButton(Icons::ClockO +" Random Map Challenge", 0.155)) {
                         window.isInRMCMode = !window.isInRMCMode;
@@ -73,7 +73,7 @@ namespace MainUIView
             }
         }
         if (GH::ReleasesReq !is null) {
-            UI::Text(Icons::AnimatedHourglass() + " Loading...");
+            UI::Text(Icons::AnimatedHourglass + " Loading...");
         }
 
         if (GH::ReleasesReq is null && GH::Releases.Length > 0) {

@@ -1,5 +1,5 @@
 namespace Icons {
-    string AnimatedHourglass() {
+    string get_AnimatedHourglass() {
         int index = Time::Stamp % 3;
 
         switch (index) {

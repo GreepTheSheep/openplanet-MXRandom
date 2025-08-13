@@ -15,7 +15,7 @@ class RMCRulesModalDialog : ModalDialog
     void RenderRulesContent()
     {
         if (m_request !is null) {
-            UI::Text(Icons::AnimatedHourglass() + " Loading...");
+            UI::Text(Icons::AnimatedHourglass + " Loading...");
         } else {
             if (m_requestError) {
                 UI::Text("Error loading rules!");

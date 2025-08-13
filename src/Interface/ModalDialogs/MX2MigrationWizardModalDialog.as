@@ -64,10 +64,10 @@ class MX2MigrationWizardModalDialog : ModalDialog
                 "You can click \"Delete data\" to remove your data if the error persists."
             );
         } else {
-            if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zBacking up old data...");
-            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
-            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass()) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
-            UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Icons::AnimatedHourglass()  + " \\$zMigrating data...");
+            if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zBacking up old data...");
+            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
+            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
+            UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Icons::AnimatedHourglass  + " \\$zMigrating data...");
 
             switch (m_migrationStep) {
                 case 0:

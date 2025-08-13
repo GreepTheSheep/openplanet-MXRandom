@@ -150,7 +150,7 @@ namespace RMC
                         }
                         UI::EndDisabled();
                         if (MXNadeoServicesGlobal::isCheckingRoom) {
-                            UI::TextDisabled(Icons::AnimatedHourglass() + " Checking...");
+                            UI::TextDisabled(Icons::AnimatedHourglass + " Checking...");
                         }
                         if (MXNadeoServicesGlobal::foundRoom !is null) {
                             UI::Text("Room found:");
