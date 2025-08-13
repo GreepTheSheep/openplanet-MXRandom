@@ -107,7 +107,7 @@ namespace PluginSettings
             DifficultiesArray = {};
             TermsExactMatch = false;
 #if TMNEXT
-            ExcludeMapTagsArr = {23, 37, 40. 49};
+            ExcludeMapTagsArr = {23, 37, 40, 49};
 #else
             ExcludeMapTagsArr = {20};
 #endif
