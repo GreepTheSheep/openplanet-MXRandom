@@ -3,6 +3,7 @@ namespace MXNadeoServicesGlobal
     bool APIDown = false;
     bool APIRefresh = false;
     bool isCheckingRoom = false;
+    bool joiningRoom = false;
     string roomCheckErrorCode = "";
     string roomCheckError = "";
     NadeoServices::ClubRoom@ foundRoom;
@@ -228,6 +229,10 @@ namespace MXNadeoServicesGlobal
     }
 #endif
 
+    bool get_IsJoiningRoom() {
+        return joiningRoom;
+    }
+
 #if DEPENDENCY_BETTERROOMMANAGER
     void JoinRMTRoom() {
         if (PluginSettings::RMC_Together_ClubId <= 0 || PluginSettings::RMC_Together_RoomId <= 0) {
@@ -236,7 +241,15 @@ namespace MXNadeoServicesGlobal
         }
 
         Log::Trace("Joining room with ID " + PluginSettings::RMC_Together_RoomId + " from club ID " + PluginSettings::RMC_Together_ClubId);
-        BRM::JoinServer(PluginSettings::RMC_Together_ClubId, PluginSettings::RMC_Together_RoomId);
+        joiningRoom = true;
+
+        try {
+            BRM::JoinServer(PluginSettings::RMC_Together_ClubId, PluginSettings::RMC_Together_RoomId);
+        } catch {
+            Log::Warn("Failed to join RMT room: " + getExceptionInfo(), true);
+        }
+
+        joiningRoom = false;
     }
 #endif
 }

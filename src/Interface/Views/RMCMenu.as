@@ -169,13 +169,16 @@ namespace RMC
                         UI::EndDisabled();
 
                         if (!inServer) {
-                            UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
-
+                            if (MXNadeoServicesGlobal::IsJoiningRoom) {
+                                UI::Text(Icons::AnimatedHourglass + " Joining room...");
+                            } else {
+                                UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
 #if DEPENDENCY_BETTERROOMMANAGER
-                            if (UI::GreenButton("Join room")) {
-                                startnew(MXNadeoServicesGlobal::JoinRMTRoom);
-                            }
+                                if (UI::GreenButton("Join room")) {
+                                    startnew(MXNadeoServicesGlobal::JoinRMTRoom);
+                                }
 #endif
+                            }
                         }
                     }
 #endif
