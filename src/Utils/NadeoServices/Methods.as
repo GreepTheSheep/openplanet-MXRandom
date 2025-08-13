@@ -227,4 +227,16 @@ namespace MXNadeoServicesGlobal
         }
     }
 #endif
+
+#if DEPENDENCY_BETTERROOMMANAGER
+    void JoinRMTRoom() {
+        if (PluginSettings::RMC_Together_ClubId <= 0 || PluginSettings::RMC_Together_RoomId <= 0) {
+            Log::Error("Invalid club or room ID when trying to join RMT server", true);
+            return;
+        }
+
+        Log::Trace("Joining room with ID " + PluginSettings::RMC_Together_RoomId + " from club ID " + PluginSettings::RMC_Together_ClubId);
+        BRM::JoinServer(PluginSettings::RMC_Together_ClubId, PluginSettings::RMC_Together_RoomId);
+    }
+#endif
 }

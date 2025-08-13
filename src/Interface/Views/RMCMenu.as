@@ -140,19 +140,11 @@ namespace RMC
                     }
 #endif
 
-                    UI::AlignTextToFramePadding();
-                    UI::Text("Club ID:");
-                    UI::SameLine();
-                    UI::SetNextItemWidth(156);
+                    UI::SetItemText("Club ID:", 225);
                     PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
 
-                    UI::AlignTextToFramePadding();
-                    UI::Text("Room ID:");
-                    UI::SameLine();
-                    UI::SetNextItemWidth(150);
+                    UI::SetItemText("Room ID:", 225);
                     PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
-
-                    bool RMT_isServerOK = false;
 
                     if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
                         UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
@@ -164,20 +156,30 @@ namespace RMC
                             UI::TextDisabled(Icons::AnimatedHourglass() + " Checking...");
                         }
                         if (MXNadeoServicesGlobal::foundRoom !is null) {
-                            RMT_isServerOK = true;
                             UI::Text("Room found:");
                             UI::Text("'"+Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.name)+"', in club '"+Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName)+"'");
                         }
                     }
-                    if (RMT_isServerOK && !TM::IsInServer()) {
-                        UI::BeginDisabled();
-                        UI::GreyButton(Icons::Users + " Start Random Map Together");
-                        UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
+
+                    if (MXNadeoServicesGlobal::foundRoom !is null) {
+                        bool inServer = TM::IsInServer();
+
+                        UI::BeginDisabled(!inServer);
+                        if (UI::GreenButton(Icons::Users + " Start Random Map Together")) {
+                            currentGameMode = GameMode::Together;
+                            startnew(CoroutineFunc(Together.StartRMT));
+                        }
                         UI::EndDisabled();
-                    }
-                    if (RMT_isServerOK && TM::IsInServer() && UI::GreenButton(Icons::Users + " Start Random Map Together")){
-                        currentGameMode = GameMode::Together;
-                        startnew(CoroutineFunc(Together.StartRMT));
+
+                        if (!inServer) {
+                            UI::Text("\\$a50" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
+
+#if DEPENDENCY_BETTERROOMMANAGER
+                            if (UI::GreenButton("Join room")) {
+                                startnew(MXNadeoServicesGlobal::JoinRMTRoom);
+                            }
+#endif
+                        }
                     }
 #endif
                 break;
