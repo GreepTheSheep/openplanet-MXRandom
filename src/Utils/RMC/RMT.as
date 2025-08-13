@@ -409,7 +409,7 @@ class RMT : RMC
             UI::AlignTextToFramePadding();
             UI::Text("Switching map...");
             UI::SameLine();
-            UI::Text(Icons::InfoCircle);
+            UI::TextDisabled(Icons::InfoCircle);
             UI::SetPreviousTooltip("Map switch might be prevented by Nadeo if done too quickly.\n\nIf the podium screen is not shown after 10 seconds, you can \nstart a vote to change to the next map in the game pause menu.");
         }
     }
@@ -592,6 +592,10 @@ class RMT : RMC
     }
 
     void DrawPlayerProgress() {
+        if (RMC::IsStarting) {
+            return;
+        }
+
         if (UI::CollapsingHeader("Current Runs")) {
 #if DEPENDENCY_MLFEEDRACEDATA
             auto rd = MLFeed::GetRaceData_V4();

@@ -74,9 +74,6 @@ namespace RMC
                         currentGameMode = GameMode::Objective;
                         startnew(Start);
                     }
-                    if (UI::Button(Icons::Table + " Objective Mode Standings")) {
-                        OpenBrowserURL("https://www.speedrun.com/tmce#Flinks_Random_Map_Challenge");
-                    }
                     break;
 #if TMNEXT
                 case GameMode::ChallengeChaos:
@@ -231,7 +228,6 @@ namespace RMC
             Survival.Skips > 0 ||
             Survival.SurvivedTime > 0
         ) {
-            if (!UI::IsOverlayShown()) UI::Dummy(vec2(0, 10));
             UI::Separator();
             UI::Text("Last run stats:");
             if (currentGameMode == GameMode::Challenge) {

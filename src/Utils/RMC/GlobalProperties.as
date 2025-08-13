@@ -210,7 +210,7 @@ namespace RMC
             CGameCtnPlayground@ playground = cast<CGameCtnPlayground>(app.CurrentPlayground);
 
             if (playground !is null && playground.PlayerRecordedGhost !is null) {
-                if (playground.PlayerRecordedGhost.RaceTime != LastRun) {
+                if (int(playground.PlayerRecordedGhost.RaceTime) != LastRun) {
                     HandledRun = false;
                     time = playground.PlayerRecordedGhost.RaceTime;
                 }

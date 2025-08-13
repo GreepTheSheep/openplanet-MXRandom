@@ -55,21 +55,17 @@ namespace UI {
 
     bool CenteredButton(const string &in text)
     {
-        float textWidth = Draw::MeasureString(text).x;
-        float padding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding).x;
-        float buttonWidth = textWidth + padding;
+        vec2 button = MeasureButton(text);
+        UI::CenterAlign(button.x);
 
-        UI::CenterAlign(buttonWidth);
         return UI::Button(text);
     }
 
     bool CenteredButton(const string &in text, float color)
     {
-        float textWidth = Draw::MeasureString(text).x;
-        float padding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding).x;
-        float buttonWidth = textWidth + padding;
+        vec2 button = MeasureButton(text);
+        UI::CenterAlign(button.x);
 
-        UI::CenterAlign(buttonWidth);
         return UI::ButtonColored(text, color);
     }
 
@@ -98,6 +94,13 @@ namespace UI {
     }
 
     // Buttons
+
+    vec2 MeasureButton(const string &in label) {
+        vec2 text = Draw::MeasureString(label);
+        vec2 padding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding);
+
+        return text + padding;
+    }
 
     bool ResetButton() {
         UI::SameLine();
