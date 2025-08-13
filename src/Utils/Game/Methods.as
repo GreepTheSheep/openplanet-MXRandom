@@ -59,6 +59,13 @@ namespace TM
         return IsMapCorrect(string(DataJson["recentlyPlayed"][0]["MapUid"]));
     }
 
+    uint PlaygroundGameTime() {
+        auto app = GetApp();
+        auto playgroundScript = app.Network.PlaygroundClientScriptAPI;
+        if (playgroundScript is null) return uint(-1);
+        return uint(playgroundScript.GameTime);
+    }
+
     void LoadRMCMap() {
         if (DataJson["recentlyPlayed"].Length == 0) return;
 
