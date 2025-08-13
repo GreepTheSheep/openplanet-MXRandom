@@ -73,8 +73,6 @@ namespace RMC
                     }
                     break;
                 case GameMode::Objective:
-                    UI::TextDisabled(Icons::InfoCircle + " Hover for info");
-                    UI::SetPreviousTooltip("Set a goal, and get it done as quickly as possible!\nSkips are unlimited but costs you time spending on the map.");
                     UI::AlignTextToFramePadding();
                     UI::Text("Goal:");
                     UI::SameLine();

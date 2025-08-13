@@ -28,9 +28,18 @@ class RMCRulesModalDialog : ModalDialog
 
                 UI::PushTextWrapPos(UI::GetWindowContentRegionWidth());
 
-                if (UI::BeginTabItem(Icons::ClockO + " Random Map Challenge")) {
-                    array<string> rules;
+                array<string> rules;
 
+                if (UI::BeginTabItem("General")) {
+                    for (uint i = 0; i < m_rulesJson["general"].Length; i++) {
+                        rules.InsertLast("- " + string(m_rulesJson["general"][i]));
+                    }
+
+                    UI::Markdown(string::Join(rules, "\n\n"));
+                    UI::EndTabItem();
+                }
+
+                if (UI::BeginTabItem(Icons::ClockO + " Random Map Challenge")) {
                     for (uint i = 0; i < m_rulesJson["challenge"].Length; i++) {
                         rules.InsertLast("- " + string(m_rulesJson["challenge"][i]));
                     }
@@ -40,10 +49,17 @@ class RMCRulesModalDialog : ModalDialog
                 }
 
                 if (UI::BeginTabItem(Icons::Heart + " Random Map Survival")) {
-                    array<string> rules;
-
                     for (uint i = 0; i < m_rulesJson["survival"].Length; i++) {
                         rules.InsertLast("- " + string(m_rulesJson["survival"][i]));
+                    }
+
+                    UI::Markdown(string::Join(rules, "\n\n"));
+                    UI::EndTabItem();
+                }
+
+                if (UI::BeginTabItem(Icons::Trophy + " Random Map Objective")) {
+                    for (uint i = 0; i < m_rulesJson["objective"].Length; i++) {
+                        rules.InsertLast("- " + string(m_rulesJson["objective"][i]));
                     }
 
                     UI::Markdown(string::Join(rules, "\n\n"));
