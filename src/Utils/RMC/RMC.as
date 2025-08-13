@@ -169,7 +169,7 @@ class RMC
                 if (UI::Button("Force switch")) startnew(RMC::SwitchMap);
             }
             else RMC::IsPaused = true;
-        } else if (TM::IsMapLoaded()) {
+        } else if (RMC::IsInited && TM::IsMapLoaded()) {
             if (TM::InRMCMap()) {
                 UI::Separator();
                 MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
