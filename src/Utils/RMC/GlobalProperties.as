@@ -133,6 +133,7 @@ namespace RMC
                         GoalMedalCount = 0;
                         Challenge.BelowMedalCount = 0;
                         Survival.Skips = 0;
+                        Objective.Skips = 0;
                         FreeSkipsUsed = 0;
                         CurrentTimeOnMap = -1;
                         GotBelowMedal = false;

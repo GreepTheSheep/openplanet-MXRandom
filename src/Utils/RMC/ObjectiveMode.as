@@ -123,6 +123,7 @@ class RMObjective : RMC
 #endif
                 if (TM::InRMCMap()) {
                     RMC::StartTime = Time::Now;
+                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
                     PendingTimerLoop();
 
                     if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
