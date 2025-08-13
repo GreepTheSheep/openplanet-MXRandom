@@ -8,6 +8,6 @@ namespace Fonts {
         @Header = UI::LoadFont("DroidSans-Bold.ttf", 22);
         @HeaderSub = UI::LoadFont("DroidSans.ttf", 20);
         @TimerFont = UI::LoadFont("src/Assets/Fonts/digital-7.mono.ttf", 20);
-        @MidBold = UI::LoadFont("DroidSans-Bold.ttf", 18);
+        @MidBold = UI::LoadFont("DroidSans-Bold.ttf", 24);
     }
 }

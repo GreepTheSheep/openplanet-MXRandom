@@ -15,8 +15,8 @@ namespace RMC
 
 #if SIG_SCHOOL
         UI::Text("\\$fa0" + Icons::University + " \\$zSchool mode is enabled.");
-        if (!Meta::IsSchoolModeWhitelisted()) UI::Text("\\$f00" + Icons::TimesCircleO + " \\$zThe results will not be uploaded to the leaderboard.");
-        else UI::Text("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted, results will be uploaded to the leaderboard.");
+        if (!Meta::IsSchoolModeWhitelisted()) UI::TextWrapped("\\$f00" + Icons::TimesCircleO + " \\$zThe results will not be uploaded to the leaderboard.");
+        else UI::TextWrapped("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted, results will be uploaded to the leaderboard.");
 #endif
             UI::SetItemText("Mode:", 200);
             if (UI::BeginCombo("##GamemodeSelect", tostring(selectedGameMode).Replace("_", " "))) {
@@ -95,16 +95,16 @@ namespace RMC
                         UI::Text("Missing permission to create club activities");
                     } else {
 #if !DEPENDENCY_NADEOSERVICES
-                        UI::Text(Icons::ExclamationTriangle + " NadeoServices dependency not found, your Openplanet installation may be corrupt!");
-                        UI::SetPreviousTooltip("RMT needs NadeoServices dependency (shipped with Openplanet) in order to send events to a room.");
+                        UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zNadeoServices dependency not found.");
+                        UI::SetPreviousTooltip("RMT needs the NadeoServices dependency (shipped with Openplanet) in order to send events to a room.\n\nYour Openplanet installation may be corrupted.");
 #endif
 #if !DEPENDENCY_MLHOOK
-                        UI::Text(Icons::ExclamationTriangle + " MLHook dependency not found, please enable or install \"MLHook & Event Inspector\" from the Plugin Manager.");
-                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
+                        UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zMLHook dependency not found.");
+                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLHook & Event Inspector\" from the Plugin Manager.");
 #endif
 #if !DEPENDENCY_MLFEEDRACEDATA
-                        UI::Text(Icons::ExclamationTriangle + " MLFeed dependency not found, please enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
-                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players on a room");
+                        UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zMLFeed dependency not found.");
+                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
 #endif
 #if !DEPENDENCY_BETTERCHAT
                         UI::Text(Icons::ExclamationCircle + " Better Chat plugin not found.");
@@ -137,10 +137,10 @@ namespace RMC
                     }
 #endif
 
-                    UI::SetItemText("Club ID:", 225);
+                    UI::SetItemText("Club ID:", 200);
                     PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
 
-                    UI::SetItemText("Room ID:", 225);
+                    UI::SetItemText("Room ID:", 200);
                     PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
 
                     if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
