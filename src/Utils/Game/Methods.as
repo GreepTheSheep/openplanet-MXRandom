@@ -1,10 +1,17 @@
 namespace TM
 {
+    const uint COOLDOWN = 5000;
+
     void LoadMap(ref@ mapData)
     {
 #if TMNEXT
         if (!Permissions::PlayLocalMap()) {
             Log::Error("Missing permission to play local maps. Club / Standard access is required.", true);
+            return;
+        }
+#elif MP4
+        if (TM::CurrentTitlePack() == "") {
+            Log::Error("No titlepack is selected, can't load map!.", true);
             return;
         }
 #endif
@@ -23,14 +30,6 @@ namespace TM
 
         string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
 
-#if DEPENDENCY_CHAOSMODE
-        if (ChaosMode::IsInRMCMode()) {
-            Log::Trace("Loading map in Chaos Mode");
-            app.ManiaTitleControlScriptAPI.PlayMap(url, "TrackMania/ChaosModeRMC", "");
-            return;
-        }
-#endif
-
         string gameMode;
         MX::ModesFromMapType.Get(map.MapType, gameMode);
 
@@ -38,7 +37,19 @@ namespace TM
         if (gameMode == "") MX::ModesFromTitlePack.Get(map.TitlePack, gameMode);
 #endif
 
+#if DEPENDENCY_CHAOSMODE
+        if (ChaosMode::IsInRMCMode()) {
+            gameMode = "TrackMania/ChaosModeRMC";
+        }
+#endif
+
         app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
+
+        const uint start = Time::Now;
+
+        while (Time::Now < start + COOLDOWN || IsLoadingScreen()) {
+            yield();
+        }
     }
 
     bool IsMapLoaded() {
@@ -119,6 +130,25 @@ namespace TM
                 playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
             }
         }
+    }
+
+    bool IsLoadingScreen() {
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+
+        auto scriptAPI = app.Network.PlaygroundClientScriptAPI;
+        if (scriptAPI !is null && scriptAPI.IsLoadingScreen) {
+            return true;
+        }
+
+        auto script = app.PlaygroundScript;
+        if (script is null) return false;
+
+        auto manager = script.UIManager;
+        if (manager !is null && manager.HoldLoadingScreen) {
+            return true;
+        }
+
+        return false;
     }
 
     bool IsPauseMenuDisplayed() {
