@@ -6,7 +6,6 @@ class Date
     Date(const string &in time, const string &in format) {
         timestamp = Time::ParseFormatString(format, time);
         info = Time::Parse(timestamp);
-        print(timestamp);
     }
 
     Date(const int &in stamp) {

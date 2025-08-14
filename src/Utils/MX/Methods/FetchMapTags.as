@@ -20,7 +20,7 @@ namespace MX
 
             m_mapTags.Sort(function(a,b) { return a.Name < b.Name; });
 
-            print(m_mapTags.Length + " tags loaded");
+            Log::Trace(m_mapTags.Length + " tags loaded");
             APIDown = false;
             APIRefreshing = false;
         } catch {

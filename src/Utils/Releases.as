@@ -48,7 +48,7 @@ namespace GH
             Log::Trace("Releases::CheckRequest : " + res);
 
             if (json.GetType() != Json::Type::Array || json.Length == 0) {
-                print("Releases::CheckRequest : Error parsing response");
+                Log::Error("Releases::CheckRequest : Error parsing response");
                 releasesRequestError = true;
                 return;
             }

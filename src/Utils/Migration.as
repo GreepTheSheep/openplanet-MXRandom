@@ -46,13 +46,13 @@ namespace Migration
             Log::Trace("Migration::CheckRequest : " + res);
 
             if (json.GetType() != Json::Type::Object) {
-                print("Migration::CheckRequest : Json is not an object");
+                Log::Error("Migration::CheckRequest : Json is not an object", true);
                 requestError = true;
                 return;
             }
 
             if (json.Length == 0 || !json.HasKey("Results") || json["Results"].Length == 0) {
-                print("Migration::CheckRequest : Error parsing response");
+                Log::Error("Migration::CheckRequest : Error parsing response", true);
                 requestError = true;
                 return;
             }
@@ -156,13 +156,13 @@ namespace Migration
             Log::Trace("Migration::CheckV2MXRequest: " + res);
 
             if (json.GetType() != Json::Type::Object) {
-                print("Migration::CheckV2MXRequest: Json is not an object");
+                Log::Error("Migration::CheckV2MXRequest: Json is not an object", true);
                 v2_requestError = true;
                 return;
             }
 
             if (json.Length == 0 || !json.HasKey("Results") || json["Results"].Length == 0) {
-                print("Migration::CheckV2MXRequest: Error parsing response");
+                Log::Error("Migration::CheckV2MXRequest: Error parsing response", true);
                 v2_requestError = true;
                 return;
             }
