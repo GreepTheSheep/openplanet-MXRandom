@@ -125,7 +125,7 @@ namespace PluginSettings
 
         UI::SetItemText("From:");
         MinLength = UI::InputInt("##FromLengthFilter", MinLength, 0);
-        UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.");
+        UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
 
         if (MinLength != 0 && UI::ResetButton()) {
             MinLength = 0;
@@ -133,7 +133,7 @@ namespace PluginSettings
 
         UI::SetCenteredItemText("To:");
         MaxLength = UI::InputInt("##ToLengthFilter", MaxLength, 0);
-        UI::SetItemTooltip("Maximum duration of the map, based on the author medal, in milliseconds.");
+        UI::SetItemTooltip("Maximum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
 
         if (MaxLength != 0 && UI::ResetButton()) {
             MaxLength = 0;
@@ -263,6 +263,16 @@ namespace PluginSettings
                 UI::EndListBox();
             }
             UI::EndTable();
+        }
+
+        // TMX tags for their respective map types
+        if (
+            (MapType == MapTypes::Stunt && ExcludeMapTagsArr.Find(16) >= 0)
+            || (MapType == MapTypes::Platform && ExcludeMapTagsArr.Find(18) >= 0)
+            || (MapType == MapTypes::Royal && ExcludeMapTagsArr.Find(37) >= 0)
+        ) {
+            UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$z" + tostring(MapType) + " tag excluded while searching for " + tostring(MapType) + " maps.");
+            UI::SetPreviousTooltip("It's recommended to not exclude this tag while searching for " + tostring(MapType));         
         }
 
         TagInclusiveSearch = UI::Checkbox("Tag inclusive search", TagInclusiveSearch);
