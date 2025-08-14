@@ -235,19 +235,16 @@ namespace RMC
             UI::Text("Last run stats:");
             if (currentGameMode == GameMode::Challenge) {
                 Challenge.RenderGoalMedal();
-                UI::HPadding(25);
                 Challenge.RenderBelowGoalMedal();
             }
             else if (currentGameMode == GameMode::Survival) {
                 Survival.RenderGoalMedal();
-                UI::HPadding(25);
                 Survival.RenderBelowGoalMedal();
                 UI::AlignTextToFramePadding();
                 UI::Text("Survived time: " + RMC::FormatTimer(Survival.SurvivedTime));
             }
             else if (currentGameMode == GameMode::Objective) {
                 Objective.RenderGoalMedal();
-                UI::HPadding(25);
                 Objective.RenderBelowGoalMedal();
                 UI::AlignTextToFramePadding();
                 UI::Text("Total time: " + RMC::FormatTimer(Objective.RunTime));
@@ -255,7 +252,6 @@ namespace RMC
 #if TMNEXT
             else if (currentGameMode == GameMode::Together) {
                 Together.RenderGoalMedal();
-                UI::HPadding(25);
                 Together.RenderBelowGoalMedal();
                 Together.RenderScores();
             }

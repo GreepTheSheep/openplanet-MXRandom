@@ -68,7 +68,6 @@ class RMC
         if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
         RenderGoalMedal();
-        UI::HPadding(25);
         RenderBelowGoalMedal();
 
         if (PluginSettings::RMC_DisplayPace) {
@@ -146,6 +145,7 @@ class RMC
     {
         if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
         {
+            UI::HPadding(25);
 #if TMNEXT
             if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
 #endif

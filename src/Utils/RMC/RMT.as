@@ -47,7 +47,6 @@ class RMT : RMC
         if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
         UI::Separator();
         RenderGoalMedal();
-        UI::HPadding(25);
         RenderBelowGoalMedal();
         RenderMVPPlayer();
 
