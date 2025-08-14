@@ -485,24 +485,25 @@ class RMC
 
             if (!RMC::IsPaused && !RMC::GotGoalMedal) {
                 uint score = TM::GetFinishScore();
+                bool inverse = TM::CurrentMapType() == MapTypes::Stunt;
 
                 if (score == uint(-1)) {
                     sleep(50);
                     continue;
                 }
 
-                if (score <= GoalTime) {
+                if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
                     GotGoalMedalNotification();
                     RMC::GoalMedalCount++;
                     RMC::GotGoalMedal = true;
                     RMC::CreateSave();
-                } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && score <= BelowGoalTime) {
+                } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
                     GotBelowGoalMedalNotification();
                     RMC::GotBelowMedal = true;
                     RMC::CreateSave();
                 }
 
-                if (RMC::CurrentTimeOnMap == -1 || int(score) < RMC::CurrentTimeOnMap) {
+                if (RMC::CurrentTimeOnMap == -1 || (!inverse && int(score) < RMC::CurrentTimeOnMap) || (inverse && int(score) > RMC::CurrentTimeOnMap)) {
                     // PB
                     RMC::CurrentTimeOnMap = score;
                     RMC::CreateSave();

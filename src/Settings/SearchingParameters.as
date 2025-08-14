@@ -78,6 +78,9 @@ namespace PluginSettings
     [Setting hidden]
     bool SkipSeenMaps = false;
 
+    [Setting hidden]
+    MapTypes MapType = MapTypes::Race;
+
     [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab()
     {
@@ -106,6 +109,7 @@ namespace PluginSettings
             ExcludedAuthorsArr = {};
             DifficultiesArray = {};
             TermsExactMatch = false;
+            MapType = MapTypes::Race;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40, 49};
 #else
@@ -305,6 +309,20 @@ namespace PluginSettings
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
         UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");
+
+#if TMNEXT
+        UI::SetNextItemWidth(160);
+        if (UI::BeginCombo("Map Type", tostring(MapType))) {
+            for (int i = 0; i < MapTypes::Last; i++) {
+                if (UI::Selectable(tostring(MapTypes(i)), MapType == MapTypes(i))) {
+                    MapType = MapTypes(i);
+                }
+            }
+            UI::EndCombo();
+        }
+
+        UI::SetPreviousTooltip("The game mode of the map.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Only Race will work online!");
+#endif
 
         UI::EndDisabled();
     }

@@ -159,18 +159,23 @@ namespace RMC
                     if (MXNadeoServicesGlobal::foundRoom !is null) {
                         bool inServer = TM::IsInServer();
 
-                        UI::BeginDisabled(!inServer);
+                        UI::BeginDisabled(!inServer || PluginSettings::MapType != MapTypes::Race);
                         if (UI::GreenButton(Icons::Users + " Start Random Map Together")) {
                             currentGameMode = GameMode::Together;
                             startnew(CoroutineFunc(Together.StartRMT));
                         }
                         UI::EndDisabled();
 
+                        if (PluginSettings::MapType != MapTypes::Race) {
+                            UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zInvalid map type " + tostring(PluginSettings::MapType) + " selected");
+                            UI::SetPreviousTooltip("RMT only works with the \"Race\" map type.\n\nPlease change the setting before continuing.");
+                        }
+
                         if (!inServer) {
                             if (MXNadeoServicesGlobal::IsJoiningRoom) {
                                 UI::Text(Icons::AnimatedHourglass + " Joining room...");
                             } else {
-                                UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing");
+                                UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing.");
 #if DEPENDENCY_BETTERROOMMANAGER
                                 if (UI::GreenButton("Join room")) {
                                     startnew(MXNadeoServicesGlobal::JoinRMTRoom);

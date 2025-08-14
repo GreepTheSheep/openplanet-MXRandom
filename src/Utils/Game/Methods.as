@@ -1,6 +1,7 @@
 namespace TM
 {
     const uint COOLDOWN = 5000;
+    array<uint> royalTimes = { 0, 0, 0, 0 };
 
     void LoadMap(ref@ mapData)
     {
@@ -91,20 +92,44 @@ namespace TM
         if (app.RootMap is null) return false;
 
         auto map = app.RootMap;
+        int authorTime = map.TMObjective_AuthorTime;
+        MapTypes type = CurrentMapType();
+        bool inverse = type == MapTypes::Stunt;
 
-        uint normalGold = uint((map.TMObjective_AuthorTime * 1.06) / 1000 + 1) * 1000;
-        uint normalSilver = uint((map.TMObjective_AuthorTime * 1.2) / 1000 + 1) * 1000;
-        uint normalBronze = uint((map.TMObjective_AuthorTime * 1.5) / 1000 + 1) * 1000;
+        uint normalGold;
+        uint normalSilver;
+        uint normalBronze;
 
-        if (map.TMObjective_GoldTime < normalGold) {
+        switch (type) {
+            case MapTypes::Stunt:
+                // Credits to beu and Ezio for the formula
+                normalGold = uint(Math::Floor(authorTime * 0.085) * 10);
+                normalSilver = uint(Math::Floor(authorTime * 0.06) * 10);
+                normalBronze = uint(Math::Floor(authorTime * 0.037) * 10);
+                break;
+            case MapTypes::Platform:
+                normalGold = authorTime + 3;
+                normalSilver = authorTime + 10;
+                normalBronze = authorTime + 30;
+                break;
+            case MapTypes::Race:
+            case MapTypes::Royal:
+            default:
+                normalGold = uint((authorTime * 1.06) / 1000 + 1) * 1000;
+                normalSilver = uint((authorTime * 1.2) / 1000 + 1) * 1000;
+                normalBronze = uint((authorTime * 1.5) / 1000 + 1) * 1000;
+                break;
+        }
+
+        if ((!inverse && map.TMObjective_GoldTime < normalGold) || (inverse && map.TMObjective_GoldTime > normalGold)) {
             return true;
         }
 
-        if (map.TMObjective_SilverTime < normalSilver) {
+        if ((!inverse && map.TMObjective_SilverTime < normalSilver) || (inverse && map.TMObjective_SilverTime > normalSilver)) {
             return true;
         }
 
-        if (map.TMObjective_BronzeTime < normalBronze) {
+        if ((!inverse && map.TMObjective_BronzeTime < normalBronze) || (inverse && map.TMObjective_BronzeTime > normalBronze)) {
             return true;
         }
 
@@ -202,18 +227,72 @@ namespace TM
 
             auto seq = playground.GameTerminals[0].UISequence_Current;
 
-            if (seq == SGamePlaygroundUIConfig::EUISequence::Finish) {
+            if (seq == SGamePlaygroundUIConfig::EUISequence::Finish || seq == SGamePlaygroundUIConfig::EUISequence::UIInteraction) {
                 CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
                 auto ghost = script.Ghost_RetrieveFromPlayer(playerScriptAPI);
 
-                if (ghost !is null && ghost.Result.Time > 0 && ghost.Result.Time < uint(-1)) {
-                    score = ghost.Result.Time;
-                }
+                if (ghost !is null) {
+                    switch (currentType) {
+                        case MapTypes::Stunt:
+                            score = ghost.Result.StuntsScore;
+                            break;
+                        case MapTypes::Platform:
+                            score = ghost.Result.NbRespawns;
+                            break;
+                        case MapTypes::Race:
+                        case MapTypes::Royal:
+                        default:
+                            if (ghost.Result.Time > 0 && ghost.Result.Time < uint(-1)) {
+                                score = ghost.Result.Time;
+                            }
+                            break;
+                    }
 
-                script.DataFileMgr.Ghost_Release(ghost.Id);
+                    script.DataFileMgr.Ghost_Release(ghost.Id);
+
+                    // from the Random Altered Campaign Challenge plugin https://openplanet.dev/plugin/randomalteredcampaign
+                    // Credit to ArEyeses for the code
+                    if (currentType == MapTypes::Royal) {
+                        uint resIndex = player.CurrentLaunchedRespawnLandmarkIndex;
+
+                        if (resIndex >= 0 && resIndex < playground.Arena.MapLandmarks.Length) {
+                            uint section = playground.Arena.MapLandmarks[resIndex].Order;
+
+                            if (section == 5) {
+                                return royalTimes[0] + royalTimes[1] + royalTimes[2] + royalTimes[3] + score;
+                            }
+
+                            royalTimes[section - 1] = score;
+
+                            // Reset section times from previous runs
+                            for (uint i = section; i < royalTimes.Length; i++) {
+                                royalTimes[i] = 0;
+                            }
+
+                            return -1;
+                        }
+
+                        return -1;
+                    }
+                }
             }
         }
 #endif
         return score;
+    }
+
+    MapTypes CurrentMapType() {
+        CTrackMania@ app = cast<CTrackMania>(GetApp());
+        string mapType = app.RootMap.MapType;
+
+        if (mapType.Contains("Stunt")) {
+            return MapTypes::Stunt;
+        } else if (mapType.Contains("Platform")) {
+            return MapTypes::Platform;
+        } else if (mapType.EndsWith("Royal")) {
+            return MapTypes::Royal;
+        }
+
+        return MapTypes::Race;
     }
 }

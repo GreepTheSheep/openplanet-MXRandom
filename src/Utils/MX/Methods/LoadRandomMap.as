@@ -152,24 +152,30 @@ namespace MX
 
             // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
             if (PluginSettings::RMC_Medal == Medals::WR) {
-                if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
-                    Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                if (PluginSettings::MapType == MapTypes::Platform || PluginSettings::MapType == MapTypes::Royal) {
+                    // Platform and Royal don't support leaderboards
+                    Log::Warn("Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
+                    TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
+                } else {
+                    if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
+                        Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
+                        sleep(1000);
+                        PreloadRandomMap();
+                        return;
+                    }
+
+                    // if uploaded, get wr
+                    int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
+
+                    if (mapWorldRecord == -1) {
+                        Log::Warn("Couldn't get map World Record, retrying another map...");
+                        sleep(1000);
+                        PreloadRandomMap();
+                        return;
+                    }
+
+                    TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
                 }
-
-                // if uploaded, get wr
-                int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
-
-                if (mapWorldRecord == -1) {
-                    Log::Warn("Couldn't get map World Record, retrying another map...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
-                }
-
-                TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
             }
 #endif
         }
@@ -347,7 +353,12 @@ namespace MX
             // prevent loading CharacterPilot maps
             params.Set("vehicle", "1,2,3,4");
 
-            if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_Medal == Medals::WR) {
+            if (
+                (RMC::IsRunning || RMC::IsStarting)
+                && PluginSettings::RMC_Medal == Medals::WR
+                && PluginSettings::MapType != MapTypes::Platform
+                && PluginSettings::MapType != MapTypes::Royal
+            ) {
                 // We only want maps with a WR
                 params.Set("inhasrecord", "1");
             }
@@ -361,8 +372,14 @@ namespace MX
             }
 #endif
 
-        // prevent loading non-Race maps (Royal, flagrush etc...)
-        params.Set("maptype", SUPPORTED_MAP_TYPE);
+        switch (PluginSettings::MapType) {
+            case MapTypes::Race:
+                params.Set("maptype", SUPPORTED_MAP_TYPE);
+                break;
+            default:
+                params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
+                break;
+        }
 
         string urlParams = DictToApiParams(params);
         return url + urlParams;
