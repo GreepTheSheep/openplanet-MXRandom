@@ -9,6 +9,14 @@ class RMC
     UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
     UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
 
+    array<UI::Texture@> Textures = { 
+        BronzeTex,
+        SilverTex,
+        GoldTex,
+        AuthorTex,
+        WRTex
+    };
+
     RMC()
     {
         print(GetModeName() + " loaded");
@@ -129,30 +137,16 @@ class RMC
 
     void RenderGoalMedal()
     {
-#if TMNEXT
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(WRTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-#endif
-        if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-        else if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-        else UI::Text(PluginSettings::RMC_GoalMedal);
+        UI::Image(Textures[PluginSettings::RMC_Medal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(RMC::GoalMedalCount), Fonts::TimerFont);
     }
 
     void RenderBelowGoalMedal()
     {
-        if (PluginSettings::RMC_GoalMedal != RMC::Medals[0])
-        {
+        if (PluginSettings::RMC_Medal != Medals::Bronze) {
             UI::HPadding(25);
-#if TMNEXT
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) UI::Image(AuthorTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-#endif
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) UI::Image(GoldTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) UI::Image(SilverTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-            else if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) UI::Image(BronzeTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
-            else UI::Text(PluginSettings::RMC_GoalMedal);
+            UI::Image(Textures[PluginSettings::RMC_Medal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             UI::SameLine();
             UI::AlignTextToImage(tostring(BelowMedalCount), Fonts::TimerFont);
         }
@@ -261,14 +255,13 @@ class RMC
 
     void SkipButtons()
     {
-        string BelowMedal = PluginSettings::RMC_GoalMedal;
-        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
-        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
+        Medals BelowMedal = PluginSettings::RMC_Medal;
+        if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
         if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed){
             int skipsLeft = PluginSettings::RMC_FreeSkipAmount - RMC::FreeSkipsUsed;
-            if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedal ? " Take " + BelowMedal + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
+            if(UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedal ? " Take " + tostring(BelowMedal) + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
                 if (RMC::GotBelowMedal) {
@@ -283,7 +276,7 @@ class RMC
                 startnew(RMC::SwitchMap);
             }
         } else if (RMC::GotBelowMedal) {
-            if (UI::Button(Icons::PlayCircleO + " Take " + BelowMedal + " medal")) {
+            if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
                 BelowMedalCount += 1;
@@ -354,20 +347,21 @@ class RMC
         if (RMC::GotBelowMedal) GotBelowGoalMedalNotification();
         if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
+        startnew(CoroutineFunc(PbLoop));
     }
 
     void GameEndNotification()
     {
         if (RMC::currentGameMode == RMC::GameMode::Challenge) {
 #if TMNEXT
-            RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_GoalMedal);
+            RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
 #endif
             UI::ShowNotification(
                 "\\$0f0Random Map Challenge ended!",
-                "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
+                "You got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
                 (
-                    PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
-                    (" and "+ BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1])
+                    PluginSettings::RMC_Medal != Medals::Bronze ?
+                    (" and "+ BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)))
                     : ""
                 ) + " medals!");
         }
@@ -375,10 +369,10 @@ class RMC
         if (RMC::currentGameMode == RMC::GameMode::ChallengeChaos) {
             UI::ShowNotification(
                 "\\$0f0Random Map Chaos Challenge ended!",
-                "You got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_GoalMedal) +
+                "You got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
                 (
-                    PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
-                    (" and "+ BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1])
+                    PluginSettings::RMC_Medal != Medals::Bronze ?
+                    (" and "+ BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)))
                     : ""
                 ) + " medals!");
             ChaosMode::SetRMCMode(false);
@@ -388,19 +382,19 @@ class RMC
 
     void GotGoalMedalNotification()
     {
-        Log::Trace("RMC: Got the "+ tostring(PluginSettings::RMC_GoalMedal) + " medal!");
+        Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
-            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "We're searching for another map...");
+            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
             startnew(RMC::SwitchMap);
-        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal!", "Select 'Next map' to change the map");
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
     }
 
     void GotBelowGoalMedalNotification()
     {
-        Log::Trace("RMC: Got the "+ RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal!");
+        Log::Trace("RMC: Got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal!");
         if (!RMC::GotBelowMedal)
             UI::ShowNotification(
-                "\\$db4" + Icons::Trophy + " You got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal",
+                "\\$db4" + Icons::Trophy + " You got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal",
                 "You can take the medal and skip the map"
             );
     }
@@ -445,23 +439,77 @@ class RMC
                 ChaosMode::SetRMCPaused(true);
 #endif
             }
-
-            if (!RMC::GotGoalMedal && RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)){
-                GotGoalMedalNotification();
-                RMC::GoalMedalCount += 1;
-                RMC::GotGoalMedal = true;
-                RMC::CreateSave();
-            } else if (
-                !RMC::GotGoalMedal &&
-                !RMC::GotBelowMedal &&
-                PluginSettings::RMC_GoalMedal != RMC::Medals[0] &&
-                RMC::GetCurrentMapMedal() >= RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1)
-            {
-                GotBelowGoalMedalNotification();
-                RMC::GotBelowMedal = true;
-                RMC::CreateSave();
-            }
         }
     }
 
+    uint get_GoalTime() {
+        auto app = cast<CTrackMania>(GetApp());
+        auto map = app.RootMap;
+
+        if (map !is null && app.CurrentPlayground !is null) {
+            switch (PluginSettings::RMC_Medal) {
+#if TMNEXT
+                case Medals::WR: return TM::GetWorldRecordFromCache(map.IdName);
+#endif
+                case Medals::Author: return map.TMObjective_AuthorTime;
+                case Medals::Gold: return map.TMObjective_GoldTime;
+                case Medals::Silver: return map.TMObjective_SilverTime;
+                case Medals::Bronze: return map.TMObjective_BronzeTime;
+                default: return uint(-1);
+            }
+        }
+
+        return uint(-1);
+    }
+
+    uint get_BelowGoalTime() {
+        auto app = cast<CTrackMania>(GetApp());
+        auto map = app.RootMap;
+
+        if (map !is null && app.CurrentPlayground !is null) {
+            switch (PluginSettings::RMC_Medal - 1) {
+                case Medals::Author: return map.TMObjective_AuthorTime;
+                case Medals::Gold: return map.TMObjective_GoldTime;
+                case Medals::Silver: return map.TMObjective_SilverTime;
+                case Medals::Bronze: return map.TMObjective_BronzeTime;
+                default: return uint(-1);
+            }
+        }
+
+        return uint(-1);
+    }
+
+    void PbLoop() {
+        while (RMC::IsRunning) {
+            yield();
+
+            if (!RMC::IsPaused && !RMC::GotGoalMedal) {
+                uint score = TM::GetFinishScore();
+
+                if (score == uint(-1)) {
+                    sleep(50);
+                    continue;
+                }
+
+                if (score <= GoalTime) {
+                    GotGoalMedalNotification();
+                    RMC::GoalMedalCount++;
+                    RMC::GotGoalMedal = true;
+                    RMC::CreateSave();
+                } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && score <= BelowGoalTime) {
+                    GotBelowGoalMedalNotification();
+                    RMC::GotBelowMedal = true;
+                    RMC::CreateSave();
+                }
+
+                if (RMC::CurrentTimeOnMap == -1 || int(score) < RMC::CurrentTimeOnMap) {
+                    // PB
+                    RMC::CurrentTimeOnMap = score;
+                    RMC::CreateSave();
+                }
+
+                sleep(1000);
+            }
+        }
+    }
 }

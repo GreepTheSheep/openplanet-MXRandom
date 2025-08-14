@@ -65,7 +65,7 @@ namespace RMCLeaderAPI {
         }
     }
 
-    void postRMC(const int &in goal, const int &in belowGoal, const string &in objective = "author") {
+    void postRMC(const int &in goal, const int &in belowGoal, Medals objective = Medals::Author) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
         if (!connected) {
@@ -94,9 +94,7 @@ namespace RMCLeaderAPI {
         }
 
         postingResultsAttempts++;
-        string objectiveFormatted = "author";
-        if (objective == "World Record") objectiveFormatted = "wr";
-        else objectiveFormatted = objective.ToLower();
+        string objectiveFormatted = tostring(objective).ToLower();
 
         Json::Value@ serverJson = Json::Object();
         serverJson["accountId"] = AccountId;
@@ -134,7 +132,7 @@ namespace RMCLeaderAPI {
         }
     }
 
-    void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, const string &in objective = "author") {
+    void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, Medals objective = Medals::Author) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
         if (!connected) {
@@ -164,10 +162,7 @@ namespace RMCLeaderAPI {
 
         postingResultsAttempts++;
         int survivedTimeSeconds = survivedTime / 1000;
-        string objectiveFormatted = "author";
-
-        if (objective == "World Record") objectiveFormatted = "wr";
-        else objectiveFormatted = objective.ToLower();
+        string objectiveFormatted = tostring(objective).ToLower();
 
         Json::Value@ serverJson = Json::Object();
         serverJson["accountId"] = AccountId;

@@ -24,19 +24,6 @@ namespace RMC
     RMCConfig@ config;
     int FreeSkipsUsed = 0;
     int CurrentTimeOnMap = -1; // for autosaves on PBs
-    int CurrentMedal = -1;
-    bool HandledRun = false;
-    int LastRun = -1;
-
-    array<string> Medals = {
-        "Bronze",
-        "Silver",
-        "Gold",
-        "Author"
-#if TMNEXT
-        ,"World Record"
-#endif
-    };
 
     RMC@ Challenge;
     RMS@ Survival;
@@ -98,9 +85,6 @@ namespace RMC
         ContinueSavedRun = false;
         HasCompletedCheckbox = false;
         UserEndedRun = false;
-        HandledRun = false;
-        CurrentMedal = -1;
-        LastRun = -1;
 
         if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::Survival) {
             bool hasRun = DataManager::LoadRunData();
@@ -192,89 +176,6 @@ namespace RMC
         }
     }
 
-    int GetCurrentMapMedal()
-    {
-        auto app = cast<CTrackMania>(GetApp());
-        auto map = app.RootMap;
-        int medal = -1;
-
-        if (map !is null) {
-            int worldRecordTime = TM::GetWorldRecordFromCache(map.MapInfo.MapUid);
-            int authorTime = map.TMObjective_AuthorTime;
-            int goldTime = map.TMObjective_GoldTime;
-            int silverTime = map.TMObjective_SilverTime;
-            int bronzeTime = map.TMObjective_BronzeTime;
-            int time = -1;
-
-#if MP4
-            CGameCtnPlayground@ playground = cast<CGameCtnPlayground>(app.CurrentPlayground);
-
-            if (playground !is null && playground.PlayerRecordedGhost !is null) {
-                if (int(playground.PlayerRecordedGhost.RaceTime) != LastRun) {
-                    HandledRun = false;
-                    time = playground.PlayerRecordedGhost.RaceTime;
-                }
-            }
-#elif TMNEXT
-            CGamePlayground@ playground = cast<CGamePlayground>(app.CurrentPlayground);
-            CSmArenaRulesMode@ script = cast<CSmArenaRulesMode>(app.PlaygroundScript);
-
-            if (playground !is null && script !is null && playground.GameTerminals.Length > 0) {
-                CSmPlayer@ player = cast<CSmPlayer>(playground.GameTerminals[0].ControlledPlayer);
-
-                if (player !is null) {
-                    auto UISequence = playground.GameTerminals[0].UISequence_Current;
-                    bool finished = UISequence == SGamePlaygroundUIConfig::EUISequence::Finish;
-
-                    if (HandledRun && !finished) {
-                        HandledRun = false;
-                    } else if (!HandledRun && finished) {
-                        CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-                        auto ghost = script.Ghost_RetrieveFromPlayer(playerScriptAPI);
-
-                        if (ghost !is null) {
-                            if (ghost.Result.Time > 0 && ghost.Result.Time < uint(-1)) time = ghost.Result.Time;
-                            script.DataFileMgr.Ghost_Release(ghost.Id);
-                        }
-                    }
-                }
-            }
-#endif
-            if (HandledRun || time == LastRun) {
-                return CurrentMedal;
-            } else if (time != -1) {
-                // run finished
-                if(time <= worldRecordTime) medal = 4;
-                else if(time <= authorTime) medal = 3;
-                else if(time <= goldTime) medal = 2;
-                else if(time <= silverTime) medal = 1;
-                else if(time <= bronzeTime) medal = 0;
-                else medal = -1;
-
-                HandledRun = true;
-                CurrentMedal = medal;
-                LastRun = time;
-
-                if (IS_DEV_MODE) {
-                    Log::Trace("Run finished with time " + FormatTimer(time));
-                    Log::Trace("World Record time: " + FormatTimer(worldRecordTime));
-                    Log::Trace("Author time: " + FormatTimer(authorTime));
-                    Log::Trace("Gold time: " + FormatTimer(goldTime));
-                    Log::Trace("Silver time: " + FormatTimer(silverTime));
-                    Log::Trace("Bronze time: " + FormatTimer(bronzeTime));
-                    Log::Trace("Medal: " + medal);
-                }
-
-                if (CurrentTimeOnMap > time || CurrentTimeOnMap == -1) {
-                    // PB
-                    CurrentTimeOnMap = time;
-                    CreateSave();
-                }
-            }
-        }
-        return medal;
-    }
-
     void CreateSave(bool endRun = false) {
         CurrentRunData["MapData"] = CurrentMapJsonData;
         CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
@@ -317,9 +218,6 @@ namespace RMC
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
         CurrentTimeOnMap = -1;
-        HandledRun = false;
-        CurrentMedal = -1;
-        LastRun = -1;
 
         MX::PreloadRandomMap();
     }

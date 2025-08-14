@@ -171,4 +171,49 @@ namespace TM
     void SetWorldRecordToCache(const string &in mapUid, const uint &in time) {
         worldRecordsCache.Set(mapUid, time);
     }
+
+    int GetFinishScore() {
+        if (!TM::IsMapLoaded()) {
+            return -1;
+        }
+
+        auto app = cast<CTrackMania>(GetApp());
+        int score = -1;
+
+#if MP4
+        CGameCtnPlayground@ playground = cast<CGameCtnPlayground>(app.CurrentPlayground);
+
+        if (playground !is null && playground.PlayerRecordedGhost !is null) {
+            if (playground.PlayerRecordedGhost.RaceTime != uint(-1)) {
+                score = playground.PlayerRecordedGhost.RaceTime;
+            }
+        }
+#elif TMNEXT
+        CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
+        CSmArenaRulesMode@ script = cast<CSmArenaRulesMode>(app.PlaygroundScript);
+        MapTypes currentType = CurrentMapType();
+
+        if (playground !is null && script !is null && playground.GameTerminals.Length > 0) {
+            CSmPlayer@ player = cast<CSmPlayer>(playground.GameTerminals[0].ControlledPlayer);
+
+            if (player is null) {
+                return -1;
+            }
+
+            auto seq = playground.GameTerminals[0].UISequence_Current;
+
+            if (seq == SGamePlaygroundUIConfig::EUISequence::Finish) {
+                CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
+                auto ghost = script.Ghost_RetrieveFromPlayer(playerScriptAPI);
+
+                if (ghost !is null && ghost.Result.Time > 0 && ghost.Result.Time < uint(-1)) {
+                    score = ghost.Result.Time;
+                }
+
+                script.DataFileMgr.Ghost_Release(ghost.Id);
+            }
+        }
+#endif
+        return score;
+    }
 }

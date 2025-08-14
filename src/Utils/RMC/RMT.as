@@ -91,7 +91,7 @@ class RMT : RMC
 #if DEPENDENCY_BETTERCHAT
         BetterChat::SendChatMessage(Icons::Users + " Starting Random Map Together. Have Fun!");
         sleep(200);
-        BetterChat::SendChatMessage(Icons::Users + " Goal medal: " + tostring(PluginSettings::RMC_GoalMedal));
+        BetterChat::SendChatMessage(Icons::Users + " Goal medal: " + tostring(PluginSettings::RMC_Medal));
 #endif
         SetupMapStart();
     }
@@ -233,10 +233,10 @@ class RMT : RMC
 #if DEPENDENCY_BETTERCHAT
         if (m_playerScores.Length > 0) {
             RMTPlayerScore@ p = m_playerScores[0];
-            string currentStatChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals" + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n";
-            currentStatChat += "Current MVP: " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_GoalMedal) +
-                (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ?
-                    " - " + p.belowGoals + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]
+            string currentStatChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(PluginSettings::RMC_Medal - 1) + " medals" : "") + "\n";
+            currentStatChat += "Current MVP: " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_Medal) +
+                (PluginSettings::RMC_Medal != Medals::Bronze ?
+                    " - " + p.belowGoals + " " + tostring(Medals(PluginSettings::RMC_Medal - 1))
                 : "");
             BetterChat::SendChatMessage(currentStatChat);
         }
@@ -298,7 +298,7 @@ class RMT : RMC
 
                 if (!RMC::GotGoalMedal && isObjectiveCompleted()) {
                     Log::Log(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the " + tostring(PluginSettings::RMC_Medal) + " medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
                     RMC::GoalMedalCount += 1;
                     RMC::GotGoalMedal = true;
                     RMTPlayerScore@ playerScored = GetPlayerScore(playerGotGoal);
@@ -306,21 +306,21 @@ class RMT : RMC
                     m_playerScores.SortDesc();
 
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoal.name + " got the "+tostring(PluginSettings::RMC_GoalMedal)+" medal with a time of " + playerGotGoal.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotGoal.name + " got the " + tostring(PluginSettings::RMC_Medal) + " medal with a time of " + playerGotGoal.timeStr);
                     sleep(200);
                     BetterChat::SendChatMessage(Icons::Users + " Switching map...");
 #endif
 
                     RMTSwitchMap();
                 }
-                if (!RMC::GotBelowMedal && PluginSettings::RMC_GoalMedal != RMC::Medals[0] && isBelowObjectiveCompleted()) {
+                if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
                     Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
-                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal", Text::ParseHexColor("#4d3e0a"));
+                    UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal", Text::ParseHexColor("#4d3e0a"));
                     RMC::GotBelowMedal = true;
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoal.name + " got the "+RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1]+" medal with a time of " + playerGotBelowGoal.timeStr);
+                    BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr);
                     sleep(200);
-                    BetterChat::SendChatMessage(Icons::Users + " You can skip and take the " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medal");
+                    BetterChat::SendChatMessage(Icons::Users + " You can skip and take the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal");
 #endif
                 }
             }
@@ -342,10 +342,10 @@ class RMT : RMC
 #if DEPENDENCY_BETTERCHAT
         sleep(200);
         if (m_playerScores.Length > 0) {
-            string currentStatsChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_GoalMedal) + " medals" + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + BelowMedalCount + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] + " medals" : "") + "\n\n";
+            string currentStatsChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n\n";
             for (uint i = 0; i < m_playerScores.Length; i++) {
                 RMTPlayerScore@ p = m_playerScores[i];
-                currentStatsChat += tostring(i+1) + ". " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_GoalMedal) + (PluginSettings::RMC_GoalMedal != RMC::Medals[0] ? " - " + p.belowGoals + " " + RMC::Medals[RMC::Medals.Find(PluginSettings::RMC_GoalMedal)-1] : "") + "\n";
+                currentStatsChat += tostring(i+1) + ". " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_Medal) + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + p.belowGoals + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) : "") + "\n";
             }
             BetterChat::SendChatMessage(currentStatsChat);
         }
@@ -425,12 +425,11 @@ class RMT : RMC
 
     void SkipButtons() override
     {
-        string BelowMedal = PluginSettings::RMC_GoalMedal;
-        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
-        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
+        Medals BelowMedal = PluginSettings::RMC_Medal;
+        if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
         UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
-        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + BelowMedal + " medal" : ""))) {
+        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
             RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
 
@@ -454,18 +453,17 @@ class RMT : RMC
 
     void RenderScores()
     {
-        string BelowMedal = PluginSettings::RMC_GoalMedal;
-        int medalIndex = RMC::Medals.Find(PluginSettings::RMC_GoalMedal);
-        if (medalIndex > 0) BelowMedal = RMC::Medals[medalIndex - 1];
+        Medals BelowMedal = PluginSettings::RMC_Medal;
+        if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
         if (UI::BeginTable("RMTScores", 3, UI::TableFlags::Hideable)) {
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn(PluginSettings::RMC_GoalMedal, UI::TableColumnFlags::WidthFixed, 40);
-            UI::TableSetupColumn(BelowMedal, UI::TableColumnFlags::WidthFixed, 40);
+            UI::TableSetupColumn(tostring(PluginSettings::RMC_Medal), UI::TableColumnFlags::WidthFixed, 40);
+            UI::TableSetupColumn(tostring(BelowMedal), UI::TableColumnFlags::WidthFixed, 40);
             UI::TableHeadersRow();
 
-            UI::TableSetColumnEnabled(2, PluginSettings::RMC_GoalMedal != RMC::Medals[0]);
+            UI::TableSetColumnEnabled(2, PluginSettings::RMC_Medal != Medals::Bronze);
 
             UI::ListClipper clipper(m_playerScores.Length);
             while(clipper.Step()) {
@@ -480,7 +478,7 @@ class RMT : RMC
                     UI::TableNextColumn();
                     UI::Text(tostring(s.goals));
                     UI::TableNextColumn();
-                    if (PluginSettings::RMC_GoalMedal != RMC::Medals[0]) {
+                    if (PluginSettings::RMC_Medal != Medals::Bronze) {
                         UI::Text(tostring(s.belowGoals));
                     }
                     UI::PopID();
@@ -493,19 +491,10 @@ class RMT : RMC
     bool isObjectiveCompleted()
     {
         if (TM::IsMapLoaded()) {
-            auto map = GetApp().RootMap;
-
-            uint objectiveTime = uint(-1);
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = map.TMObjective_AuthorTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = map.TMObjective_GoldTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = map.TMObjective_SilverTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[0]) objectiveTime = map.TMObjective_BronzeTime;
-
-
             if (m_mapPersonalBests.Length > 0) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
-                    if (m_mapPersonalBests[r].time <= objectiveTime) {
+                    if (m_mapPersonalBests[r].time <= GoalTime) {
                         @playerGotGoal = m_mapPersonalBests[r];
                         return true;
                     }
@@ -518,24 +507,17 @@ class RMT : RMC
     bool isBelowObjectiveCompleted()
     {
         if (TM::IsMapLoaded()) {
-            auto map = GetApp().RootMap;
-
-            uint objectiveTime = uint(-1);
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[3]) objectiveTime = map.TMObjective_GoldTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[2]) objectiveTime = map.TMObjective_SilverTime;
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[1]) objectiveTime = map.TMObjective_BronzeTime;
-
-
             if (m_mapPersonalBests.Length > 0) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
-                    if (m_mapPersonalBests[r].time <= objectiveTime) {
+                    if (m_mapPersonalBests[r].time <= BelowGoalTime) {
                         @playerGotBelowGoal = m_mapPersonalBests[r];
                         return true;
                     }
                 }
             }
         }
+
         return false;
     }
 

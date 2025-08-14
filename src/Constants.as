@@ -25,6 +25,17 @@ const array<string> PLUGIN_VERSION_SPLIT= PLUGIN_VERSION.Split(".");
 const string GITHUB_REPO_FULLNAME       = "GreepTheSheep/openplanet-mx-random";
 const string GITHUB_URL                 = "https://github.com/" + GITHUB_REPO_FULLNAME;
 
+enum Medals {
+	Bronze,
+	Silver,
+	Gold,
+	Author,
+#if TMNEXT
+	WR,
+#endif
+	Last
+}
+
 #if FORCE_NO_DEV
 const bool IS_DEV_MODE                  = false;
 #else

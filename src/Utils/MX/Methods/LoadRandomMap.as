@@ -151,7 +151,7 @@ namespace MX
             }
 
             // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
-            if (PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
+            if (PluginSettings::RMC_Medal == Medals::WR) {
                 if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
                     Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
                     sleep(1000);
@@ -347,7 +347,7 @@ namespace MX
             // prevent loading CharacterPilot maps
             params.Set("vehicle", "1,2,3,4");
 
-            if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_GoalMedal == RMC::Medals[4]) {
+            if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::RMC_Medal == Medals::WR) {
                 // We only want maps with a WR
                 params.Set("inhasrecord", "1");
             }

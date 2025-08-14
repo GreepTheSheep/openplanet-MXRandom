@@ -1,7 +1,7 @@
 namespace PluginSettings
 {
     [Setting hidden]
-    string RMC_GoalMedal = RMC::Medals[3];
+    Medals RMC_Medal = Medals::Author;
 
     [Setting hidden]
     bool RMC_DisplayCurrentMap = true;
@@ -85,7 +85,7 @@ namespace PluginSettings
         {
             if (UI::OrangeButton("Reset to default"))
             {
-                RMC_GoalMedal = RMC::Medals[3];
+                RMC_Medal = Medals::Author;
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
                 RMC_Duration = 60;
@@ -100,22 +100,20 @@ namespace PluginSettings
             }
 
             UI::SetNextItemWidth(200);
-            if (UI::BeginCombo("Goal", RMC_GoalMedal)){
-                for (uint i = 0; i < RMC::Medals.Length; i++) {
-                    string goalMedal = RMC::Medals[i];
-
-                    if (UI::Selectable(goalMedal, RMC_GoalMedal == goalMedal)) {
-                        RMC_GoalMedal = goalMedal;
+            if (UI::BeginCombo("Goal", tostring(RMC_Medal))) {
+                for (uint i = 0; i < Medals::Last; i++) {
+                    if (UI::Selectable(tostring(Medals(i)), RMC_Medal == Medals(i))) {
+                        RMC_Medal = Medals(i);
                     }
 
-                    if (RMC_GoalMedal == goalMedal) {
+                    if (RMC_Medal == Medals(i)) {
                         UI::SetItemDefaultFocus();
                     }
                 }
                 UI::EndCombo();
             }
 
-            RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the "+RMC_GoalMedal+" medal", RMC_AutoSwitch);
+            RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(RMC_Medal) + " medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quit the map when the timer is up", RMC_ExitMapOnEndTime);
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
 

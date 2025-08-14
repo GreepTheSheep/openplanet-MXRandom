@@ -38,15 +38,13 @@ namespace RMC
             }
 
             UI::SetItemText("Medal:", 200);
-            if (UI::BeginCombo("##GoalMedalObjectiveMode", PluginSettings::RMC_GoalMedal)){
-                for (uint i = 0; i < RMC::Medals.Length; i++) {
-                    string goalMedal = RMC::Medals[i];
-
-                    if (UI::Selectable(goalMedal, PluginSettings::RMC_GoalMedal == goalMedal)) {
-                        PluginSettings::RMC_GoalMedal = goalMedal;
+            if (UI::BeginCombo("##GoalMedal", tostring(PluginSettings::RMC_Medal))) {
+                for (uint i = 0; i < Medals::Last; i++) {
+                    if (UI::Selectable(tostring(Medals(i)), PluginSettings::RMC_Medal == Medals(i))) {
+                        PluginSettings::RMC_Medal = Medals(i);
                     }
 
-                    if (PluginSettings::RMC_GoalMedal == goalMedal) {
+                    if (PluginSettings::RMC_Medal == Medals(i)) {
                         UI::SetItemDefaultFocus();
                     }
                 }

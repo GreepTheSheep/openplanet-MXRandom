@@ -2,8 +2,8 @@ namespace MXRandom
 {
     bool IsRMCRunning() { return RMC::IsRunning; }
     bool IsRMCPaused() { return RMC::IsPaused; }
-    int RMCGoalMedal() { return RMC::Medals.Find(PluginSettings::RMC_GoalMedal); }
-    string RMCGoalMedalName() { return PluginSettings::RMC_GoalMedal; }
+    int RMCGoalMedal() { return int(PluginSettings::RMC_Medal); }
+    string RMCGoalMedalName() { return tostring(PluginSettings::RMC_Medal); }
     bool RMCGotGoalMedal() { return RMC::GotGoalMedal; }
     bool RMCGotBelowMedal() { return RMC::GotBelowMedal; }
     int RMCGoalMedalCount() { return RMC::GoalMedalCount; }

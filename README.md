@@ -49,7 +49,7 @@ The parameter `customParameters` decides if the plugin should use the custom sea
 | 1          | Silver |
 | 2          | Gold   |
 | 3          | Author |
-| 4          | World Record (TM2020 only) |
+| 4          | WR (TM2020 only) |
 
 ### Game Modes
 
