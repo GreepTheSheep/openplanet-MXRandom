@@ -205,9 +205,9 @@ namespace RMC
     {
         IsPaused = true;
         isSwitchingMap = true;
-        yield(30);
+        yield(100);
         MX::LoadRandomMap();
-        while (!TM::IsMapLoaded()){
+        while (!TM::IsMapLoaded()) {
             sleep(100);
         }
         EndTime = EndTime + (Time::Now - StartTime);

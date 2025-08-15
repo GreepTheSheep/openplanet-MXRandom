@@ -62,7 +62,7 @@ namespace TM
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.RootMap is null) return false;
 
-        return app.RootMap.MapInfo.MapUid == mapUid;
+        return app.RootMap.IdName == mapUid;
     }
 
     bool InRMCMap() {

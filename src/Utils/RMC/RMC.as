@@ -337,7 +337,6 @@ class RMC
         RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
         if (RMC::ContinueSavedRun) {
             ModeStartTimestamp = RMC::StartTime - (Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]));
-
         } else {
             ModeStartTimestamp = Time::Now;
         }
