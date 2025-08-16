@@ -91,6 +91,7 @@ class RMS : RMC
         RMC::IsRunning = true;
         if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
+        startnew(CoroutineFunc(PbLoop));
     }
 
     void PendingTimerLoop() override
