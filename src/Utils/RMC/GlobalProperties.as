@@ -183,11 +183,11 @@ namespace RMC
         CurrentRunData["SecondaryCounterValue"] = currentGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
         CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedal;
         CurrentRunData["PBOnMap"] = RMC::CurrentTimeOnMap;
+        CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedal;
 
         if (RMC::currentGameMode == RMC::GameMode::Survival) {
             CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
         } else {
-            CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedal;
             CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
         }
 
