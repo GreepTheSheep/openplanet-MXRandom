@@ -1,5 +1,31 @@
 namespace DataManager
 {
+    const array<string> requiredKeys = {
+        "PBOnMap",
+        "TimerRemaining",
+        "MapData",
+        "TimeSpentOnMap",
+        "PrimaryCounterValue",
+        "SecondaryCounterValue",
+        "CurrentRunTime",
+        "GotBelowMedalOnMap",
+        "GotGoalMedalOnMap",
+        "FreeSkipsUsed"
+    };
+
+    const array<Json::Type> requiredTypesOfKeys = {
+        Json::Type::Number,
+        Json::Type::Number,
+        Json::Type::Object,
+        Json::Type::Number,
+        Json::Type::Number,
+        Json::Type::Number,
+        Json::Type::Number,
+        Json::Type::Boolean,
+        Json::Type::Boolean,
+        Json::Type::Number
+    };
+
     void CheckData()
     {
         if (Versioning::IsPluginUpdated())
@@ -88,30 +114,6 @@ namespace DataManager
     }
 
     bool EnsureSaveDataIsLoadable(const string &in gameMode, Json::Value data) {
-        array<string> requiredKeys = {
-            "PBOnMap",
-            "TimerRemaining",
-            "MapData",
-            "TimeSpentOnMap",
-            "PrimaryCounterValue",
-            "SecondaryCounterValue",
-            "CurrentRunTime",
-            "GotBelowMedalOnMap",
-            "GotGoalMedalOnMap",
-            "FreeSkipsUsed"
-        };
-        array<Json::Type> requiredTypesOfKeys = {
-            Json::Type::Number,
-            Json::Type::Number,
-            Json::Type::Object,
-            Json::Type::Number,
-            Json::Type::Number,
-            Json::Type::Number,
-            Json::Type::Number,
-            Json::Type::Boolean,
-            Json::Type::Boolean,
-            Json::Type::Number
-        };
         for (uint i = 0; i < requiredKeys.Length; i++) {
             if (!data.HasKey(requiredKeys[i])) {
                 Log::Error("Save file for " + gameMode + " is corrupted, missing key '" + requiredKeys[i] + "'");
@@ -132,7 +134,7 @@ namespace DataManager
         if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
             RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
             if (!EnsureSaveDataIsLoadable(gameMode, RMC::CurrentRunData)) {
-                Log::Error("Deleting the current" + gameMode + " save file, as it is corrupted!");
+                Log::Error("Deleting the current " + gameMode + " save file, as it is corrupted!");
                 Log::Error("Please create an issue on github if this repeatedly happens");
                 RemoveCurrentSaveFile();
                 return false;

@@ -51,14 +51,14 @@ class DataMigrationWizardModalDialog : ModalDialog
         UI::PopFont();
         UI::NewLine();
 
-        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.Length == 0 ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
-        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
+        UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.IsEmpty() ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
+        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.IsEmpty() ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
         UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData saved to the file! \\$444" + DATA_JSON_LOCATION : "\\$f80" + Icons::AnimatedHourglass  + " \\$zSaving the data to the new file...");
 
         switch (m_migrationStep) {
             case 0:
                 m_MXIdsFromRecently = Migration::GetLastestPlayedMapsMXId();
-                if (m_MXIdsFromRecently.Length == 0) m_migrationStep = 2;
+                if (m_MXIdsFromRecently.IsEmpty()) m_migrationStep = 2;
                 else {
                     if (m_MXIdsFromRecently.Length > 50) m_MXIdsFromRecently.Resize(50);
                     m_migrationStep++;
@@ -66,16 +66,16 @@ class DataMigrationWizardModalDialog : ModalDialog
                 break;
             case 1:
                 Migration::CheckMXRequest();
-                if (Migration::n_request is null && Migration::RecentlyPlayed.Length == 0)
+                if (Migration::n_request is null && Migration::RecentlyPlayed.IsEmpty()) {
                     Migration::StartRequestMapsInfo(m_MXIdsFromRecently);
-
-                if (Migration::n_request is null && Migration::RecentlyPlayed.Length > 0) {
+                }
+                if (Migration::n_request is null && !Migration::RecentlyPlayed.IsEmpty()) {
                     m_MapsFetched = Migration::RecentlyPlayed;
                     m_migrationStep++;
                 }
                 break;
             case 2:
-                if (m_MapsFetched.Length > 0 && !migrationCompleted) {
+                if (!migrationCompleted && !m_MapsFetched.IsEmpty()) {
                     Migration::SaveToDataFile();
                 }
                 migrationCompleted = true;
@@ -90,7 +90,7 @@ class DataMigrationWizardModalDialog : ModalDialog
             UI::TextWrapped("Thanks for using " + PLUGIN_NAME + "!");
         }
         UI::NewLine();
-        if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
+        if (!m_MapsFetched.IsEmpty() && UI::TreeNode("Saved maps")){
             for (uint i = 0; i < m_MapsFetched.Length; i++){
                 UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
                 if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);

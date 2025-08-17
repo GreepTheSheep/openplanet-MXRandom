@@ -22,7 +22,7 @@ namespace Render
                     UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
                 }
                 UI::TableNextColumn();
-                if (map.Tags.Length == 0) UI::Text("No tags");
+                if (map.Tags.IsEmpty()) UI::Text("No tags");
                 else {
                     for (uint j = 0; j < map.Tags.Length; j++) {
                         Render::MapTag(map.Tags[j]);

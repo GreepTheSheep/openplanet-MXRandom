@@ -65,7 +65,7 @@ namespace MainUIView
     void ChangelogTabs()
     {
         GH::CheckReleasesReq();
-        if (GH::ReleasesReq is null && GH::Releases.Length == 0) {
+        if (GH::ReleasesReq is null && GH::Releases.IsEmpty()) {
             if (!GH::releasesRequestError) {
                 GH::StartReleasesReq();
             } else {
@@ -76,7 +76,7 @@ namespace MainUIView
             UI::Text(Icons::AnimatedHourglass + " Loading...");
         }
 
-        if (GH::ReleasesReq is null && GH::Releases.Length > 0) {
+        if (GH::ReleasesReq is null && !GH::Releases.IsEmpty()) {
             UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyScroll);
             for (uint i = 0; i < GH::Releases.Length; i++) {
                 GH::Release@ release = GH::Releases[i];

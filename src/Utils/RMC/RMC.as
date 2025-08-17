@@ -265,9 +265,9 @@ class RMC
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
                 if (RMC::GotBelowMedal) {
-                    BelowMedalCount += 1;
+                    BelowMedalCount++;
                 } else {
-                    RMC::FreeSkipsUsed += 1;
+                    RMC::FreeSkipsUsed++;
                     RMC::CurrentRunData["FreeSkipsUsed"] = RMC::FreeSkipsUsed;
                     DataManager::SaveCurrentRunData();
                 }
@@ -279,7 +279,7 @@ class RMC
             if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
                 RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
-                BelowMedalCount += 1;
+                BelowMedalCount++;
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
                 startnew(RMC::SwitchMap);

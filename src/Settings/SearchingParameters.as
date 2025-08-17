@@ -246,10 +246,10 @@ namespace PluginSettings
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
             UI::TableNextColumn();
             UI::AlignTextToFramePadding();
-            UI::Text("Include" + (MapTagsArr.Length == 0 ? "" : " (" + MapTagsArr.Length + " selected)"));
+            UI::Text("Include" + (MapTagsArr.IsEmpty() ? "" : " (" + MapTagsArr.Length + " selected)"));
             UI::TableNextColumn();
             UI::AlignTextToFramePadding();
-            UI::Text("Exclude" + (ExcludeMapTagsArr.Length == 0 ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
+            UI::Text("Exclude" + (ExcludeMapTagsArr.IsEmpty() ? "" : " (" + ExcludeMapTagsArr.Length + " selected)"));
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))) {
@@ -366,7 +366,7 @@ namespace PluginSettings
             res += arr[i] + ",";
         }
 
-        if (arr.Length > 0) res = res.SubStr(0, res.Length - 1);
+        if (!arr.IsEmpty()) res = res.SubStr(0, res.Length - 1);
         return res;
     }
 

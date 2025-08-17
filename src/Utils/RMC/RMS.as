@@ -73,7 +73,7 @@ class RMS : RMC
 
     void NextMapButton() override
     {
-        if(UI::GreenButton(Icons::Play + " Next map")) {
+        if (UI::GreenButton(Icons::Play + " Next map")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMS: Next map");
             UI::ShowNotification("Please wait...");
@@ -110,18 +110,18 @@ class RMS : RMC
 #endif
             UI::ShowNotification(
                 "\\$0f0Random Map Survival ended!",
-                "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +
+                "You survived with a time of " + RMC::FormatTimer(SurvivedTime) +
                 ".\nYou got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
-                " medals and " + RMC::Survival.Skips + " skips."
+                " medals and " + Skips + " skips."
             );
         }
 #if DEPENDENCY_CHAOSMODE
-        if (RMC::currentGameMode == RMC::GameMode::SurvivalChaos) {
+        else if (RMC::currentGameMode == RMC::GameMode::SurvivalChaos) {
             UI::ShowNotification(
                 "\\$0f0Random Map Chaos Survival ended!",
-                "You survived with a time of " + RMC::FormatTimer(RMC::Survival.SurvivedTime) +
+                "You survived with a time of " + RMC::FormatTimer(SurvivedTime) +
                 ".\nYou got "+ RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
-                " medals and " + RMC::Survival.Skips + " skips."
+                " medals and " + Skips + " skips."
             );
             ChaosMode::SetRMCMode(false);
         }
@@ -130,12 +130,12 @@ class RMS : RMC
 
     void GotGoalMedalNotification() override
     {
-        Log::Trace("RMC: Got the "+ tostring(PluginSettings::RMC_Medal) + " medal!");
+        Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
             RMC::EndTime += (3*60*1000);
             startnew(RMC::SwitchMap);
-        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the "+tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
     }
 
     void GotBelowGoalMedalNotification() override {}

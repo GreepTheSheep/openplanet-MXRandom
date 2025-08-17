@@ -58,7 +58,7 @@ class RMObjective : RMC
     {
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
-            Skips += 1;
+            Skips++;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
             MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);

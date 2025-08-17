@@ -65,8 +65,8 @@ class MX2MigrationWizardModalDialog : ModalDialog
             );
         } else {
             if (createBackup) UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zBacking up old data...");
-            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of maps" + (m_MXIds.Length == 0 ? "..." : " - " + m_MXIds.Length + " maps found"));
-            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.Length == 0 ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
+            UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of maps" + (m_MXIds.IsEmpty() ? "..." : " - " + m_MXIds.Length + " maps found"));
+            UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the API" + (m_MapsFetched.IsEmpty() ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIds.Length + " maps"));
             UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData migration completed!" : "\\$f80" + Icons::AnimatedHourglass  + " \\$zMigrating data...");
 
             switch (m_migrationStep) {
@@ -74,13 +74,13 @@ class MX2MigrationWizardModalDialog : ModalDialog
                     if (createBackup) Migration::BackupData();
 
                     m_MXIds = Migration::GetMX1MapsId();
-                    if (m_MXIds.Length == 0) m_migrationStep = 2;
+                    if (m_MXIds.IsEmpty()) m_migrationStep = 2;
                     else m_migrationStep++;
                     break;
                 case 1:
                     Migration::CheckMX2MigrationRequest();
                     if (Migration::v2_request is null) {
-                        if (Migration::v2_maps.Length == 0) {
+                        if (Migration::v2_maps.IsEmpty()) {
                             Migration::StartMX2RequestMapsInfo(m_MXIds);
                         } else {
                             m_MapsFetched = Migration::v2_maps;
@@ -89,7 +89,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
                     }
                     break;
                 case 2:
-                    if (m_MapsFetched.Length > 0 && !migrationCompleted) {
+                    if (!migrationCompleted && !m_MapsFetched.IsEmpty()) {
                         Migration::UpdateData();
                     }
                     migrationCompleted = true;
@@ -104,7 +104,7 @@ class MX2MigrationWizardModalDialog : ModalDialog
                 if (createBackup) UI::TextWrapped(Icons::Kenney::Save + " You can find your backup at " + MX_V1_BACKUP_LOCATION);
             }
             UI::NewLine();
-            if (m_MapsFetched.Length > 0 && UI::TreeNode("Saved maps")){
+            if (!m_MapsFetched.IsEmpty() && UI::TreeNode("Saved maps")){
                 for (uint i = 0; i < m_MapsFetched.Length; i++){
                     UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
                     if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);

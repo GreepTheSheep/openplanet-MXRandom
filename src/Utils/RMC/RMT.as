@@ -231,7 +231,7 @@ class RMT : RMC
 
         m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
-        if (m_playerScores.Length > 0) {
+        if (!m_playerScores.IsEmpty()) {
             RMTPlayerScore@ p = m_playerScores[0];
             string currentStatChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(PluginSettings::RMC_Medal - 1) + " medals" : "") + "\n";
             currentStatChat += "Current MVP: " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_Medal) +
@@ -328,7 +328,7 @@ class RMT : RMC
     }
 
     void RenderMVPPlayer() {
-        if (m_playerScores.Length > 0) {
+        if (!m_playerScores.IsEmpty()) {
             RMTPlayerScore@ p = m_playerScores[0];
             UI::Text("MVP: " + p.name + " (" + p.goals + ")");
             if (UI::BeginItemTooltip()) {
@@ -341,7 +341,7 @@ class RMT : RMC
     void BetterChatSendLeaderboard() {
 #if DEPENDENCY_BETTERCHAT
         sleep(200);
-        if (m_playerScores.Length > 0) {
+        if (!m_playerScores.IsEmpty()) {
             string currentStatsChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n\n";
             for (uint i = 0; i < m_playerScores.Length; i++) {
                 RMTPlayerScore@ p = m_playerScores[i];
@@ -354,7 +354,6 @@ class RMT : RMC
 
     void RenderCurrentMap() override
     {
-
         if (!isSwitchingMap) {
             if (TM::IsMapLoaded()) {
                 UI::Separator();
@@ -417,9 +416,6 @@ class RMT : RMC
     {
         if (TM::IsMapLoaded()) {
             SkipButtons();
-            if (IS_DEV_MODE) {
-                DevButtons();
-            }
         }
     }
 
@@ -434,7 +430,7 @@ class RMT : RMC
             if (RMC::IsPaused) RMC::IsPaused = false;
 
             if (RMC::GotBelowMedal) {
-                BelowMedalCount += 1;
+                BelowMedalCount++;
                 RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
                 playerScored.AddBelowGoal();
             } else if (
@@ -491,7 +487,7 @@ class RMT : RMC
     bool isObjectiveCompleted()
     {
         if (TM::IsMapLoaded()) {
-            if (m_mapPersonalBests.Length > 0) {
+            if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
                     if (m_mapPersonalBests[r].time <= GoalTime) {
@@ -507,7 +503,7 @@ class RMT : RMC
     bool isBelowObjectiveCompleted()
     {
         if (TM::IsMapLoaded()) {
-            if (m_mapPersonalBests.Length > 0) {
+            if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
                     if (m_mapPersonalBests[r].time <= BelowGoalTime) {
@@ -523,7 +519,7 @@ class RMT : RMC
 
     void UpdateRecords() {
         auto newPBs = GetPlayersPBsMLFeed();
-        if (newPBs.Length > 0) // empty arrays are returned on e.g., http error
+        if (!newPBs.IsEmpty()) // empty arrays are returned on e.g., http error
             m_mapPersonalBests = newPBs;
     }
 
@@ -536,7 +532,7 @@ class RMT : RMC
             auto raceData = MLFeed::GetRaceData_V4();
             if (raceData is null) return {};
             auto @players = raceData.SortedPlayers_TimeAttack;
-            if (players.Length == 0) return {};
+            if (players.IsEmpty()) return {};
             for (uint i = 0; i < players.Length; i++) {
                 auto player = cast<MLFeed::PlayerCpInfo_V4>(players[i]);
                 if (player is null) continue;
