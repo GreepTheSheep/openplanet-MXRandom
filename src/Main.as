@@ -136,7 +136,6 @@ void Main()
         }
     }
     RMC::FetchConfig();
-    RMC::InitModes();
 #if DEPENDENCY_NADEOSERVICES
     MXNadeoServicesGlobal::LoadNadeoLiveServices();
 #endif

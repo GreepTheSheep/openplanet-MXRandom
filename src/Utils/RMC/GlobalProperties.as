@@ -25,10 +25,10 @@ namespace RMC
     int FreeSkipsUsed = 0;
     int CurrentTimeOnMap = -1; // for autosaves on PBs
 
-    RMC@ Challenge;
-    RMS@ Survival;
-    RMObjective@ Objective;
-    RMT@ Together;
+    RMC@ Challenge = RMC();
+    RMS@ Survival = RMS();
+    RMObjective@ Objective = RMObjective();
+    RMT@ Together = RMT();
 
     enum GameMode
     {
@@ -47,13 +47,6 @@ namespace RMC
         Json::Value json = API::GetAsync(url);
 
         @config = RMCConfig(json);
-    }
-
-    void InitModes() {
-        @Challenge = RMC();
-        @Survival = RMS();
-        @Objective = RMObjective();
-        @Together = RMT();
     }
 
     string FormatTimer(int time) {
