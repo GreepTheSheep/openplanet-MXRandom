@@ -143,8 +143,8 @@ class RMObjective : RMC {
                 }
 
                 if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
-                    GotGoalMedalNotification();
                     RMC::GoalMedalCount++;
+                    GotGoalMedalNotification();
                     RMC::GotGoalMedal = true;
                 }
 

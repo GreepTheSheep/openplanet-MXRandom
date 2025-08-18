@@ -469,8 +469,8 @@ class RMC {
                 }
 
                 if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
-                    GotGoalMedalNotification();
                     RMC::GoalMedalCount++;
+                    GotGoalMedalNotification();
                     RMC::GotGoalMedal = true;
                     RMC::CreateSave();
                 } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
