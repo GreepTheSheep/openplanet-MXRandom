@@ -305,6 +305,7 @@ class RMC {
 
     void NextMapButton() {
         UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+
         if (UI::GreenButton(Icons::Play + " Next map")) {
             RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
@@ -312,7 +313,9 @@ class RMC {
             UI::ShowNotification("Please wait...");
             startnew(RMC::SwitchMap);
         }
-        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
+
+        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
+
         UI::EndDisabled();
     }
 
