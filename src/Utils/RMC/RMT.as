@@ -293,6 +293,17 @@ class RMT : RMC {
         }
     }
 
+    void GameEndNotification() override {
+        string notificationText = "Your team got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
+
+        if (PluginSettings::RMC_Medal != Medals::Bronze && BelowMedalCount > 0) {
+            notificationText += " and " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1));
+        }
+        notificationText += " medals!";
+
+        UI::ShowNotification("\\$0f0" + ModeName + " ended!", notificationText);
+    }
+
     void RenderMVPPlayer() {
         if (!m_playerScores.IsEmpty()) {
             RMTPlayerScore@ p = m_playerScores[0];
