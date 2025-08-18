@@ -10,20 +10,15 @@ namespace RMC
     bool GotBelowMedal = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
     int GoalMedalCount = 0;
-    int StartTime = -1;
-    int EndTime = -1;
     int TimeSpentMap = -1;
-    int TimeSpawnedMap = -1;
     Json::Value CurrentMapJsonData = Json::Object();
     bool ContinueSavedRun = false;
     bool IsInited = false;
     bool HasCompletedCheckbox = false;
     Json::Value CurrentRunData = Json::Object();
-    int StartTimeCopyForSaveData = -1;
-    int EndTimeCopyForSaveData = -1;
     RMCConfig@ config;
     int FreeSkipsUsed = 0;
-    int CurrentTimeOnMap = -1; // for autosaves on PBs
+    int PBOnMap = -1; // for autosaves on PBs
 
     RMC@ Challenge = RMC();
     RMS@ Survival = RMS();
@@ -100,83 +95,77 @@ namespace RMC
         while (!TM::IsMapLoaded()){
             sleep(100);
         }
-        while (true){
-            yield();
-            CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
-            if (GamePlayground !is null){
-                if (!IsInited) {
-                    if (!ContinueSavedRun) {
-                        TimeSpentMap = -1;
-                        GoalMedalCount = 0;
-                        Challenge.BelowMedalCount = 0;
-                        Survival.Skips = 0;
-                        Objective.Skips = 0;
-                        FreeSkipsUsed = 0;
-                        CurrentTimeOnMap = -1;
-                        GotBelowMedal = false;
-                        GotGoalMedal = false;
-                    } else {
-                        GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
-                        if (currentGameMode == GameMode::Challenge) {
-                            Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
-                            Survival.Skips = 0;
-                            GotBelowMedal = CurrentRunData["GotBelowMedalOnMap"];
-                            FreeSkipsUsed = CurrentRunData["FreeSkipsUsed"];
-                        } else {
-                            Challenge.BelowMedalCount = 0;
-                            Survival.Skips = CurrentRunData["SecondaryCounterValue"];
-                            Survival.SurvivedTime = CurrentRunData["CurrentRunTime"];
-                            Challenge.ModeStartTimestamp = -1;
-                        }
-                        GotGoalMedal = CurrentRunData["GotGoalMedalOnMap"];
-                        CurrentTimeOnMap = CurrentRunData["PBOnMap"];
-                    }
-                    UI::ShowNotification("\\$080Random Map "+ tostring(RMC::currentGameMode) + " started!", "Good Luck!");
-                    IsInited = true;
-                }
 
-                while (!TM::IsPlayerReady()) {
-                    yield();
-                }
-                if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos){
-                    Challenge.StartTimer();
-                } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos){
-                    Survival.StartTimer();
-                } else if (RMC::currentGameMode == GameMode::Objective){
-                    Objective.StartTimer();
-                }
-                TimeSpawnedMap = !RMC::ContinueSavedRun ? Time::Now : int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
-                // Clear the currently saved data so you cannot load into the same state multiple times
-                DataManager::RemoveCurrentSaveFile();
-                DataManager::CreateSaveFile();
-                IsStarting = false;
-                MX::PreloadRandomMap();
-                break;
+        if (!ContinueSavedRun) {
+            TimeSpentMap = -1;
+            GoalMedalCount = 0;
+            Challenge.BelowMedalCount = 0;
+            Survival.Skips = 0;
+            Objective.Skips = 0;
+            FreeSkipsUsed = 0;
+            PBOnMap = -1;
+            GotBelowMedal = false;
+            GotGoalMedal = false;
+        } else {
+            GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
+            GotGoalMedal = CurrentRunData["GotGoalMedal"];
+            PBOnMap = CurrentRunData["PBOnMap"];
+            TimeSpentMap = CurrentRunData["TimeSpentOnMap"];
+
+            if (currentGameMode == GameMode::Challenge) {
+                Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
+                Survival.Skips = 0;
+                GotBelowMedal = CurrentRunData["GotBelowMedal"];
+                FreeSkipsUsed = CurrentRunData["FreeSkipsUsed"];
+            } else {
+                Challenge.BelowMedalCount = 0;
+                Survival.Skips = CurrentRunData["SecondaryCounterValue"];
             }
         }
+
+        UI::ShowNotification("\\$080Random Map " + tostring(RMC::currentGameMode) + " started!", "Good Luck!");
+        IsInited = true;
+
+        while (!TM::IsPlayerReady()) {
+            yield();
+        }
+
+        if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos) {
+            Challenge.StartTimer();
+        } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos) {
+            Survival.StartTimer();
+        } else if (RMC::currentGameMode == GameMode::Objective) {
+            Objective.StartTimer();
+        }
+
+        // Clear the currently saved data so you cannot load into the same state multiple times
+        DataManager::RemoveCurrentSaveFile();
+        DataManager::CreateSaveFile();
+        IsStarting = false;
+        MX::PreloadRandomMap();
     }
 
-    void CreateSave(bool endRun = false) {
+    void CreateSave() {
         CurrentRunData["MapData"] = CurrentMapJsonData;
         CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
-        CurrentRunData["SecondaryCounterValue"] = currentGameMode == GameMode::Challenge ? Challenge.BelowMedalCount : Survival.Skips;
-        CurrentRunData["GotGoalMedalOnMap"] = RMC::GotGoalMedal;
-        CurrentRunData["PBOnMap"] = RMC::CurrentTimeOnMap;
-        CurrentRunData["GotBelowMedalOnMap"] = RMC::GotBelowMedal;
+        CurrentRunData["GotGoalMedal"] = RMC::GotGoalMedal;
+        CurrentRunData["PBOnMap"] = RMC::PBOnMap;
+        CurrentRunData["GotBelowMedal"] = RMC::GotBelowMedal;
 
-        if (RMC::currentGameMode == RMC::GameMode::Survival) {
-            CurrentRunData["CurrentRunTime"] = RMC::Survival.SurvivedTime;
+        if (currentGameMode == GameMode::Survival) {
+            CurrentRunData["TotalTime"] = Survival.SurvivedTime;
+            CurrentRunData["TimeLeft"] = Survival.TimeLeft;
+            CurrentRunData["SecondaryCounterValue"] = Survival.Skips;
+        } else if (currentGameMode == GameMode::Objective) {
+            CurrentRunData["TotalTime"] = Objective.TotalTime;
+            CurrentRunData["TimeLeft"] = Objective.TimeLeft;
+            CurrentRunData["SecondaryCounterValue"] = Objective.BelowMedalCount;
         } else {
-            CurrentRunData["CurrentRunTime"] = RMC::Challenge.ModeStartTimestamp;
+            CurrentRunData["TotalTime"] = Challenge.TotalTime;
+            CurrentRunData["TimeLeft"] = Challenge.TimeLeft;
+            CurrentRunData["SecondaryCounterValue"] = Challenge.BelowMedalCount;
         }
-
-        if (!endRun) {
-            CurrentRunData["TimerRemaining"] = RMC::EndTime - RMC::StartTime;  // don't use the copies here, they are only updated for game end.
-        } else {
-            CurrentRunData["TimerRemaining"] = RMC::EndTimeCopyForSaveData - RMC::StartTimeCopyForSaveData;
-        }
-
 
         DataManager::SaveCurrentRunData();
     }
@@ -190,14 +179,12 @@ namespace RMC
         while (!TM::IsMapLoaded()) {
             sleep(100);
         }
-        EndTime = EndTime + (Time::Now - StartTime);
-        IsPaused = false;
         isSwitchingMap = false;
         GotGoalMedal = false;
         GotBelowMedal = false;
-        TimeSpawnedMap = Time::Now;
+        TimeSpentMap = 0;
         ClickedOnSkip = false;
-        CurrentTimeOnMap = -1;
+        PBOnMap = -1;
 
         while (!TM::IsPlayerReady()) {
             yield();

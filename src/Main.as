@@ -91,6 +91,7 @@ void Main()
     Fonts::Load();
 
     DataManager::EnsureSaveFileFolderPresent();
+    DataManager::ConvertSaves();
 
     await(startnew(MX::FetchMapTags));
 

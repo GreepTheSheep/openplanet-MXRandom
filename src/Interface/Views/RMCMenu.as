@@ -250,7 +250,7 @@ namespace RMC
                 Objective.RenderGoalMedal();
                 Objective.RenderBelowGoalMedal();
                 UI::AlignTextToFramePadding();
-                UI::Text("Total time: " + RMC::FormatTimer(Objective.RunTime));
+                UI::Text("Total time: " + RMC::FormatTimer(Objective.TotalTime));
             }
 #if TMNEXT
             else if (currentGameMode == GameMode::Together) {

@@ -1,7 +1,8 @@
 class RMC
 {
     int BelowMedalCount = 0;
-    int ModeStartTimestamp = -1;
+    int TimeLeft = TimeLimit;
+    int TotalTime = 0;
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -17,17 +18,33 @@ class RMC
         WRTex
     };
 
-    RMC()
-    {
-        print(GetModeName() + " loaded");
+    string get_ModeName() { 
+        if (RMC::currentGameMode == RMC::GameMode::ChallengeChaos) {
+            return "Random Map Chaos Challenge";
+        }
+
+        return "Random Map Challenge";
     }
 
-    string GetModeName() { return "Random Map Challenge";}
+    int get_TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
-    int TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
+    int get_TimeLeft() {
+        return Math::Max(0, Math::Min(TimeLimit, TimeLeft));
+    }
 
-    string IsoDateToDMY(const string &in isoDate)
-    {
+    void set_TimeLeft(int n) {
+        TimeLeft = Math::Clamp(n, 0, TimeLimit);
+    }
+
+    int get_TotalTime() {
+        return TotalTime;
+    }
+
+    void set_TotalTime(int n) {
+        TotalTime = Math::Max(0, n);
+    }
+
+    string IsoDateToDMY(const string &in isoDate) {
         string year = isoDate.SubStr(0, 4);
         string month = isoDate.SubStr(5, 2);
         string day = isoDate.SubStr(8, 2);
@@ -41,12 +58,8 @@ class RMC
             if (UI::RedButton(Icons::Times + " Stop RM"+lastLetter))
             {
                 RMC::UserEndedRun = true;
-                RMC::EndTimeCopyForSaveData = RMC::EndTime;
-                RMC::StartTimeCopyForSaveData = RMC::StartTime;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
-                RMC::StartTime = -1;
-                RMC::EndTime = -1;
                 @MX::preloadedMap = null;
 
 #if DEPENDENCY_CHAOSMODE
@@ -59,7 +72,7 @@ class RMC
                         // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy
                         // of the timers to use for the save file
                     } else {
-                        RMC::CreateSave(true);
+                        RMC::CreateSave();
                         vec4 color = UI::HSV(0.25, 1, 0.7);
                         UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
                     }
@@ -73,14 +86,14 @@ class RMC
         }
 
         RenderTimer();
-        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(RMC::StartTime - ModeStartTimestamp));
+        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(this.TotalTime));
         UI::Separator();
         RenderGoalMedal();
         RenderBelowGoalMedal();
 
         if (PluginSettings::RMC_DisplayPace) {
             try {
-                float goalPace = ((TimeLimit() / 60 / 1000) * RMC::GoalMedalCount / ((RMC::StartTime - ModeStartTimestamp) / 60 / 100));
+                float goalPace = ((TimeLimit / 60 / 1000) * RMC::GoalMedalCount / (this.TotalTime / 60 / 100));
                 UI::Text("Pace: " + goalPace);
             } catch {
                 UI::Text("Pace: 0");
@@ -113,11 +126,11 @@ class RMC
     void RenderTimer()
     {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning || RMC::EndTime > 0) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
-            else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
+        if (RMC::IsRunning) {
+            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(this.TimeLeft));
+            else UI::Text(RMC::FormatTimer(this.TimeLeft));
         } else {
-            UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
+            UI::TextDisabled(RMC::FormatTimer(TimeLimit));
         }
         UI::PopFont();
         UI::Dummy(vec2(0, 8));
@@ -128,7 +141,7 @@ class RMC
             UI::PopFont();
         }
         if (IS_DEV_MODE) {
-            if (RMC::IsRunning || RMC::EndTime > 0) {
+            if (RMC::IsRunning || this.TimeLeft > 0) {
                 if (RMC::IsPaused) UI::Text("Timer paused");
                 else UI::Text("Timer running");
             } else UI::Text("Timer ended");
@@ -247,7 +260,6 @@ class RMC
     void PausePlayButton()
     {
         if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
-            if (RMC::IsPaused) RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
             RMC::IsPaused = !RMC::IsPaused;
         }
     }
@@ -295,7 +307,7 @@ class RMC
         if (UI::OrangeButton(Icons::PlayCircleO + "Skip broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
-            Renderables::Add(BrokenMapSkipWarnModalDialog());
+            Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
@@ -320,26 +332,18 @@ class RMC
     {
         if (UI::RoseButton("+1min")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
-            RMC::EndTime += (1*60*1000);
+            this.TimeLeft += (1*60*1000);
         }
         UI::SameLine();
         if (UI::RoseButton("-1min")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
-            RMC::EndTime -= (1*60*1000);
-
-            if ((RMC::EndTime - RMC::StartTime) < (1*60*1000)) RMC::EndTime = RMC::StartTime + (1*60*1000);
+            this.TimeLeft = Math::Max(1*60*1000, this.TimeLeft - 1*60*1000);
         }
     }
 
-    void StartTimer()
-    {
-        RMC::StartTime = Time::Now;
-        RMC::EndTime = !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
-        if (RMC::ContinueSavedRun) {
-            ModeStartTimestamp = RMC::StartTime - (Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]));
-        } else {
-            ModeStartTimestamp = Time::Now;
-        }
+    void StartTimer() {
+        this.TimeLeft = !RMC::ContinueSavedRun ? TimeLimit : int(RMC::CurrentRunData["TimeLeft"]);
+        this.TotalTime = !RMC::ContinueSavedRun ? 0 : int(RMC::CurrentRunData["TotalTime"]);
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         if (RMC::GotBelowMedal && RMC::GotGoalMedal) RMC::GotBelowMedal = false;
@@ -398,46 +402,42 @@ class RMC
             );
     }
 
-    void PendingTimerLoop(){}
-
     void TimerYield() {
-        while (RMC::IsRunning){
-            yield();
-            if (!RMC::IsPaused) {
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(false);
-#endif
-                if (TM::InRMCMap()) {
-                    RMC::StartTime = Time::Now;
-                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
-                    PendingTimerLoop();
+        int lastUpdate = Time::Now;
 
-                    if (RMC::StartTime > RMC::EndTime || !RMC::IsRunning || RMC::EndTime <= 0) {
-                        RMC::StartTime = -1;
-                        RMC::EndTime = -1;
-                        RMC::IsRunning = false;
-                        RMC::ShowTimer = false;
-                        if (!RMC::UserEndedRun) {
-                            GameEndNotification();
-                            DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
-                        }
-                        if (PluginSettings::RMC_ExitMapOnEndTime){
-                            CTrackMania@ app = cast<CTrackMania>(GetApp());
-                            app.BackToMainMenu();
-                        }
-                        @MX::preloadedMap = null;
-                    }
-                } else {
-                    RMC::IsPaused = true;
-                }
-            } else {
-                // pause timer
-                RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
-                RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
+        while (RMC::IsRunning) {
+            yield();
+
 #if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(true);
+                ChaosMode::SetRMCPaused(RMC::IsPaused);
 #endif
+
+            if (!RMC::IsPaused) {
+                if (!TM::InRMCMap()) {
+                    RMC::IsPaused = true;
+                } else if (!RMC::IsRunning || TimeLeft == 0) {
+                    RMC::IsRunning = false;
+                    RMC::ShowTimer = false;
+
+                    if (!RMC::UserEndedRun) {
+                        GameEndNotification();
+                        DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
+                    }
+
+                    if (PluginSettings::RMC_ExitMapOnEndTime){
+                        CTrackMania@ app = cast<CTrackMania>(GetApp());
+                        app.BackToMainMenu();
+                    }
+                    @MX::preloadedMap = null;
+                } else {
+                    int delta = Time::Now - lastUpdate;
+                    this.TimeLeft -= delta;
+                    this.TotalTime += delta;
+                    RMC::TimeSpentMap += delta;
+                }
             }
+
+            lastUpdate = Time::Now;
         }
     }
 
@@ -502,9 +502,9 @@ class RMC
                     RMC::CreateSave();
                 }
 
-                if (RMC::CurrentTimeOnMap == -1 || (!inverse && int(score) < RMC::CurrentTimeOnMap) || (inverse && int(score) > RMC::CurrentTimeOnMap)) {
+                if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
                     // PB
-                    RMC::CurrentTimeOnMap = score;
+                    RMC::PBOnMap = score;
                     RMC::CreateSave();
                 }
 

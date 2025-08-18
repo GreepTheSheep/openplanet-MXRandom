@@ -1,21 +1,16 @@
 class RMObjective : RMC
 {
     int Skips = 0;
-    int RunTimeStart = -1;
-    int RunTime = -1;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
-    string GetModeName() override { return "Random Map Objective";}
+    string get_ModeName() override { return "Random Map Objective";}
 
     void RenderTimer() override
     {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning || RMC::EndTime > 0 || RMC::StartTime > 0) {
-            RunTime = RMC::StartTime - RunTimeStart;
-
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RunTime));
-            else UI::Text(RMC::FormatTimer(RunTime));
-
+        if (RMC::IsRunning) {
+            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(this.TotalTime));
+            else UI::Text(RMC::FormatTimer(this.TotalTime));
         } else {
             UI::TextDisabled(RMC::FormatTimer(0));
         }
@@ -68,7 +63,7 @@ class RMObjective : RMC
 #endif
                 (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
             ) {
-                RMC::EndTime += RMC::TimeSpentMap;
+                this.TimeLeft += RMC::TimeSpentMap;
             }
             startnew(RMC::SwitchMap);
         }
@@ -86,10 +81,9 @@ class RMObjective : RMC
 
     void DevButtons() override {}
 
-    void StartTimer() override
-    {
-        RMC::StartTime = Time::Now;
-        RunTimeStart = Time::Now;
+    void StartTimer() override {
+        this.TotalTime = 0;
+        this.TimeLeft = TimeLimit;
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
@@ -112,40 +106,34 @@ class RMObjective : RMC
     void TimerYield() override
     {
         auto app = cast<CTrackMania>(GetApp());
+        int lastUpdate = Time::Now;
 
         while (RMC::IsRunning) {
             yield();
-            if (!RMC::IsPaused) {
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(false);
-#endif
-                if (TM::InRMCMap()) {
-                    RMC::StartTime = Time::Now;
-                    RMC::TimeSpentMap = Time::Now - RMC::TimeSpawnedMap;
-                    PendingTimerLoop();
 
-                    if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
-                        UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(RunTime));
-                        RMC::StartTime = -1;
-                        RMC::EndTime = -1;
-                        RMC::IsRunning = false;
-                        RMC::ShowTimer = false;
-                        if (PluginSettings::RMC_ExitMapOnEndTime){
-                            app.BackToMainMenu();
-                        }
-                        @MX::preloadedMap = null;
-                    }
-                } else {
-                    RMC::IsPaused = true;
-                }
-            } else {
-                // pause timer
-                RMC::StartTime = Time::Now - (Time::Now - RMC::StartTime);
-                RMC::EndTime = Time::Now - (Time::Now - RMC::EndTime);
 #if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(true);
+                ChaosMode::SetRMCPaused(RMC::IsPaused);
 #endif
+
+            if (!RMC::IsPaused) {
+                if (!TM::InRMCMap()) {
+                    RMC::IsPaused = true;
+                } else if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
+                    UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(this.TotalTime));
+                    RMC::IsRunning = false;
+                    RMC::ShowTimer = false;
+                    if (PluginSettings::RMC_ExitMapOnEndTime) {
+                        app.BackToMainMenu();
+                    }
+                    @MX::preloadedMap = null;
+                } else {
+                    int delta = Time::Now - lastUpdate;
+                    this.TotalTime += delta;
+                    RMC::TimeSpentMap += delta;
+                }
             }
+
+            lastUpdate = Time::Now;
         }
     }
 
@@ -168,9 +156,9 @@ class RMObjective : RMC
                     RMC::GotGoalMedal = true;
                 }
 
-                if (RMC::CurrentTimeOnMap == -1 || (!inverse && int(score) < RMC::CurrentTimeOnMap) || (inverse && int(score) > RMC::CurrentTimeOnMap)) {
+                if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
                     // PB
-                    RMC::CurrentTimeOnMap = score;
+                    RMC::PBOnMap = score;
                     RMC::CreateSave();
                 }
 

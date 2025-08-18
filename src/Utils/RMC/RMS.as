@@ -1,33 +1,38 @@
 class RMS : RMC
 {
     int Skips = 0;
-    int SurvivedTimeStart = -1;
-    int SurvivedTime = -1;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
-    string GetModeName() override { return "Random Map Survival";}
+    string get_ModeName() override { 
+        if (RMC::currentGameMode == RMC::GameMode::SurvivalChaos) {
+            return "Random Map Chaos Survival";
+        }
 
-    int TimeLimit() override { return PluginSettings::RMC_SurvivalMaxTime * 60 * 1000; }
+        return "Random Map Survival";
+    }
 
-    void RenderTimer() override
-    {
+    int get_TimeLimit() override { return (PluginSettings::RMC_SurvivalMaxTime - Skips) * 60 * 1000; }
+
+    int get_SurvivedTime() {
+        return TotalTime;
+    }
+
+    void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning || RMC::EndTime > 0 || RMC::StartTime > 0) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
-            else UI::Text(RMC::FormatTimer(RMC::EndTime - RMC::StartTime));
+        if (RMC::IsRunning) {
+            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(this.TimeLeft));
+            else UI::Text(RMC::FormatTimer(this.TimeLeft));
 
-            SurvivedTime = RMC::StartTime - SurvivedTimeStart;
-            if (SurvivedTime > 0 && PluginSettings::RMC_SurvivalShowSurvivedTime) {
+            UI::Dummy(vec2(0, 8));
+
+            if (PluginSettings::RMC_SurvivalShowSurvivedTime && this.SurvivedTime > 0) {
                 UI::PopFont();
-                UI::Dummy(vec2(0, 8));
                 UI::PushFont(Fonts::HeaderSub);
                 UI::Text(RMC::FormatTimer(SurvivedTime));
                 UI::SetPreviousTooltip("Total time survived");
-            } else {
-                UI::Dummy(vec2(0, 8));
             }
             if (PluginSettings::RMC_DisplayMapTimeSpent) {
-                if(SurvivedTime > 0 && PluginSettings::RMC_SurvivalShowSurvivedTime) {
+                if (PluginSettings::RMC_SurvivalShowSurvivedTime && this.SurvivedTime > 0) {
                     UI::SameLine();
                 }
                 UI::PushFont(Fonts::HeaderSub);
@@ -36,7 +41,7 @@ class RMS : RMC
                 UI::PopFont();
             }
         } else {
-            UI::TextDisabled(RMC::FormatTimer(TimeLimit()));
+            UI::TextDisabled(RMC::FormatTimer(TimeLimit));
             UI::Dummy(vec2(0, 8));
         }
 
@@ -64,7 +69,7 @@ class RMS : RMC
         if (UI::OrangeButton(Icons::PlayCircleO + " Skip Broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
-            Renderables::Add(BrokenMapSkipWarnModalDialog());
+            Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
@@ -77,29 +82,19 @@ class RMS : RMC
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMS: Next map");
             UI::ShowNotification("Please wait...");
-            RMC::EndTime += (3*60*1000);
+            this.TimeLeft += (3*60*1000);
             startnew(RMC::SwitchMap);
         }
     }
 
-    void StartTimer() override
-    {
-        RMC::StartTime = Time::Now;
-        RMC::EndTime =  !RMC::ContinueSavedRun ? RMC::StartTime + TimeLimit() : RMC::StartTime + int(RMC::CurrentRunData["TimerRemaining"]);
-        SurvivedTimeStart = !RMC::ContinueSavedRun ? Time::Now : Time::Now - int(RMC::CurrentRunData["CurrentRunTime"]);
+    void StartTimer() override {
+        this.TimeLeft = !RMC::ContinueSavedRun ? TimeLimit : int(RMC::CurrentRunData["TimeLeft"]);
+        this.TotalTime = !RMC::ContinueSavedRun ? 0 : int(RMC::CurrentRunData["TotalTime"]);
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
-    }
-
-    void PendingTimerLoop() override
-    {
-        // Cap timer max
-        if ((RMC::EndTime - RMC::StartTime) > (PluginSettings::RMC_SurvivalMaxTime-RMC::Survival.Skips)*60*1000) {
-            RMC::EndTime = RMC::StartTime + (PluginSettings::RMC_SurvivalMaxTime-RMC::Survival.Skips)*60*1000;
-        }
     }
 
     void GameEndNotification() override
@@ -133,7 +128,7 @@ class RMS : RMC
         Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
-            RMC::EndTime += (3*60*1000);
+            this.TimeLeft += (3*60*1000);
             startnew(RMC::SwitchMap);
         } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
     }

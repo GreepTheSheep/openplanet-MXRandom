@@ -4,11 +4,13 @@ class BrokenMapSkipWarnModalDialog : ModalDialog
     string resErrorString;
     Json::Value m_rulesJson;
     bool m_requestError = false;
+    RMC@ mode;
 
-    BrokenMapSkipWarnModalDialog()
+    BrokenMapSkipWarnModalDialog(RMC@ gamemode)
     {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zWarning###BrokenMapSkip");
         m_size = vec2(400, 130);
+        @mode = gamemode;
     }
 
     void RenderDialog() override
@@ -19,18 +21,15 @@ class BrokenMapSkipWarnModalDialog : ModalDialog
         UI::EndChild();
         if (UI::Button(Icons::Times + " No")) {
             Close();
-            RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
             RMC::IsPaused = false;
         }
         UI::SameLine();
         UI::SetCursorPos(vec2(UI::GetWindowSize().x - 70 * scale, UI::GetCursorPos().y));
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
-            RMC::EndTime = RMC::EndTime + (Time::Now - RMC::StartTime);
-            RMC::IsPaused = false;
             print("RMC: Broken Map Skip");
             UI::ShowNotification("Please wait...");
-            RMC::EndTime += RMC::TimeSpentMap;
+            mode.TimeLeft += RMC::TimeSpentMap;
             startnew(RMC::SwitchMap);
         }
     }

@@ -20,7 +20,7 @@ class SaveRunQuestionModalDialog : ModalDialog
         UI::SetCursorPos(vec2(UI::GetWindowSize().x - 70 * scale, UI::GetCursorPos().y));
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
-            RMC::CreateSave(true);
+            RMC::CreateSave();
             Log::Log("Saved run data", true);
         }
     }

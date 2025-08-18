@@ -2,14 +2,14 @@ namespace DataManager
 {
     const array<string> requiredKeys = {
         "PBOnMap",
-        "TimerRemaining",
+        "TimeLeft",
         "MapData",
         "TimeSpentOnMap",
         "PrimaryCounterValue",
         "SecondaryCounterValue",
-        "CurrentRunTime",
-        "GotBelowMedalOnMap",
-        "GotGoalMedalOnMap",
+        "TotalTime",
+        "GotBelowMedal",
+        "GotGoalMedal",
         "FreeSkipsUsed"
     };
 
@@ -84,15 +84,15 @@ namespace DataManager
         string gameMode = "RM" + lastLetter;
         Json::Value SaveFileData = Json::Object();
         SaveFileData["PBOnMap"] = -1;
-        SaveFileData["TimerRemaining"] = 0;
+        SaveFileData["TimeLeft"] = 0;
         SaveFileData["MapData"] = Json::Object();
-        SaveFileData["TimeSpentOnMap"] = 0;  // this is updated when you manually quit on a map
+        SaveFileData["TimeSpentOnMap"] = 0;
         SaveFileData["PrimaryCounterValue"] = 0;  // Amount of goal medals
         SaveFileData["SecondaryCounterValue"] = 0;  // Second medal type for RMC ("Gold Skips") or skip count for RMS
-        SaveFileData["CurrentRunTime"] = 0;
-        SaveFileData["GotBelowMedalOnMap"] = false; // for challenge runs
-        SaveFileData["GotGoalMedalOnMap"] = false; // for challenge runs
-        SaveFileData["FreeSkipsUsed"] = 0; // for RMC runs
+        SaveFileData["TotalTime"] = 0;
+        SaveFileData["GotBelowMedal"] = false;
+        SaveFileData["GotGoalMedal"] = false;
+        SaveFileData["FreeSkipsUsed"] = 0;
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
         RMC::CurrentRunData = SaveFileData;
     }
@@ -111,6 +111,45 @@ namespace DataManager
         string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
+    }
+
+    void ConvertSaves() {
+        array<string> saves = IO::IndexFolder(SAVE_DATA_LOCATION, true);
+
+        for (uint f = 0; f < saves.Length; f++) {
+            string path = saves[f];
+            string fileName = Path::GetFileNameWithoutExtension(path);
+            Json::Value@ save = Json::FromFile(path);
+
+            if (!save.HasKey("TotalTime")) {
+                if (fileName == "RMO" && IO::FileExists(path)) {
+                    // These are not used
+                    IO::Delete(path);
+                }
+
+                save["TimeLeft"] = int(save["TimerRemaining"]);
+                save.Remove("TimerRemaining");
+
+                save["GotGoalMedal"] = bool(save["GotGoalMedalOnMap"]);
+                save.Remove("GotGoalMedalOnMap");
+                
+                if (save.HasKey("GotBelowMedalOnMap")) {
+                    save["GotBelowMedal"] = bool(save["GotBelowMedalOnMap"]);
+                    save.Remove("GotBelowMedalOnMap");
+                } else {
+                    save["GotBelowMedal"] = false;
+                }
+
+                if (fileName == "RMS") {
+                    save["TotalTime"] = int(save["CurrentRunTime"]);
+                } else {
+                    save["TotalTime"] = RMC::Challenge.TimeLimit - int(save["TimeLeft"]);
+                }
+                save.Remove("CurrentRunTime");
+
+                Json::ToFile(path, save);
+            }
+        }
     }
 
     bool EnsureSaveDataIsLoadable(const string &in gameMode, Json::Value data) {
@@ -139,7 +178,7 @@ namespace DataManager
                 RemoveCurrentSaveFile();
                 return false;
             }
-            if (RMC::CurrentRunData["TimerRemaining"] == 0) return false;
+            if (RMC::CurrentRunData["TimeLeft"] == 0) return false;
             return true;
         }
         return false;
