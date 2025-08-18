@@ -31,20 +31,17 @@ namespace UI {
 
     // Alignment
 
-    void CenterAlign()
-    {
+    void CenterAlign() {
         vec2 region = UI::GetWindowSize();
         vec2 position = UI::GetCursorPos();
         UI::SetCursorPos(vec2(region.x / 2, position.y));
     }
 
-    void CenterAlign(float elementWidth)
-    {
+    void CenterAlign(float elementWidth) {
         UI::SetCursorPos(vec2((UI::GetWindowSize().x - elementWidth) * 0.5, UI::GetCursorPos().y));
     }
 
-    void CenteredText(const string &in text, bool disabled = false)
-    {
+    void CenteredText(const string &in text, bool disabled = false) {
         UI::AlignTextToFramePadding();
         float textWidth = Draw::MeasureString(text).x;
         UI::CenterAlign(textWidth);
@@ -53,16 +50,14 @@ namespace UI {
         else UI::Text(text);
     }
 
-    bool CenteredButton(const string &in text)
-    {
+    bool CenteredButton(const string &in text) {
         vec2 button = MeasureButton(text);
         UI::CenterAlign(button.x);
 
         return UI::Button(text);
     }
 
-    bool CenteredButton(const string &in text, float color)
-    {
+    bool CenteredButton(const string &in text, float color) {
         vec2 button = MeasureButton(text);
         UI::CenterAlign(button.x);
 

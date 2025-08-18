@@ -1,8 +1,8 @@
 namespace PluginSettings {
     void Render() {
         UI::BeginTabBar("RMCSettingsTab", UI::TabBarFlags::FittingPolicyResizeDown);
-        if (UI::BeginTabItem(Icons::Cogs + " Random Map Challenge"))
-        {
+
+        if (UI::BeginTabItem(Icons::Cogs + " Random Map Challenge")) {
             PluginSettings::RenderRMCSettingTab();
             UI::EndTabItem();
         }

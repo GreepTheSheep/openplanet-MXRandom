@@ -1,7 +1,5 @@
-namespace API
-{
-    Net::HttpRequest@ Get(const string &in url)
-    {
+namespace API {
+    Net::HttpRequest@ Get(const string &in url) {
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Get;
         ret.Url = url;
@@ -15,8 +13,7 @@ namespace API
         return ret;
     }
 
-    Json::Value GetAsync(const string &in url)
-    {
+    Json::Value GetAsync(const string &in url) {
         auto req = Get(url);
         while (!req.Finished()) {
             yield();
@@ -26,8 +23,7 @@ namespace API
         return req.Json();
     }
 
-    Net::HttpRequest@ Post(const string &in url, const string &in body)
-    {
+    Net::HttpRequest@ Post(const string &in url, const string &in body) {
         auto ret = Net::HttpRequest();
         ret.Method = Net::HttpMethod::Post;
         ret.Url = url;
@@ -43,8 +39,7 @@ namespace API
         return ret;
     }
 
-    Json::Value PostAsync(const string &in url, const string &in body)
-    {
+    Json::Value PostAsync(const string &in url, const string &in body) {
         auto req = Post(url, body);
         while (!req.Finished()) {
             yield();

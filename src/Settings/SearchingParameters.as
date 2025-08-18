@@ -1,5 +1,4 @@
-namespace PluginSettings
-{
+namespace PluginSettings {
     [Setting hidden]
     bool CustomRules = false;
 
@@ -82,9 +81,8 @@ namespace PluginSettings
     MapTypes MapType = MapTypes::Race;
 
     [SettingsTab name="Filters" order="2" icon="Filter"]
-    void RenderSearchingSettingTab()
-    {
-        CustomRules = UI::Checkbox("\\$fc0"+Icons::ExclamationTriangle+" \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
+    void RenderSearchingSettingTab() {
+        CustomRules = UI::Checkbox("\\$fc0" + Icons::ExclamationTriangle + " \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
         UI::Separator();
 
         UI::BeginDisabled(!CustomRules);
@@ -253,21 +251,21 @@ namespace PluginSettings
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))) {
-                for (uint i = 0; i < MX::m_mapTags.Length; i++)
-                {
+                for (uint i = 0; i < MX::m_mapTags.Length; i++) {
                     MX::MapTag@ tag = MX::m_mapTags[i];
                     if (UI::Selectable(tag.Name, MapTagsArr.Find(tag.ID) >= 0)) MapTagsArr = ToggleMapTag(MapTagsArr, tag.ID);
                 }
+
                 UI::EndListBox();
             }
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Exclude Tags", vec2(200, 300))) {
-                for (uint i = 0; i < MX::m_mapTags.Length; i++)
-                {
+                for (uint i = 0; i < MX::m_mapTags.Length; i++) {
                     MX::MapTag@ tag = MX::m_mapTags[i];
                     if (UI::Selectable(tag.Name, ExcludeMapTagsArr.Find(tag.ID) >= 0)) ExcludeMapTagsArr = ToggleMapTag(ExcludeMapTagsArr, tag.ID);
                 }
+
                 UI::EndListBox();
             }
             UI::EndTable();
@@ -338,6 +336,7 @@ namespace PluginSettings
                     MapType = MapTypes(i);
                 }
             }
+
             UI::EndCombo();
         }
 
@@ -347,8 +346,7 @@ namespace PluginSettings
         UI::EndDisabled();
     }
 
-    array<int> ToggleMapTag(array<int> tags, int tagID)
-    {
+    array<int> ToggleMapTag(array<int> tags, int tagID) {
         int position = tags.Find(tagID);
         if (position >= 0) {
             tags.RemoveAt(position);
@@ -358,11 +356,9 @@ namespace PluginSettings
         return tags;
     }
 
-    string ConvertArrayToList(array<int> arr)
-    {
+    string ConvertArrayToList(array<int> arr) {
         string res = "";
-        for (uint i = 0; i < arr.Length; i++)
-        {
+        for (uint i = 0; i < arr.Length; i++) {
             res += arr[i] + ",";
         }
 
@@ -370,8 +366,7 @@ namespace PluginSettings
         return res;
     }
 
-    array<int> ConvertListToArray(const string &in arrStr)
-    {
+    array<int> ConvertListToArray(const string &in arrStr) {
         array<int> res = {};
         if (arrStr.Length == 0) return res;
 

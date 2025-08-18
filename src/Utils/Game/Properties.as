@@ -1,4 +1,3 @@
-namespace TM
-{
+namespace TM {
     dictionary worldRecordsCache;
 }

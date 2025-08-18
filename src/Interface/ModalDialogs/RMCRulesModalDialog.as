@@ -1,25 +1,23 @@
-class RMCRulesModalDialog : ModalDialog
-{
+class RMCRulesModalDialog : ModalDialog {
     Net::HttpRequest@ m_request;
     string resErrorString;
     Json::Value m_rulesJson;
     bool m_requestError = false;
 
-    RMCRulesModalDialog()
-    {
+    RMCRulesModalDialog() {
         super(MX_COLOR_STR + Icons::Book + " \\$zRandom Map Challenge Rules");
         m_size = vec2(Draw::GetWidth() / 2, 600);
         StartRulesRequest();
     }
 
-    void RenderRulesContent()
-    {
+    void RenderRulesContent() {
         if (m_request !is null) {
             UI::Text(Icons::AnimatedHourglass + " Loading...");
         } else {
             if (m_requestError) {
                 UI::Text("Error loading rules!");
                 UI::TextDisabled(resErrorString);
+
                 if (UI::Button("Retry")) {
                     StartRulesRequest();
                 }
@@ -73,14 +71,12 @@ class RMCRulesModalDialog : ModalDialog
         }
     }
 
-    void StartRulesRequest()
-    {
+    void StartRulesRequest() {
         string url = "https://openplanet.dev/plugin/mxrandom/config/user-rules";
         @m_request = API::Get(url);
     }
 
-    void CheckRulesRequest()
-    {
+    void CheckRulesRequest() {
         // If there's a request, check if it has finished
         if (m_request !is null && m_request.Finished()) {
             // Parse the response
@@ -109,8 +105,7 @@ class RMCRulesModalDialog : ModalDialog
     }
 
 
-    void RenderDialog() override
-    {
+    void RenderDialog() override {
         RMC::RenderBaseInfo();
         CheckRulesRequest();
         RenderRulesContent();

@@ -1,19 +1,16 @@
-namespace MX
-{
-    void FetchMapTags()
-    {
+namespace MX {
+    void FetchMapTags() {
         m_mapTags.RemoveRange(0, m_mapTags.Length);
         APIRefreshing = true;
 
-        Json::Value resNet = API::GetAsync(PluginSettings::RMC_MX_Url+"/api/meta/tags");
+        Json::Value resNet = API::GetAsync(PluginSettings::RMC_MX_Url + "/api/meta/tags");
 
         try {
-            for (uint i = 0; i < resNet.Length; i++)
-            {
+            for (uint i = 0; i < resNet.Length; i++) {
                 int tagID = resNet[i]["ID"];
                 string tagName = resNet[i]["Name"];
 
-                Log::Trace("Loading tag #"+tagID+" - "+tagName);
+                Log::Trace("Loading tag #" + tagID + " - " + tagName);
 
                 m_mapTags.InsertLast(MapTag(resNet[i]));
             }

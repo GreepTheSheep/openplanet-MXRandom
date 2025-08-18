@@ -1,5 +1,4 @@
-namespace RMC
-{
+namespace RMC {
     bool ShowTimer = false;
     bool IsStarting = false;
     bool IsRunning = false;
@@ -25,8 +24,7 @@ namespace RMC
     RMObjective@ Objective = RMObjective();
     RMT@ Together = RMT();
 
-    enum GameMode
-    {
+    enum GameMode {
         Challenge,
         Survival,
         Objective,
@@ -64,8 +62,7 @@ namespace RMC
         return result;
     }
 
-    void Start()
-    {
+    void Start() {
         IsInited = false;
         ShowTimer = true;
         IsStarting = true;
@@ -88,11 +85,14 @@ namespace RMC
         if (RMC::ContinueSavedRun) {
             RMC::CurrentMapJsonData = CurrentRunData["MapData"];
         }
+
         if (MX::preloadedMap !is null) {
             @MX::preloadedMap = null;
         }
+
         MX::LoadRandomMap();
-        while (!TM::IsMapLoaded()){
+
+        while (!TM::IsMapLoaded()) {
             sleep(100);
         }
 
@@ -170,8 +170,7 @@ namespace RMC
         DataManager::SaveCurrentRunData();
     }
 
-    void SwitchMap()
-    {
+    void SwitchMap() {
         IsPaused = true;
         isSwitchingMap = true;
         yield(100);

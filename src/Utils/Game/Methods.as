@@ -1,10 +1,8 @@
-namespace TM
-{
+namespace TM {
     const uint COOLDOWN = 5000;
     array<uint> royalTimes = { 0, 0, 0, 0 };
 
-    void LoadMap(ref@ mapData)
-    {
+    void LoadMap(ref@ mapData) {
 #if TMNEXT
         if (!Permissions::PlayLocalMap()) {
             Log::Error("Missing permission to play local maps. Club / Standard access is required.", true);
@@ -25,7 +23,7 @@ namespace TM
 #endif
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
-        while(!app.ManiaTitleControlScriptAPI.IsReady) {
+        while (!app.ManiaTitleControlScriptAPI.IsReady) {
             yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
         }
 
@@ -58,7 +56,7 @@ namespace TM
         return app.RootMap !is null;
     }
 
-    bool IsMapCorrect(const string &in mapUid){
+    bool IsMapCorrect(const string &in mapUid) {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.RootMap is null) return false;
 
@@ -76,14 +74,18 @@ namespace TM
     uint PlaygroundGameTime() {
         auto app = GetApp();
         auto playgroundScript = app.Network.PlaygroundInterfaceScriptHandler;
+
         if (playgroundScript is null) return uint(-1);
+
         return uint(playgroundScript.GameTime);
     }
 
     uint PlaygroundStartTime() {
         auto app = GetApp();
         auto playground = cast<CSmArenaClient>(app.CurrentPlayground);
+
         if (playground is null || playground.Arena is null || playground.Arena.Rules is null) return uint(-1);
+
         return uint(playground.Arena.Rules.RulesStateStartTime);
     }
 
@@ -145,8 +147,7 @@ namespace TM
         return false;
     }
 
-    string CurrentTitlePack()
-    {
+    string CurrentTitlePack() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.LoadedManiaTitle is null) return "";
         string titleId = app.LoadedManiaTitle.TitleId;
@@ -158,9 +159,9 @@ namespace TM
     }
 
     void ClosePauseMenu() {
-        if(IsPauseMenuDisplayed()) {
+        if (IsPauseMenuDisplayed()) {
             CSmArenaClient@ playground = cast<CSmArenaClient>(GetApp().CurrentPlayground);
-            if(playground !is null) {
+            if (playground !is null) {
                 playground.Interface.ManialinkScriptHandler.CloseInGameMenu(CGameScriptHandlerPlaygroundInterface::EInGameMenuResult::Resume);
             }
         }
@@ -190,7 +191,7 @@ namespace TM
         return app.ManiaPlanetScriptAPI.ActiveContext_InGameMenuDisplayed;
     }
 
-    bool IsInServer(){
+    bool IsInServer() {
         CTrackManiaNetwork@ Network = cast<CTrackManiaNetwork>(GetApp().Network);
         CGameCtnNetServerInfo@ ServerInfo = cast<CGameCtnNetServerInfo>(Network.ServerInfo);
         return ServerInfo.JoinLink != "";

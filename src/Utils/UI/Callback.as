@@ -1,5 +1,4 @@
-namespace UI
-{
+namespace UI {
     // Callback for map, mappack, and user IDs
     void MXIdCallback(UI::InputTextCallbackData@ data) {
         if (data.EventFlag == UI::InputTextFlags::CallbackAlways) {

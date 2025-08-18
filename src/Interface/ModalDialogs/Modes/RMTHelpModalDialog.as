@@ -1,18 +1,15 @@
-class RMTHelpModalDialog : ModalDialog
-{
+class RMTHelpModalDialog : ModalDialog {
     UI::Texture@ clubIdTex;
     UI::Texture@ roomIdTex;
 
-    RMTHelpModalDialog()
-    {
+    RMTHelpModalDialog() {
         super(Icons::InfoCircle + " \\$zRandom Map Together###RMTHelp");
         m_size = vec2(Draw::GetWidth(), Draw::GetHeight()) * 0.6f;
         @clubIdTex = UI::LoadTexture("src/Assets/Images/help_clubId.jpg");
         @roomIdTex = UI::LoadTexture("src/Assets/Images/help_roomId.jpg");
     }
 
-    void RenderDialog() override
-    {
+    void RenderDialog() override {
         float scale = UI::GetScale();
         UI::BeginChild("Content", vec2(0, -32) * scale);
 

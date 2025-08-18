@@ -1,5 +1,4 @@
-class ModalDialog : IRenderable
-{
+class ModalDialog : IRenderable {
 	string m_id;
 	bool m_firstRender = false;
 	bool m_visible = true;

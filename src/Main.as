@@ -1,12 +1,11 @@
-void RenderMenu()
-{
+void RenderMenu() {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
-    if(UI::BeginMenu(MX_COLOR_STR+Icons::Random+" \\$z"+SHORT_MX+" Randomizer" + (MX::APIDown ? " \\$f00"+Icons::Server : ""))){
+    if (UI::BeginMenu(MX_COLOR_STR + Icons::Random + " \\$z" + SHORT_MX + " Randomizer" + (MX::APIDown ? " \\$f00" + Icons::Server : ""))) {
         if (MX::APIDown && !IS_DEV_MODE) {
             if (!MX::APIRefreshing) {
-                UI::Text("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
+                UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$z" + MX_NAME + " is not responding. It might be down.");
                 if (UI::Button("Retry")) {
                     startnew(MX::FetchMapTags);
                 }
@@ -23,16 +22,15 @@ void RenderMenu()
                     if (UI::MenuItem(Icons::Play + " Quick map")) {
                         startnew(MX::LoadRandomMap);
                     }
-                    UI::SetPreviousTooltip("This will load and play instantly a random map from "+MX_NAME+".");
+                    UI::SetPreviousTooltip("This will load and play instantly a random map from " + MX_NAME + ".");
 
-                    if(UI::MenuItem(MX_COLOR_STR+Icons::Random+" \\$zRandomizer Menu", "", window.isOpened)) {
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zRandomizer Menu", "", window.isOpened)) {
                         window.isOpened = !window.isOpened;
                     }
                     UI::Separator();
-                    if(UI::MenuItem(MX_COLOR_STR+Icons::ClockO+" \\$zRandom Map Challenge", "", window.isInRMCMode)) {
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::ClockO + " \\$zRandom Map Challenge", "", window.isInRMCMode)) {
                         if (window.isInRMCMode) window.isInRMCMode = false;
-                        else
-                        {
+                        else {
                             if (!window.isOpened) window.isOpened = true;
                             window.isInRMCMode = true;
                         }
@@ -48,16 +46,14 @@ void RenderMenu()
     }
 }
 
-void RenderInterface()
-{
+void RenderInterface() {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
     if (!window.isInRMCMode) window.Render();
 }
 
-void Render()
-{
+void Render() {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
@@ -66,8 +62,7 @@ void Render()
 }
 
 bool held = false;
-void OnKeyPress(bool down, VirtualKey key)
-{
+void OnKeyPress(bool down, VirtualKey key) {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
@@ -77,8 +72,7 @@ void OnKeyPress(bool down, VirtualKey key)
     held = down;
 }
 
-void Main()
-{
+void Main() {
 #if TMNEXT
     if (!hasPermissions) {
         Log::Error("You need Club / Standard access to use this plugin!", true);
@@ -103,10 +97,10 @@ void Main()
             IO::Delete(DATA_JSON_LOCATION_DATADIR);
         } else if (DataJsonOldVersion.GetType() == Json::Type::Null) {
             DataManager::InitData();
-            UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing "+PLUGIN_NAME+"!","No data file was detected, that means it's your first install. Welcome!", 15000);
+            UI::ShowNotification("\\$afa" + Icons::InfoCircle + " Thanks for installing " + PLUGIN_NAME + "!","No data file was detected, that means it's your first install. Welcome!", 15000);
         } else {
             if (Versioning::IsVersion1(DataJsonOldVersion["version"])) {
-                Log::Trace("Data JSON old version is "+Json::Write(DataJsonOldVersion["version"])+", showing migration wizard");
+                Log::Trace("Data JSON old version is " + Json::Write(DataJsonOldVersion["version"]) + ", showing migration wizard");
                 Renderables::Add(DataMigrationWizardModalDialog());
             }
         }

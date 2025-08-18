@@ -1,21 +1,18 @@
-class DataMigrationWizardModalDialog : ModalDialog
-{
+class DataMigrationWizardModalDialog : ModalDialog {
     int m_stage = 0;
     int m_migrationStep = 0;
     bool migrationCompleted = false;
     array<int> m_MXIdsFromRecently;
     array<MX::MapInfo@> m_MapsFetched;
 
-    DataMigrationWizardModalDialog()
-    {
+    DataMigrationWizardModalDialog() {
         super(MX_COLOR_STR + Icons::Random + " \\$zData Migration Wizard");
         m_size = vec2(Draw::GetWidth()/2, Draw::GetHeight()/2);
     }
 
-    void RenderStep1()
-    {
+    void RenderStep1() {
         UI::PushFont(Fonts::Header);
-        UI::TextWrapped("Thanks for updating " + PLUGIN_NAME +"!");
+        UI::TextWrapped("Thanks for updating " + PLUGIN_NAME + "!");
         UI::PopFont();
 
         UI::TextWrapped("This wizard will help you migrate your data from the version 1 to the version 2 of the plugin.");
@@ -43,16 +40,16 @@ class DataMigrationWizardModalDialog : ModalDialog
         );
     }
 
-    void RenderStep2()
-    {
+    void RenderStep2() {
         UI::PushFont(Fonts::Header);
         if (!migrationCompleted) UI::Text("Please wait...");
         else UI::Text("Data migration complete!");
         UI::PopFont();
+
         UI::NewLine();
 
         UI::Text((m_migrationStep > 0 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the list of recently played maps" + (m_MXIdsFromRecently.IsEmpty() ? "..." : " - " + m_MXIdsFromRecently.Length + " maps found"));
-        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.IsEmpty() ? "..." : " - " + m_MapsFetched.Length + "/"+m_MXIdsFromRecently.Length + " maps"));
+        UI::Text((m_migrationStep > 1 ? "\\$090" + Icons::Check : "\\$f80" + Icons::AnimatedHourglass) + " \\$zGetting the missing data from the server" + (m_MapsFetched.IsEmpty() ? "..." : " - " + m_MapsFetched.Length + "/" + m_MXIdsFromRecently.Length + " maps"));
         UI::Text(migrationCompleted ? "\\$090" + Icons::Check + " \\$zData saved to the file! \\$444" + DATA_JSON_LOCATION : "\\$f80" + Icons::AnimatedHourglass  + " \\$zSaving the data to the new file...");
 
         switch (m_migrationStep) {
@@ -82,36 +79,39 @@ class DataMigrationWizardModalDialog : ModalDialog
                 break;
         }
 
-        if (migrationCompleted)
-        {
+        if (migrationCompleted) {
             UI::Separator();
             UI::NewLine();
+
             UI::TextWrapped("\\$0f0" + Icons::Check + " \\$zYour data has been successfully migrated to the new format.");
             UI::TextWrapped("Thanks for using " + PLUGIN_NAME + "!");
         }
+
         UI::NewLine();
-        if (!m_MapsFetched.IsEmpty() && UI::TreeNode("Saved maps")){
-            for (uint i = 0; i < m_MapsFetched.Length; i++){
+
+        if (!m_MapsFetched.IsEmpty() && UI::TreeNode("Saved maps")) {
+            for (uint i = 0; i < m_MapsFetched.Length; i++) {
                 UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
-                if (UI::IsItemClicked()) OpenBrowserURL("https://"+MX_URL+"/mapshow/"+m_MapsFetched[i].MapId);
+                if (UI::IsItemClicked()) OpenBrowserURL("https://" + MX_URL+ "/mapshow/" + m_MapsFetched[i].MapId);
             }
+
             UI::TreePop();
         }
     }
 
-    bool CanClose() override
-    {
+    bool CanClose() override {
         return migrationCompleted;
     }
 
-    void RenderDialog() override
-    {
+    void RenderDialog() override {
         float scale = UI::GetScale();
+
         UI::BeginChild("Content", vec2(0, -32) * scale);
 		switch (m_stage) {
 			case 0: RenderStep1(); break;
 			case 1: RenderStep2(); break;
 		}
+
 		UI::EndChild();
 
         if (m_stage == 0) {
@@ -119,17 +119,19 @@ class DataMigrationWizardModalDialog : ModalDialog
                 DataManager::InitData();
                 Close();
             }
+
             UI::SameLine();
+
             vec2 currentPos = UI::GetCursorPos();
             UI::SetCursorPos(vec2(UI::GetWindowSize().x - 90 * scale, currentPos.y));
+
             if (UI::GreenButton("Migrate " + Icons::ArrowRight)) {
                 m_stage++;
             }
         }
-        if (migrationCompleted) {
-            if (UI::GreenButton(Icons::Check + "Finish")) {
-                Close();
-            }
+
+        if (migrationCompleted && UI::GreenButton(Icons::Check + "Finish")) {
+            Close();
         }
     }
 }

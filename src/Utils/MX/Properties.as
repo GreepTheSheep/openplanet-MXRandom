@@ -1,5 +1,4 @@
-namespace MX
-{
+namespace MX {
     array<MapTag@> m_mapTags;
     Net::HttpRequest@ req;
 

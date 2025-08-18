@@ -1,5 +1,4 @@
-namespace MX
-{
+namespace MX {
     enum Difficulties {
         Beginner,
         Intermediate,

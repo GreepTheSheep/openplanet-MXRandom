@@ -1,11 +1,10 @@
-namespace MainUIView
-{
-    void Header()
-    {
+namespace MainUIView {
+    void Header() {
         float scale = UI::GetScale();
+
         if (MX::APIDown) {
             if (!MX::APIRefreshing) {
-                UI::CenteredText("\\$fc0"+Icons::ExclamationTriangle+" \\$z"+MX_NAME + " is not responding. It might be down.");
+                UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$z" + MX_NAME + " is not responding. It might be down.");
                 if (UI::CenteredButton("Retry")) {
                     startnew(MX::FetchMapTags);
                 }
@@ -17,7 +16,7 @@ namespace MainUIView
             if (Permissions::PlayLocalMap()) {
 #endif
                 if (TM::CurrentTitlePack() == "") {
-                    UI::CenteredText("\\$fc0"+Icons::ExclamationTriangle+" \\$zPlease select a title pack.");
+                    UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$zPlease select a title pack.");
                 } else {
                     if (!MX::RandomMapIsLoading) {
                         if (UI::CenteredButton(Icons::Play + " Play a random map", 0.33f)) {
@@ -26,7 +25,8 @@ namespace MainUIView
                     } else {
                         UI::CenteredText(Icons::AnimatedHourglass + " Loading...");
                     }
-                    if (UI::CenteredButton(Icons::ClockO +" Random Map Challenge", 0.155)) {
+
+                    if (UI::CenteredButton(Icons::ClockO + " Random Map Challenge", 0.155)) {
                         window.isInRMCMode = !window.isInRMCMode;
                     }
                 }
@@ -39,13 +39,13 @@ namespace MainUIView
         UI::Separator();
     }
 
-    void RecentlyPlayedMapsTab()
-    {
+    void RecentlyPlayedMapsTab() {
         UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.10f, 0.10f, 0.10f, 1));
         UI::PushStyleColor(UI::Col::TableRowBg, vec4(0.13f, 0.13f, 0.13f, 1));
 
         if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg)) {
             float scale = UI::GetScale();
+
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthFixed, 135 * scale);
@@ -53,7 +53,9 @@ namespace MainUIView
             UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 90 * scale);
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableHeadersRow();
+
             Render::RecentlyPlayedMaps();
+
             UI::EndTable();
         } else {
             UI::Text("No recently played maps");
@@ -62,9 +64,9 @@ namespace MainUIView
         UI::PopStyleColor(2);
     }
 
-    void ChangelogTabs()
-    {
+    void ChangelogTabs() {
         GH::CheckReleasesReq();
+
         if (GH::ReleasesReq is null && GH::Releases.IsEmpty()) {
             if (!GH::releasesRequestError) {
                 GH::StartReleasesReq();
@@ -72,12 +74,14 @@ namespace MainUIView
                 UI::Text("Error while loading releases");
             }
         }
+
         if (GH::ReleasesReq !is null) {
             UI::Text(Icons::AnimatedHourglass + " Loading...");
         }
 
         if (GH::ReleasesReq is null && !GH::Releases.IsEmpty()) {
             UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyScroll);
+
             for (uint i = 0; i < GH::Releases.Length; i++) {
                 GH::Release@ release = GH::Releases[i];
 
@@ -88,6 +92,7 @@ namespace MainUIView
                     UI::EndTabItem();
                 }
             }
+
             UI::EndTabBar();
         }
     }

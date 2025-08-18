@@ -1,5 +1,4 @@
-class Date
-{
+class Date {
     int timestamp;
     Time::Info info;
 

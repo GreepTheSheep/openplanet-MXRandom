@@ -1,5 +1,4 @@
-namespace MX
-{
+namespace MX {
     const dictionary ModesFromMapType = {
 #if MP4
         { "Race",                     "" },

@@ -46,7 +46,7 @@ namespace RMCLeaderAPI {
             bool isSuccess = serverRes["success"];
             if (!isSuccess) {
                 string errMsg = serverRes["message"];
-                Log::Warn("Login failed: "+errMsg+" - Retrying...");
+                Log::Warn("Login failed: " + errMsg + " - Retrying...");
                 sleep(5000);
                 RMCLeaderAPI::Login();
             } else {
@@ -116,7 +116,7 @@ namespace RMCLeaderAPI {
             bool isSuccess = serverRes["success"];
             if (!isSuccess) {
                 string errMsg = serverRes["message"];
-                Log::Warn("Posting RMC results failed: "+errMsg+"\n Retrying...");
+                Log::Warn("Posting RMC results failed: " + errMsg + "\nRetrying...");
                 sleep(5000);
                 RMCLeaderAPI::postRMC(goal, belowGoal, objective);
             } else {
@@ -185,7 +185,7 @@ namespace RMCLeaderAPI {
             bool isSuccess = serverRes["success"];
             if (!isSuccess) {
                 string errMsg = serverRes["message"];
-                Log::Warn("Posting RMS results failed: "+errMsg+"\n Retrying...");
+                Log::Warn("Posting RMS results failed: " + errMsg + "\nRetrying...");
                 sleep(5000);
                 RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
             } else {

@@ -1,5 +1,4 @@
-class RMT : RMC
-{
+class RMT : RMC {
 #if TMNEXT
     string LobbyMapUID = "";
     NadeoServices::ClubRoom@ RMTRoom;
@@ -20,11 +19,9 @@ class RMT : RMC
 
     void DevButtons() override {}
 
-    void Render() override
-    {
+    void Render() override {
         if (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns) {
-            if (UI::RedButton(Icons::Times + " Stop RMT"))
-            {
+            if (UI::RedButton(Icons::Times + " Stop RMT")) {
                 pressedStopButton = true;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
@@ -42,13 +39,13 @@ class RMT : RMC
         }
 
         RenderTimer();
-        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(this.TotalTime));
+        if (IS_DEV_MODE) UI::Text(RMC::FormatTimer(TotalTime));
         UI::Separator();
         RenderGoalMedal();
         RenderBelowGoalMedal();
         RenderMVPPlayer();
 
-       if (PluginSettings::RMC_DisplayPace) {
+        if (PluginSettings::RMC_DisplayPace) {
             try {
                 float goalPace = ((TimeLimit / 60 / 1000) * RMC::GoalMedalCount / (TimeLeft / 60 / 100));
                 UI::Text("Pace: " + goalPace);
@@ -57,8 +54,7 @@ class RMT : RMC
             }
         }
 
-        if (PluginSettings::RMC_DisplayCurrentMap)
-        {
+        if (PluginSettings::RMC_DisplayCurrentMap) {
             RenderCurrentMap();
         }
 
@@ -70,15 +66,14 @@ class RMT : RMC
         }
     }
 
-    void StartRMT()
-    {
+    void StartRMT() {
         m_mapPersonalBests = {};
         m_playerScores = {};
         if (!seenMaps.IsEmpty()) seenMaps.RemoveRange(0, seenMaps.Length);
         RMC::GoalMedalCount = 0;
         BelowMedalCount = 0;
-        this.TotalTime = 0;
-        this.TimeLeft = TimeLimit;
+        TotalTime = 0;
+        TimeLeft = TimeLimit;
         RMC::ShowTimer = true;
         RMC::ClickedOnSkip = false;
         pressedStopButton = false;
@@ -288,8 +283,8 @@ class RMT : RMC
                     }
     
                     int delta = Time::Now - lastUpdate;
-                    this.TimeLeft -= delta;
-                    this.TotalTime += delta;
+                    TimeLeft -= delta;
+                    TotalTime += delta;
                     RMC::TimeSpentMap += delta;
                 }
             }
@@ -323,8 +318,7 @@ class RMT : RMC
 #endif
     }
 
-    void RenderCurrentMap() override
-    {
+    void RenderCurrentMap() override {
         if (!isSwitchingMap) {
             if (TM::IsMapLoaded()) {
                 UI::Separator();
@@ -337,7 +331,7 @@ class RMT : RMC
                         UI::Text("\\$db4" + Icons::Trophy + "\\$z " + currentMap.AwardCount);
                     }
 
-                    if(PluginSettings::RMC_DisplayMapDate) {
+                    if (PluginSettings::RMC_DisplayMapDate) {
                         UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
                         UI::SameLine();
                     }
@@ -383,20 +377,18 @@ class RMT : RMC
         }
     }
 
-    void RenderPlayingButtons() override
-    {
+    void RenderPlayingButtons() override {
         if (TM::IsMapLoaded()) {
             SkipButtons();
         }
     }
 
-    void SkipButtons() override
-    {
+    void SkipButtons() override {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
         UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
-        if(UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
+        if (UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
             RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
 
@@ -418,8 +410,7 @@ class RMT : RMC
         UI::EndDisabled();
     }
 
-    void RenderScores()
-    {
+    void RenderScores() {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
@@ -433,9 +424,8 @@ class RMT : RMC
             UI::TableSetColumnEnabled(2, PluginSettings::RMC_Medal != Medals::Bronze);
 
             UI::ListClipper clipper(m_playerScores.Length);
-            while(clipper.Step()) {
-                for(int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-                {
+            while (clipper.Step()) {
+                for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
                     UI::TableNextRow();
                     UI::PushID("RMTScore"+i);
                     RMTPlayerScore@ s = m_playerScores[i];
@@ -455,8 +445,7 @@ class RMT : RMC
         }
     }
 
-    bool isObjectiveCompleted()
-    {
+    bool isObjectiveCompleted() {
         if (TM::IsMapLoaded()) {
             if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
@@ -471,8 +460,7 @@ class RMT : RMC
         return false;
     }
 
-    bool isBelowObjectiveCompleted()
-    {
+    bool isBelowObjectiveCompleted() {
         if (TM::IsMapLoaded()) {
             if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {

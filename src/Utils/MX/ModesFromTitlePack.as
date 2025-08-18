@@ -1,5 +1,4 @@
-namespace MX
-{
+namespace MX {
     const dictionary ModesFromTitlePack = {
 #if MP4
         // Base title packs

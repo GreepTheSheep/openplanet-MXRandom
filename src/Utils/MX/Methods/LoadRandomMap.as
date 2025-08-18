@@ -1,5 +1,4 @@
-namespace MX
-{
+namespace MX {
     MX::MapInfo@ preloadedMap;
     bool isLoadingPreload = false;
     // "Unassigned" = MP1 Canyon and TMF Stadium maps. They are guaranteed to be compatible as editing the map would change the title ID.
@@ -32,7 +31,7 @@ namespace MX
             Json::Value _res = API::GetAsync(check_url + urlParams);
             if (_res["Results"].Length == 0) {
                 // author does not own any usable map.
-                Log::Error(Icons::ExclamationTriangle+" No maps found for author '"+PluginSettings::MapAuthor+"', retrying without author set...");
+                Log::Error(Icons::ExclamationTriangle + " No maps found for author '" + PluginSettings::MapAuthor + "', retrying without author set...");
                 PluginSettings::MapAuthor = "";
                 return _res;
             } else if (_res["Results"].Length == 1) {
@@ -47,7 +46,7 @@ namespace MX
             Json::Value _res = API::GetAsync(check_url + urlParams);
             if (_res["Results"].Length == 0) {
                 // there are no map names matching the filter
-                Log::Error(Icons::ExclamationTriangle+" No maps found for name '"+PluginSettings::MapName+"', retrying without name set...");
+                Log::Error(Icons::ExclamationTriangle + " No maps found for name '" + PluginSettings::MapName + "', retrying without name set...");
                 PluginSettings::MapName = "";
                 return _res;
             } else if (_res["Results"].Length == 1) {
@@ -63,7 +62,7 @@ namespace MX
             Json::Value _res = API::GetAsync(check_url + urlParams);
             if (_res["Results"].Length == 0) {
                 // there are no map names matching the filter
-                Log::Error(Icons::ExclamationTriangle+" No maps found for author '"+PluginSettings::MapAuthor+"' and name '"+PluginSettings::MapName+"', retrying without name set...");
+                Log::Error(Icons::ExclamationTriangle + " No maps found for author '" + PluginSettings::MapAuthor + "' and name '" + PluginSettings::MapName + "', retrying without name set...");
                 PluginSettings::MapName = "";
                 return _res;
             } else if (_res["Results"].Length == 1) {
@@ -86,8 +85,7 @@ namespace MX
     }
 
 
-    void PreloadRandomMap()
-    {
+    void PreloadRandomMap() {
         isLoadingPreload = true;
 
         string URL = CreateQueryURL();
@@ -122,10 +120,10 @@ namespace MX
                 return;
             }
         }
-        Log::Trace("PreloadRandomMapRes: "+Json::Write(res));
+        Log::Trace("PreloadRandomMapRes: " + Json::Write(res));
         MX::MapInfo@ map = MX::MapInfo(res);
 
-        if (map is null){
+        if (map is null) {
             Log::Warn("Map is null, retrying...");
             sleep(1000);
             PreloadRandomMap();
@@ -246,10 +244,8 @@ namespace MX
         @preloadedMap = map;
     }
 
-    void LoadRandomMap()
-    {
-        try
-        {
+    void LoadRandomMap() {
+        try {
             while (RandomMapIsLoading) {
                 yield();
             }
@@ -261,6 +257,7 @@ namespace MX
 #endif
             RandomMapIsLoading = true;
             MX::MapInfo@ map;
+
             if (RMC::ContinueSavedRun && !RMC::IsInited) {
                 Json::Value res = RMC::CurrentMapJsonData;
                 res["PlayedAt"] = Time::Stamp; // Update to the last time it was played
@@ -281,9 +278,7 @@ namespace MX
 
             RandomMapIsLoading = false;
             RMC::CurrentMapJsonData = map.ToJson();
-        }
-        catch
-        {
+        } catch {
             Log::Warn("Error while loading map: " + getExceptionInfo());
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
@@ -291,8 +286,7 @@ namespace MX
         }
     }
 
-    string CreateQueryURL(bool customParameters = true)
-    {
+    string CreateQueryURL(bool customParameters = true) {
         string url = PluginSettings::RMC_MX_Url + "/api/maps";
 
         dictionary params;
@@ -308,12 +302,14 @@ namespace MX
                 if (PluginSettings::MinLength != 0) {
                     params.Set("authortimemin", tostring(PluginSettings::MinLength));
                 }
+
                 if (PluginSettings::MaxLength != 0) {
                     params.Set("authortimemax", tostring(PluginSettings::MaxLength));
                 }
             } else {
                 params.Set("authortimemax", tostring(RMC::config.length));
             }
+
             if (PluginSettings::UseDateInterval) {
                 int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
                 int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
@@ -325,25 +321,32 @@ namespace MX
                     Log::Warn("Invalid date interval selected, ignoring...");
                 }
             }
+
             if (!PluginSettings::MapTagsArr.IsEmpty()) {
                 params.Set("tag", PluginSettings::MapTags);
             }
+
             if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()) {
                 params.Set("etag", PluginSettings::ExcludeMapTags);
             }
+
             if (PluginSettings::TagInclusiveSearch) {
                 params.Set("taginclusive", "true");
             }
-            if (!PluginSettings::DifficultiesArray.IsEmpty()){
+
+            if (!PluginSettings::DifficultiesArray.IsEmpty()) {
                 params.Set("difficulty", PluginSettings::Difficulties);
             }
+
             if (PluginSettings::MapAuthor != "") {
                 if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
                 params.Set("author", PluginSettings::MapAuthor);
             }
+
             if (PluginSettings::MapName != "") {
                 params.Set("name", PluginSettings::MapName);
             }
+
             if (PluginSettings::MapPackID != 0) {
                 params.Set("mappackid", tostring(PluginSettings::MapPackID));
             }
@@ -387,6 +390,7 @@ namespace MX
 
     string DictToApiParams(dictionary params) {
         string urlParams = "";
+
         if (!params.IsEmpty()) {
             auto keys = params.GetKeys();
             for (uint i = 0; i < keys.Length; i++) {

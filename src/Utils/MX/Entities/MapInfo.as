@@ -1,7 +1,5 @@
-namespace MX
-{
-    class MapInfo
-    {
+namespace MX {
+    class MapInfo {
         int MapId;
         string MapUid;
         string OnlineMapId;
@@ -21,8 +19,7 @@ namespace MX
         bool ServerSizeExceeded;
         array<MapTag@> Tags;
 
-        MapInfo(const Json::Value &in json)
-        {
+        MapInfo(const Json::Value &in json) {
             try {
                 MapId = json["MapId"];
                 MapUid = json["MapUid"];
@@ -75,12 +72,11 @@ namespace MX
                 }
             } catch {
                 Name = json["Name"];
-                Log::Warn("Error parsing infos for the map: "+ Name + "\nReason: " + getExceptionInfo(), true);
+                Log::Warn("Error parsing infos for the map: " + Name + "\nReason: " + getExceptionInfo(), true);
             }
         }
 
-        Json::Value ToJson()
-        {
+        Json::Value ToJson() {
             Json::Value json = Json::Object();
             try {
                 json["MapId"] = MapId;
@@ -116,7 +112,7 @@ namespace MX
 
                 json["Tags"] = tagArray;
             } catch {
-                Log::Error("Error converting map info to JSON for map "+Name, true);
+                Log::Error("Error converting map info to JSON for map " + Name, true);
             }
             return json;
         }

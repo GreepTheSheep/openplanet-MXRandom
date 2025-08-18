@@ -1,5 +1,4 @@
-namespace PluginSettings
-{
+namespace PluginSettings {
     [Setting hidden]
     Medals RMC_Medal = Medals::Author;
 
@@ -78,13 +77,11 @@ namespace PluginSettings
 #endif
 
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
-    void RenderRMCSettingTab()
-    {
+    void RenderRMCSettingTab() {
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-        if (UI::BeginTabItem(Icons::Cogs + " General"))
-        {
-            if (UI::OrangeButton("Reset to default"))
-            {
+
+        if (UI::BeginTabItem(Icons::Cogs + " General")) {
+            if (UI::OrangeButton("Reset to default")) {
                 RMC_Medal = Medals::Author;
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
@@ -110,6 +107,7 @@ namespace PluginSettings
                         UI::SetItemDefaultFocus();
                     }
                 }
+
                 UI::EndCombo();
             }
 
@@ -138,10 +136,8 @@ namespace PluginSettings
             UI::EndTabItem();
         }
 
-        if (UI::BeginTabItem(Icons::WindowMaximize + " Display"))
-        {
-            if (UI::OrangeButton("Reset to default"))
-            {
+        if (UI::BeginTabItem(Icons::WindowMaximize + " Display")) {
+            if (UI::OrangeButton("Reset to default")) {
                 RMC_DisplayCurrentMap = true;
                 RMC_AlwaysShowBtns = true;
                 RMC_SurvivalShowSurvivedTime = true;
@@ -175,6 +171,7 @@ namespace PluginSettings
 
             UI::EndTabItem();
         }
+
         UI::EndTabBar();
     }
 }

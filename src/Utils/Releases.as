@@ -1,11 +1,9 @@
-namespace GH
-{
+namespace GH {
     array<Release@> Releases;
     Net::HttpRequest@ ReleasesReq;
     bool releasesRequestError = false;
 
-    class Release
-    {
+    class Release {
         string api_url;
         string page_url;
         string tag_name;
@@ -16,8 +14,7 @@ namespace GH
         string published_at;
         string body;
 
-        Release(const Json::Value &in json)
-        {
+        Release(const Json::Value &in json) {
             api_url = json["url"];
             page_url = json["html_url"];
             tag_name = json["tag_name"];
@@ -30,14 +27,12 @@ namespace GH
         }
     }
 
-    void StartReleasesReq()
-    {
-        string url = "https://api.github.com/repos/"+GITHUB_REPO_FULLNAME+"/releases";
+    void StartReleasesReq() {
+        string url = "https://api.github.com/repos/" + GITHUB_REPO_FULLNAME + "/releases";
         @ReleasesReq = API::Get(url);
     }
 
-    void CheckReleasesReq()
-    {
+    void CheckReleasesReq() {
         // If there's a request, check if it has finished
         if (ReleasesReq !is null && ReleasesReq.Finished()) {
             // Parse the response
@@ -54,8 +49,7 @@ namespace GH
             }
 
             // Handle the response
-            for (uint i = 0; i < json.Length; i++)
-            {
+            for (uint i = 0; i < json.Length; i++) {
                 Json::Value RelJson = json[i];
                 Release@ ReleaseData = Release(RelJson);
                 Releases.InsertLast(ReleaseData);

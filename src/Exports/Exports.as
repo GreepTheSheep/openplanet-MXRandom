@@ -1,5 +1,4 @@
-namespace MXRandom
-{
+namespace MXRandom {
     import bool IsRMCRunning() from "MXRandom";
     import bool IsRMCPaused() from "MXRandom";
     import int RMCGoalMedal() from "MXRandom";

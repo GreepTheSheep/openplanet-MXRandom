@@ -1,16 +1,14 @@
-class RMObjective : RMC
-{
+class RMObjective : RMC {
     int Skips = 0;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
     string get_ModeName() override { return "Random Map Objective";}
 
-    void RenderTimer() override
-    {
+    void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(this.TotalTime));
-            else UI::Text(RMC::FormatTimer(this.TotalTime));
+            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(TotalTime));
+            else UI::Text(RMC::FormatTimer(TotalTime));
         } else {
             UI::TextDisabled(RMC::FormatTimer(0));
         }
@@ -24,13 +22,12 @@ class RMObjective : RMC
         }
     }
 
-    void RenderGoalMedal() override
-    {
+    void RenderGoalMedal() override {
         UI::Image(Textures[PluginSettings::RMC_Medal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
 
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {
-            UI::AlignTextToImage("-"+tostring(PluginSettings::RMC_ObjectiveMode_Goal-RMC::GoalMedalCount), Fonts::TimerFont);
+            UI::AlignTextToImage("-" + tostring(PluginSettings::RMC_ObjectiveMode_Goal - RMC::GoalMedalCount), Fonts::TimerFont);
             UI::SetPreviousTooltip("Remaining medals. Click to set to total count.");
         } else {
             UI::AlignTextToImage(tostring(RMC::GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), Fonts::TimerFont);
@@ -41,16 +38,14 @@ class RMObjective : RMC
         }
     }
 
-    void RenderBelowGoalMedal() override
-    {
+    void RenderBelowGoalMedal() override {
         UI::HPadding(25);
         UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(Skips), Fonts::TimerFont);
     }
 
-    void SkipButtons() override
-    {
+    void SkipButtons() override {
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Skips++;
@@ -63,15 +58,14 @@ class RMObjective : RMC
 #endif
                 (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
             ) {
-                this.TimeLeft += RMC::TimeSpentMap;
+                TimeLeft += RMC::TimeSpentMap;
             }
             startnew(RMC::SwitchMap);
         }
     }
 
-    void NextMapButton() override
-    {
-        if(UI::GreenButton(Icons::Play + " Next map")) {
+    void NextMapButton() override {
+        if (UI::GreenButton(Icons::Play + " Next map")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("ObjectiveMode: Next map");
             UI::ShowNotification("Please wait...");
@@ -82,17 +76,16 @@ class RMObjective : RMC
     void DevButtons() override {}
 
     void StartTimer() override {
-        this.TotalTime = 0;
-        this.TimeLeft = TimeLimit;
+        TotalTime = 0;
+        TimeLeft = TimeLimit;
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
     }
 
-    void GotGoalMedalNotification() override
-    {
-        Log::Trace("ObjectiveMode: Got the "+ tostring(PluginSettings::RMC_Medal) + " medal!");
+    void GotGoalMedalNotification() override {
+        Log::Trace("ObjectiveMode: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
             if (PluginSettings::RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
@@ -103,8 +96,7 @@ class RMObjective : RMC
 
     void GotBelowGoalMedalNotification() override {}
 
-    void TimerYield() override
-    {
+    void TimerYield() override {
         auto app = cast<CTrackMania>(GetApp());
         int lastUpdate = Time::Now;
 
@@ -119,7 +111,7 @@ class RMObjective : RMC
                 if (!TM::InRMCMap()) {
                     RMC::IsPaused = true;
                 } else if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
-                    UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(this.TotalTime));
+                    UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(TotalTime));
                     RMC::IsRunning = false;
                     RMC::ShowTimer = false;
                     if (PluginSettings::RMC_ExitMapOnEndTime) {
@@ -128,7 +120,7 @@ class RMObjective : RMC
                     @MX::preloadedMap = null;
                 } else {
                     int delta = Time::Now - lastUpdate;
-                    this.TotalTime += delta;
+                    TotalTime += delta;
                     RMC::TimeSpentMap += delta;
                 }
             }

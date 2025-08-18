@@ -1,5 +1,4 @@
-namespace Migration
-{
+namespace Migration {
     // Migrates data to version 2 of the plugin
 
     Json::Value RecentlyPlayedJson = Json::FromFile(IO::FromDataFolder("TMXRandom_PlayedMaps.json"));
@@ -7,13 +6,11 @@ namespace Migration
     array<MX::MapInfo@> RecentlyPlayed;
     bool requestError = false;
 
-    array<int> GetLastestPlayedMapsMXId()
-    {
+    array<int> GetLastestPlayedMapsMXId() {
         array<int> MXIds;
         if (RecentlyPlayedJson.GetType() != Json::Type::Array) return MXIds;
 
-        for (uint i = 0; i < RecentlyPlayedJson.Length; i++)
-        {
+        for (uint i = 0; i < RecentlyPlayedJson.Length; i++) {
             Json::Value MapJson = RecentlyPlayedJson[i];
             int MapId = MapJson["MXID"];
             MXIds.InsertLast(MapId);
@@ -21,22 +18,20 @@ namespace Migration
         return MXIds;
     }
 
-    void StartRequestMapsInfo(array<int> MXIds)
-    {
+    void StartRequestMapsInfo(array<int> MXIds) {
         array<MX::MapInfo@> Maps;
         string url = PluginSettings::RMC_MX_Url + "/api/maps?fields=" + MAP_FIELDS + "&count=50&id=";
         string mapIdsStr = "";
 
-        for (uint i = 0; i < MXIds.Length; i++)
-        {
+        for (uint i = 0; i < MXIds.Length; i++) {
             mapIdsStr += tostring(MXIds[i]);
             if (i < MXIds.Length - 1) mapIdsStr += ",";
         }
+
         @n_request = API::Get(url + mapIdsStr);
     }
 
-    void CheckMXRequest()
-    {
+    void CheckMXRequest() {
         // If there's a request, check if it has finished
         if (n_request !is null && n_request.Finished()) {
             // Parse the response
@@ -60,8 +55,7 @@ namespace Migration
             Json::Value@ maps = json["Results"];
 
             // Handle the response
-            for (uint i = 0; i < maps.Length; i++)
-            {
+            for (uint i = 0; i < maps.Length; i++) {
                 MX::MapInfo@ Map = MX::MapInfo(maps[i]);
                 RecentlyPlayed.InsertLast(Map);
             }
@@ -69,14 +63,14 @@ namespace Migration
         }
     }
 
-    void SaveToDataFile()
-    {
+    void SaveToDataFile() {
         DataManager::InitData(false);
-        for (uint i = 0; i < RecentlyPlayed.Length; i++)
-        {
+
+        for (uint i = 0; i < RecentlyPlayed.Length; i++) {
             Json::Value MapJson = RecentlyPlayed[i].ToJson();
             DataJson["recentlyPlayed"].Add(MapJson);
         }
+
         DataManager::SaveData();
 
         string oldFile = IO::FromDataFolder("TMXRandom_PlayedMaps.json");

@@ -1,7 +1,5 @@
-namespace NadeoServices
-{
-    class ClubRoom
-    {
+namespace NadeoServices {
+    class ClubRoom {
         int id;
         int clubId;
         string clubName;
@@ -17,8 +15,7 @@ namespace NadeoServices
         uint creationTimestamp;
         bool password;
 
-        ClubRoom(const Json::Value &in json)
-        {
+        ClubRoom(const Json::Value &in json) {
             try {
                 id = json["id"];
                 clubId = json["clubId"];
@@ -40,8 +37,7 @@ namespace NadeoServices
         }
     }
 
-    class ClubRoomInfo
-    {
+    class ClubRoomInfo {
         int id;
         string name;
         string region;
@@ -51,15 +47,15 @@ namespace NadeoServices
         array<string> maps;
         string script;
         bool scalable;
-        // scriptSettings
+
+        // Script settings
         string timeLimit;
         string joinLink;
         string currentMapUid;
         bool starting;
         bool isOff;
 
-        ClubRoomInfo(const Json::Value &in json)
-        {
+        ClubRoomInfo(const Json::Value &in json) {
             try {
                 id = json["id"];
                 name = json["name"];
@@ -69,7 +65,9 @@ namespace NadeoServices
                 playerCount = json["playerCount"];
                 script = json["script"];
                 scalable = json["scalable"];
+
                 if (json["scriptSettings"].HasKey("S_TimeLimit")) timeLimit = json["scriptSettings"]["S_TimeLimit"]["value"];
+
                 if (json["serverInfo"].GetType() != Json::Type::Null) {
                     joinLink = json["serverInfo"]["joinLink"];
                     currentMapUid = json["serverInfo"]["currentMapUid"];
@@ -79,8 +77,9 @@ namespace NadeoServices
                     isOff = true;
                 }
 
-                for (uint i = 0; i < json["maps"].Length; i++)
+                for (uint i = 0; i < json["maps"].Length; i++) {
                     maps.InsertLast(json["maps"][i]);
+                }
             } catch {
                 Log::Warn("Failed to parse Club Room Info " + id + " - " + getExceptionInfo());
             }

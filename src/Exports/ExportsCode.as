@@ -1,5 +1,4 @@
-namespace MXRandom
-{
+namespace MXRandom {
     bool IsRMCRunning() { return RMC::IsRunning; }
     bool IsRMCPaused() { return RMC::IsPaused; }
     int RMCGoalMedal() { return int(PluginSettings::RMC_Medal); }

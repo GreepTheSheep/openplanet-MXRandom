@@ -1,23 +1,20 @@
-interface IRenderable
-{
+interface IRenderable {
 	void Render();
 	bool ShouldDisappear();
 }
 
-namespace Renderables
-{
+namespace Renderables {
 	array<IRenderable@> g_renderables;
 
-	void Add(IRenderable@ rend)
-	{
+	void Add(IRenderable@ rend) {
 		g_renderables.InsertLast(rend);
 	}
 
-	void Render()
-	{
+	void Render() {
 		for (int i = int(g_renderables.Length) - 1; i >= 0; i--) {
 			auto rend = g_renderables[i];
 			rend.Render();
+
 			if (rend.ShouldDisappear()) {
 				g_renderables.RemoveAt(i);
 			}

@@ -1,5 +1,4 @@
-namespace DataManager
-{
+namespace DataManager {
     const array<string> requiredKeys = {
         "PBOnMap",
         "TimeLeft",
@@ -26,17 +25,15 @@ namespace DataManager
         Json::Type::Number
     };
 
-    void CheckData()
-    {
-        if (Versioning::IsPluginUpdated())
-        {
-            Log::Log("Plugin was updated, old version was "+ Json::Write(DataJson["version"]));
+    void CheckData() {
+        if (Versioning::IsPluginUpdated()) {
+            Log::Log("Plugin was updated, old version was " + Json::Write(DataJson["version"]));
             DataJson["version"] = PLUGIN_VERSION;
         }
     }
 
     void EnsureSaveFileFolderPresent() {
-        if(!IO::FolderExists(SAVE_DATA_LOCATION)) {
+        if (!IO::FolderExists(SAVE_DATA_LOCATION)) {
             IO::CreateFolder(SAVE_DATA_LOCATION);
         }
     }
@@ -62,8 +59,7 @@ namespace DataManager
         return true;
     }
 
-    void InitData(bool save = true)
-    {
+    void InitData(bool save = true) {
         DataJson = Json::Object();
         DataJson["version"] = PLUGIN_VERSION;
         DataJson["recentlyPlayed"] = Json::Array();
@@ -73,8 +69,7 @@ namespace DataManager
         if (save) SaveData();
     }
 
-    void SaveData()
-    {
+    void SaveData() {
         Log::Trace("Saving JSON file");
         Json::ToFile(DATA_JSON_LOCATION, DataJson);
     }
@@ -170,17 +165,24 @@ namespace DataManager
     bool LoadRunData() {
         string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
+
         if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {
             RMC::CurrentRunData = Json::FromFile(SAVE_DATA_LOCATION + gameMode + ".json");
+
             if (!EnsureSaveDataIsLoadable(gameMode, RMC::CurrentRunData)) {
                 Log::Error("Deleting the current " + gameMode + " save file, as it is corrupted!");
                 Log::Error("Please create an issue on github if this repeatedly happens");
                 RemoveCurrentSaveFile();
                 return false;
             }
-            if (RMC::CurrentRunData["TimeLeft"] == 0) return false;
+
+            if (RMC::CurrentRunData["TimeLeft"] == 0) {
+                return false;
+            }
+
             return true;
         }
+
         return false;
     }
 
