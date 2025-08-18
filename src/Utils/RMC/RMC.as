@@ -419,10 +419,10 @@ class RMC {
     }
 
     uint get_GoalTime() {
-        auto app = cast<CTrackMania>(GetApp());
-        auto map = app.RootMap;
+        if (TM::InRMCMap()) {
+            auto app = cast<CTrackMania>(GetApp());
+            auto map = app.RootMap;
 
-        if (map !is null && app.CurrentPlayground !is null) {
             switch (PluginSettings::RMC_Medal) {
 #if TMNEXT
                 case Medals::WR: return TM::GetWorldRecordFromCache(map.IdName);
@@ -439,10 +439,10 @@ class RMC {
     }
 
     uint get_BelowGoalTime() {
-        auto app = cast<CTrackMania>(GetApp());
-        auto map = app.RootMap;
+        if (TM::InRMCMap()) {
+            auto app = cast<CTrackMania>(GetApp());
+            auto map = app.RootMap;
 
-        if (map !is null && app.CurrentPlayground !is null) {
             switch (PluginSettings::RMC_Medal - 1) {
                 case Medals::Author: return map.TMObjective_AuthorTime;
                 case Medals::Gold: return map.TMObjective_GoldTime;
