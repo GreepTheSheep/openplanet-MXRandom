@@ -43,23 +43,15 @@ namespace RMC {
     }
 
     string FormatTimer(int time) {
-        int hundreths = time % 1000 / 10;
-        time /= 1000;
-        int hours = time / 60 / 60;
-        int minutes = (time / 60) % 60;
-        int seconds = time % 60;
+        time = Math::Max(0, time);
+        string timer = Time::Format(time, true, false, false, true);
 
-        string result = "";
-
-        if (hours > 0) {
-            result += Text::Format("%02d", hours) + ":";
+        if (timer.IndexOf(":") == 1 || timer.IndexOf(".") == 1) {
+            // Add leading zero
+            timer = "0" + timer;
         }
-        if (minutes > 0 || (hours > 0 && minutes < 10)) {
-            result += Text::Format("%02d", minutes) + ":";
-        }
-        result += Text::Format("%02d", seconds) + "." + Text::Format("%02d", hundreths);
 
-        return result;
+        return timer;
     }
 
     void Start() {
