@@ -134,37 +134,24 @@ namespace RMC
                     UI::ShowNotification("\\$080Random Map "+ tostring(RMC::currentGameMode) + " started!", "Good Luck!");
                     IsInited = true;
                 }
-#if MP4
-                CTrackManiaPlayer@ player = cast<CTrackManiaPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#elif TMNEXT
-                CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].GUIPlayer);
-#endif
-                if (player !is null){
-#if MP4
-                    while (player.RaceState != CTrackManiaPlayer::ERaceState::Running){
-                        yield();
-                    }
-#elif TMNEXT
-                    CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-                    while (playerScriptAPI.Post == 0){
-                        yield();
-                    }
-#endif
-                    if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos){
-                        Challenge.StartTimer();
-                    } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos){
-                        Survival.StartTimer();
-                    } else if (RMC::currentGameMode == GameMode::Objective){
-                        Objective.StartTimer();
-                    }
-                    TimeSpawnedMap = !RMC::ContinueSavedRun ? Time::Now : int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
-                    // Clear the currently saved data so you cannot load into the same state multiple times
-                    DataManager::RemoveCurrentSaveFile();
-                    DataManager::CreateSaveFile();
-                    IsStarting = false;
-                    MX::PreloadRandomMap();
-                    break;
+
+                while (!TM::IsPlayerReady()) {
+                    yield();
                 }
+                if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos){
+                    Challenge.StartTimer();
+                } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos){
+                    Survival.StartTimer();
+                } else if (RMC::currentGameMode == GameMode::Objective){
+                    Objective.StartTimer();
+                }
+                TimeSpawnedMap = !RMC::ContinueSavedRun ? Time::Now : int(Time::Now) - int(CurrentRunData["TimeSpentOnMap"]);
+                // Clear the currently saved data so you cannot load into the same state multiple times
+                DataManager::RemoveCurrentSaveFile();
+                DataManager::CreateSaveFile();
+                IsStarting = false;
+                MX::PreloadRandomMap();
+                break;
             }
         }
     }
@@ -211,6 +198,11 @@ namespace RMC
         TimeSpawnedMap = Time::Now;
         ClickedOnSkip = false;
         CurrentTimeOnMap = -1;
+
+        while (!TM::IsPlayerReady()) {
+            yield();
+        }
+        IsPaused = false;
 
         MX::PreloadRandomMap();
     }

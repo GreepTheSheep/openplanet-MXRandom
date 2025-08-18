@@ -71,11 +71,20 @@ namespace TM
         return IsMapCorrect(string(DataJson["recentlyPlayed"][0]["MapUid"]));
     }
 
+    // from TMX Together by Xertrov https://openplanet.dev/plugin/tmx-together
+
     uint PlaygroundGameTime() {
         auto app = GetApp();
-        auto playgroundScript = app.Network.PlaygroundClientScriptAPI;
+        auto playgroundScript = app.Network.PlaygroundInterfaceScriptHandler;
         if (playgroundScript is null) return uint(-1);
         return uint(playgroundScript.GameTime);
+    }
+
+    uint PlaygroundStartTime() {
+        auto app = GetApp();
+        auto playground = cast<CSmArenaClient>(app.CurrentPlayground);
+        if (playground is null || playground.Arena is null || playground.Arena.Rules is null) return uint(-1);
+        return uint(playground.Arena.Rules.RulesStateStartTime);
     }
 
     void LoadRMCMap() {
@@ -294,5 +303,52 @@ namespace TM
         }
 
         return MapTypes::Race;
+    }
+
+    bool IsPlayerReady() {
+        auto app = cast<CTrackMania>(GetApp());
+
+        auto playground = cast<CGamePlayground>(app.CurrentPlayground);
+        if (playground is null || playground.GameTerminals.Length == 0) {
+            return false;
+        }
+
+        CGameTerminal@ terminal = playground.GameTerminals[0];
+        if (terminal is null) {
+            return false;
+        }
+
+#if TMNEXT
+        if (terminal.UISequence_Current != SGamePlaygroundUIConfig::EUISequence::Playing) return false;
+
+        auto player = cast<CSmPlayer>(playground.GameTerminals[0].ControlledPlayer);
+        uint gametime = PlaygroundGameTime();
+        if (player is null || player.StartTime < 0 || player.StartTime > int(gametime) || player.ScriptAPI is null) {
+            return false;
+        }
+
+        auto script = cast<CSmScriptPlayer>(player.ScriptAPI);
+        if (script.Post == 0) {
+            return false;
+        }
+#else
+        auto player = cast<CTrackManiaPlayer>(playground.GameTerminals[0].ControlledPlayer);
+        if (player is null || player.RaceState != CTrackManiaPlayer::ERaceState::Running) {
+            return false;
+        }
+#endif
+
+        return true;
+    }
+
+    bool IsServerReady() {
+        if (!IsPlayerReady()) {
+            return false;
+        }
+
+        uint start = PlaygroundStartTime();
+        uint gametime = PlaygroundGameTime();
+
+        return gametime > start;
     }
 }

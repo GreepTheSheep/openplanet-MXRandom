@@ -123,20 +123,17 @@ class RMT : RMC
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit() / 1000);
-        while (GetApp().CurrentPlayground is null) yield();
-        CGamePlayground@ GamePlayground = cast<CGamePlayground>(GetApp().CurrentPlayground);
-        while (GamePlayground.GameTerminals.Length < 0) yield();
-        while (GamePlayground.GameTerminals[0] is null) yield();
-        while (GamePlayground.GameTerminals[0].ControlledPlayer is null) yield();
-        CSmPlayer@ player = cast<CSmPlayer>(GamePlayground.GameTerminals[0].ControlledPlayer);
-        while (player.ScriptAPI is null) yield();
-        CSmScriptPlayer@ playerScriptAPI = cast<CSmScriptPlayer>(player.ScriptAPI);
-        while (playerScriptAPI.Post == 0) yield();
+
+        RMC::GotGoalMedal = false;
+        RMC::GotBelowMedal = false;
+
+        while (!TM::IsServerReady()) {
+            yield();
+        }
+
         RMC::StartTime = Time::Now;
         RMC::EndTime = RMC::StartTime + TimeLimit();
         RMC::IsPaused = false;
-        RMC::GotGoalMedal = false;
-        RMC::GotBelowMedal = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(UpdateRecordsLoop));
@@ -205,28 +202,8 @@ class RMT : RMC
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, RMTTimerMapChange / 1000);
 
-        CGameCtnApp@ app = GetApp();
-
-        // from TMX Together by Xertrov https://openplanet.dev/plugin/tmx-together
-        while (true) {
+        while (!TM::IsServerReady()) {
             yield();
-            uint gameTime = TM::PlaygroundGameTime();
-
-            CSmArenaClient@ playground = cast<CSmArenaClient>(app.CurrentPlayground);
-            if (playground is null || playground.GameTerminals.Length == 0) continue;
-
-            CGameTerminal@ terminal = playground.GameTerminals[0];
-            if (terminal is null || terminal.UISequence_Current != SGamePlaygroundUIConfig::EUISequence::Playing) continue;
-
-            CSmPlayer@ player = cast<CSmPlayer>(terminal.ControlledPlayer);
-            if (player is null || player.StartTime < 0 || player.StartTime > int(gameTime) || player.ScriptAPI is null) continue;
-
-            CSmScriptPlayer@ script = cast<CSmScriptPlayer>(player.ScriptAPI);
-            if (script.Post == 0) continue;
-
-            if (playground.Arena.Rules.RulesStateStartTime < gameTime) {
-                break;
-            }
         }
 
         m_playerScores.SortDesc();
