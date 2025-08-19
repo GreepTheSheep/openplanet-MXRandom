@@ -217,7 +217,7 @@ namespace RMC {
 #endif
 
         if (UI::PurpleButton(Icons::Cog)) {
-            Renderables::Add(SettingsModalDialog());
+            Meta::OpenSettings();
         }
         UI::SetPreviousTooltip("Settings");
 
