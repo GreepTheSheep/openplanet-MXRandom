@@ -178,6 +178,20 @@ namespace MX {
 #endif
         }
 
+        if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
+            Log::Warn("Map is most likely low effort, skipping...");
+            sleep(1000);
+            PreloadRandomMap();
+            return;
+        }
+
+        if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
+            Log::Warn("Map is most likely missing a default filtered tag, skipping...");
+            sleep(1000);
+            PreloadRandomMap();
+            return;
+        }
+
         if (PluginSettings::CustomRules) {
             if (PluginSettings::UseDateInterval) {
                 int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);

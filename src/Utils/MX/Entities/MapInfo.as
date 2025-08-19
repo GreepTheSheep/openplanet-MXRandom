@@ -116,5 +116,25 @@ namespace MX {
             }
             return json;
         }
+
+        bool HasTag(int tagId) {
+            for (uint i = 0; i < Tags.Length; i++) {
+                if (Tags[i].ID == tagId) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool HasTag(const string &in tagName) {
+            for (uint i = 0; i < Tags.Length; i++) {
+                if (Tags[i].Name == tagName) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

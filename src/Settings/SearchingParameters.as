@@ -80,6 +80,12 @@ namespace PluginSettings {
     [Setting hidden]
     MapTypes MapType = MapTypes::Race;
 
+    [Setting hidden]
+    bool FilterLowEffort = true;
+
+    [Setting hidden]
+    bool FilterUntagged = true;
+
     [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab() {
         CustomRules = UI::Checkbox("\\$fc0" + Icons::ExclamationTriangle + " \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
@@ -108,6 +114,8 @@ namespace PluginSettings {
             DifficultiesArray = {};
             TermsExactMatch = false;
             MapType = MapTypes::Race;
+            FilterLowEffort = true;
+            FilterUntagged = true;
 #if TMNEXT
             ExcludeMapTagsArr = {23, 37, 40, 49};
 #else
@@ -342,6 +350,12 @@ namespace PluginSettings {
 
         UI::SettingDescription("The game mode of the map.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Only Race will work online!");
 #endif
+
+        FilterLowEffort = UI::Checkbox("Filter low effort maps", FilterLowEffort);
+        UI::SettingDescription("If enabled, the plugin will try to detect and filter low effort maps.\n\nE.g., RMC free, maps created for streamers, and randomly generated tracks.");
+
+        FilterUntagged = UI::Checkbox("Filter untagged maps", FilterUntagged);
+        UI::SettingDescription("If enabled, the plugin will try to detect and filter maps missing default filtered tags.\n\nE.g., untagged Kacky / Altered Nadeo maps.");
 
         UI::EndDisabled();
     }
