@@ -151,7 +151,7 @@ namespace PluginSettings {
 
             RMC_DisplayMapTimeSpent = UI::Checkbox("Time spent on the map", RMC_DisplayMapTimeSpent);
             RMC_AlwaysShowBtns = UI::Checkbox("Show buttons when the Openplanet overlay is hidden", RMC_AlwaysShowBtns);
-            RMC_DisplayPace = UI::Checkbox("Goal pace (Objective only)", RMC_DisplayPace);
+            RMC_DisplayPace = UI::Checkbox("Show the pace of the current run", RMC_DisplayPace);
             RMC_SurvivalShowSurvivedTime = UI::Checkbox("Total time survived (Survival only)", RMC_SurvivalShowSurvivedTime);
             UI::SetNextItemWidth(300);
             RMC_ImageSize = UI::SliderInt("Medals size", RMC_ImageSize, 15, 35);
