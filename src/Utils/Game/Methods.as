@@ -53,7 +53,7 @@ namespace TM {
 
     bool IsMapLoaded() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
-        return app.RootMap !is null;
+        return app.RootMap !is null && app.CurrentPlayground !is null;
     }
 
     bool IsMapCorrect(const string &in mapUid) {
