@@ -124,9 +124,9 @@ namespace PluginSettings {
         UI::SetItemText("From:");
         MinLength = UI::InputInt("##FromLengthFilter", MinLength, 0);
 #if TMNEXT
-        UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
+        UI::SettingDescription("Minimum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
 #else
-        UI::SetItemTooltip("Minimum duration of the map, based on the author medal, in milliseconds.");
+        UI::SettingDescription("Minimum duration of the map, based on the author medal, in milliseconds.");
 #endif
 
         if (MinLength != 0 && UI::ResetButton()) {
@@ -136,9 +136,9 @@ namespace PluginSettings {
         UI::SetCenteredItemText("To:");
         MaxLength = UI::InputInt("##ToLengthFilter", MaxLength, 0);
 #if TMNEXT
-        UI::SetItemTooltip("Maximum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
+        UI::SettingDescription("Maximum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
 #else
-        UI::SetItemTooltip("Maximum duration of the map, based on the author medal, in milliseconds.");
+        UI::SettingDescription("Maximum duration of the map, based on the author medal, in milliseconds.");
 #endif
 
         if (MaxLength != 0 && UI::ResetButton()) {
@@ -165,7 +165,7 @@ namespace PluginSettings {
 
         UI::SetItemText("From:");
         FromDate = UI::InputText("##FromDateFilter", FromDate, UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::DateCallback));
-        UI::SetItemTooltip("Minimum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
+        UI::SettingDescription("Minimum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
 
         if ((!UI::IsItemActive() && !Date::IsValid(FromDate)) || (FromDate != releaseDate && UI::ResetButton())) {
             FromDate = releaseDate;
@@ -173,7 +173,7 @@ namespace PluginSettings {
 
         UI::SetCenteredItemText("To:");
         ToDate = UI::InputText("##ToDateFilter", ToDate, UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::DateCallback));
-        UI::SetItemTooltip("Maximum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
+        UI::SettingDescription("Maximum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
 
         if ((!UI::IsItemActive() && !Date::IsValid(ToDate)) || (ToDate != currentDate && UI::ResetButton())) {
             ToDate = currentDate;
@@ -183,16 +183,25 @@ namespace PluginSettings {
         
         UI::PaddedHeaderSeparator("Map");
 
-        UI::SetNextItemWidth(200);
-        MapName = UI::InputText("Map Name Filter", MapName, false);
+        UI::SetItemText("Map Name Filter:");
+        MapName = UI::InputText("##MapName", MapName, false);
 
         if (MapName != "" && UI::ResetButton()) {
             MapName = "";
         }
 
-        UI::SetNextItemWidth(200);
-        ExcludedTerms = UI::InputText("Excluded term(s)", ExcludedTerms, false);
-        UI::SetPreviousTooltip("Filter out maps that contain specific words/phrases in their name.\nFor example, you can filter out \"slop\", \"yeet\", or \"random generated\".\n\nWhen filtering multiple terms, they must be comma-separated.");
+        UI::SetCenteredItemText("Map Author Filter:");
+        MapAuthor = UI::InputText("##AuthorFilter", MapAuthor, false);
+
+        if (MapAuthor != "" && UI::ResetButton()) {
+            MapAuthor = "";
+        }
+
+        if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
+
+        UI::SetItemText("Excluded term(s):");
+        ExcludedTerms = UI::InputText("##ExcludedTerms", ExcludedTerms, false);
+        UI::SettingDescription("Filter out maps that contain specific words/phrases in their name.\nFor example, you can filter out \"slop\", \"yeet\", or \"random generated\".\n\nWhen filtering multiple terms, they must be comma-separated.");
 
         if (ExcludedTerms != "" && UI::ResetButton()) {
             ExcludedTerms = "";
@@ -201,31 +210,22 @@ namespace PluginSettings {
         UI::SameLine();
 
         TermsExactMatch = UI::Checkbox("Exact match", TermsExactMatch);
-        UI::SetPreviousTooltip("If enabled, terms will only be excluded when there's an exact match.\n\nExample: If you exclude the word \"AI\", it won't filter out maps with the words \"Air\" or \"Fail\".");
+        UI::SettingDescription("If enabled, terms will only be excluded when there's an exact match.\n\nExample: If you exclude the word \"AI\", it won't filter out maps with the words \"Air\" or \"Fail\".");
 
-        UI::SetNextItemWidth(200);
-        // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
-        MapPackID = Text::ParseInt64(UI::InputText("Map Pack ID", MapPackID != 0 ? tostring(MapPackID) : "", UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::MXIdCallback)));
-
-        if (MapPackID != 0 && UI::ResetButton()) {
-            MapPackID = 0;
-        }
-
-        UI::SetNextItemWidth(200);
-        MapAuthor = UI::InputText("Map Author Filter", MapAuthor, false);
-
-        if (MapAuthor != "" && UI::ResetButton()) {
-            MapAuthor = "";
-        }
-
-        if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
-
-        UI::SetNextItemWidth(200);
-        ExcludedAuthors = UI::InputText("Excluded Author(s)", ExcludedAuthors, false);
-        UI::SetPreviousTooltip("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
+        UI::SetCenteredItemText("Excluded Author(s):");
+        ExcludedAuthors = UI::InputText("##ExcludedAuthors", ExcludedAuthors, false);
+        UI::SettingDescription("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
 
         if (ExcludedAuthors != "" && UI::ResetButton()) {
             ExcludedAuthors = "";
+        }
+
+        UI::SetItemText("Map Pack ID:");
+        // Using InputText instead of a InputInt because it looks better and using "" as empty value instead of 0 for consistency with the other fields
+        MapPackID = Text::ParseInt64(UI::InputText("##MappackId", MapPackID != 0 ? tostring(MapPackID) : "", UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::MXIdCallback)));
+
+        if (MapPackID != 0 && UI::ResetButton()) {
+            MapPackID = 0;
         }
 
         MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
@@ -284,7 +284,7 @@ namespace PluginSettings {
 #endif
 
         TagInclusiveSearch = UI::Checkbox("Tag inclusive search", TagInclusiveSearch);
-        UI::SetPreviousTooltip("If enabled, maps must contain all selected tags.");
+        UI::SettingDescription("If enabled, maps must contain all selected tags.");
 
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
@@ -326,7 +326,7 @@ namespace PluginSettings {
         Difficulties = ConvertArrayToList(DifficultiesArray);
 
         SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
-        UI::SetPreviousTooltip("If enabled, every map will only appear once per run.");
+        UI::SettingDescription("If enabled, every map will only appear once per run.");
 
 #if TMNEXT
         UI::SetNextItemWidth(160);
@@ -340,7 +340,7 @@ namespace PluginSettings {
             UI::EndCombo();
         }
 
-        UI::SetPreviousTooltip("The game mode of the map.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Only Race will work online!");
+        UI::SettingDescription("The game mode of the map.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Only Race will work online!");
 #endif
 
         UI::EndDisabled();
