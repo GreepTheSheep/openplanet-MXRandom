@@ -1,4 +1,6 @@
 class ContinueSavedRunModalDialog : ModalDialog {
+    bool HasCompletedCheckbox = false;
+
     ContinueSavedRunModalDialog() {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zContinue Saved Run?");
         m_size = vec2(400, 160);
@@ -24,7 +26,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
         if (UI::Button(Icons::Times + " New Run")) {
             DataManager::RemoveCurrentSaveFile();
             Close();
-            RMC::HasCompletedCheckbox = true;
+            HasCompletedCheckbox = true;
         }
 
         UI::SameLine();
@@ -33,7 +35,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
         if (UI::OrangeButton(Icons::PlayCircleO + " Continue")) {
             RMC::ContinueSavedRun = true;
             Close();
-            RMC::HasCompletedCheckbox = true;
+            HasCompletedCheckbox = true;
         }
     }
 }

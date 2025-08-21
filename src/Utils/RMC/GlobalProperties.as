@@ -12,7 +12,6 @@ namespace RMC {
     Json::Value CurrentMapJsonData = Json::Object();
     bool ContinueSavedRun = false;
     bool IsInited = false;
-    bool HasCompletedCheckbox = false;
     Json::Value CurrentRunData = Json::Object();
     RMCConfig@ config;
     int FreeSkipsUsed = 0;
@@ -59,7 +58,6 @@ namespace RMC {
         IsStarting = true;
         IsSwitchingMap = false;
         ContinueSavedRun = false;
-        HasCompletedCheckbox = false;
         UserEndedRun = false;
 
         if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::Survival) {
@@ -67,8 +65,9 @@ namespace RMC {
             if (!hasRun) {
                 DataManager::CreateSaveFile();
             } else {
-                Renderables::Add(ContinueSavedRunModalDialog());
-                while (!HasCompletedCheckbox) {
+                auto saveDialog = ContinueSavedRunModalDialog();
+                Renderables::Add(saveDialog);
+                while (!saveDialog.HasCompletedCheckbox) {
                     sleep(100);
                 }
             }
