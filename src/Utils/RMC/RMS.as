@@ -56,10 +56,9 @@ class RMS : RMC {
     }
 
     void SkipButtons() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
 
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
-            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             Skips++;
             Log::Trace("RMS: Skipping map");
@@ -70,7 +69,6 @@ class RMS : RMC {
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Skip Broken Map")) {
-            RMC::ClickedOnSkip = true;
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             RMC::IsPaused = true;
             Renderables::Add(BrokenMapSkipWarnModalDialog(this));
@@ -82,7 +80,7 @@ class RMS : RMC {
     }
 
     void NextMapButton() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
             if (RMC::IsPaused) RMC::IsPaused = false;

@@ -3,8 +3,7 @@ namespace RMC {
     bool IsStarting = false;
     bool IsRunning = false;
     bool IsPaused = false;
-    bool isSwitchingMap = false;
-    bool ClickedOnSkip = false;
+    bool IsSwitchingMap = false;
     bool GotGoalMedal = false;
     bool GotBelowMedal = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
@@ -58,7 +57,7 @@ namespace RMC {
         IsInited = false;
         ShowTimer = true;
         IsStarting = true;
-        ClickedOnSkip = false;
+        IsSwitchingMap = false;
         ContinueSavedRun = false;
         HasCompletedCheckbox = false;
         UserEndedRun = false;
@@ -164,17 +163,16 @@ namespace RMC {
 
     void SwitchMap() {
         IsPaused = true;
-        isSwitchingMap = true;
+        IsSwitchingMap = true;
         yield(100);
         MX::LoadRandomMap();
         while (!TM::IsMapLoaded()) {
             sleep(100);
         }
-        isSwitchingMap = false;
+        IsSwitchingMap = false;
         GotGoalMedal = false;
         GotBelowMedal = false;
         TimeSpentMap = 0;
-        ClickedOnSkip = false;
         PBOnMap = -1;
 
         while (!TM::IsPlayerReady()) {

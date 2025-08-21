@@ -65,10 +65,9 @@ class RMObjective : RMC {
     }
 
     void NextMapButton() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("ObjectiveMode: Next map");
             UI::ShowNotification("Please wait...");

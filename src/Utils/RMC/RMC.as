@@ -159,7 +159,7 @@ class RMC {
     }
 
     void RenderCurrentMap() {
-        if (RMC::isSwitchingMap) {
+        if (RMC::IsSwitchingMap) {
             UI::Separator();
             if (RMC::IsPaused) {
                 UI::AlignTextToFramePadding();
@@ -259,11 +259,10 @@ class RMC {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
         if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed) {
             int skipsLeft = PluginSettings::RMC_FreeSkipAmount - RMC::FreeSkipsUsed;
             if (UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedal ? " Take " + tostring(BelowMedal) + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
-                RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
                 if (RMC::GotBelowMedal) {
                     BelowMedalCount++;
@@ -278,7 +277,6 @@ class RMC {
             }
         } else if (RMC::GotBelowMedal) {
             if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
-                RMC::ClickedOnSkip = true;
                 if (RMC::IsPaused) RMC::IsPaused = false;
                 BelowMedalCount++;
                 Log::Trace("RMC: Skipping map");
@@ -304,10 +302,9 @@ class RMC {
     }
 
     void NextMapButton() {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::ClickedOnSkip);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");

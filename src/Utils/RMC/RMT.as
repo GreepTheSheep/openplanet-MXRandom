@@ -10,7 +10,6 @@ class RMT : RMC {
     PBTime@ playerGotGoal;
     PBTime@ playerGotBelowGoal;
     uint RMTTimerMapChange = 0;
-    bool isSwitchingMap = false;
     bool pressedStopButton = false;
     bool isFetchingNextMap = false;
     array<string> seenMaps;
@@ -75,7 +74,7 @@ class RMT : RMC {
         TotalTime = 0;
         TimeLeft = TimeLimit;
         RMC::ShowTimer = true;
-        RMC::ClickedOnSkip = false;
+        RMC::IsSwitchingMap = false;
         pressedStopButton = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
@@ -93,7 +92,7 @@ class RMT : RMC {
 
     void SetupMapStart() {
         RMC::IsStarting = true;
-        isSwitchingMap = true;
+        RMC::IsSwitchingMap = true;
         // Fetch a map
         Log::Trace("RMT: Fetching a random map...");
         Json::Value res;
@@ -130,7 +129,7 @@ class RMT : RMC {
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(UpdateRecordsLoop));
-        isSwitchingMap = false;
+        RMC::IsSwitchingMap = false;
         RMC::IsStarting = false;
         startnew(CoroutineFunc(RMTFetchNextMap));
     }
@@ -172,7 +171,7 @@ class RMT : RMC {
 
     void RMTSwitchMap() {
         m_playerScores.SortDesc();
-        isSwitchingMap = true;
+        RMC::IsSwitchingMap = true;
         m_mapPersonalBests = {};
         RMC::IsPaused = true;
         RMC::GotGoalMedal = false;
@@ -211,8 +210,7 @@ class RMT : RMC {
 #endif
 
         RMC::IsPaused = false;
-        isSwitchingMap = false;
-        RMC::ClickedOnSkip = false;
+        RMC::IsSwitchingMap = false;
         startnew(CoroutineFunc(RMTFetchNextMap));
     }
 
@@ -330,7 +328,7 @@ class RMT : RMC {
     }
 
     void RenderCurrentMap() override {
-        if (!isSwitchingMap) {
+        if (!RMC::IsSwitchingMap) {
             if (TM::IsMapLoaded()) {
                 UI::Separator();
 
@@ -398,9 +396,8 @@ class RMT : RMC {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
-        UI::BeginDisabled(RMC::ClickedOnSkip || isSwitchingMap);
+        UI::BeginDisabled(RMC::IsSwitchingMap);
         if (UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
-            RMC::ClickedOnSkip = true;
             if (RMC::IsPaused) RMC::IsPaused = false;
 
             if (RMC::GotBelowMedal) {
@@ -522,7 +519,7 @@ class RMT : RMC {
     void UpdateRecordsLoop() {
         while (RMC::IsRunning) {
             sleep(500);
-            if (!isSwitchingMap) UpdateRecords();
+            if (!RMC::IsSwitchingMap) UpdateRecords();
         }
     }
 
