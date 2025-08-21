@@ -329,8 +329,11 @@ class RMC {
     }
 
     void StartTimer() {
-        TimeLeft = !RMC::ContinueSavedRun ? TimeLimit : int(RMC::CurrentRunData["TimeLeft"]);
-        TotalTime = !RMC::ContinueSavedRun ? 0 : int(RMC::CurrentRunData["TotalTime"]);
+        if (RMC::ContinueSavedRun) {
+            TimeLeft = int(RMC::CurrentRunData["TimeLeft"]);
+            TotalTime = int(RMC::CurrentRunData["TotalTime"]);
+        }
+
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         if (RMC::GotBelowMedal && RMC::GotGoalMedal) RMC::GotBelowMedal = false;

@@ -66,16 +66,9 @@ class RMT : RMC {
     }
 
     void StartRMT() {
-        m_mapPersonalBests = {};
-        m_playerScores = {};
-        if (!seenMaps.IsEmpty()) seenMaps.RemoveRange(0, seenMaps.Length);
         RMC::GoalMedalCount = 0;
-        BelowMedalCount = 0;
-        TotalTime = 0;
-        TimeLeft = TimeLimit;
         RMC::ShowTimer = true;
         RMC::IsSwitchingMap = false;
-        pressedStopButton = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
         yield();

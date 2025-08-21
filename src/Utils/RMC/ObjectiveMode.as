@@ -82,8 +82,6 @@ class RMObjective : RMC {
     void DevButtons() override {}
 
     void StartTimer() override {
-        TotalTime = 0;
-        TimeLeft = TimeLimit;
         RMC::IsPaused = false;
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));

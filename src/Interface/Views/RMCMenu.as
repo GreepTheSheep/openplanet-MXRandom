@@ -54,12 +54,14 @@ namespace RMC {
                 case GameMode::Challenge:
                     if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")) {
                         currentGameMode = GameMode::Challenge;
+                        @Challenge = RMC();
                         startnew(Start);
                     }
                     break;
                 case GameMode::Survival:
                     if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")) {
                         currentGameMode = GameMode::Survival;
+                        @Survival = RMS();
                         startnew(Start);
                     }
                     break;
@@ -69,6 +71,7 @@ namespace RMC {
 
                     if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")) {
                         currentGameMode = GameMode::Objective;
+                        @Objective = RMObjective();
                         startnew(Start);
                     }
                     break;
@@ -77,8 +80,15 @@ namespace RMC {
                 case GameMode::SurvivalChaos:
 #if DEPENDENCY_CHAOSMODE
                     if (UI::RedButton(Icons::Fire + " Start Chaos Mode")) {
+                        if (selectedGameMode == GameMode::ChallengeChaos) {
+                            currentGameMode = GameMode::ChallengeChaos;
+                            @Challenge = RMC();
+                        } else {
+                            currentGameMode = GameMode::SurvivalChaos;
+                            @Survival = RMS();
+                        }
+
                         ChaosMode::SetRMCMode(true);
-                        currentGameMode = selectedGameMode;
                         startnew(Start);
                     }
 #else
@@ -170,6 +180,7 @@ namespace RMC {
 
                         if (UI::GreenButton(Icons::Users + " Start Random Map Together")) {
                             currentGameMode = GameMode::Together;
+                            @Together = RMT();
                             startnew(CoroutineFunc(Together.StartRMT));
                         }
 

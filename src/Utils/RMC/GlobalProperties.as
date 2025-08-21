@@ -90,9 +90,6 @@ namespace RMC {
         if (!ContinueSavedRun) {
             TimeSpentMap = -1;
             GoalMedalCount = 0;
-            Challenge.BelowMedalCount = 0;
-            Survival.Skips = 0;
-            Objective.Skips = 0;
             FreeSkipsUsed = 0;
             PBOnMap = -1;
             GotBelowMedal = false;
