@@ -1,7 +1,7 @@
 class RMC {
     int BelowMedalCount = 0;
-    int TimeLeft = TimeLimit;
-    int TotalTime = 0;
+    int _TimeLeft = TimeLimit;
+    int _TotalTime = 0;
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -28,19 +28,19 @@ class RMC {
     int get_TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
     int get_TimeLeft() {
-        return Math::Max(0, Math::Min(TimeLimit, TimeLeft));
+        return Math::Max(0, Math::Min(TimeLimit, _TimeLeft));
     }
 
     void set_TimeLeft(int n) {
-        TimeLeft = Math::Clamp(n, 0, TimeLimit);
+        _TimeLeft = Math::Clamp(n, 0, TimeLimit);
     }
 
     int get_TotalTime() {
-        return TotalTime;
+        return _TotalTime;
     }
 
     void set_TotalTime(int n) {
-        TotalTime = Math::Max(0, n);
+        _TotalTime = Math::Max(0, n);
     }
 
     string IsoDateToDMY(const string &in isoDate) {
