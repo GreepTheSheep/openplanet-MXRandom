@@ -6,10 +6,8 @@ class RMT : RMC {
     MX::MapInfo@ nextMap;
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
-    bool m_CurrentlyLoadingRecords = false;
     PBTime@ playerGotGoal;
     PBTime@ playerGotBelowGoal;
-    uint RMTTimerMapChange = 0;
     bool pressedStopButton = false;
     bool isFetchingNextMap = false;
     array<string> seenMaps;
