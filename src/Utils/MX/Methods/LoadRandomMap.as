@@ -367,26 +367,26 @@ namespace MX {
         }
 
 #if TMNEXT
-            // prevent loading CharacterPilot maps
-            params.Set("vehicle", "1,2,3,4");
+        // prevent loading CharacterPilot maps
+        params.Set("vehicle", "1,2,3,4");
 
-            if (
-                (RMC::IsRunning || RMC::IsStarting)
-                && PluginSettings::RMC_Medal == Medals::WR
-                && PluginSettings::MapType != MapTypes::Platform
-                && PluginSettings::MapType != MapTypes::Royal
-            ) {
-                // We only want maps with a WR
-                params.Set("inhasrecord", "1");
-            }
+        if (
+            (RMC::IsRunning || RMC::IsStarting)
+            && PluginSettings::RMC_Medal == Medals::WR
+            && PluginSettings::MapType != MapTypes::Platform
+            && PluginSettings::MapType != MapTypes::Royal
+        ) {
+            // We only want maps with a WR
+            params.Set("inhasrecord", "1");
+        }
 #elif MP4
-            // Fetch in the correct titlepack
-            if (TM::CurrentTitlePack() == "TMAll") {
-                int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
-                params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
-            } else {
-                params.Set("titlepack", TM::CurrentTitlePack());
-            }
+        // Fetch in the correct titlepack
+        if (TM::CurrentTitlePack() == "TMAll") {
+            int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
+            params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
+        } else {
+            params.Set("titlepack", TM::CurrentTitlePack());
+        }
 #endif
 
         switch (PluginSettings::MapType) {
