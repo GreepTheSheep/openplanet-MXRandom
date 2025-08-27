@@ -66,7 +66,7 @@ void OnKeyPress(bool down, VirtualKey key) {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
-    if (!MX::APIDown && !held && key == PluginSettings::S_QuickMapKey) {
+    if (!MX::APIDown && !MX::RandomMapIsLoading && !held && key == PluginSettings::S_QuickMapKey) {
         startnew(MX::LoadRandomMap);
     }
     held = down;
