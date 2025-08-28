@@ -181,6 +181,8 @@ class RMT : RMC {
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
+        RMC::TimeSpentMap = 0;
+
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLeft / 1000);
 
         while (!TM::IsServerReady()) {
