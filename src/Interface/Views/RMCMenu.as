@@ -257,10 +257,10 @@ namespace RMC {
         ) {
             UI::Separator();
             UI::Text("Last run stats:");
-            if (currentGameMode == GameMode::Challenge || currentGameMode::ChallengeChaos) {
+            if (currentGameMode == GameMode::Challenge || currentGameMode == GameMode::ChallengeChaos) {
                 Challenge.RenderGoalMedal();
                 Challenge.RenderBelowGoalMedal();
-            } else if (currentGameMode == GameMode::Survival || currentGameMode::SurvivalChaos) {
+            } else if (currentGameMode == GameMode::Survival || currentGameMode == GameMode::SurvivalChaos) {
                 Survival.RenderGoalMedal();
                 Survival.RenderBelowGoalMedal();
 
