@@ -140,7 +140,7 @@ namespace MXNadeoServicesGlobal {
     void ClubRoomSetMapAndSwitchAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID) {
         Json::Value bodyJson = Json::Object();
         EditRoomPayloadSetMaps(bodyJson, {mapUID});
-        EditRoomPayloadSetTimeout(bodyJson, 1);
+        EditRoomPayloadSetTimeout(bodyJson, 5);
         RunClubRoomRequest(room, bodyJson, "ClubRoomSetMapAndSwitch");
     }
 
