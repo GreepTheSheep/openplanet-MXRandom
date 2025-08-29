@@ -260,7 +260,7 @@ class RMT : RMC {
                         BetterChat::SendChatMessage(Icons::Users + " Switching map...");
     #endif
 
-                        RMTSwitchMap();
+                        startnew(CoroutineFunc(RMTSwitchMap));
                     }
                     if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
                         Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
