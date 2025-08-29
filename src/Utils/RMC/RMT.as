@@ -26,7 +26,6 @@ class RMT : RMC {
                 startnew(CoroutineFunc(ResetToLobbyMap));
             }
 
-            RenderCustomSearchWarning();
             UI::Separator();
         }
 
