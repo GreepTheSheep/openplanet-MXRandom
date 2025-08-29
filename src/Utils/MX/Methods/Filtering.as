@@ -24,6 +24,11 @@ namespace MX {
                 Log::Warn("Map is most likely low effort.");
                 return true;
             }
+
+            if (Regex::Contains(map.Name, "#?0*(2[6-9]|[3-9]\\d|\\d{3,})[^0-9]?$", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is most likely from a long low effort series.");
+                return true;
+            }
         }
 
         return false;
