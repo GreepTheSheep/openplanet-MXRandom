@@ -20,7 +20,7 @@ namespace MX {
                 return true;
             }
 
-            if (Regex::Contains(map.Name, "\\b(shit|trash|garbage|impossible|AI)\\b", Regex::Flags::CaseInsensitive)) {
+            if (Regex::Contains(map.Name, "(^|[^a-z])(awful|annoying|shit|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map is most likely low effort.");
                 return true;
             }
