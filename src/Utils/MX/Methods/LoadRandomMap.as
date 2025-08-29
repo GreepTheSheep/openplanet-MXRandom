@@ -1,80 +1,8 @@
 namespace MX {
-    MX::MapInfo@ preloadedMap;
     bool isLoadingPreload = false;
+
     // "Unassigned" = MP1 Canyon and TMF Stadium maps. They are guaranteed to be compatible as editing the map would change the title ID.
     const array<string> tmAllCompatibleTitlepacks = { "TMAll", "TMCanyon", "TMStadium", "TMValley", "TMLagoon", "Unassigned" };
-    Json::Value CheckCustomRulesParametersNoResults() {
-        string check_url = PluginSettings::RMC_MX_Url + "/api/maps";
-
-        dictionary params;
-        params.Set("fields", MAP_FIELDS);
-        params.Set("random", "1");
-        params.Set("count", "1");
-        params.Set("maptype", SUPPORTED_MAP_TYPE); // ignore any non-Race maps (Royal, flagrush etc...)
-
-#if TMNEXT
-        // ignore CharacterPilot maps
-        params.Set("vehicle", "1,2,3,4");
-#elif MP4
-        // only consider the correct titlepack
-        if (TM::CurrentTitlePack() == "TMAll" && false) {
-            params.Set("titlepack", TM::CurrentTitlePack() + ",TMCanyon,TMValley,TMStadium,TMLagoon"); // TODO doesn't work yet
-        } else {
-            params.Set("titlepack", TM::CurrentTitlePack());
-        }
-#endif
-
-        if (PluginSettings::MapAuthor != "") {
-            params.Set("author", PluginSettings::MapAuthor);
-            string urlParams = DictToApiParams(params);
-
-            Json::Value _res = API::GetAsync(check_url + urlParams);
-            if (_res["Results"].Length == 0) {
-                // author does not own any usable map.
-                Log::Error(Icons::ExclamationTriangle + " No maps found for author '" + PluginSettings::MapAuthor + "', retrying without author set...");
-                PluginSettings::MapAuthor = "";
-                return _res;
-            } else if (_res["Results"].Length == 1) {
-                // author only has one usable map, so we can just return it as the API will troll when using random on it
-                return _res["Results"][0];
-            }
-        }
-        if (PluginSettings::MapName != "") {
-            params.Set("name", PluginSettings::MapName);
-            string urlParams = DictToApiParams(params);
-
-            Json::Value _res = API::GetAsync(check_url + urlParams);
-            if (_res["Results"].Length == 0) {
-                // there are no map names matching the filter
-                Log::Error(Icons::ExclamationTriangle + " No maps found for name '" + PluginSettings::MapName + "', retrying without name set...");
-                PluginSettings::MapName = "";
-                return _res;
-            } else if (_res["Results"].Length == 1) {
-                // there is only one map matching the filter, so we can just return it
-                return _res["Results"][0];
-            }
-        }
-        if (PluginSettings::MapAuthor != "" && PluginSettings::MapName != "") {
-            params.Set("name", PluginSettings::MapName);
-            params.Set("author", PluginSettings::MapAuthor);
-            string urlParams = DictToApiParams(params);
-
-            Json::Value _res = API::GetAsync(check_url + urlParams);
-            if (_res["Results"].Length == 0) {
-                // there are no map names matching the filter
-                Log::Error(Icons::ExclamationTriangle + " No maps found for author '" + PluginSettings::MapAuthor + "' and name '" + PluginSettings::MapName + "', retrying without name set...");
-                PluginSettings::MapName = "";
-                return _res;
-            } else if (_res["Results"].Length == 1) {
-                // there is only one map matching the filter, so we can just return it
-                return _res["Results"][0];
-            }
-        }
-
-        Json::Value retval = Json::Object();
-        retval["hasMaps"] = true;
-        return retval;
-    }
 
     bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
         int64 mapUpdatedDate = Time::ParseFormatString('%FT%T', map.UpdatedAt);
@@ -85,67 +13,50 @@ namespace MX {
     }
 
 
-    void PreloadRandomMap() {
-        isLoadingPreload = true;
-
+    MX::MapInfo@ GetRandomMap() {
         string URL = CreateQueryURL();
         Json::Value res;
+
         try {
-            res = API::GetAsync(URL)["Results"][0];
+            res = API::GetAsync(URL);
         } catch {
-            if (PluginSettings::CustomRules || (!RMC::IsStarting && !RMC::IsRunning)) {
-                // we might get an error because the author doesn't have a map/no map with the given name exists
-                // if we do not detect that there are no matching results, we will enter an infinite loop with errors
-                // that will force the user to reload the plugin
-                Json::Value check = CheckCustomRulesParametersNoResults();
-                if (check.HasKey("MapId")) {
-                    // we found a single map that matches the parameters, so we can just return it
-                    res = check;
-                } else if (check.HasKey("hasMaps")) {
-                    // maps with parameters exist but we still got an error, just retry
-                    // (from testing usually TMX doing weird stuff and not returning a map even though there is multiple, just retry and it will find one after a few tries)
-                    Log::Error("ManiaExchange API returned an error, retrying...");
-                    sleep(3000);
-                    PreloadRandomMap();
-                    return;
-                } else {  // no maps found, retrying without parameters
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
-                }
-            } else {
-                Log::Error("ManiaExchange API returned an error, retrying...");
-                sleep(3000);
-                PreloadRandomMap();
-                return;
-            }
+            Log::Error("An error occurred while getting a random map from ManiaExchange.");
+            return null;
         }
-        Log::Trace("PreloadRandomMapRes: " + Json::Write(res));
-        MX::MapInfo@ map = MX::MapInfo(res);
+
+        Log::Trace("[GetRandomMap] API response: " + Json::Write(res));
+
+        if (res.GetType() != Json::Type::Object || !res.HasKey("Results")) {
+            Log::Error("Something went wrong while getting a random map from ManiaExchange");
+            return null;
+        } else if (res["Results"].Length == 0) {
+            if (PluginSettings::CustomRules) {
+                Log::Error("Failed to find a random map with custom parameters");    
+            } else {
+                Log::Error("Failed to find a random map without custom parameters. This should never happen!");
+            }
+            return null;
+        }
+
+        MX::MapInfo@ map = MX::MapInfo(res["Results"][0]);
 
         if (map is null) {
             Log::Warn("Map is null, retrying...");
-            sleep(1000);
-            PreloadRandomMap();
-            return;
+            return null;
         }
 
         if (RMC::IsRunning || RMC::IsStarting) {
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::config.length) {
                     Log::Warn("Map is too long, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                    return null;
                 }
             }
 
 #if TMNEXT
             if (RMC::currentGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
                 Log::Warn("Map is too big to play in servers, retrying...");
-                sleep(1000);
-                PreloadRandomMap();
-                return;
+                return null;
             }
 
             // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
@@ -157,9 +68,7 @@ namespace MX {
                 } else {
                     if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
                         Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
-                        sleep(1000);
-                        PreloadRandomMap();
-                        return;
+                        return null;
                     }
 
                     // if uploaded, get wr
@@ -167,9 +76,7 @@ namespace MX {
 
                     if (mapWorldRecord == -1) {
                         Log::Warn("Couldn't get map World Record, retrying another map...");
-                        sleep(1000);
-                        PreloadRandomMap();
-                        return;
+                        return null;
                     }
 
                     TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
@@ -180,16 +87,12 @@ namespace MX {
 
         if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
             Log::Warn("Map is most likely low effort, skipping...");
-            sleep(1000);
-            PreloadRandomMap();
-            return;
+            return null;
         }
 
         if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
             Log::Warn("Map is most likely missing a default filtered tag, skipping...");
-            sleep(1000);
-            PreloadRandomMap();
-            return;
+            return null;
         }
 
         if (PluginSettings::CustomRules) {
@@ -200,31 +103,23 @@ namespace MX {
                 // only check if date range is valid
                 if (fromDate < toDate && !isMapInsideDateParams(map)) {
                     Log::Warn("Looking for new map inside date params...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                    return null;
                 }
             }
 
             if (PluginSettings::UseCustomLength) {
                 if (PluginSettings::MinLength != 0 && map.AuthorTime < PluginSettings::MinLength) {
                     Log::Warn("Map is shorter than the requested length, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                    return null;
                 }
 
                 if (PluginSettings::MaxLength != 0 && map.AuthorTime > PluginSettings::MaxLength) {
                     Log::Warn("Map is longer than the requested length, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                    return null;
                 }
             } else if (map.AuthorTime > RMC::config.length) {
                 Log::Warn("Map is too long, retrying...");
-                sleep(1000);
-                PreloadRandomMap();
-                return;
+                return null;
             }
 
             if (PluginSettings::ExcludedTerms != "") {
@@ -237,9 +132,7 @@ namespace MX {
 
                 if (Regex::Contains(map.Name, termsRegex, Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map contains an excluded term, retrying...");
-                    sleep(1000);
-                    PreloadRandomMap();
-                    return;
+                    return null;
                 }
             }
 
@@ -247,15 +140,13 @@ namespace MX {
                 foreach (string author : PluginSettings::ExcludedAuthorsArr) {
                     if (map.Username.ToLower() == author) {
                         Log::Warn("Map is uploaded by an excluded author, retrying...");
-                        sleep(1000);
-                        PreloadRandomMap();
-                        return;
+                        return null;
                     }
                 }
             }
         }
-        isLoadingPreload = false;
-        @preloadedMap = map;
+
+        return map;
     }
 
     void LoadRandomMap() {
@@ -272,16 +163,29 @@ namespace MX {
             RandomMapIsLoading = true;
             MX::MapInfo@ map;
 
-            if (RMC::ContinueSavedRun && !RMC::IsInited) {
-                Json::Value res = RMC::CurrentMapJsonData;
-                res["PlayedAt"] = Time::Stamp; // Update to the last time it was played
-                @map = MX::MapInfo(res);
-                @preloadedMap = null;
-            } else {
-                if (preloadedMap is null && !isLoadingPreload) PreloadRandomMap();
-                while (isLoadingPreload) yield();
-                @map = preloadedMap;
-                @preloadedMap = null;
+            int attempts = 0;
+
+            while (true) {
+                @map = GetRandomMap();
+
+                if (map !is null) {
+                    break;
+                }
+
+                attempts++;
+
+                if (attempts >= 15) {
+                    if (PluginSettings::CustomRules) {
+                        Log::Warn("Failed to find a map with custom parameters. Searching without them...", true);
+                        PluginSettings::CustomRules = false;
+                        attempts = 0;
+                    } else {
+                        Log::Error("Failed to get a random map after 15 attempts.", true);
+                        return;
+                    }
+                }
+
+                sleep(2000);
             }
 
             Log::LoadingMapNotification(map);

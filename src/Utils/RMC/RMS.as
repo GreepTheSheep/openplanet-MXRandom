@@ -63,7 +63,7 @@ class RMS : RMC {
             Skips++;
             Log::Trace("RMS: Skipping map");
             UI::ShowNotification("Please wait...");
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
@@ -87,7 +87,7 @@ class RMS : RMC {
             Log::Trace("RMS: Next map");
             UI::ShowNotification("Please wait...");
             TimeLeft += (3*60*1000);
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
@@ -106,6 +106,7 @@ class RMS : RMC {
         if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
+        startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void GameEndNotification() override {
@@ -133,7 +134,7 @@ class RMS : RMC {
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
             TimeLeft += (3*60*1000);
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
     }
 

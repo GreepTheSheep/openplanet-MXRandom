@@ -73,14 +73,14 @@ namespace RMC {
             }
         }
         if (RMC::ContinueSavedRun) {
-            RMC::CurrentMapJsonData = CurrentRunData["MapData"];
+            MX::MapInfo@ map = MX::MapInfo(CurrentRunData["MapData"]);
+            map.PlayedAt = Time::Stamp;
+            Log::LoadingMapNotification(map);
+            DataManager::SaveMapToRecentlyPlayed(map);
+            await(startnew(TM::LoadMap, map));
+        } else {
+            MX::LoadRandomMap();
         }
-
-        if (MX::preloadedMap !is null) {
-            @MX::preloadedMap = null;
-        }
-
-        MX::LoadRandomMap();
 
         while (!TM::IsMapLoaded()) {
             sleep(100);
@@ -129,7 +129,6 @@ namespace RMC {
         DataManager::RemoveCurrentSaveFile();
         DataManager::CreateSaveFile();
         IsStarting = false;
-        MX::PreloadRandomMap();
     }
 
     void CreateSave() {
@@ -155,27 +154,5 @@ namespace RMC {
         }
 
         DataManager::SaveCurrentRunData();
-    }
-
-    void SwitchMap() {
-        IsPaused = true;
-        IsSwitchingMap = true;
-        yield(100);
-        MX::LoadRandomMap();
-        while (!TM::IsMapLoaded()) {
-            sleep(100);
-        }
-        IsSwitchingMap = false;
-        GotGoalMedal = false;
-        GotBelowMedal = false;
-        TimeSpentMap = 0;
-        PBOnMap = -1;
-
-        while (!TM::IsPlayerReady()) {
-            yield();
-        }
-        IsPaused = false;
-
-        MX::PreloadRandomMap();
     }
 }

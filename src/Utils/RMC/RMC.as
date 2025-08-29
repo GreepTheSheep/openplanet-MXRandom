@@ -2,6 +2,8 @@ class RMC {
     int BelowMedalCount = 0;
     int _TimeLeft = TimeLimit;
     int _TotalTime = 0;
+    MX::MapInfo@ nextMap;
+    array<string> seenMaps;
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -57,8 +59,6 @@ class RMC {
                 RMC::UserEndedRun = true;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
-                @MX::preloadedMap = null;
-
 #if DEPENDENCY_CHAOSMODE
                 ChaosMode::SetRMCMode(false);
 #endif
@@ -165,7 +165,9 @@ class RMC {
                 UI::AlignTextToFramePadding();
                 UI::Text("Switching map...");
                 UI::SameLine();
-                if (UI::Button("Force switch")) startnew(RMC::SwitchMap);
+                if (UI::Button("Force switch")) {
+                    startnew(CoroutineFunc(SwitchMap));
+                }
             }
             else RMC::IsPaused = true;
         } else if (RMC::IsInited && TM::IsMapLoaded()) {
@@ -221,7 +223,9 @@ class RMC {
                 UI::Separator();
                 UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
                 UI::Text("Please change the map.");
-                if (UI::Button("Change map")) startnew(RMC::SwitchMap);
+                if (UI::Button("Change map")) {
+                    startnew(CoroutineFunc(SwitchMap));
+                }
             }
         } else if (!RMC::IsStarting) {
             UI::Separator();
@@ -273,7 +277,7 @@ class RMC {
                 }
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
-                startnew(RMC::SwitchMap);
+                startnew(CoroutineFunc(SwitchMap));
             }
         } else if (RMC::GotBelowMedal) {
             if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
@@ -281,7 +285,7 @@ class RMC {
                 BelowMedalCount++;
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
-                startnew(RMC::SwitchMap);
+                startnew(CoroutineFunc(SwitchMap));
             }
         } else {
             UI::NewLine();
@@ -308,7 +312,7 @@ class RMC {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
@@ -341,6 +345,7 @@ class RMC {
         if (RMC::GotGoalMedal) GotGoalMedalNotification();
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
+        startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void GameEndNotification() {
@@ -369,7 +374,7 @@ class RMC {
         Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
     }
 
@@ -408,7 +413,6 @@ class RMC {
                         CTrackMania@ app = cast<CTrackMania>(GetApp());
                         app.BackToMainMenu();
                     }
-                    @MX::preloadedMap = null;
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TimeLeft -= delta;
@@ -491,5 +495,57 @@ class RMC {
                 sleep(1000);
             }
         }
+    }
+
+    void PreloadNextMap() {
+        while (RMC::IsStarting || RMC::IsRunning) {
+            @nextMap = MX::GetRandomMap();
+
+            if (nextMap !is null) {
+                if (PluginSettings::SkipSeenMaps) {
+                    if (seenMaps.Find(nextMap.MapUid) != -1) {
+                        Log::Trace("Map has been played already, skipping...");
+                        sleep(2000);
+                        continue;
+                    }
+
+                    seenMaps.InsertLast(nextMap.MapUid);
+                }
+
+                break;
+            }
+
+            sleep(2000);
+        }
+    }
+
+    void SwitchMap() {
+        RMC::IsPaused = true;
+        RMC::IsSwitchingMap = true;
+
+        yield(100);
+
+        Log::LoadingMapNotification(nextMap);
+        DataManager::SaveMapToRecentlyPlayed(nextMap);
+        await(startnew(TM::LoadMap, nextMap));
+
+        while (!TM::IsMapLoaded()) {
+            sleep(100);
+        }
+
+        RMC::IsSwitchingMap = false;
+        RMC::GotGoalMedal = false;
+        RMC::GotBelowMedal = false;
+        RMC::TimeSpentMap = 0;
+        RMC::PBOnMap = -1;
+        RMC::CurrentMapJsonData = nextMap.ToJson();
+
+        while (!TM::IsPlayerReady()) {
+            yield();
+        }
+
+        RMC::IsPaused = false;
+
+        PreloadNextMap();
     }
 }

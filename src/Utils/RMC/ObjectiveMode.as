@@ -60,7 +60,7 @@ class RMObjective : RMC {
             ) {
                 TimeLeft += RMC::TimeSpentMap;
             }
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         }
     }
 
@@ -71,7 +71,7 @@ class RMObjective : RMC {
             if (RMC::IsPaused) RMC::IsPaused = false;
             Log::Trace("ObjectiveMode: Next map");
             UI::ShowNotification("Please wait...");
-            startnew(RMC::SwitchMap);
+            startnew(CoroutineFunc(SwitchMap));
         }
 
         if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
@@ -86,6 +86,7 @@ class RMObjective : RMC {
         RMC::IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
+        startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void GotGoalMedalNotification() override {
@@ -93,7 +94,7 @@ class RMObjective : RMC {
         if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
             if (PluginSettings::RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
-                startnew(RMC::SwitchMap);
+                startnew(CoroutineFunc(SwitchMap));
             } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
         }
     }
@@ -121,7 +122,6 @@ class RMObjective : RMC {
                     if (PluginSettings::RMC_ExitMapOnEndTime) {
                         app.BackToMainMenu();
                     }
-                    @MX::preloadedMap = null;
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TotalTime += delta;

@@ -3,14 +3,11 @@ class RMT : RMC {
     string LobbyMapUID = "";
     NadeoServices::ClubRoom@ RMTRoom;
     MX::MapInfo@ currentMap;
-    MX::MapInfo@ nextMap;
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
     PBTime@ playerGotGoal;
     PBTime@ playerGotBelowGoal;
     bool pressedStopButton = false;
-    bool isFetchingNextMap = false;
-    array<string> seenMaps;
 
     string get_ModeName() override { return "Random Map Together";}
 
@@ -22,8 +19,6 @@ class RMT : RMC {
                 pressedStopButton = true;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
-                @nextMap = null;
-                @MX::preloadedMap = null;
 #if DEPENDENCY_BETTERCHAT
                 BetterChat::SendChatMessage(Icons::Users + " Random Map Together stopped");
                 startnew(CoroutineFunc(BetterChatSendLeaderboard));
@@ -84,27 +79,24 @@ class RMT : RMC {
     void SetupMapStart() {
         RMC::IsStarting = true;
         RMC::IsSwitchingMap = true;
-        // Fetch a map
-        Log::Trace("RMT: Fetching a random map...");
-        Json::Value res;
-        try {
-            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
-        } catch {
-            Log::Error("ManiaExchange API returned an error, retrying...", true);
-            SetupMapStart();
-            return;
-        }
-        @currentMap = MX::MapInfo(res);
-        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
-        seenMaps.InsertLast(currentMap.MapUid);
 
-        if (currentMap.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(currentMap.MapUid)) {
-            Log::Trace("RMT: Map is not on NadeoServices, retrying...");
-            SetupMapStart();
-            return;
+        while (RMC:: IsStarting || RMC::IsRunning) {
+            @currentMap = MX::GetRandomMap();
+
+            if (currentMap !is null) {
+                if (PluginSettings::SkipSeenMaps) {
+                    seenMaps.InsertLast(currentMap.MapUid);
+                }
+
+                break;
+            }
+
+            sleep(2000);
         }
 
+        Log::LoadingMapNotification(currentMap);
         DataManager::SaveMapToRecentlyPlayed(currentMap);
+
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit / 1000);
@@ -122,42 +114,7 @@ class RMT : RMC {
         startnew(CoroutineFunc(UpdateRecordsLoop));
         RMC::IsSwitchingMap = false;
         RMC::IsStarting = false;
-        startnew(CoroutineFunc(RMTFetchNextMap));
-    }
-
-    void RMTFetchNextMap() {
-        isFetchingNextMap = true;
-        // Fetch a map
-        Log::Trace("RMT: Fetching a random map...");
-        Json::Value res;
-        try {
-            res = API::GetAsync(MX::CreateQueryURL())["Results"][0];
-        } catch {
-            Log::Error("ManiaExchange API returned an error, retrying...");
-            RMTFetchNextMap();
-            return;
-        }
-        @nextMap = MX::MapInfo(res);
-        Log::Trace("RMT: Next Random map: " + nextMap.Name + " (" + nextMap.MapId + ")");
-
-        if (PluginSettings::SkipSeenMaps) {
-            if (seenMaps.Find(nextMap.MapUid) != -1) {
-                Log::Trace("Map has been played already, retrying...");
-                RMTFetchNextMap();
-                return;
-            }
-
-            seenMaps.InsertLast(nextMap.MapUid);
-        }
-
-        if (currentMap.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(nextMap.MapUid)) {
-            Log::Trace("RMT: Next map is not on NadeoServices, retrying...");
-            @nextMap = null;
-            RMTFetchNextMap();
-            return;
-        }
-
-        isFetchingNextMap = false;
+        PreloadNextMap();
     }
 
     void RMTSwitchMap() {
@@ -167,17 +124,18 @@ class RMT : RMC {
         RMC::IsPaused = true;
         RMC::GotGoalMedal = false;
         RMC::GotBelowMedal = false;
-        if (nextMap is null && !isFetchingNextMap) RMTFetchNextMap();
-        while (isFetchingNextMap) yield();
+        
+        if (nextMap is null) {
+            PreloadNextMap();
+        }
         @currentMap = nextMap;
-        @nextMap = null;
-        Log::Trace("RMT: Random map: " + currentMap.Name + " (" + currentMap.MapId + ")");
 
         if (RMC::TimeSpentMap < 15000) {
             // Only notify if the server has spent fewer than 15 secs on the map
             UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
         }
 
+        Log::LoadingMapNotification(currentMap);
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
@@ -204,7 +162,7 @@ class RMT : RMC {
 
         RMC::IsPaused = false;
         RMC::IsSwitchingMap = false;
-        startnew(CoroutineFunc(RMTFetchNextMap));
+        startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void ResetToLobbyMap() {
@@ -217,7 +175,6 @@ class RMT : RMC {
             MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, LobbyMapUID);
             if (pressedStopButton) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
             while (!TM::IsMapCorrect(LobbyMapUID)) sleep(1000);
-            pressedStopButton = false;
         }
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
     }
@@ -235,8 +192,6 @@ class RMT : RMC {
                     RMC::IsRunning = false;
                     RMC::ShowTimer = false;
                     GameEndNotification();
-                    @nextMap = null;
-                    @MX::preloadedMap = null;
                     m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
                     BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
@@ -261,8 +216,7 @@ class RMT : RMC {
     #endif
 
                         startnew(CoroutineFunc(RMTSwitchMap));
-                    }
-                    if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
+                    } else if (!RMC::GotGoalMedal && !RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
                         Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
                         UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal", Text::ParseHexColor("#4d3e0a"));
                         RMC::GotBelowMedal = true;
