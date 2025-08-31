@@ -195,7 +195,6 @@ namespace MX {
             await(startnew(TM::LoadMap, map));
 
             RandomMapIsLoading = false;
-            RMC::CurrentMapJsonData = map.ToJson();
         } catch {
             Log::Warn("Error while loading map: " + getExceptionInfo());
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);

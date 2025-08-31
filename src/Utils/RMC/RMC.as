@@ -2,6 +2,7 @@ class RMC {
     int BelowMedalCount = 0;
     int _TimeLeft = TimeLimit;
     int _TotalTime = 0;
+    MX::MapInfo@ currentMap;
     MX::MapInfo@ nextMap;
     array<string> seenMaps;
 
@@ -43,6 +44,10 @@ class RMC {
 
     void set_TotalTime(int n) {
         _TotalTime = Math::Max(0, n);
+    }
+
+    bool InCurrentMap() {
+        return currentMap !is null && TM::IsMapCorrect(currentMap.MapUid);
     }
 
     string IsoDateToDMY(const string &in isoDate) {
@@ -171,9 +176,8 @@ class RMC {
             }
             else RMC::IsPaused = true;
         } else if (RMC::IsInited && TM::IsMapLoaded()) {
-            if (TM::InRMCMap()) {
+            if (InCurrentMap()) {
                 UI::Separator();
-                MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
 
                 if (currentMap !is null) {
                     UI::Text(currentMap.Name);
@@ -232,13 +236,13 @@ class RMC {
 
             if (UI::Button("Return to map")) {
                 UI::ShowNotification("Returning to current map...");
-                TM::LoadRMCMap();
+                startnew(TM::LoadMap, currentMap);
             }
         }
     }
 
     void RenderPlayingButtons() {
-        if (TM::InRMCMap()) {
+        if (InCurrentMap()) {
             PausePlayButton();
             UI::SameLine();
             SkipButtons();
@@ -398,7 +402,7 @@ class RMC {
 #endif
 
             if (!RMC::IsPaused) {
-                if (!TM::InRMCMap()) {
+                if (!InCurrentMap()) {
                     RMC::IsPaused = true;
                 } else if (!RMC::IsRunning || TimeLeft == 0) {
                     RMC::IsRunning = false;
@@ -426,7 +430,7 @@ class RMC {
     }
 
     uint get_GoalTime() {
-        if (TM::InRMCMap()) {
+        if (InCurrentMap()) {
             auto app = cast<CTrackMania>(GetApp());
             auto map = app.RootMap;
 
@@ -446,7 +450,7 @@ class RMC {
     }
 
     uint get_BelowGoalTime() {
-        if (TM::InRMCMap()) {
+        if (InCurrentMap()) {
             auto app = cast<CTrackMania>(GetApp());
             auto map = app.RootMap;
 
@@ -529,6 +533,8 @@ class RMC {
         DataManager::SaveMapToRecentlyPlayed(nextMap);
         await(startnew(TM::LoadMap, nextMap));
 
+        @currentMap = nextMap;
+
         while (!TM::IsMapLoaded()) {
             sleep(100);
         }
@@ -538,7 +544,6 @@ class RMC {
         RMC::GotBelowMedal = false;
         RMC::TimeSpentMap = 0;
         RMC::PBOnMap = -1;
-        RMC::CurrentMapJsonData = nextMap.ToJson();
 
         while (!TM::IsPlayerReady()) {
             yield();

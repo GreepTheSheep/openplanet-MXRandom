@@ -9,7 +9,7 @@ namespace RMC {
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
     int GoalMedalCount = 0;
     int TimeSpentMap = -1;
-    Json::Value CurrentMapJsonData = Json::Object();
+
     bool ContinueSavedRun = false;
     bool IsInited = false;
     Json::Value CurrentRunData = Json::Object();
@@ -110,20 +110,23 @@ namespace RMC {
             }
         }
 
-        UI::ShowNotification("\\$080Random Map " + tostring(RMC::currentGameMode) + " started!", "Good Luck!");
-        IsInited = true;
-
         while (!TM::IsPlayerReady()) {
             yield();
         }
 
         if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::ChallengeChaos) {
+            @Challenge.currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             Challenge.StartTimer();
         } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::SurvivalChaos) {
+            @Survival.currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             Survival.StartTimer();
         } else if (RMC::currentGameMode == GameMode::Objective) {
+            @Objective.currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             Objective.StartTimer();
         }
+
+        UI::ShowNotification("\\$080Random Map " + tostring(RMC::currentGameMode) + " started!", "Good Luck!");
+        IsInited = true;
 
         // Clear the currently saved data so you cannot load into the same state multiple times
         DataManager::RemoveCurrentSaveFile();
@@ -132,7 +135,6 @@ namespace RMC {
     }
 
     void CreateSave() {
-        CurrentRunData["MapData"] = CurrentMapJsonData;
         CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
         CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         CurrentRunData["GotGoalMedal"] = RMC::GotGoalMedal;
@@ -140,14 +142,17 @@ namespace RMC {
         CurrentRunData["GotBelowMedal"] = RMC::GotBelowMedal;
 
         if (currentGameMode == GameMode::Survival) {
+            CurrentRunData["MapData"] = Survival.currentMap.ToJson();
             CurrentRunData["TotalTime"] = Survival.SurvivedTime;
             CurrentRunData["TimeLeft"] = Survival.TimeLeft;
             CurrentRunData["SecondaryCounterValue"] = Survival.Skips;
         } else if (currentGameMode == GameMode::Objective) {
+            CurrentRunData["MapData"] = Objective.currentMap.ToJson();
             CurrentRunData["TotalTime"] = Objective.TotalTime;
             CurrentRunData["TimeLeft"] = Objective.TimeLeft;
             CurrentRunData["SecondaryCounterValue"] = Objective.BelowMedalCount;
         } else {
+            CurrentRunData["MapData"] = Challenge.currentMap.ToJson();
             CurrentRunData["TotalTime"] = Challenge.TotalTime;
             CurrentRunData["TimeLeft"] = Challenge.TimeLeft;
             CurrentRunData["SecondaryCounterValue"] = Challenge.BelowMedalCount;

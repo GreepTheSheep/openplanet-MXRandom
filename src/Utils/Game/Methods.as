@@ -63,12 +63,6 @@ namespace TM {
         return app.RootMap.IdName == mapUid;
     }
 
-    bool InRMCMap() {
-        if (!IsMapLoaded() || DataJson["recentlyPlayed"].Length == 0) return false;
-
-        return IsMapCorrect(string(DataJson["recentlyPlayed"][0]["MapUid"]));
-    }
-
     // from TMX Together by Xertrov https://openplanet.dev/plugin/tmx-together
 
     uint PlaygroundGameTime() {
@@ -87,15 +81,6 @@ namespace TM {
         if (playground is null || playground.Arena is null || playground.Arena.Rules is null) return uint(-1);
 
         return uint(playground.Arena.Rules.RulesStateStartTime);
-    }
-
-    void LoadRMCMap() {
-        if (DataJson["recentlyPlayed"].Length == 0) return;
-
-        MX::MapInfo@ map = MX::MapInfo(DataJson["recentlyPlayed"][0]);
-        if (IsMapCorrect(map.MapUid)) return;
-
-        startnew(LoadMap, map);
     }
 
     bool HasEditedMedals() {

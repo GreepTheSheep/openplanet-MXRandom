@@ -51,7 +51,7 @@ class RMObjective : RMC {
             Skips++;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
-            MX::MapInfo@ currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+
             if (
 #if TMNEXT
                 (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) ||
@@ -113,7 +113,7 @@ class RMObjective : RMC {
 #endif
 
             if (!RMC::IsPaused) {
-                if (!TM::InRMCMap()) {
+                if (!InCurrentMap()) {
                     RMC::IsPaused = true;
                 } else if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
                     UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(TotalTime));

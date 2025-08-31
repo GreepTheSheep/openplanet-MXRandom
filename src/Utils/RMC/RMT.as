@@ -2,7 +2,6 @@ class RMT : RMC {
 #if TMNEXT
     string LobbyMapUID = "";
     NadeoServices::ClubRoom@ RMTRoom;
-    MX::MapInfo@ currentMap;
     array<PBTime@> m_mapPersonalBests;
     array<RMTPlayerScore@> m_playerScores;
     PBTime@ playerGotGoal;
@@ -185,7 +184,7 @@ class RMT : RMC {
             yield();
 
             if (!RMC::IsPaused) {
-                if (!TM::IsMapLoaded()) {
+                if (!InCurrentMap()) {
                     RMC::IsPaused = true;
                 } else if (!pressedStopButton && (!RMC::IsRunning || TimeLeft == 0)) {
                     RMC::IsRunning = false;
@@ -275,7 +274,7 @@ class RMT : RMC {
 
     void RenderCurrentMap() override {
         if (!RMC::IsSwitchingMap) {
-            if (TM::IsMapLoaded()) {
+            if (InCurrentMap()) {
                 UI::Separator();
 
                 if (currentMap !is null) {
@@ -333,7 +332,7 @@ class RMT : RMC {
     }
 
     void RenderPlayingButtons() override {
-        if (TM::IsMapLoaded()) {
+        if (InCurrentMap()) {
             SkipButtons();
         }
     }
@@ -400,7 +399,7 @@ class RMT : RMC {
     }
 
     bool isObjectiveCompleted() {
-        if (TM::IsMapLoaded()) {
+        if (InCurrentMap()) {
             if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
@@ -415,7 +414,7 @@ class RMT : RMC {
     }
 
     bool isBelowObjectiveCompleted() {
-        if (TM::IsMapLoaded()) {
+        if (InCurrentMap()) {
             if (!m_mapPersonalBests.IsEmpty()) {
                 for (uint r = 0; r < m_mapPersonalBests.Length; r++) {
                     if (m_mapPersonalBests[r].time <= 0) continue;
