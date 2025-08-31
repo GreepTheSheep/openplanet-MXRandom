@@ -317,7 +317,6 @@ class RMT : RMC {
                         }
                     }
                 } else {
-                    UI::Separator();
                     UI::TextDisabled("Map info unavailable");
                 }
             }

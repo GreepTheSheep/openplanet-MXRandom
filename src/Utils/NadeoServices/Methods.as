@@ -103,7 +103,7 @@ namespace MXNadeoServicesGlobal {
 
         auto res = req.Json();
 
-        if (res.GetType() != Json::Type::Object) {
+        if (req.ResponseCode() >= 400 || res.GetType() != Json::Type::Object || !res.HasKey("uid")) {
             if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {
                 string errorMsg = res[0];
                 if (errorMsg.Contains("notFound")) return false;

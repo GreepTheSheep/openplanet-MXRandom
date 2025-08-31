@@ -71,8 +71,6 @@ class RMC {
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                         Renderables::Add(SaveRunQuestionModalDialog());
-                        // sleeping here to wait for the dialog to be closed crashes the plugin, hence we just have a copy
-                        // of the timers to use for the save file
                     } else {
                         RMC::CreateSave();
                         vec4 color = UI::HSV(0.25, 1, 0.7);
@@ -220,12 +218,11 @@ class RMC {
                         }
                     }
                 } else {
-                    UI::Separator();
                     UI::TextDisabled("Map info unavailable");
                 }
             } else {
                 UI::Separator();
-                UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zActual map is not the same that we got.");
+                UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zLoaded map is not the one we got.");
                 UI::Text("Please change the map.");
                 if (UI::Button("Change map")) {
                     startnew(CoroutineFunc(SwitchMap));
