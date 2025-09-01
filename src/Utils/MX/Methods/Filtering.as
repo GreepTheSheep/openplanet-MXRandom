@@ -51,9 +51,16 @@ namespace MX {
         }
 #endif
 
-        if (map.AwardCount < 5 && !map.HasTag("Kacky") && map.Name.ToLower().Contains("kacky")) {
-            Log::Warn("Map is most likely untagged Kacky.");
-            return true;
+        if (map.AwardCount < 5) {
+            if (!map.HasTag("Kacky") && map.Name.ToLower().Contains("kacky")) {
+                Log::Warn("Map is most likely untagged Kacky.");
+                return true;
+            }
+
+            if (!map.HasTag("Trial") && Regex::Contains(map.Name, "(^|[^a-z])Trial($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is most likely untagged Trial.");
+                return true;
+            }
         }
 
         return false;
