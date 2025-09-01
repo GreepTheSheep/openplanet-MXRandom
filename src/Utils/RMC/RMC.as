@@ -50,13 +50,6 @@ class RMC {
         return currentMap !is null && TM::IsMapCorrect(currentMap.MapUid);
     }
 
-    string IsoDateToDMY(const string &in isoDate) {
-        string year = isoDate.SubStr(0, 4);
-        string month = isoDate.SubStr(5, 2);
-        string day = isoDate.SubStr(8, 2);
-        return day + "-" + month + "-" + year;
-    }
-
     void Render() {
         string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
         if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {

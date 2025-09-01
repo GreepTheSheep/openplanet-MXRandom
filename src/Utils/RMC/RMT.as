@@ -286,7 +286,7 @@ class RMT : RMC {
                     }
 
                     if (PluginSettings::RMC_DisplayMapDate) {
-                        UI::TextDisabled(IsoDateToDMY(currentMap.UpdatedAt));
+                        UI::TextDisabled(Date::FormatISO(currentMap.UpdatedAt, "%d-%m-%Y"));
                         UI::SameLine();
                     }
 

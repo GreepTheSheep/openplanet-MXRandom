@@ -48,6 +48,17 @@ namespace Date {
         return Time::ParseFormatString('%F %T', date);
     }
 
+
+    string FormatISO(const string &in isoDate, const string &in format) {
+        try {
+            int timestamp = Time::ParseFormatString('%FT%T', isoDate);
+            return Time::FormatString(format, timestamp);
+        } catch {
+            Log::Error("Failed to format ISO date \"" + isoDate + "\" as \"" + format + "\".");
+            return "Unknown";
+        }
+    }
+
     // check if date complies with ISO 8601
     bool IsValid(const string &in date) {
         try {
