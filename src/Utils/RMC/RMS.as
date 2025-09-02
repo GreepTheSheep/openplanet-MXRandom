@@ -1,5 +1,4 @@
 class RMS : RMC {
-    int Skips = 0;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
     string get_ModeName() override { 
@@ -14,6 +13,14 @@ class RMS : RMC {
 
     int get_SurvivedTime() {
         return TotalTime;
+    }
+
+    int get_Skips() {
+        return BelowMedalCount;
+    }
+
+    void set_Skips(int n) {
+        BelowMedalCount = Math::Clamp(n, 0, PluginSettings::RMC_SurvivalMaxTime);
     }
 
     void RenderTimer() override {
@@ -60,7 +67,7 @@ class RMS : RMC {
 
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
             if (RMC::IsPaused) RMC::IsPaused = false;
-            Skips++;
+            Skips += 1;
             Log::Trace("RMS: Skipping map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));

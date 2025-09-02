@@ -28,6 +28,21 @@ class RMC {
         return "Random Map Challenge";
     }
 
+    void CreateSave() {
+        RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
+        RMC::CurrentRunData["SecondaryCounterValue"] = BelowMedalCount;
+        RMC::CurrentRunData["FreeSkipsUsed"] = RMC::FreeSkipsUsed;
+        RMC::CurrentRunData["GotGoalMedal"] = RMC::GotGoalMedal;
+        RMC::CurrentRunData["GotBelowMedal"] = RMC::GotBelowMedal;
+        RMC::CurrentRunData["MapData"] = currentMap.ToJson();
+        RMC::CurrentRunData["TotalTime"] = TotalTime;
+        RMC::CurrentRunData["TimeLeft"] = TimeLeft;
+        RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
+        RMC::CurrentRunData["PBOnMap"] = RMC::PBOnMap;
+
+        DataManager::SaveCurrentRunData();
+    }
+
     int get_TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
 
     int get_TimeLeft() {
@@ -63,9 +78,9 @@ class RMC {
                 int secondaryCount = RMC::currentGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
-                        Renderables::Add(SaveRunQuestionModalDialog());
+                        Renderables::Add(SaveRunQuestionModalDialog(this));
                     } else {
-                        RMC::CreateSave();
+                        CreateSave();
                         vec4 color = UI::HSV(0.25, 1, 0.7);
                         UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
                     }
@@ -473,17 +488,17 @@ class RMC {
                     RMC::GoalMedalCount++;
                     GotGoalMedalNotification();
                     RMC::GotGoalMedal = true;
-                    RMC::CreateSave();
+                    CreateSave();
                 } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
                     GotBelowGoalMedalNotification();
                     RMC::GotBelowMedal = true;
-                    RMC::CreateSave();
+                    CreateSave();
                 }
 
                 if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
                     // PB
                     RMC::PBOnMap = score;
-                    RMC::CreateSave();
+                    CreateSave();
                 }
 
                 sleep(1000);

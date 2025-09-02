@@ -133,31 +133,4 @@ namespace RMC {
         DataManager::CreateSaveFile();
         IsStarting = false;
     }
-
-    void CreateSave() {
-        CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
-        CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
-        CurrentRunData["GotGoalMedal"] = RMC::GotGoalMedal;
-        CurrentRunData["PBOnMap"] = RMC::PBOnMap;
-        CurrentRunData["GotBelowMedal"] = RMC::GotBelowMedal;
-
-        if (currentGameMode == GameMode::Survival) {
-            CurrentRunData["MapData"] = Survival.currentMap.ToJson();
-            CurrentRunData["TotalTime"] = Survival.SurvivedTime;
-            CurrentRunData["TimeLeft"] = Survival.TimeLeft;
-            CurrentRunData["SecondaryCounterValue"] = Survival.Skips;
-        } else if (currentGameMode == GameMode::Objective) {
-            CurrentRunData["MapData"] = Objective.currentMap.ToJson();
-            CurrentRunData["TotalTime"] = Objective.TotalTime;
-            CurrentRunData["TimeLeft"] = Objective.TimeLeft;
-            CurrentRunData["SecondaryCounterValue"] = Objective.BelowMedalCount;
-        } else {
-            CurrentRunData["MapData"] = Challenge.currentMap.ToJson();
-            CurrentRunData["TotalTime"] = Challenge.TotalTime;
-            CurrentRunData["TimeLeft"] = Challenge.TimeLeft;
-            CurrentRunData["SecondaryCounterValue"] = Challenge.BelowMedalCount;
-        }
-
-        DataManager::SaveCurrentRunData();
-    }
 }

@@ -155,7 +155,7 @@ class RMObjective : RMC {
                 if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
                     // PB
                     RMC::PBOnMap = score;
-                    RMC::CreateSave();
+                    CreateSave();
                 }
 
                 sleep(1000);

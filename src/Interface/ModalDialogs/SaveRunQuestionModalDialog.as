@@ -1,7 +1,10 @@
 class SaveRunQuestionModalDialog : ModalDialog {
-    SaveRunQuestionModalDialog() {
+    RMC@ currentRun;
+
+    SaveRunQuestionModalDialog(RMC@ run) {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zSave run?");
         m_size = vec2(400, 130);
+        @currentRun = run;
     }
 
     void RenderDialog() override {
@@ -22,7 +25,7 @@ class SaveRunQuestionModalDialog : ModalDialog {
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
-            RMC::CreateSave();
+            currentRun.CreateSave();
             Log::Log("Saved run data", true);
         }
     }
