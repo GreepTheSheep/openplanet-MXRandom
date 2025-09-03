@@ -126,7 +126,7 @@ class RMC {
         if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
             UI::Separator();
             UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$zInvalid for official leaderboards");
-            UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tag in the settings.");
+            UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
         }
     }
 
