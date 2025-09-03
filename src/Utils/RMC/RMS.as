@@ -20,7 +20,7 @@ class RMS : RMC {
     }
 
     void set_Skips(int n) {
-        BelowMedalCount = Math::Clamp(n, 0, PluginSettings::RMC_SurvivalMaxTime);
+        BelowMedalCount = Math::Max(0, n);
     }
 
     void RenderTimer() override {
