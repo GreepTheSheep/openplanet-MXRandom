@@ -72,28 +72,8 @@ namespace RMC {
                 }
             }
         }
-        if (RMC::ContinueSavedRun) {
-            MX::MapInfo@ map = MX::MapInfo(CurrentRunData["MapData"]);
-            map.PlayedAt = Time::Stamp;
-            Log::LoadingMapNotification(map);
-            DataManager::SaveMapToRecentlyPlayed(map);
-            await(startnew(TM::LoadMap, map));
-        } else {
-            MX::LoadRandomMap();
-        }
 
-        while (!TM::IsMapLoaded()) {
-            sleep(100);
-        }
-
-        if (!ContinueSavedRun) {
-            TimeSpentMap = -1;
-            GoalMedalCount = 0;
-            FreeSkipsUsed = 0;
-            PBOnMap = -1;
-            GotBelowMedal = false;
-            GotGoalMedal = false;
-        } else {
+        if (ContinueSavedRun) {
             GoalMedalCount = CurrentRunData["PrimaryCounterValue"];
             GotGoalMedal = CurrentRunData["GotGoalMedal"];
             PBOnMap = CurrentRunData["PBOnMap"];
@@ -101,16 +81,29 @@ namespace RMC {
 
             if (currentGameMode == GameMode::Challenge) {
                 Challenge.BelowMedalCount = CurrentRunData["SecondaryCounterValue"];
-                Survival.Skips = 0;
                 GotBelowMedal = CurrentRunData["GotBelowMedal"];
                 FreeSkipsUsed = CurrentRunData["FreeSkipsUsed"];
             } else {
-                Challenge.BelowMedalCount = 0;
                 Survival.Skips = CurrentRunData["SecondaryCounterValue"];
             }
+
+            MX::MapInfo@ map = MX::MapInfo(CurrentRunData["MapData"]);
+            map.PlayedAt = Time::Stamp;
+            Log::LoadingMapNotification(map);
+            DataManager::SaveMapToRecentlyPlayed(map);
+            await(startnew(TM::LoadMap, map));
+        } else {
+            TimeSpentMap = -1;
+            GoalMedalCount = 0;
+            FreeSkipsUsed = 0;
+            PBOnMap = -1;
+            GotBelowMedal = false;
+            GotGoalMedal = false;
+
+            MX::LoadRandomMap();
         }
 
-        while (!TM::IsPlayerReady()) {
+        while (!TM::IsMapLoaded() || !TM::IsPlayerReady()) {
             yield();
         }
 
