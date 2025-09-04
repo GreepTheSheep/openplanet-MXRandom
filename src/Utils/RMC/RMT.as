@@ -348,6 +348,7 @@ class RMT : RMC {
                 (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
             ) {
                 TimeLeft += RMC::TimeSpentMap;
+                TotalTime -= RMC::TimeSpentMap;
             }
 #if DEPENDENCY_BETTERCHAT
             BetterChat::SendChatMessage(Icons::Users + " Skipping map...");

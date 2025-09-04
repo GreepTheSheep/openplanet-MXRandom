@@ -31,6 +31,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
             print("RMC: Broken Map Skip");
             UI::ShowNotification("Please wait...");
             mode.TimeLeft += RMC::TimeSpentMap;
+            mode.TotalTime -= RMC::TimeSpentMap;
             startnew(CoroutineFunc(mode.SwitchMap));
         }
     }
