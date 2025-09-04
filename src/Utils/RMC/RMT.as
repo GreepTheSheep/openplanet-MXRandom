@@ -36,12 +36,7 @@ class RMT : RMC {
         RenderMVPPlayer();
 
         if (PluginSettings::RMC_DisplayPace) {
-            try {
-                float goalPace = ((TimeLimit / 60 / 1000) * RMC::GoalMedalCount / (TimeLeft / 60 / 100));
-                UI::Text("Pace: " + goalPace);
-            } catch {
-                UI::Text("Pace: 0");
-            }
+            RenderPace();
         }
 
         if (PluginSettings::RMC_DisplayCurrentMap) {

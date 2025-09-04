@@ -23,6 +23,8 @@ class RMS : RMC {
         BelowMedalCount = Math::Max(0, n);
     }
 
+    void RenderPace() override { }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning) {

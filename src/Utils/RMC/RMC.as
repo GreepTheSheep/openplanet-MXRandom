@@ -100,12 +100,7 @@ class RMC {
         RenderBelowGoalMedal();
 
         if (PluginSettings::RMC_DisplayPace) {
-            try {
-                float goalPace = ((TimeLimit / 60 / 1000) * RMC::GoalMedalCount / (TotalTime / 60 / 100));
-                UI::Text("Pace: " + goalPace);
-            } catch {
-                UI::Text("Pace: 0");
-            }
+            RenderPace();
         }
 
         if (PluginSettings::RMC_DisplayCurrentMap) {
@@ -119,6 +114,15 @@ class RMC {
         if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             UI::Separator();
             RenderPlayingButtons();
+        }
+    }
+
+    void RenderPace() {
+        try {
+            int goalPace = int(Math::Floor(float(TimeLimit) * RMC::GoalMedalCount / float(TotalTime)));
+            UI::Text("Pace: " + goalPace);
+        } catch {
+            UI::Text("Pace: 0");
         }
     }
 

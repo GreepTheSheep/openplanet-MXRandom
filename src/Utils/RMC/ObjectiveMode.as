@@ -4,6 +4,8 @@ class RMObjective : RMC {
 
     string get_ModeName() override { return "Random Map Objective";}
 
+    void RenderPace() override { }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
         if (RMC::IsRunning) {
