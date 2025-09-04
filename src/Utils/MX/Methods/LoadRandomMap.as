@@ -61,7 +61,7 @@ namespace MX {
 
             // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
             if (PluginSettings::RMC_Medal == Medals::WR) {
-                if (PluginSettings::MapType == MapTypes::Platform || PluginSettings::MapType == MapTypes::Royal) {
+                if (PluginSettings::CustomRules && (PluginSettings::MapType == MapTypes::Platform || PluginSettings::MapType == MapTypes::Royal)) {
                     // Platform and Royal don't support leaderboards
                     Log::Warn("Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
@@ -276,8 +276,7 @@ namespace MX {
         if (
             (RMC::IsRunning || RMC::IsStarting)
             && PluginSettings::RMC_Medal == Medals::WR
-            && PluginSettings::MapType != MapTypes::Platform
-            && PluginSettings::MapType != MapTypes::Royal
+            && (!PluginSettings::CustomRules || !customParameters || (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal))
         ) {
             // We only want maps with a WR
             params.Set("inhasrecord", "1");
@@ -292,13 +291,10 @@ namespace MX {
         }
 #endif
 
-        switch (PluginSettings::MapType) {
-            case MapTypes::Race:
-                params.Set("maptype", SUPPORTED_MAP_TYPE);
-                break;
-            default:
-                params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
-                break;
+        if (!PluginSettings::CustomRules || !customParameters || PluginSettings::MapType == MapTypes::Race) {
+            params.Set("maptype", SUPPORTED_MAP_TYPE);
+        } else {
+            params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
         }
 
         string urlParams = DictToApiParams(params);
