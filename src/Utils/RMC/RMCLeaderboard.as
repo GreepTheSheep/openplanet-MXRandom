@@ -3,82 +3,113 @@
 
 #if TMNEXT
 namespace RMCLeaderAPI {
-    bool connected = false;
-    bool connectionError = false;
-    bool connectionInProgress = false;
-    int connectionAttempts = 0;
-    int postingResultsAttempts = 0;
     string AccountToken = "";
     string AccountId = "";
+    ConnectionStatus Status = ConnectionStatus::Not_Connected;
+
+    enum ConnectionStatus {
+        Not_Connected,
+        Connecting,
+        Connected,
+        Error
+    }
+
+    bool get_IsConnected() {
+        return Status == ConnectionStatus::Connected;
+    }
+
+    bool get_IsConnecting() {
+        return Status == ConnectionStatus::Connecting;
+    }
+
+    bool get_IsError() {
+        return Status == ConnectionStatus::Error;
+    }
 
     void Login() {
-        if (connectionAttempts >= 5) {
-            Log::Error("Too many failed connection attempts on the leaderboard API. Sending records are disabled for this time.", true);
-            connectionError = true;
-            connected = false;
-            return;
-        }
+        if (IsConnected) return;
 
-        connectionAttempts++;
-        connectionInProgress = true;
-        Log::Log("Starting Auth...");
+        CTrackMania@ app = cast<CTrackMania@>(GetApp());
 
-        Auth::PluginAuthTask@ tokenTask = Auth::GetToken();
+        Status = ConnectionStatus::Connecting;
+        int connectionAttempts = 0;
 
-        while (!tokenTask.Finished()) yield();
+        while (!IsConnected && connectionAttempts < 5)  {
+            connectionAttempts++;
 
-        if (!tokenTask.IsSuccess() || tokenTask.Token() == "") {
-            Log::Warn("Account token fetching failed: " + tokenTask.Error() + " - Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::Login();
-        }
+            Log::Log("Starting Auth...");
 
-        AccountToken = tokenTask.Token();
+            if (AccountToken == "") {
+                Auth::PluginAuthTask@ tokenTask = Auth::GetToken();
 
-        if (Meta::IsDeveloperMode()) Log::Trace("Token: " + AccountToken);
-        if (Meta::IsDeveloperMode()) Log::Log("Sending Token...");
+                while (!tokenTask.Finished()) yield();
 
-        CTrackManiaNetwork@ Network = cast<CTrackManiaNetwork>(GetApp().Network);
-        AccountId = Network.PlayerInfo.WebServicesUserId;
+                if (!tokenTask.IsSuccess() || tokenTask.Token() == "") {
+                    Log::Warn("Account token fetching failed: " + tokenTask.Error() + " - Retrying...");
+                    sleep(5000);
+                    continue;
+                }
 
-        Json::Value@ serverJson = Json::Object();
-        serverJson["token"] = AccountToken;
-        serverJson["player_id"] = AccountId;
-        serverJson["plugin_version"] = PLUGIN_VERSION;
-
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/auth.php", Json::Write(serverJson));
-
-        if (serverRes.HasKey("success")) {
-            bool isSuccess = serverRes["success"];
-            if (!isSuccess) {
-                string errMsg = serverRes["message"];
-                Log::Warn("Login failed: " + errMsg + " - Retrying...");
-                sleep(5000);
-                RMCLeaderAPI::Login();
-            } else {
-                string srvDisplayName = serverRes["player_name"];
-                Log::Log("Connected! Display name: " + srvDisplayName, Meta::IsDeveloperMode());
-                connectionError = false;
-                connectionInProgress = false;
-                connected = true;
+                AccountToken = tokenTask.Token();
             }
-        } else {
-            // failed, retry
-            Log::Warn("Login failed: API returned unexpected values. Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::Login();
-            return;
+
+            if (app.LocalPlayerInfo is null || app.LocalPlayerInfo.WebServicesUserId == "") {
+                Log::Warn("Failed to get account ID from local player - Retrying...");
+                sleep(5000);
+                continue;
+            }
+
+            AccountId = app.LocalPlayerInfo.WebServicesUserId;
+
+#if SIG_DEVELOPER
+            Log::Trace("Token: " + AccountToken);
+            Log::Log("Sending Token...");
+#endif
+
+            Json::Value@ json = Json::Object();
+            json["token"] = AccountToken;
+            json["player_id"] = AccountId;
+            json["plugin_version"] = PLUGIN_VERSION;
+
+            Json::Value@ res = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/auth.php", Json::Write(json));
+
+            if (res.HasKey("success")) {
+                bool isSuccess = res["success"];
+
+                if (isSuccess) {
+                    string srvDisplayName = res["player_name"];
+                    Log::Log("Connected! Display name: " + srvDisplayName, Meta::IsDeveloperMode());
+                    Status = ConnectionStatus::Connected;
+                    return;
+                } else {
+                    string errMsg = res["message"];
+                    Log::Warn("Login failed: " + errMsg + " - Retrying...");
+                    sleep(5000);
+                }
+            } else {
+                // failed, retry
+                Log::Warn("Login failed: API returned unexpected values. Retrying...");
+                sleep(5000);
+            }
+        }
+
+        if (!IsConnected) {
+            Log::Error("Too many failed connection attempts on the leaderboard API. Sending records are disabled for this time.", true);
+            Status = ConnectionStatus::Error;
         }
     }
 
     void postRMC(const int &in goal, const int &in belowGoal, Medals objective = Medals::Author) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
-        if (!connected) {
+        if (!IsConnected) {
             // Retry login
-            connectionError = false;
-            connectionAttempts = 0;
             Login();
+        }
+
+        if (IsError) {
+            Log::Error("Failed to post RMC results: Couldn't connect to the leaderboard API.", true);
+            return;
         }
 
 #if SIG_SCHOOL
@@ -93,59 +124,60 @@ namespace RMCLeaderAPI {
             return;
         }
 
-        if (postingResultsAttempts >= 10) {
-            Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
-            postingResultsAttempts = 0;
-            return;
-        }
+        Json::Value@ json = Json::Object();
+        json["accountId"] = AccountId;
+        json["objective"] = tostring(objective).ToLower();
+        json["goal"] = goal;
+        json["below_goal"] = belowGoal;
 
-        postingResultsAttempts++;
-        string objectiveFormatted = tostring(objective).ToLower();
+        int attempts = 0;
 
-        Json::Value@ serverJson = Json::Object();
-        serverJson["accountId"] = AccountId;
-        serverJson["objective"] = objectiveFormatted;
-        serverJson["goal"] = goal;
-        serverJson["below_goal"] = belowGoal;
+        while (attempts < 10) {
+            attempts++;
 
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rmc.php", Json::Write(serverJson));
+            Json::Value@ res = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rmc.php", Json::Write(json));
 
-        if (serverRes.GetType() != Json::Type::Object) {
-            // failed, retry
-            Log::Warn("Posting RMC results failed: API didn't return an object. Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::postRMC(goal, belowGoal, objective);
-            return;
-        }
-
-        if (serverRes.HasKey("success")) {
-            bool isSuccess = serverRes["success"];
-            if (!isSuccess) {
-                string errMsg = serverRes["message"];
-                Log::Warn("Posting RMC results failed: " + errMsg + "\nRetrying...");
+            if (res.GetType() != Json::Type::Object) {
+                // failed, retry
+                Log::Warn("Posting RMC results failed: API didn't return an object. Retrying...");
                 sleep(5000);
-                RMCLeaderAPI::postRMC(goal, belowGoal, objective);
-            } else {
-                string message = serverRes["message"];
-                Log::Log(message, true);
+                continue;
             }
-        } else {
-            // failed, retry
-            Log::Warn("Posting RMC results failed: API returned unexpected values. Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::postRMC(goal, belowGoal, objective);
-            return;
+
+            if (res.HasKey("success")) {
+                bool isSuccess = res["success"];
+                string message = res["message"];
+
+                if (isSuccess) {
+                    Log::Log(message, true);
+                    return;
+                } else {
+                    Log::Warn("Posting RMC results failed: " + message + " - Retrying...");
+                    sleep(5000);
+                    continue;
+                }
+            } else {
+                // failed, retry
+                Log::Warn("Posting RMC results failed: API returned unexpected values. Retrying...");
+                sleep(5000);
+                continue;
+            }
         }
+
+        Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
     }
 
     void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, Medals objective = Medals::Author) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
-        if (!connected) {
+        if (!IsConnected) {
             // Retry login
-            connectionError = false;
-            connectionAttempts = 0;
             Login();
+        }
+
+        if (IsError) {
+            Log::Error("Failed to post RMS results: Couldn't connect to the leaderboard API.", true);
+            return;
         }
 
 #if SIG_SCHOOL
@@ -160,51 +192,48 @@ namespace RMCLeaderAPI {
             return;
         }
 
-        if (postingResultsAttempts >= 10) {
-            Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
-            postingResultsAttempts = 0;
-            return;
-        }
+        Json::Value@ json = Json::Object();
+        json["accountId"] = AccountId;
+        json["objective"] = tostring(objective).ToLower();
+        json["goal"] = goal;
+        json["skips"] = skips;
+        json["time_survived"] = survivedTime / 1000;
 
-        postingResultsAttempts++;
-        int survivedTimeSeconds = survivedTime / 1000;
-        string objectiveFormatted = tostring(objective).ToLower();
+        int attempts = 0;
 
-        Json::Value@ serverJson = Json::Object();
-        serverJson["accountId"] = AccountId;
-        serverJson["objective"] = objectiveFormatted;
-        serverJson["goal"] = goal;
-        serverJson["skips"] = skips;
-        serverJson["time_survived"] = survivedTimeSeconds;
+        while (attempts < 10) {
+            attempts++;
 
-        Json::Value@ serverRes = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rms.php", Json::Write(serverJson));
+            Json::Value@ res = API::PostAsync(PluginSettings::RMC_Leaderboard_Url + "/api/rms.php", Json::Write(json));
 
-        if (serverRes.GetType() != Json::Type::Object) {
-            // failed, retry
-            Log::Warn("Posting RMS results failed: API didn't return an object. Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
-            return;
-        }
-
-        if (serverRes.HasKey("success")) {
-            bool isSuccess = serverRes["success"];
-            if (!isSuccess) {
-                string errMsg = serverRes["message"];
-                Log::Warn("Posting RMS results failed: " + errMsg + "\nRetrying...");
+            if (res.GetType() != Json::Type::Object) {
+                // failed, retry
+                Log::Warn("Posting RMS results failed: API didn't return an object. Retrying...");
                 sleep(5000);
-                RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
-            } else {
-                string message = serverRes["message"];
-                Log::Log(message, true);
+                continue;
             }
-        } else {
-            // failed, retry
-            Log::Warn("Posting RMS results failed: API returned unexpected values. Retrying...");
-            sleep(5000);
-            RMCLeaderAPI::postRMS(goal, skips, survivedTime, objective);
-            return;
+
+            if (res.HasKey("success")) {
+                bool isSuccess = res["success"];
+                string message = res["message"];
+
+                if (isSuccess) {
+                    Log::Log(message, true);
+                    return;
+                } else {
+                    Log::Warn("Posting RMS results failed: " + message + " - Retrying...");
+                    sleep(5000);
+                    continue;
+                }
+            } else {
+                // failed, retry
+                Log::Warn("Posting RMS results failed: API returned unexpected values. Retrying...");
+                sleep(5000);
+                continue;
+            }
         }
+
+        Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
     }
 }
 #endif
