@@ -36,17 +36,15 @@ class RMCConfig {
         Log::Trace("Fetched and loaded RMC configs!", IS_DEV_MODE);
     }
 
-    bool HasPrepatchTags(const MX::MapInfo &in map) {
-        for (uint j = 0; j < map.Tags.Length; j++) {
-            for (uint i = 0; i < prepatchMapTags.Length; i++) {
-                if (map.Tags[j].ID == prepatchMapTags[i].ID) {
-                    auto patchDate = Date(prepatchMapTags[i].ExeBuild, "%F_%H_%M");
-                    auto mapCreation = Date(map.ExeBuild, "%F_%H_%M");
+    bool HasPrepatchTags(MX::MapInfo@ map) {
+        for (uint i = 0; i < prepatchMapTags.Length; i++) {
+            if (map.HasTag(prepatchMapTags[i].ID)) {
+                auto patchDate = Date(prepatchMapTags[i].ExeBuild, "%F_%H_%M");
+                auto mapCreation = Date(map.ExeBuild, "%F_%H_%M");
 
-                    if (mapCreation.isBefore(patchDate)) {
-                        // if map was released before the patch, it's broken
-                        return true;
-                    }
+                if (mapCreation.isBefore(patchDate)) {
+                    // if map was released before the patch, it's broken
+                    return true;
                 }
             }
         }
@@ -54,12 +52,10 @@ class RMCConfig {
         return false;
     }
 
-    RMCConfigMapTag@ GetPrepatchTag(const MX::MapInfo &in map) {
-        for (uint j = 0; j < map.Tags.Length; j++) {
-            for (uint i = 0; i < prepatchMapTags.Length; i++) {
-                if (map.Tags[j].ID == prepatchMapTags[i].ID) {
-                    return prepatchMapTags[i];
-                }
+    RMCConfigMapTag@ GetPrepatchTag(MX::MapInfo@ map) {
+        for (uint i = 0; i < prepatchMapTags.Length; i++) {
+            if (map.HasTag(prepatchMapTags[i].ID)) {
+                return prepatchMapTags[i];
             }
         }
 
