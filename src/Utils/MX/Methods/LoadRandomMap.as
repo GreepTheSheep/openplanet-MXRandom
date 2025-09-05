@@ -210,11 +210,18 @@ namespace MX {
         params.Set("fields", MAP_FIELDS);
         params.Set("random", "1");
         params.Set("count", "1");
+#if TMNEXT
+        params.Set("vehicle", "1,2,3,4"); // prevent loading CharacterPilot maps
+#elif MP4
+        if (TM::CurrentTitlePack() == "TMAll") {
+            int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
+            params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
+        } else {
+            params.Set("titlepack", TM::CurrentTitlePack());
+        }
+#endif
 
-        if ((RMC::IsRunning || RMC::IsStarting) && (!customParameters || !PluginSettings::CustomRules)) {
-            params.Set("etag", RMC::config.etags);
-            params.Set("authortimemax", tostring(RMC::config.length));
-        } else if (customParameters && PluginSettings::CustomRules) {
+        if (PluginSettings::CustomRules && customParameters) {
             if (PluginSettings::UseCustomLength) {
                 if (PluginSettings::MinLength != 0) {
                     params.Set("authortimemin", tostring(PluginSettings::MinLength));
@@ -267,34 +274,32 @@ namespace MX {
             if (PluginSettings::MapPackID != 0) {
                 params.Set("mappackid", tostring(PluginSettings::MapPackID));
             }
-        }
 
-#if TMNEXT
-        // prevent loading CharacterPilot maps
-        params.Set("vehicle", "1,2,3,4");
+            if (PluginSettings::MapType == MapTypes::Race) {
+                params.Set("maptype", SUPPORTED_MAP_TYPE);
+            } else {
+                params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
+            }
 
-        if (
-            (RMC::IsRunning || RMC::IsStarting)
-            && PluginSettings::RMC_Medal == Medals::WR
-            && (!PluginSettings::CustomRules || !customParameters || (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal))
-        ) {
-            // We only want maps with a WR
-            params.Set("inhasrecord", "1");
-        }
-#elif MP4
-        // Fetch in the correct titlepack
-        if (TM::CurrentTitlePack() == "TMAll") {
-            int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
-            params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
+            if (RMC::IsRunning || RMC::IsStarting) {
+                if (PluginSettings::RMC_Medal == Medals::WR) {
+                    if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
+                        params.Set("inhasrecord", "1");
+                    }
+                }
+            }
         } else {
-            params.Set("titlepack", TM::CurrentTitlePack());
-        }
-#endif
-
-        if (!PluginSettings::CustomRules || !customParameters || PluginSettings::MapType == MapTypes::Race) {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
-        } else {
-            params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
+
+            if (RMC::IsRunning || RM::IsStarting) {
+                params.Set("etag", RMC::config.etags);
+                params.Set("authortimemax", tostring(RMC::config.length));
+
+                if (PluginSettings::RMC_Medal == Medals::WR) {
+                    // We only want maps with a WR
+                    params.Set("inhasrecord", "1");
+                }
+            }
         }
 
         string urlParams = DictToApiParams(params);
