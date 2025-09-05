@@ -27,6 +27,12 @@ namespace RMCLeaderAPI {
 
         while (!tokenTask.Finished()) yield();
 
+        if (!tokenTask.IsSuccess() || tokenTask.Token() == "") {
+            Log::Warn("Account token fetching failed: " + tokenTask.Error() + " - Retrying...");
+            sleep(5000);
+            RMCLeaderAPI::Login();
+        }
+
         AccountToken = tokenTask.Token();
 
         if (Meta::IsDeveloperMode()) Log::Trace("Token: " + AccountToken);
