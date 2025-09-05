@@ -291,7 +291,7 @@ namespace MX {
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
 
-            if (RMC::IsRunning || RM::IsStarting) {
+            if (RMC::IsRunning || RMC::IsStarting) {
                 params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
 
