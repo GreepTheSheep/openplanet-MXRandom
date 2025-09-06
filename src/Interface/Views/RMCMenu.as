@@ -121,11 +121,6 @@ namespace RMC {
                         UI::Text(Icons::ExclamationCircle + " Better Room Manager plugin not found.");
                         UI::SetPreviousTooltip("RMT can use Better Room Manager plugin (by XertroV) in order to autodetect Club and Room ID. This is optional.");
 #endif
-                        UI::TextDisabled(Icons::InfoCircle + " Click for help");
-
-                        if (UI::IsItemClicked()) {
-                            Renderables::Add(RMTHelpModalDialog());
-                        }
                     }
 
 #if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
@@ -157,11 +152,17 @@ namespace RMC {
                     if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
                         UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
 
-                        if (UI::Button("Check Room")) {
+                        if (UI::Button(Icons::Search + " Check room")) {
                             startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
                         }
 
                         UI::EndDisabled();
+
+                        UI::SameLine();
+
+                        if (UI::GreyButton(Icons::QuestionCircle + " Help")) {
+                            Renderables::Add(RMTHelpModalDialog());
+                        }
 
                         if (MXNadeoServicesGlobal::isCheckingRoom) {
                             UI::TextDisabled(Icons::AnimatedHourglass + " Checking...");
@@ -195,15 +196,19 @@ namespace RMC {
                             if (MXNadeoServicesGlobal::IsJoiningRoom) {
                                 UI::Text(Icons::AnimatedHourglass + " Joining room...");
                             } else {
-                                UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zPlease join the room before continuing.");
+                                UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zJoin the room before continuing.");
 #if DEPENDENCY_BETTERROOMMANAGER
-                                if (UI::GreenButton("Join room")) {
+                                if (UI::GreenButton(Icons::SignIn + " Join room")) {
                                     startnew(MXNadeoServicesGlobal::JoinRMTRoom);
                                 }
 #endif
                             }
                         }
                     }
+#else
+                if (UI::GreyButton(Icons::QuestionCircle + " Help")) {
+                    Renderables::Add(RMTHelpModalDialog());
+                }
 #endif
                 break;
 #endif
