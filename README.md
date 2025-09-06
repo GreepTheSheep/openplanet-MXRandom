@@ -61,5 +61,5 @@ Game modes are in an enumerated list.
 | 1          | Survival         |
 | 2          | Objective        |
 | 3          | Together         |
-| 4          | ChallengeChaos   |
-| 5          | SurvivalChaos    |
+| 4          | Challenge Chaos   |
+| 5          | Survival Chaos    |

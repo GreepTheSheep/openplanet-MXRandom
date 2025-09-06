@@ -19,7 +19,7 @@ namespace RMC {
             UI::SetItemText("Mode:", 200);
             if (UI::BeginCombo("##GamemodeSelect", tostring(selectedGameMode).Replace("_", " "))) {
 #if TMNEXT
-                for (uint i = 0; i <= GameMode::SurvivalChaos; i++) {
+                for (uint i = 0; i <= GameMode::Survival_Chaos; i++) {
 #else
                 for (uint i = 0; i <= GameMode::Objective; i++) {
 #endif
@@ -76,15 +76,15 @@ namespace RMC {
                     }
                     break;
 #if TMNEXT
-                case GameMode::ChallengeChaos:
-                case GameMode::SurvivalChaos:
+                case GameMode::Challenge_Chaos:
+                case GameMode::Survival_Chaos:
 #if DEPENDENCY_CHAOSMODE
                     if (UI::RedButton(Icons::Fire + " Start Chaos Mode")) {
-                        if (selectedGameMode == GameMode::ChallengeChaos) {
-                            currentGameMode = GameMode::ChallengeChaos;
+                        if (selectedGameMode == GameMode::Challenge_Chaos) {
+                            currentGameMode = GameMode::Challenge_Chaos;
                             @Challenge = RMC();
                         } else {
-                            currentGameMode = GameMode::SurvivalChaos;
+                            currentGameMode = GameMode::Survival_Chaos;
                             @Survival = RMS();
                         }
 
@@ -257,10 +257,10 @@ namespace RMC {
         ) {
             UI::Separator();
             UI::Text("Last run stats:");
-            if (currentGameMode == GameMode::Challenge || currentGameMode == GameMode::ChallengeChaos) {
+            if (currentGameMode == GameMode::Challenge || currentGameMode == GameMode::Challenge_Chaos) {
                 Challenge.RenderGoalMedal();
                 Challenge.RenderBelowGoalMedal();
-            } else if (currentGameMode == GameMode::Survival || currentGameMode == GameMode::SurvivalChaos) {
+            } else if (currentGameMode == GameMode::Survival || currentGameMode == GameMode::Survival_Chaos) {
                 Survival.RenderGoalMedal();
                 Survival.RenderBelowGoalMedal();
 
@@ -286,11 +286,11 @@ namespace RMC {
     void RenderRMCTimer() {
         switch (currentGameMode) {
             case GameMode::Challenge:
-            case GameMode::ChallengeChaos:
+            case GameMode::Challenge_Chaos:
                 Challenge.Render();
                 break;
             case GameMode::Survival:
-            case GameMode::SurvivalChaos:
+            case GameMode::Survival_Chaos:
                 Survival.Render();
                 break;
             case GameMode::Objective:

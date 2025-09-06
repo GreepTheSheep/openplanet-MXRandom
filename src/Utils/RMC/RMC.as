@@ -21,7 +21,7 @@ class RMC {
     };
 
     string get_ModeName() { 
-        if (RMC::currentGameMode == RMC::GameMode::ChallengeChaos) {
+        if (RMC::currentGameMode == RMC::GameMode::Challenge_Chaos) {
             return "Random Map Chaos Challenge";
         }
 
@@ -376,7 +376,7 @@ class RMC {
             RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
         }
 #if DEPENDENCY_CHAOSMODE
-        else if (RMC::currentGameMode == RMC::GameMode::ChallengeChaos) {
+        else if (RMC::currentGameMode == RMC::GameMode::Challenge_Chaos) {
             ChaosMode::SetRMCMode(false);
         }
 #endif
