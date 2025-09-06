@@ -352,7 +352,7 @@ namespace PluginSettings {
 #endif
 
         FilterLowEffort = UI::Checkbox("Filter low effort maps", FilterLowEffort);
-        UI::SettingDescription("If enabled, the plugin will try to detect and filter low effort maps.\n\nE.g., RMC free, maps created for streamers, long series, and randomly generated tracks.");
+        UI::SettingDescription("If enabled, the plugin will try to detect and filter low effort maps.\n\nE.g., RMC free, maps created for streamers, and randomly generated tracks.");
 
         FilterUntagged = UI::Checkbox("Filter untagged maps", FilterUntagged);
         UI::SettingDescription("If enabled, the plugin will try to detect and filter maps missing default filtered tags.\n\nE.g., untagged Kacky / Altered Nadeo maps.");

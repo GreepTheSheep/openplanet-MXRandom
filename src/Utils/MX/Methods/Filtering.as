@@ -36,7 +36,8 @@ namespace MX {
                     return true;
                 }
 
-                if (Regex::Contains(name, "#?0*(2[6-9]|[3-9]\\d|\\d{3,})[^0-9]?$", Regex::Flags::CaseInsensitive)) {
+                // Disabled for now
+                if (false && Regex::Contains(name, "#?0*(2[6-9]|[3-9]\\d|\\d{3,})[^0-9]?$", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely from a long low effort series.");
                     return true;
                 }
