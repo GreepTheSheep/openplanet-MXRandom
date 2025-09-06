@@ -4,30 +4,42 @@ namespace MX {
             return false;
         }
 
-        if (Regex::Contains(map.Name, "(^|[^a-z])RM[CST]($|[^a-z])", Regex::Flags::CaseInsensitive)) {
-            Log::Warn("Map contains the word RMC, RMS, or RMT.");
-            return true;
+        array<string> names = { map.Name };
+
+        string cleanName = Text::StripFormatCodes(map.GbxMapName);
+
+        if (map.Name != cleanName) {
+            names.InsertLast(cleanName);
         }
 
-        if (map.AwardCount < 10 && Regex::Contains(map.Name, "(Scrapie|granady|Ssano|Wirtual)|(\\blars\\b)", Regex::Flags::CaseInsensitive)) {
-            Log::Warn("Map is most likely for a streamer and low effort.");
-            return true;
-        }
+        for (uint i = 0; i < names.Length; i++) {
+            string name = names[i];
 
-        if (map.AwardCount < 5) {
-            if (Regex::Contains(map.Name, "Generator|Generated|Random map|\\b(RMM|RMG)\\b", Regex::Flags::CaseInsensitive)) {
-                Log::Warn("Map is most likely randomly generated.");
+            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map contains the word RMC, RMS, or RMT.");
                 return true;
             }
 
-            if (Regex::Contains(map.Name, "(^|[^a-z])(awful|annoying|shit|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
-                Log::Warn("Map is most likely low effort.");
+            if (map.AwardCount < 10 && Regex::Contains(name, "(Scrapie|granady|Ssano|Wirtual)|(\\blars\\b)", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is most likely for a streamer and low effort.");
                 return true;
             }
 
-            if (Regex::Contains(map.Name, "#?0*(2[6-9]|[3-9]\\d|\\d{3,})[^0-9]?$", Regex::Flags::CaseInsensitive)) {
-                Log::Warn("Map is most likely from a long low effort series.");
-                return true;
+            if (map.AwardCount < 5) {
+                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG)\\b", Regex::Flags::CaseInsensitive)) {
+                    Log::Warn("Map is most likely randomly generated.");
+                    return true;
+                }
+
+                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|lunatic|sorry|annoying|shit|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                    Log::Warn("Map is most likely low effort.");
+                    return true;
+                }
+
+                if (Regex::Contains(name, "#?0*(2[6-9]|[3-9]\\d|\\d{3,})[^0-9]?$", Regex::Flags::CaseInsensitive)) {
+                    Log::Warn("Map is most likely from a long low effort series.");
+                    return true;
+                }
             }
         }
 
