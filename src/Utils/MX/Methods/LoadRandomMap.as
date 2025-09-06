@@ -53,6 +53,11 @@ namespace MX {
                 }
             }
 
+            if ((!PluginSettings::CustomRules || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
+                Log::Warn("Map is from a blacklisted author, skipping...");
+                return null;
+            }
+
 #if TMNEXT
             if (RMC::currentGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
                 Log::Warn("Map is too big to play in servers, retrying...");

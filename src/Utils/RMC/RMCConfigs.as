@@ -6,6 +6,7 @@ class RMCConfig {
     string etags = "20";
 #endif
     int length = 180000;
+    array<string> blacklistedAuthors;
 
     RMCConfig(const Json::Value &in json) {
         if (json.GetType() == Json::Type::Null || !json.HasKey("next") || !json.HasKey("mp4")) {
@@ -25,6 +26,12 @@ class RMCConfig {
             }
         }
 
+        if (data.HasKey("blacklistedAuthors")) {
+            for (uint i = 0; i < data["blacklistedAuthors"].Length; i++) {
+                blacklistedAuthors.InsertLast(string(data["blacklistedAuthors"][i]).ToLower());
+            }
+        }
+
         if (data.HasKey("search-etags") && data["search-etags"].GetType() == Json::Type::String) {
             etags = data["search-etags"];
         }
@@ -34,6 +41,10 @@ class RMCConfig {
         }
 
         Log::Trace("Fetched and loaded RMC configs!", IS_DEV_MODE);
+    }
+
+    bool IsAuthorBlacklisted(MX::MapInfo@ map) {
+        return blacklistedAuthors.Find(map.Username.ToLower()) > -1;
     }
 
     bool HasPrepatchTags(MX::MapInfo@ map) {
