@@ -113,7 +113,7 @@ class MX2MigrationWizardModalDialog : ModalDialog {
             if (!m_MapsFetched.IsEmpty() && UI::TreeNode("Saved maps")) {
                 for (uint i = 0; i < m_MapsFetched.Length; i++) {
                     UI::Text(m_MapsFetched[i].MapId + ": " + m_MapsFetched[i].Name + " - " + m_MapsFetched[i].Username);
-                    if (UI::IsItemClicked()) OpenBrowserURL("https://" + MX_URL + "/mapshow/" + m_MapsFetched[i].MapId);
+                    if (UI::IsItemClicked()) OpenBrowserURL(MX_URL + "/mapshow/" + m_MapsFetched[i].MapId);
                 }
 
                 UI::TreePop();

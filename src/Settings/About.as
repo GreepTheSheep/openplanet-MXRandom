@@ -68,13 +68,13 @@ void RenderAboutTab() {
     UI::PopFont();
 
     if (UI::Button(Icons::KeyboardO + " \\$zContact ManiaExchange")) {
-        OpenBrowserURL("https://" + MX_URL + "/postcreate?PmTargetUserId=11");
+        OpenBrowserURL(MX_URL + "/postcreate?PmTargetUserId=11");
     }
 
     UI::SameLine();
 
     if (UI::RedButton(Icons::Heart + " \\$zSupport ManiaExchange")) {
-        OpenBrowserURL("https://" + MX_URL + "/about?r=support");
+        OpenBrowserURL(MX_URL + "/about?r=support");
     }
 
     UI::Text("Base URL \\$777" + PluginSettings::RMC_MX_Url);

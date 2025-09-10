@@ -92,7 +92,7 @@ namespace Migration {
 
     void MigrateMX1Settings() {
         if (PluginSettings::RMC_MX_Url == "https://map-monitor.xk.io") {
-            PluginSettings::RMC_MX_Url = "https://" + MX_URL;
+            PluginSettings::RMC_MX_Url = MX_URL;
         }
 
         if (PluginSettings::MapAuthor.Contains(",")) {

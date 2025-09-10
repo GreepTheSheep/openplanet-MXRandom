@@ -39,7 +39,7 @@ namespace Render {
 #if DEPENDENCY_MANIAEXCHANGE
                     ManiaExchange::ShowMapInfo(map.MapId);
 #else
-                    OpenBrowserURL("https://" + MX_URL + "/mapshow/" + map.MapId);
+                    OpenBrowserURL(MX_URL + "/mapshow/" + map.MapId);
 #endif
                 }
                 UI::SameLine();

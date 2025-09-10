@@ -3,7 +3,7 @@ namespace PluginSettings {
     bool closeOverlayOnMapLoaded = true;
 
     [Setting hidden]
-    string RMC_MX_Url = "https://" + MX_URL;
+    string RMC_MX_Url = MX_URL;
 
     [Setting hidden]
     string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
@@ -12,7 +12,7 @@ namespace PluginSettings {
     void RenderAdvancedSettings() {
         if (UI::OrangeButton("Reset to default")) {
             closeOverlayOnMapLoaded = true;
-            RMC_MX_Url = "https://" + MX_URL;
+            RMC_MX_Url = MX_URL;
             RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
         }
 
@@ -27,7 +27,7 @@ namespace PluginSettings {
 
 #if TMNEXT
         if (UI::Button("Use official TMX API")) {
-            RMC_MX_Url = "https://" + MX_URL;
+            RMC_MX_Url = MX_URL;
         }
 
         if (PluginSettings::RMC_PushLeaderboardResults) {
