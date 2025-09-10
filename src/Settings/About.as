@@ -24,6 +24,8 @@ void RenderAboutTab() {
     UI::SeparatorText(MX_COLOR_STR + Icons::Random + " \\$z " + PLUGIN_NAME);
     UI::PopFont();
 
+    UI::PushID(PLUGIN_NAME);
+
     UI::Text("Made by \\$777" + Meta::ExecutingPlugin().Author + " \\$aaaand its contributors");
     UI::Text("Version \\$777" + PLUGIN_VERSION);
     UI::Text("Plugin ID \\$777" + Meta::ExecutingPlugin().ID);
@@ -47,33 +49,51 @@ void RenderAboutTab() {
 
     UI::SameLine();
 
+    if (UI::Button(Icons::Heartbeat + " Plugin Home")) {
+        OpenBrowserURL("https://openplanet.dev/plugin/" + Meta::ExecutingPlugin().SiteID);
+    }
+
+    UI::PopID();
+
+    UI::PushFont(Fonts::HeaderSub);
+    UI::SeparatorText("\\$f39" + Icons::Heartbeat + "\\$z Openplanet");
+    UI::PopFont();
+
+    UI::PushID("Openplanet");
+
+    UI::Text("Version \\$777" + Meta::OpenplanetBuildInfo());
+
     if (UI::Button(Icons::DiscordAlt + " Discord")) {
-        OpenBrowserURL("https://greep.gq/discord");
+        OpenBrowserURL("https://discord.com/invite/openplanet");
     }
 
     UI::SameLine();
 
-    if (UI::Button(Icons::Heartbeat + " Plugin Home")) {
-        OpenBrowserURL("https://openplanet.nl/files/" + Meta::ExecutingPlugin().SiteID);
+    if (UI::Button(Icons::Kenney::GithubAlt + " Github")) {
+        OpenBrowserURL("https://github.com/openplanet-nl");
     }
 
+    UI::SameLine();
+
+    if (UI::Button(Icons::Mastodon + " Mastodon")) {
+        OpenBrowserURL("https://mastodon.gamedev.place/@openplanet");
+    }
+
+    UI::PopID();
+
     UI::PushFont(Fonts::HeaderSub);
-    UI::SeparatorText("\\$f39" + Icons::Heartbeat + " \\$z " + "Openplanet");
+    UI::SeparatorText(MX_COLOR_STR + Icons::ManiaExchange + "\\$z ManiaExchange");
     UI::PopFont();
 
-    UI::Text("Version \\$777" + Meta::OpenplanetBuildInfo());
+    UI::PushID("ManiaExchange");
 
-    UI::PushFont(Fonts::HeaderSub);
-    UI::SeparatorText(MX_COLOR_STR + Icons::ManiaExchange + " \\$z " + "ManiaExchange");
-    UI::PopFont();
-
-    if (UI::Button(Icons::KeyboardO + " \\$zContact ManiaExchange")) {
+    if (UI::Button(Icons::KeyboardO + " Contact ManiaExchange")) {
         OpenBrowserURL(MX_URL + "/postcreate?PmTargetUserId=11");
     }
 
     UI::SameLine();
 
-    if (UI::RedButton(Icons::Heart + " \\$zSupport ManiaExchange")) {
+    if (UI::RedButton(Icons::Heart + " Support ManiaExchange")) {
         OpenBrowserURL(MX_URL + "/about?r=support");
     }
 
@@ -90,8 +110,9 @@ void RenderAboutTab() {
 
     UI::SameLine();
 
-    if (UI::Button(Icons::Twitter + " Twitter")) {
-        OpenBrowserURL("https://twitter.com/maniaexchange/");
+    // TODO missing icon
+    if (UI::Button("Bluesky")) {
+        OpenBrowserURL("https://bsky.app/profile/maniaexchange.bsky.social");
     }
 
     UI::SameLine();
@@ -105,4 +126,6 @@ void RenderAboutTab() {
     if (UI::Button(Icons::DiscordAlt + " Discord")) {
         OpenBrowserURL("https://discord.mania.exchange/");
     }
+
+    UI::PopID();
 }
