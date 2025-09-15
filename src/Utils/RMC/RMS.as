@@ -127,7 +127,7 @@ class RMS : RMC {
         );
 
 #if TMNEXT
-        if (RMC::currentGameMode == RMC::GameMode::Challenge) {
+        if (RMC::currentGameMode == RMC::GameMode::Survival) {
             RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
         }
 #if DEPENDENCY_CHAOSMODE
