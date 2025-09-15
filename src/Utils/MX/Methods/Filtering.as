@@ -26,7 +26,7 @@ namespace MX {
             }
 
             if (map.AwardCount < 5) {
-                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG)\\b", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG|R?TGE)\\b", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely randomly generated.");
                     return true;
                 }
