@@ -26,9 +26,7 @@ namespace RMC {
         Challenge,
         Survival,
         Objective,
-        Together,
-        Challenge_Chaos,
-        Survival_Chaos
+        Together
     }
     GameMode currentGameMode;
 
@@ -107,10 +105,10 @@ namespace RMC {
             yield();
         }
 
-        if (RMC::currentGameMode == GameMode::Challenge || RMC::currentGameMode == GameMode::Challenge_Chaos) {
+        if (RMC::currentGameMode == GameMode::Challenge) {
             @Challenge.currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             Challenge.StartTimer();
-        } else if (RMC::currentGameMode == GameMode::Survival || RMC::currentGameMode == GameMode::Survival_Chaos) {
+        } else if (RMC::currentGameMode == GameMode::Survival) {
             @Survival.currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
             Survival.StartTimer();
         } else if (RMC::currentGameMode == GameMode::Objective) {

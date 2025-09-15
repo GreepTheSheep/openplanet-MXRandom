@@ -2,10 +2,6 @@ class RMS : RMC {
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
     string get_ModeName() override { 
-        if (RMC::currentGameMode == RMC::GameMode::Survival_Chaos) {
-            return "Random Map Chaos Survival";
-        }
-
         return "Random Map Survival";
     }
 
@@ -130,11 +126,6 @@ class RMS : RMC {
         if (RMC::currentGameMode == RMC::GameMode::Survival) {
             RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
         }
-#if DEPENDENCY_CHAOSMODE
-        else if (RMC::currentGameMode == RMC::GameMode::Survival_Chaos) {
-            ChaosMode::SetRMCMode(false);
-        }
-#endif
 #endif
     }
 

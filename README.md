@@ -16,8 +16,6 @@ Select "Random Map Challenge" to play one of the following game modes:
 * Random Map Survival (RMS)
 * Random Map Objective (RMO)
 * Random Map Together (RMT) (TM2020 only, requires [MLFeed](https://openplanet.dev/plugin/mlfeedracedata) and [MLHook](https://openplanet.dev/plugin/mlhook))
-* Random Map Challenge Chaos (TM2020 only, requires [Chaos Mode](https://openplanet.dev/plugin/chaosmode))
-* Random Map Survival Chaos (TM2020 only, requires [Chaos Mode](https://openplanet.dev/plugin/chaosmode))
 
 ## Exports
 
@@ -61,5 +59,3 @@ Game modes are in an enumerated list.
 | 1          | Survival         |
 | 2          | Objective        |
 | 3          | Together         |
-| 4          | Challenge Chaos   |
-| 5          | Survival Chaos    |

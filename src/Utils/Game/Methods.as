@@ -36,12 +36,6 @@ namespace TM {
         if (gameMode == "") MX::ModesFromTitlePack.Get(map.TitlePack, gameMode);
 #endif
 
-#if DEPENDENCY_CHAOSMODE
-        if (ChaosMode::IsInRMCMode()) {
-            gameMode = "TrackMania/ChaosModeRMC";
-        }
-#endif
-
         app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
 
         const uint start = Time::Now;

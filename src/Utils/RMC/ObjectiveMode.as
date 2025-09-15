@@ -110,10 +110,6 @@ class RMObjective : RMC {
         while (RMC::IsRunning) {
             yield();
 
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(RMC::IsPaused);
-#endif
-
             if (!RMC::IsPaused) {
                 if (!InCurrentMap()) {
                     RMC::IsPaused = true;

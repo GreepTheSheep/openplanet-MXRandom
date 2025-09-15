@@ -21,10 +21,6 @@ class RMC {
     };
 
     string get_ModeName() { 
-        if (RMC::currentGameMode == RMC::GameMode::Challenge_Chaos) {
-            return "Random Map Chaos Challenge";
-        }
-
         return "Random Map Challenge";
     }
 
@@ -72,9 +68,7 @@ class RMC {
                 RMC::UserEndedRun = true;
                 RMC::IsRunning = false;
                 RMC::ShowTimer = false;
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCMode(false);
-#endif
+
                 int secondaryCount = RMC::currentGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
                 if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
@@ -375,11 +369,6 @@ class RMC {
         if (RMC::currentGameMode == RMC::GameMode::Challenge) {
             RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
         }
-#if DEPENDENCY_CHAOSMODE
-        else if (RMC::currentGameMode == RMC::GameMode::Challenge_Chaos) {
-            ChaosMode::SetRMCMode(false);
-        }
-#endif
 #endif
     }
 
@@ -405,10 +394,6 @@ class RMC {
 
         while (RMC::IsRunning) {
             yield();
-
-#if DEPENDENCY_CHAOSMODE
-                ChaosMode::SetRMCPaused(RMC::IsPaused);
-#endif
 
             if (!RMC::IsPaused) {
                 if (!InCurrentMap()) {
