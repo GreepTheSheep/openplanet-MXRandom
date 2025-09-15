@@ -287,11 +287,13 @@ namespace MX {
             }
 
             if (RMC::IsRunning || RMC::IsStarting) {
+#if TMNEXT
                 if (PluginSettings::RMC_Medal == Medals::WR) {
                     if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
                         params.Set("inhasrecord", "1");
                     }
                 }
+#endif
             }
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
@@ -300,10 +302,12 @@ namespace MX {
                 params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
 
+#if TMNEXT
                 if (PluginSettings::RMC_Medal == Medals::WR) {
                     // We only want maps with a WR
                     params.Set("inhasrecord", "1");
                 }
+#endif
             }
         }
 
