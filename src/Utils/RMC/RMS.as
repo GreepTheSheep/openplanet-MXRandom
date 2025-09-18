@@ -130,7 +130,7 @@ class RMS : RMC {
     }
 
     void GotGoalMedalNotification() override {
-        Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
+        Log::Trace("RMS: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
             TimeLeft += (3*60*1000);

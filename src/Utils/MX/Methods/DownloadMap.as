@@ -4,7 +4,7 @@ namespace MX {
             auto json = API::GetAsync(PluginSettings::RMC_MX_Url + "/api/maps?fields" + MAP_FIELDS + "&id=" + mapId);
 
             if (json.Length == 0) {
-                Log::Error("Track not found.", true);
+                Log::Error("[DownloadMap] Failed to find a map with ID #" + mapId, true);
                 return;
             }
 
@@ -16,7 +16,7 @@ namespace MX {
             if (!IO::FolderExists(mxDLFolder)) IO::CreateFolder(mxDLFolder);
 
             Net::HttpRequest@ netMap = API::Get(PluginSettings::RMC_MX_Url + "/mapgbx/" + mapId);
-            Log::Trace("Started downloading map " + map.Name + " (" + mapId + ") to " + mxDLFolder);
+            Log::Trace("[DownloadMap] Started downloading map " + map.Name + " (" + mapId + ") to " + mxDLFolder);
 
             while (!netMap.Finished()) {
                 yield();
@@ -26,9 +26,9 @@ namespace MX {
             _fileName = Path::SanitizeFileName(_fileName);
 
             netMap.SaveToFile(mxDLFolder + "/" + _fileName + ".Map.Gbx");
-            Log::Log("Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
+            Log::Log("[DownloadMap] Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
         } catch {
-            Log::Error("Error while downloading map");
+            Log::Error("Error while downloading map with ID #" + mapId, true);
         }
     }
 }

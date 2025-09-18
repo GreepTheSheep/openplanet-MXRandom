@@ -28,7 +28,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
-            print("RMC: Broken Map Skip");
+            Log::Log("RMC: Skipping broken map.");
             UI::ShowNotification("Please wait...");
             mode.TimeLeft += RMC::TimeSpentMap;
             mode.TotalTime -= RMC::TimeSpentMap;

@@ -10,7 +10,7 @@ namespace MX {
                 int tagID = resNet[i]["ID"];
                 string tagName = resNet[i]["Name"];
 
-                Log::Trace("Loading tag #" + tagID + " - " + tagName);
+                Log::Trace("[FetchMapTags] Loading tag #" + tagID + " - " + tagName);
 
                 m_mapTags.InsertLast(MapTag(resNet[i]));
             }
@@ -21,7 +21,7 @@ namespace MX {
             APIDown = false;
             APIRefreshing = false;
         } catch {
-            Log::Warn("Error while loading tags");
+            Log::Warn("[FetchMapTags] Error while loading tags");
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
             APIRefreshing = false;

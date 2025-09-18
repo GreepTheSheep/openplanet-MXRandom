@@ -44,7 +44,7 @@ namespace MXNadeoServicesGlobal {
             yield();
         }
 
-        Log::Trace("NadeoServices - Check server: " + req.String());
+        Log::Trace("[CheckNadeoRoom] Response: " + req.String());
         auto res = req.Json();
         isCheckingRoom = false;
 
@@ -76,9 +76,9 @@ namespace MXNadeoServicesGlobal {
         while (regScript.IsProcessing) yield();
 
         if (regScript.HasFailed) {
-            Log::Error("Uploading map failed: " + regScript.ErrorType + ", " + regScript.ErrorCode + ", " + regScript.ErrorDescription);
+            Log::Error("[UploadMapToNadeoServices] Map upload failed: " + regScript.ErrorType + ", " + regScript.ErrorCode + ", " + regScript.ErrorDescription);
         } else if (regScript.HasSucceeded) {
-            Log::Trace("UploadMapFromLocal: Map uploaded: " + AddMapToServer_MapUid);
+            Log::Trace("[UploadMapToNadeoServices] Map uploaded: " + AddMapToServer_MapUid);
         }
 
         dfm.TaskResult_Release(regScript.Id);
@@ -93,7 +93,7 @@ namespace MXNadeoServicesGlobal {
     bool CheckIfMapExistsAsync(const string &in mapUid) {
         string url = NadeoServices::BaseURLLive() + "/api/token/map/" + mapUid;
 
-        Log::Trace("NadeoServices - Check if map exists: " + url);
+        Log::Trace("[CheckIfMapExists] URL: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
         req.Start();
 
@@ -108,7 +108,7 @@ namespace MXNadeoServicesGlobal {
                 string errorMsg = res[0];
                 if (errorMsg.Contains("notFound")) return false;
             }
-            Log::Error("NadeoServices - Error checking if map exists: " + req.String());
+            Log::Error("[CheckIfMapExists] Error checking if map exists: " + req.String());
             return false;
         }
 
@@ -157,7 +157,7 @@ namespace MXNadeoServicesGlobal {
         }
 
         auto res = req.String();
-        Log::Trace("NadeoServices - " + callingFuncName + "::Res: " + res);
+        Log::Trace("NadeoServices - " + callingFuncName + ": Response: " + res);
     }
 
     void SetMapToClubRoomAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID) {
@@ -168,7 +168,7 @@ namespace MXNadeoServicesGlobal {
         bodyJson["maps"].Add(mapUID);
         string body = Json::Write(bodyJson);
 
-        Log::Trace("NadeoServices - SetMapToClubRoom: " + url + " - " + body);
+        Log::Trace("[SetMapToClubRoom]: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
         req.Start();
 
@@ -177,7 +177,7 @@ namespace MXNadeoServicesGlobal {
         }
 
         auto res = req.String();
-        Log::Trace("NadeoServices - SetMapToClubRoom::Res: " + res);
+        Log::Trace("[SetMapToClubRoom] Response: " + res);
     }
 
     void ClubRoomSwitchMapAsync(const NadeoServices::ClubRoom@ &in room) {
@@ -195,7 +195,7 @@ namespace MXNadeoServicesGlobal {
         bodyJson["settings"] = bodyJsonSettings;
         string body = Json::Write(bodyJson);
 
-        Log::Trace("NadeoServices - ClubRoomSwitchMapAsync: " + url + " - " + body);
+        Log::Trace("[ClubRoomSwitchMapAsync]: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
         req.Start();
 
@@ -204,7 +204,7 @@ namespace MXNadeoServicesGlobal {
         }
 
         auto res = req.String();
-        Log::Trace("NadeoServices - ClubRoomSwitchMapAsync::Res: " + res);
+        Log::Trace("[ClubRoomSwitchMapAsync] Response: " + res);
     }
 
     void ClubRoomSetCountdownTimer(const NadeoServices::ClubRoom@ &in room, const int &in timerSec) {
@@ -216,7 +216,7 @@ namespace MXNadeoServicesGlobal {
     int GetMapWorldRecord(const string &in mapUid) {
         string url = NadeoServices::BaseURLLive() + "/api/token/leaderboard/group/Personal_Best/map/" + mapUid + "/top?length=1&onlyWorld=true&offset=0";
 
-        Log::Trace("NadeoServices - Get Map WR: " + url);
+        Log::Trace("[GetMapWorldRecord] URL: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
         req.Start();
 
@@ -224,7 +224,7 @@ namespace MXNadeoServicesGlobal {
             yield();
         }
 
-        Log::Trace("NadeoServices - Get Map WR Res: " + req.String());
+        Log::Trace("[GetMapWorldRecord] Response: " + req.String());
         auto res = req.Json();
 
         if (res.GetType() != Json::Type::Object) {
@@ -232,7 +232,7 @@ namespace MXNadeoServicesGlobal {
                 string errorMsg = res[0];
                 if (errorMsg.Contains("notFound")) return -1;
             }
-            Log::Error("NadeoServices - Error get map WR: " + req.String());
+            Log::Error("[GetMapWorldRecord] Error when getting WR: " + req.String());
             return -1;
         }
 
@@ -240,10 +240,10 @@ namespace MXNadeoServicesGlobal {
             uint mapWR = res["tops"][0]["top"][0]["score"];
             string mapWRPlayer =  res["tops"][0]["top"][0]["accountId"];
 
-            Log::Trace("NadeoServices - Map WR: " + mapWR + " by accountid " + mapWRPlayer);
+            Log::Trace("[GetMapWorldRecord] Found WR - Time: " + mapWR + " by accountid " + mapWRPlayer);
             return mapWR;
         } catch {
-            Log::Error("NadeoServices - Map WR failed: " + getExceptionInfo());
+            Log::Error("[GetMapWorldRecord] Failed to get map WR: " + getExceptionInfo());
             return -1;
         }
     }

@@ -8,7 +8,7 @@ namespace API {
             ret.Headers.Set("Authorization", "Token " + RMCLeaderAPI::AccountToken);
         }
 #endif
-        Log::Trace("Get: " + url);
+        Log::Trace("[API::Get] Request URL: " + url);
         ret.Start();
         return ret;
     }
@@ -19,7 +19,7 @@ namespace API {
             yield();
         }
         string res = req.String();
-        Log::Trace("Code: " + req.ResponseCode() + " - Get Res: " + res);
+        Log::Trace("[API::GetAsync] Response code: " + req.ResponseCode() + " - Response: " + res);
         return req.Json();
     }
 
@@ -34,7 +34,7 @@ namespace API {
 #endif
         ret.Body = body;
         ret.Headers.Set("Content-Type", "application/json");
-        Log::Trace("Post: " + url);
+        Log::Trace("[API::Post] Request URL: " + url);
         ret.Start();
         return ret;
     }
@@ -45,7 +45,7 @@ namespace API {
             yield();
         }
         string res = req.String();
-        Log::Trace("Code: " + req.ResponseCode() + " - Post Res: " + res);
+        Log::Trace("[API::PostAsync] Response code: " + req.ResponseCode() + " - Response: " + res);
         return req.Json();
     }
 }

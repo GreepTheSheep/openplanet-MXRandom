@@ -40,10 +40,10 @@ namespace GH {
             auto json = ReleasesReq.Json();
             @ReleasesReq = null;
 
-            Log::Trace("Releases::CheckRequest : " + res);
+            Log::Trace("[Releases::CheckRequest] Response: " + res);
 
             if (json.GetType() != Json::Type::Array || json.Length == 0) {
-                Log::Error("Releases::CheckRequest : Error parsing response");
+                Log::Error("[Releases::CheckRequest] Error parsing response");
                 releasesRequestError = true;
                 return;
             }

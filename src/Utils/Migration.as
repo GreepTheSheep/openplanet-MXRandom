@@ -38,16 +38,16 @@ namespace Migration {
             string res = n_request.String();
             auto json = n_request.Json();
 
-            Log::Trace("Migration::CheckRequest : " + res);
+            Log::Trace("[Migration::CheckRequest] Response: " + res);
 
             if (json.GetType() != Json::Type::Object) {
-                Log::Error("Migration::CheckRequest : Json is not an object", true);
+                Log::Error("[Migration::CheckRequest] Json is not an object", true);
                 requestError = true;
                 return;
             }
 
             if (json.Length == 0 || !json.HasKey("Results") || json["Results"].Length == 0) {
-                Log::Error("Migration::CheckRequest : Error parsing response", true);
+                Log::Error("[Migration::CheckRequest] Error parsing response", true);
                 requestError = true;
                 return;
             }
@@ -147,16 +147,16 @@ namespace Migration {
             string res = v2_request.String();
             auto json = v2_request.Json();
 
-            Log::Trace("Migration::CheckV2MXRequest: " + res);
+            Log::Trace("[Migration::CheckV2MXRequest] Response: " + res);
 
             if (json.GetType() != Json::Type::Object) {
-                Log::Error("Migration::CheckV2MXRequest: Json is not an object", true);
+                Log::Error("[Migration::CheckV2MXRequest] Json is not an object", true);
                 v2_requestError = true;
                 return;
             }
 
             if (json.Length == 0 || !json.HasKey("Results") || json["Results"].Length == 0) {
-                Log::Error("Migration::CheckV2MXRequest: Error parsing response", true);
+                Log::Error("[Migration::CheckV2MXRequest] Error parsing response", true);
                 v2_requestError = true;
                 return;
             }

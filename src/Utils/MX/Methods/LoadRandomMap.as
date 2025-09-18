@@ -20,20 +20,20 @@ namespace MX {
         try {
             res = API::GetAsync(URL);
         } catch {
-            Log::Error("An error occurred while getting a random map from ManiaExchange.");
+            Log::Error("[GetRandomMap] An error occurred while getting a random map from ManiaExchange.");
             return null;
         }
 
         Log::Trace("[GetRandomMap] API response: " + Json::Write(res));
 
         if (res.GetType() != Json::Type::Object || !res.HasKey("Results")) {
-            Log::Error("Something went wrong while getting a random map from ManiaExchange");
+            Log::Error("[GetRandomMap] Something went wrong while getting a random map from ManiaExchange");
             return null;
         } else if (res["Results"].Length == 0) {
             if (PluginSettings::CustomRules) {
-                Log::Error("Failed to find a random map with custom parameters");    
+                Log::Error("[GetRandomMap] Failed to find a random map with custom parameters");    
             } else {
-                Log::Error("Failed to find a random map without custom parameters. This should never happen!");
+                Log::Error("[GetRandomMap] Failed to find a random map without custom parameters. This should never happen!");
             }
             return null;
         }
@@ -41,38 +41,37 @@ namespace MX {
         MX::MapInfo@ map = MX::MapInfo(res["Results"][0]);
 
         if (map is null) {
-            Log::Warn("Map is null, retrying...");
+            Log::Warn("[GetRandomMap] Map is null, skipping...");
             return null;
         }
 
         if (RMC::IsRunning || RMC::IsStarting) {
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::config.length) {
-                    Log::Warn("Map is too long, retrying...");
+                    Log::Warn("[GetRandomMap] Map AT (" + Time::Format(map.AuthorTime) + ") is longer than the max length for RMC (" + Time::Format(RMC::config.length) + "), skipping...");
                     return null;
                 }
             }
 
             if ((!PluginSettings::CustomRules || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
-                Log::Warn("Map is from a blacklisted author, skipping...");
+                Log::Warn("[GetRandomMap] Map is from a blacklisted author, skipping...");
                 return null;
             }
 
 #if TMNEXT
             if (RMC::currentGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
-                Log::Warn("Map is too big to play in servers, retrying...");
+                Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
                 return null;
             }
 
-            // Check if map is uploaded to Nadeo Services (if goal == WorldRecord)
             if (PluginSettings::RMC_Medal == Medals::WR) {
                 if (PluginSettings::CustomRules && (PluginSettings::MapType == MapTypes::Platform || PluginSettings::MapType == MapTypes::Royal)) {
                     // Platform and Royal don't support leaderboards
-                    Log::Warn("Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
+                    Log::Warn("[GetRandomMap] Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
                 } else {
                     if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
-                        Log::Warn("Map is not uploaded to Nadeo Services, retrying...");
+                        Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
                         return null;
                     }
 
@@ -80,7 +79,7 @@ namespace MX {
                     int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
 
                     if (mapWorldRecord == -1) {
-                        Log::Warn("Couldn't get map World Record, retrying another map...");
+                        Log::Warn("[GetRandomMap] Couldn't get the World Record for map ID #" + map.MapId + ", skipping...");
                         return null;
                     }
 
@@ -91,12 +90,12 @@ namespace MX {
         }
 
         if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
-            Log::Warn("Map is most likely low effort, skipping...");
+            Log::Warn("[GetRandomMap] Map is most likely low effort, skipping...");
             return null;
         }
 
         if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
-            Log::Warn("Map is most likely missing a default filtered tag, skipping...");
+            Log::Warn("[GetRandomMap] Map is most likely missing a default filtered tag, skipping...");
             return null;
         }
 
@@ -107,19 +106,19 @@ namespace MX {
 
                 // only check if date range is valid
                 if (fromDate < toDate && !isMapInsideDateParams(map)) {
-                    Log::Warn("Looking for new map inside date params...");
+                    Log::Warn("[GetRandomMap] Map is outside the date interval set, skipping...");
                     return null;
                 }
             }
 
             if (PluginSettings::UseCustomLength) {
                 if (PluginSettings::MinLength != 0 && map.AuthorTime < PluginSettings::MinLength) {
-                    Log::Warn("Map is shorter than the requested length, retrying...");
+                    Log::Warn("[GetRandomMap] Map is shorter than the requested length, skipping...");
                     return null;
                 }
 
                 if (PluginSettings::MaxLength != 0 && map.AuthorTime > PluginSettings::MaxLength) {
-                    Log::Warn("Map is longer than the requested length, retrying...");
+                    Log::Warn("[GetRandomMap] Map is longer than the requested length, skipping...");
                     return null;
                 }
             } else if (map.AuthorTime > RMC::config.length) {
@@ -136,7 +135,7 @@ namespace MX {
                 }
 
                 if (Regex::Contains(map.Name, termsRegex, Regex::Flags::CaseInsensitive)) {
-                    Log::Warn("Map contains an excluded term, retrying...");
+                    Log::Warn("[GetRandomMap] Map name contains an excluded term, skipping...");
                     return null;
                 }
             }
@@ -144,7 +143,7 @@ namespace MX {
             if (PluginSettings::ExcludedAuthors != "") {
                 foreach (string author : PluginSettings::ExcludedAuthorsArr) {
                     if (map.Username.ToLower() == author) {
-                        Log::Warn("Map is uploaded by an excluded author, retrying...");
+                        Log::Warn("[GetRandomMap] Map is uploaded by the excluded author \"" + author + "\", skipping...");
                         return null;
                     }
                 }
@@ -181,11 +180,11 @@ namespace MX {
 
                 if (attempts >= 15) {
                     if (PluginSettings::CustomRules) {
-                        Log::Warn("Failed to find a map with custom parameters. Searching without them...", true);
+                        Log::Warn("[LoadRandomMap] Failed to find a map with custom parameters. Searching without them...", true);
                         PluginSettings::CustomRules = false;
                         attempts = 0;
                     } else {
-                        Log::Error("Failed to get a random map after 15 attempts.", true);
+                        Log::Error("[LoadRandomMap] Failed to get a random map after 15 attempts.", true);
                         return;
                     }
                 }
@@ -201,7 +200,7 @@ namespace MX {
 
             RandomMapIsLoading = false;
         } catch {
-            Log::Warn("Error while loading map: " + getExceptionInfo());
+            Log::Warn("[LoadRandomMap] Error while loading map: " + getExceptionInfo());
             Log::Error(MX_NAME + " API is not responding, it might be down.", true);
             APIDown = true;
             RandomMapIsLoading = false;

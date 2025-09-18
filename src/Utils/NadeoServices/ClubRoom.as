@@ -32,7 +32,7 @@ namespace NadeoServices {
                 creationTimestamp = json["creationTimestamp"];
                 password = json["password"];
             } catch {
-                Log::Warn("Failed to parse Club Room " + id + " - " + getExceptionInfo());
+                Log::Warn("[NadeoServices::ClubRoom] Failed to parse Club Room " + id + " - " + getExceptionInfo());
             }
         }
     }
@@ -81,7 +81,7 @@ namespace NadeoServices {
                     maps.InsertLast(json["maps"][i]);
                 }
             } catch {
-                Log::Warn("Failed to parse Club Room Info " + id + " - " + getExceptionInfo());
+                Log::Warn("[NadeoServices::ClubRoom] Failed to parse Club Room Info " + id + " - " + getExceptionInfo());
             }
         }
     }

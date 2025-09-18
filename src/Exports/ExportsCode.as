@@ -42,7 +42,7 @@ namespace MXRandom {
         Json::Value res = API::GetAsync(URL);
 
         if (res.GetType() == Json::Type::Null || !res.HasKey("Results") || res["Results"].Length == 0) {
-            Log::Error("Failed to find a random map from TMX.");
+            Log::Error("[MXRandom::GetMap] Failed to find a random map from TMX.");
             return null;
         }
 
@@ -53,7 +53,7 @@ namespace MXRandom {
         MX::MapInfo@ map = GetMap();
 
         if (map is null) {
-            Log::Error("Failed to load a random map: Couldn't find a map.");
+            Log::Error("[MXRandom::GetMap] Failed to load a random map: Couldn't find a map.");
             return;
         }
 
@@ -64,7 +64,7 @@ namespace MXRandom {
         MX::MapInfo@ map = GetMap(true);
 
         if (map is null) {
-            Log::Error("Failed to load a random map with custom parameters: Couldn't find a map.");
+            Log::Error("[MXRandom::GetMap] Failed to load a random map with custom parameters: Couldn't find a map.");
             return;
         }
 

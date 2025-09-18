@@ -84,17 +84,17 @@ class RMCRulesModalDialog : ModalDialog {
             auto json = m_request.Json();
             @m_request = null;
 
-            Log::Trace("Rules::CheckRequest : " + res);
+            Log::Trace("[Rules::CheckRequest] Response: " + res);
 
             if (json.GetType() != Json::Type::Object) {
-                Log::Error("Rules::CheckRequest : Error parsing response");
+                Log::Error("[Rules::CheckRequest] Error parsing response");
                 m_requestError = true;
                 return;
             }
 
             if (json.HasKey("error")) {
                 resErrorString = json["error"];
-                Log::Error("Rules::CheckRequest : Error: " + resErrorString);
+                Log::Error("[Rules::CheckRequest] Error: " + resErrorString);
                 m_requestError = true;
                 return;
             }
