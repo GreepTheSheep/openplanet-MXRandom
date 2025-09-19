@@ -352,9 +352,13 @@ class RMC {
     }
 
     void PausePlayButton() {
+        UI::BeginDisabled(IsSwitchingMap || !IsRunning);
+
         if (UI::Button((IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
             IsPaused = !IsPaused;
         }
+
+        UI::EndDisabled();
     }
 
 
