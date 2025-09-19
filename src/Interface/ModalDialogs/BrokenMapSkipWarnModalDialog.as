@@ -20,7 +20,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
 
         if (UI::Button(Icons::Times + " No")) {
             Close();
-            RMC::IsPaused = false;
+            mode.IsPaused = false;
         }
 
         UI::SameLine();
@@ -30,8 +30,8 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
             Close();
             Log::Log("RMC: Skipping broken map.");
             UI::ShowNotification("Please wait...");
-            mode.TimeLeft += RMC::TimeSpentMap;
-            mode.TotalTime -= RMC::TimeSpentMap;
+            mode.TimeLeft += mode.TimeSpentMap;
+            mode.TotalTime -= mode.TimeSpentMap;
             startnew(CoroutineFunc(mode.SwitchMap));
         }
     }

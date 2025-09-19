@@ -6,17 +6,20 @@ class RMT : RMC {
     array<RMTPlayerScore@> m_playerScores;
     PBTime@ playerGotGoal;
     PBTime@ playerGotBelowGoal;
-    bool pressedStopButton = false;
 
     string get_ModeName() override { return "Random Map Together";}
+
+    RMC::GameMode get_GameMode() override {
+        return RMC::GameMode::Together;
+    }
 
     void DevButtons() override {}
 
     void Render() override {
         if (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns) {
             if (UI::RedButton(Icons::Times + " Stop RMT")) {
-                pressedStopButton = true;
-                RMC::IsRunning = false;
+                UserEndedRun = true;
+                IsRunning = false;
                 RMC::ShowTimer = false;
 #if DEPENDENCY_BETTERCHAT
                 BetterChat::SendChatMessage(Icons::Users + " Random Map Together stopped");
@@ -43,7 +46,7 @@ class RMT : RMC {
             RenderCurrentMap();
         }
 
-        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             UI::Separator();
             RenderPlayingButtons();
             UI::Separator();
@@ -51,10 +54,8 @@ class RMT : RMC {
         }
     }
 
-    void StartRMT() {
-        RMC::GoalMedalCount = 0;
+    void Start() override {
         RMC::ShowTimer = true;
-        RMC::IsSwitchingMap = false;
         Log::Trace("RMT: Getting lobby map UID from the room...");
         MXNadeoServicesGlobal::CheckNadeoRoomAsync();
         yield();
@@ -70,10 +71,10 @@ class RMT : RMC {
     }
 
     void SetupMapStart() {
-        RMC::IsStarting = true;
-        RMC::IsSwitchingMap = true;
+        IsStarting = true;
+        IsSwitchingMap = true;
 
-        while (RMC:: IsStarting || RMC::IsRunning) {
+        while (!UserEndedRun) {
             @currentMap = MX::GetRandomMap();
 
             if (currentMap !is null) {
@@ -94,36 +95,32 @@ class RMT : RMC {
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit / 1000);
 
-        RMC::GotGoalMedal = false;
-        RMC::GotBelowMedal = false;
-
         while (!TM::IsServerReady()) {
             yield();
         }
 
-        RMC::IsPaused = false;
-        RMC::IsRunning = true;
+        IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(UpdateRecordsLoop));
-        RMC::IsSwitchingMap = false;
-        RMC::IsStarting = false;
+        IsSwitchingMap = false;
+        IsStarting = false;
         PreloadNextMap();
     }
 
     void RMTSwitchMap() {
         m_playerScores.SortDesc();
-        RMC::IsSwitchingMap = true;
+        IsSwitchingMap = true;
         m_mapPersonalBests = {};
-        RMC::IsPaused = true;
-        RMC::GotGoalMedal = false;
-        RMC::GotBelowMedal = false;
+        IsPaused = true;
+        GotGoalMedal = false;
+        GotBelowMedal = false;
         
         if (nextMap is null) {
             PreloadNextMap();
         }
         @currentMap = nextMap;
 
-        if (RMC::TimeSpentMap < 15000) {
+        if (TimeSpentMap < 15000) {
             // Only notify if the server has spent fewer than 15 secs on the map
             UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
         }
@@ -132,7 +129,7 @@ class RMT : RMC {
         DataManager::SaveMapToRecentlyPlayed(currentMap);
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
-        RMC::TimeSpentMap = 0;
+        TimeSpentMap = 0;
 
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLeft / 1000);
 
@@ -144,7 +141,7 @@ class RMT : RMC {
 #if DEPENDENCY_BETTERCHAT
         if (!m_playerScores.IsEmpty()) {
             RMTPlayerScore@ p = m_playerScores[0];
-            string currentStatChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n";
+            string currentStatChat = Icons::Users + " RMT Leaderboard: " + tostring(GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n";
             currentStatChat += "Current MVP: " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_Medal) +
                 (PluginSettings::RMC_Medal != Medals::Bronze ?
                     " - " + p.belowGoals + " " + tostring(Medals(PluginSettings::RMC_Medal - 1))
@@ -153,8 +150,8 @@ class RMT : RMC {
         }
 #endif
 
-        RMC::IsPaused = false;
-        RMC::IsSwitchingMap = false;
+        IsPaused = false;
+        IsSwitchingMap = false;
         startnew(CoroutineFunc(PreloadNextMap));
     }
 
@@ -166,7 +163,7 @@ class RMT : RMC {
             BetterChat::SendChatMessage(Icons::Users + " Returning to lobby map...");
 #endif
             MXNadeoServicesGlobal::SetMapToClubRoomAsync(RMTRoom, LobbyMapUID);
-            if (pressedStopButton) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
+            if (UserEndedRun) MXNadeoServicesGlobal::ClubRoomSwitchMapAsync(RMTRoom);
             while (!TM::IsMapCorrect(LobbyMapUID)) sleep(1000);
         }
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
@@ -175,14 +172,14 @@ class RMT : RMC {
     void TimerYield() override {
         int lastUpdate = Time::Now;
 
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             yield();
 
-            if (!RMC::IsPaused) {
+            if (!IsPaused) {
                 if (!InCurrentMap()) {
-                    RMC::IsPaused = true;
-                } else if (!pressedStopButton && (!RMC::IsRunning || TimeLeft == 0)) {
-                    RMC::IsRunning = false;
+                    IsPaused = true;
+                } else if (!UserEndedRun && (!IsRunning || TimeLeft == 0)) {
+                    IsRunning = false;
                     RMC::ShowTimer = false;
                     GameEndNotification();
                     m_playerScores.SortDesc();
@@ -193,11 +190,11 @@ class RMT : RMC {
 #endif
                     ResetToLobbyMap();
                 } else {
-                    if (!RMC::GotGoalMedal && isObjectiveCompleted()) {
+                    if (!GotGoalMedal && isObjectiveCompleted()) {
                         Log::Log(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
                         UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the " + tostring(PluginSettings::RMC_Medal) + " medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
-                        RMC::GoalMedalCount++;
-                        RMC::GotGoalMedal = true;
+                        GoalMedalCount++;
+                        GotGoalMedal = true;
                         RMTPlayerScore@ playerScored = GetPlayerScore(playerGotGoal);
                         playerScored.AddGoal();
                         m_playerScores.SortDesc();
@@ -209,10 +206,10 @@ class RMT : RMC {
     #endif
 
                         startnew(CoroutineFunc(RMTSwitchMap));
-                    } else if (!RMC::GotGoalMedal && !RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
+                    } else if (!GotGoalMedal && !GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && isBelowObjectiveCompleted()) {
                         Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
                         UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal", Text::ParseHexColor("#4d3e0a"));
-                        RMC::GotBelowMedal = true;
+                        GotBelowMedal = true;
     #if DEPENDENCY_BETTERCHAT
                         BetterChat::SendChatMessage(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr);
                         sleep(200);
@@ -223,7 +220,7 @@ class RMT : RMC {
                     int delta = Time::Now - lastUpdate;
                     TimeLeft -= delta;
                     TotalTime += delta;
-                    RMC::TimeSpentMap += delta;
+                    TimeSpentMap += delta;
                 }
             }
 
@@ -232,7 +229,7 @@ class RMT : RMC {
     }
 
     void GameEndNotification() override {
-        string notificationText = "Your team got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
+        string notificationText = "Your team got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
 
         if (PluginSettings::RMC_Medal != Medals::Bronze && BelowMedalCount > 0) {
             notificationText += " and " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1));
@@ -257,7 +254,7 @@ class RMT : RMC {
 #if DEPENDENCY_BETTERCHAT
         sleep(200);
         if (!m_playerScores.IsEmpty()) {
-            string currentStatsChat = Icons::Users + " RMT Leaderboard: " + tostring(RMC::GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n\n";
+            string currentStatsChat = Icons::Users + " RMT Leaderboard: " + tostring(GoalMedalCount) + " " + tostring(PluginSettings::RMC_Medal) + " medals" + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medals" : "") + "\n\n";
             for (uint i = 0; i < m_playerScores.Length; i++) {
                 RMTPlayerScore@ p = m_playerScores[i];
                 currentStatsChat += tostring(i+1) + ". " + p.name + ": " + p.goals + " " + tostring(PluginSettings::RMC_Medal) + (PluginSettings::RMC_Medal != Medals::Bronze ? " - " + p.belowGoals + " " + tostring(Medals(PluginSettings::RMC_Medal - 1)) : "") + "\n";
@@ -268,7 +265,7 @@ class RMT : RMC {
     }
 
     void RenderCurrentMap() override {
-        if (!RMC::IsSwitchingMap) {
+        if (!IsSwitchingMap) {
             if (InCurrentMap()) {
                 UI::Separator();
 
@@ -335,11 +332,11 @@ class RMT : RMC {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
-        UI::BeginDisabled(RMC::IsSwitchingMap);
-        if (UI::Button(Icons::PlayCircleO + " Skip" + (RMC::GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+        UI::BeginDisabled(IsSwitchingMap);
+        if (UI::Button(Icons::PlayCircleO + " Skip" + (GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
+            if (IsPaused) IsPaused = false;
 
-            if (RMC::GotBelowMedal) {
+            if (GotBelowMedal) {
                 BelowMedalCount++;
                 RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
                 playerScored.AddBelowGoal();
@@ -347,8 +344,8 @@ class RMT : RMC {
                 (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) ||
                 (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
             ) {
-                TimeLeft += RMC::TimeSpentMap;
-                TotalTime -= RMC::TimeSpentMap;
+                TimeLeft += TimeSpentMap;
+                TotalTime -= TimeSpentMap;
             }
 #if DEPENDENCY_BETTERCHAT
             BetterChat::SendChatMessage(Icons::Users + " Skipping map...");
@@ -457,9 +454,9 @@ class RMT : RMC {
     }
 
     void UpdateRecordsLoop() {
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             sleep(500);
-            if (!RMC::IsSwitchingMap) UpdateRecords();
+            if (!IsSwitchingMap) UpdateRecords();
         }
     }
 
@@ -476,7 +473,7 @@ class RMT : RMC {
     }
 
     void DrawPlayerProgress() {
-        if (RMC::IsStarting) {
+        if (IsStarting) {
             return;
         }
 

@@ -45,7 +45,7 @@ namespace MX {
             return null;
         }
 
-        if (RMC::IsRunning || RMC::IsStarting) {
+        if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::config.length) {
                     Log::Warn("[GetRandomMap] Map AT (" + Time::Format(map.AuthorTime) + ") is longer than the max length for RMC (" + Time::Format(RMC::config.length) + "), skipping...");
@@ -59,7 +59,7 @@ namespace MX {
             }
 
 #if TMNEXT
-            if (RMC::currentGameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
+            if (RMC::currentRun.GameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
                 Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
                 return null;
             }
@@ -285,7 +285,7 @@ namespace MX {
                 params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
             }
 
-            if (RMC::IsRunning || RMC::IsStarting) {
+            if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
 #if TMNEXT
                 if (PluginSettings::RMC_Medal == Medals::WR) {
                     if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
@@ -297,7 +297,7 @@ namespace MX {
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
 
-            if (RMC::IsRunning || RMC::IsStarting) {
+            if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
                 params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
 

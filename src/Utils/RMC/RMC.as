@@ -1,10 +1,31 @@
 class RMC {
+    // Medals
+    int GoalMedalCount = 0;
+    bool GotGoalMedal = false;
     int BelowMedalCount = 0;
-    int _TimeLeft = TimeLimit;
-    int _TotalTime = 0;
+    bool GotBelowMedal = false;
+    int FreeSkipsUsed = 0;
+
+    // Status
+    bool IsInited = false;
+    bool IsPaused = false;
+    bool IsRunning = false;
+    bool IsStarting = false;
+    bool IsSwitchingMap = false;
+
+    // Map
     MX::MapInfo@ currentMap;
     MX::MapInfo@ nextMap;
     array<string> seenMaps;
+    int TimeSpentMap = -1;
+    int PBOnMap = -1; // for autosaves on PBs
+
+    // Timer
+    int _TimeLeft = TimeLimit;
+    int _TotalTime = 0;
+
+    bool ContinueSavedRun = false;
+    bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
     UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
@@ -24,17 +45,85 @@ class RMC {
         return "Random Map Challenge";
     }
 
+    RMC::GameMode get_GameMode() {
+        return RMC::GameMode::Challenge;
+    }
+
+    void LoadSave() {
+        GoalMedalCount = RMC::CurrentRunData["PrimaryCounterValue"];
+        BelowMedalCount = RMC::CurrentRunData["SecondaryCounterValue"];
+        GotGoalMedal = RMC::CurrentRunData["GotGoalMedal"];
+        PBOnMap = RMC::CurrentRunData["PBOnMap"];
+        TimeSpentMap = RMC::CurrentRunData["TimeSpentOnMap"];
+        GotBelowMedal = RMC::CurrentRunData["GotBelowMedal"];
+        FreeSkipsUsed = RMC::CurrentRunData["FreeSkipsUsed"];
+        TimeLeft = RMC::CurrentRunData["TimeLeft"];
+        TotalTime = RMC::CurrentRunData["TotalTime"];
+    }
+
+    void CheckSave() {
+        if (!DataManager::LoadRunData()) {
+            DataManager::CreateSaveFile();
+            return;
+        }
+
+        auto saveDialog = ContinueSavedRunModalDialog(this);
+        Renderables::Add(saveDialog);
+
+        while (!saveDialog.HasCompletedCheckbox) {
+            sleep(100);
+        }
+
+        if (!ContinueSavedRun) {
+            return;
+        }
+
+        LoadSave();
+
+        MX::MapInfo@ map = MX::MapInfo(RMC::CurrentRunData["MapData"]);
+        map.PlayedAt = Time::Stamp;
+        Log::LoadingMapNotification(map);
+        DataManager::SaveMapToRecentlyPlayed(map);
+        await(startnew(TM::LoadMap, map));
+    }
+
+    void Start() {
+        RMC::ShowTimer = true;
+        IsStarting = true;
+
+        CheckSave();
+
+        if (!ContinueSavedRun) {
+            MX::LoadRandomMap();
+        }
+
+        while (!TM::IsMapLoaded() || !TM::IsPlayerReady()) {
+            yield();
+        }
+
+        @currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+        StartTimer();
+
+        UI::ShowNotification("\\$080" + ModeName + " started!", "Good Luck!");
+        IsInited = true;
+
+        // Clear the currently saved data so you cannot load into the same state multiple times
+        DataManager::RemoveCurrentSaveFile();
+        DataManager::CreateSaveFile();
+        IsStarting = false;
+    }
+
     void CreateSave() {
-        RMC::CurrentRunData["PrimaryCounterValue"] = RMC::GoalMedalCount;
+        RMC::CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         RMC::CurrentRunData["SecondaryCounterValue"] = BelowMedalCount;
-        RMC::CurrentRunData["FreeSkipsUsed"] = RMC::FreeSkipsUsed;
-        RMC::CurrentRunData["GotGoalMedal"] = RMC::GotGoalMedal;
-        RMC::CurrentRunData["GotBelowMedal"] = RMC::GotBelowMedal;
+        RMC::CurrentRunData["FreeSkipsUsed"] = FreeSkipsUsed;
+        RMC::CurrentRunData["GotGoalMedal"] = GotGoalMedal;
+        RMC::CurrentRunData["GotBelowMedal"] = GotBelowMedal;
         RMC::CurrentRunData["MapData"] = currentMap.ToJson();
         RMC::CurrentRunData["TotalTime"] = TotalTime;
         RMC::CurrentRunData["TimeLeft"] = TimeLeft;
-        RMC::CurrentRunData["TimeSpentOnMap"] = RMC::TimeSpentMap;
-        RMC::CurrentRunData["PBOnMap"] = RMC::PBOnMap;
+        RMC::CurrentRunData["TimeSpentOnMap"] = TimeSpentMap;
+        RMC::CurrentRunData["PBOnMap"] = PBOnMap;
 
         DataManager::SaveCurrentRunData();
     }
@@ -62,15 +151,14 @@ class RMC {
     }
 
     void Render() {
-        string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
-        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        string lastLetter = tostring(this.GameMode).SubStr(0,1);
+        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             if (UI::RedButton(Icons::Times + " Stop RM" + lastLetter)) {
-                RMC::UserEndedRun = true;
-                RMC::IsRunning = false;
+                UserEndedRun = true;
+                IsRunning = false;
                 RMC::ShowTimer = false;
 
-                int secondaryCount = RMC::currentGameMode == RMC::GameMode::Challenge ? BelowMedalCount : RMC::Survival.Skips;
-                if (RMC::GoalMedalCount != 0 || secondaryCount != 0 || RMC::GotBelowMedal || RMC::GotGoalMedal) {
+                if (GoalMedalCount != 0 || BelowMedalCount != 0 || GotBelowMedal || GotGoalMedal) {
                     if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                         Renderables::Add(SaveRunQuestionModalDialog(this));
                     } else {
@@ -105,7 +193,7 @@ class RMC {
         RenderCustomSearchWarning();
 #endif
 
-        if (RMC::IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
             UI::Separator();
             RenderPlayingButtons();
         }
@@ -113,7 +201,7 @@ class RMC {
 
     void RenderPace() {
         try {
-            int goalPace = int(Math::Floor(float(TimeLimit) * RMC::GoalMedalCount / float(TotalTime)));
+            int goalPace = int(Math::Floor(float(TimeLimit) * GoalMedalCount / float(TotalTime)));
             UI::Text("Pace: " + goalPace);
         } catch {
             UI::Text("Pace: 0");
@@ -121,7 +209,7 @@ class RMC {
     }
 
     void RenderCustomSearchWarning() {
-        if ((RMC::IsRunning || RMC::IsStarting) && PluginSettings::CustomRules) {
+        if ((IsRunning || IsStarting) && PluginSettings::CustomRules) {
             UI::Separator();
             UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$zInvalid for official leaderboards");
             UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
@@ -130,23 +218,27 @@ class RMC {
 
     void RenderTimer() {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(TimeLeft));
-            else UI::Text(RMC::FormatTimer(TimeLeft));
+
+        if (IsPaused || !IsRunning) {
+            UI::TextDisabled(RMC::FormatTimer(TimeLeft));
         } else {
-            UI::TextDisabled(RMC::FormatTimer(TimeLimit));
+            UI::Text(RMC::FormatTimer(TimeLeft));
         }
+
         UI::PopFont();
+
         UI::Dummy(vec2(0, 8));
+
         if (PluginSettings::RMC_DisplayMapTimeSpent) {
             UI::PushFont(Fonts::HeaderSub);
-            UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
+            UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
             UI::SetPreviousTooltip("Time spent on this map");
             UI::PopFont();
         }
+
         if (IS_DEV_MODE) {
-            if (RMC::IsRunning || TimeLeft > 0) {
-                if (RMC::IsPaused) UI::Text("Timer paused");
+            if (IsRunning || TimeLeft > 0) {
+                if (IsPaused) UI::Text("Timer paused");
                 else UI::Text("Timer running");
             } else UI::Text("Timer ended");
         }
@@ -155,7 +247,7 @@ class RMC {
     void RenderGoalMedal() {
         UI::Image(Textures[PluginSettings::RMC_Medal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
-        UI::AlignTextToImage(tostring(RMC::GoalMedalCount), Fonts::TimerFont);
+        UI::AlignTextToImage(tostring(GoalMedalCount), Fonts::TimerFont);
     }
 
     void RenderBelowGoalMedal() {
@@ -168,9 +260,9 @@ class RMC {
     }
 
     void RenderCurrentMap() {
-        if (RMC::IsSwitchingMap) {
+        if (IsSwitchingMap) {
             UI::Separator();
-            if (RMC::IsPaused) {
+            if (IsPaused) {
                 UI::AlignTextToFramePadding();
                 UI::Text("Switching map...");
                 UI::SameLine();
@@ -178,8 +270,8 @@ class RMC {
                     startnew(CoroutineFunc(SwitchMap));
                 }
             }
-            else RMC::IsPaused = true;
-        } else if (RMC::IsInited && TM::IsMapLoaded()) {
+            else IsPaused = true;
+        } else if (IsInited && TM::IsMapLoaded()) {
             if (InCurrentMap()) {
                 UI::Separator();
 
@@ -234,7 +326,7 @@ class RMC {
                     startnew(CoroutineFunc(SwitchMap));
                 }
             }
-        } else if (!RMC::IsStarting) {
+        } else if (!IsStarting) {
             UI::Separator();
 
             if (UI::Button("Return to map")) {
@@ -249,7 +341,7 @@ class RMC {
             PausePlayButton();
             UI::SameLine();
             SkipButtons();
-            if (!PluginSettings::RMC_AutoSwitch && RMC::GotGoalMedal) {
+            if (!PluginSettings::RMC_AutoSwitch && GotGoalMedal) {
                 NextMapButton();
             }
 
@@ -260,8 +352,8 @@ class RMC {
     }
 
     void PausePlayButton() {
-        if (UI::Button((RMC::IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
-            RMC::IsPaused = !RMC::IsPaused;
+        if (UI::Button((IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
+            IsPaused = !IsPaused;
         }
     }
 
@@ -270,25 +362,25 @@ class RMC {
         Medals BelowMedal = PluginSettings::RMC_Medal;
         if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
 
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
-        if (PluginSettings::RMC_FreeSkipAmount > RMC::FreeSkipsUsed) {
-            int skipsLeft = PluginSettings::RMC_FreeSkipAmount - RMC::FreeSkipsUsed;
-            if (UI::Button(Icons::PlayCircleO + (RMC::GotBelowMedal ? " Take " + tostring(BelowMedal) + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
-                if (RMC::IsPaused) RMC::IsPaused = false;
-                if (RMC::GotBelowMedal) {
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
+        if (PluginSettings::RMC_FreeSkipAmount > FreeSkipsUsed) {
+            int skipsLeft = PluginSettings::RMC_FreeSkipAmount - FreeSkipsUsed;
+            if (UI::Button(Icons::PlayCircleO + (GotBelowMedal ? " Take " + tostring(BelowMedal) + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
+                if (IsPaused) IsPaused = false;
+                if (GotBelowMedal) {
                     BelowMedalCount++;
                 } else {
-                    RMC::FreeSkipsUsed++;
-                    RMC::CurrentRunData["FreeSkipsUsed"] = RMC::FreeSkipsUsed;
+                    FreeSkipsUsed++;
+                    RMC::CurrentRunData["FreeSkipsUsed"] = FreeSkipsUsed;
                     DataManager::SaveCurrentRunData();
                 }
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
                 startnew(CoroutineFunc(SwitchMap));
             }
-        } else if (RMC::GotBelowMedal) {
+        } else if (GotBelowMedal) {
             if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
-                if (RMC::IsPaused) RMC::IsPaused = false;
+                if (IsPaused) IsPaused = false;
                 BelowMedalCount++;
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
@@ -297,14 +389,14 @@ class RMC {
         } else {
             UI::NewLine();
         }
-        if (!RMC::GotBelowMedal) UI::SetPreviousTooltip(
+        if (!GotBelowMedal) UI::SetPreviousTooltip(
             "Free Skips are if the map is finishable but you still want to skip it for any reason.\n" +
             "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
         );
 
         if (UI::OrangeButton(Icons::PlayCircleO + "Skip broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
-            RMC::IsPaused = true;
+            IsPaused = true;
             Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
@@ -313,10 +405,10 @@ class RMC {
     }
 
     void NextMapButton() {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (IsPaused) IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));
@@ -328,35 +420,31 @@ class RMC {
     }
 
     void DevButtons() {
-        if (UI::RoseButton("+1min")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
-            TimeLeft += (1*60*1000);
-        }
-        UI::SameLine();
         if (UI::RoseButton("-1min")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
             TimeLeft = Math::Max(1*60*1000, TimeLeft - 1*60*1000);
+        }
+
+        UI::SameLine();
+
+        if (UI::RoseButton("+1min")) {
+            TimeLeft += (1*60*1000);
         }
     }
 
     void StartTimer() {
-        if (RMC::ContinueSavedRun) {
-            TimeLeft = int(RMC::CurrentRunData["TimeLeft"]);
-            TotalTime = int(RMC::CurrentRunData["TotalTime"]);
-        }
+        IsRunning = true;
 
-        RMC::IsPaused = false;
-        RMC::IsRunning = true;
-        if (RMC::GotBelowMedal && RMC::GotGoalMedal) RMC::GotBelowMedal = false;
-        if (RMC::GotBelowMedal) GotBelowGoalMedalNotification();
-        if (RMC::GotGoalMedal) GotGoalMedalNotification();
+        if (GotBelowMedal && GotGoalMedal) GotBelowMedal = false;
+        if (GotBelowMedal) GotBelowGoalMedalNotification();
+        if (GotGoalMedal) GotGoalMedalNotification();
+
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
         startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void GameEndNotification() {
-        string notificationText = "You got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
+        string notificationText = "You got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
 
         if (PluginSettings::RMC_Medal != Medals::Bronze && BelowMedalCount > 0) {
             notificationText += " and " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1));
@@ -366,8 +454,8 @@ class RMC {
         UI::ShowNotification("\\$0f0" + ModeName + " ended!", notificationText);
 
 #if TMNEXT
-        if (RMC::currentGameMode == RMC::GameMode::Challenge) {
-            RMCLeaderAPI::postRMC(RMC::GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
+        if (this.GameMode == RMC::GameMode::Challenge) {
+            RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
         }
 #endif
     }
@@ -382,7 +470,7 @@ class RMC {
 
     void GotBelowGoalMedalNotification() {
         Log::Trace("RMC: Got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal!");
-        if (!RMC::GotBelowMedal)
+        if (!GotBelowMedal)
             UI::ShowNotification(
                 "\\$db4" + Icons::Trophy + " You got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal",
                 "You can take the medal and skip the map"
@@ -392,17 +480,17 @@ class RMC {
     void TimerYield() {
         int lastUpdate = Time::Now;
 
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             yield();
 
-            if (!RMC::IsPaused) {
+            if (!IsPaused) {
                 if (!InCurrentMap()) {
-                    RMC::IsPaused = true;
-                } else if (!RMC::IsRunning || TimeLeft == 0) {
-                    RMC::IsRunning = false;
+                    IsPaused = true;
+                } else if (!IsRunning || TimeLeft == 0) {
+                    IsRunning = false;
                     RMC::ShowTimer = false;
 
-                    if (!RMC::UserEndedRun) {
+                    if (!UserEndedRun) {
                         GameEndNotification();
                         DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
                     }
@@ -415,7 +503,7 @@ class RMC {
                     int delta = Time::Now - lastUpdate;
                     TimeLeft -= delta;
                     TotalTime += delta;
-                    RMC::TimeSpentMap += delta;
+                    TimeSpentMap += delta;
                 }
             }
 
@@ -461,10 +549,10 @@ class RMC {
     }
 
     void PbLoop() {
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             yield();
 
-            if (!RMC::IsPaused && !RMC::GotGoalMedal) {
+            if (!IsPaused && !GotGoalMedal) {
                 uint score = TM::GetFinishScore();
                 bool inverse = TM::CurrentMapType() == MapTypes::Stunt;
 
@@ -474,19 +562,19 @@ class RMC {
                 }
 
                 if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
-                    RMC::GoalMedalCount++;
+                    GoalMedalCount++;
                     GotGoalMedalNotification();
-                    RMC::GotGoalMedal = true;
+                    GotGoalMedal = true;
                     CreateSave();
-                } else if (!RMC::GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
+                } else if (!GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
                     GotBelowGoalMedalNotification();
-                    RMC::GotBelowMedal = true;
+                    GotBelowMedal = true;
                     CreateSave();
                 }
 
-                if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
+                if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
                     // PB
-                    RMC::PBOnMap = score;
+                    PBOnMap = score;
                     CreateSave();
                 }
 
@@ -496,7 +584,7 @@ class RMC {
     }
 
     void PreloadNextMap() {
-        while (RMC::IsStarting || RMC::IsRunning) {
+        while (IsStarting || IsRunning) {
             @nextMap = MX::GetRandomMap();
 
             if (nextMap !is null) {
@@ -518,8 +606,8 @@ class RMC {
     }
 
     void SwitchMap() {
-        RMC::IsPaused = true;
-        RMC::IsSwitchingMap = true;
+        IsPaused = true;
+        IsSwitchingMap = true;
 
         yield(100);
 
@@ -533,17 +621,17 @@ class RMC {
             sleep(100);
         }
 
-        RMC::IsSwitchingMap = false;
-        RMC::GotGoalMedal = false;
-        RMC::GotBelowMedal = false;
-        RMC::TimeSpentMap = 0;
-        RMC::PBOnMap = -1;
+        IsSwitchingMap = false;
+        GotGoalMedal = false;
+        GotBelowMedal = false;
+        TimeSpentMap = 0;
+        PBOnMap = -1;
 
         while (!TM::IsPlayerReady()) {
             yield();
         }
 
-        RMC::IsPaused = false;
+        IsPaused = false;
 
         PreloadNextMap();
     }

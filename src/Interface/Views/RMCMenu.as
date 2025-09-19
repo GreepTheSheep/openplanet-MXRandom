@@ -53,16 +53,14 @@ namespace RMC {
             switch (selectedGameMode) {
                 case GameMode::Challenge:
                     if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")) {
-                        currentGameMode = GameMode::Challenge;
-                        @Challenge = RMC();
-                        startnew(Start);
+                        @currentRun = RMC();
+                        startnew(CoroutineFunc(currentRun.Start));
                     }
                     break;
                 case GameMode::Survival:
                     if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")) {
-                        currentGameMode = GameMode::Survival;
-                        @Survival = RMS();
-                        startnew(Start);
+                        @currentRun = RMS();
+                        startnew(CoroutineFunc(currentRun.Start));
                     }
                     break;
                 case GameMode::Objective:
@@ -70,9 +68,8 @@ namespace RMC {
                     PluginSettings::RMC_ObjectiveMode_Goal = Math::Max(1, UI::InputInt("##ObjectiveMedals", PluginSettings::RMC_ObjectiveMode_Goal));
 
                     if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")) {
-                        currentGameMode = GameMode::Objective;
-                        @Objective = RMObjective();
-                        startnew(Start);
+                        @currentRun = RMObjective();
+                        startnew(CoroutineFunc(currentRun.Start));
                     }
                     break;
 #if TMNEXT
@@ -159,9 +156,8 @@ namespace RMC {
                         UI::BeginDisabled(!inServer || PluginSettings::MapType != MapTypes::Race);
 
                         if (UI::GreenButton(Icons::Users + " Start Random Map Together")) {
-                            currentGameMode = GameMode::Together;
-                            @Together = RMT();
-                            startnew(CoroutineFunc(Together.StartRMT));
+                            @currentRun = RMT();
+                            startnew(CoroutineFunc(currentRun.Start));
                         }
 
                         UI::EndDisabled();
@@ -234,56 +230,33 @@ namespace RMC {
         }
 
         if (
-            RMC::GoalMedalCount > 0 ||
-            Challenge.BelowMedalCount > 0 ||
-            Survival.Skips > 0 ||
-            Survival.SurvivedTime > 0
+            currentRun.GoalMedalCount > 0 ||
+            currentRun.BelowMedalCount > 0 ||
+            currentRun.TotalTime > 0
         ) {
             UI::Separator();
             UI::Text("Last run stats:");
-            if (currentGameMode == GameMode::Challenge) {
-                Challenge.RenderGoalMedal();
-                Challenge.RenderBelowGoalMedal();
-            } else if (currentGameMode == GameMode::Survival) {
-                Survival.RenderGoalMedal();
-                Survival.RenderBelowGoalMedal();
 
-                UI::AlignTextToFramePadding();
-                UI::Text("Survived time: " + RMC::FormatTimer(Survival.SurvivedTime));
-            } else if (currentGameMode == GameMode::Objective) {
-                Objective.RenderGoalMedal();
-                Objective.RenderBelowGoalMedal();
+            currentRun.RenderGoalMedal();
+            currentRun.RenderBelowGoalMedal();
 
+            if (currentRun.GameMode == GameMode::Survival) {
                 UI::AlignTextToFramePadding();
-                UI::Text("Total time: " + RMC::FormatTimer(Objective.TotalTime));
+                UI::Text("Survived time: " + RMC::FormatTimer(currentRun.TotalTime));
+            } else if (currentRun.GameMode == GameMode::Objective) {
+                UI::AlignTextToFramePadding();
+                UI::Text("Total time: " + RMC::FormatTimer(currentRun.TotalTime));
 #if TMNEXT
-            } else if (currentGameMode == GameMode::Together) {
-                Together.RenderGoalMedal();
-                Together.RenderBelowGoalMedal();
-
-                Together.RenderScores();
+            } else if (currentRun.GameMode == GameMode::Together) {
+                RMT@ run = cast<RMT>(currentRun);
+                run.RenderScores();
 #endif
             }
         }
     }
 
     void RenderRMCTimer() {
-        switch (currentGameMode) {
-            case GameMode::Challenge:
-                Challenge.Render();
-                break;
-            case GameMode::Survival:
-                Survival.Render();
-                break;
-            case GameMode::Objective:
-                Objective.Render();
-                break;
-            case GameMode::Together:
-                Together.Render();
-                break;
-            default:
-                break;
-        }
+        currentRun.Render();
     }
 
     void RenderBaseInfo() {

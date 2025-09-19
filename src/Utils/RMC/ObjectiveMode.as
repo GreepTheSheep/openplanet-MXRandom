@@ -2,24 +2,35 @@ class RMObjective : RMC {
     int Skips = 0;
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
 
-    string get_ModeName() override { return "Random Map Objective";}
+    string get_ModeName() override { return "Random Map Objective"; }
+
+    RMC::GameMode get_GameMode() override {
+        return RMC::GameMode::Objective;
+    }
 
     void RenderPace() override { }
 
+    void CheckSave() override { }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(TotalTime));
-            else UI::Text(RMC::FormatTimer(TotalTime));
+
+        if (IsPaused || !IsRunning) {
+            UI::TextDisabled(RMC::FormatTimer(TotalTime));
         } else {
-            UI::TextDisabled(RMC::FormatTimer(0));
+            UI::Text(RMC::FormatTimer(TotalTime));
         }
+
         UI::PopFont();
+
         UI::Dummy(vec2(0, 8));
+
         if (PluginSettings::RMC_DisplayMapTimeSpent) {
             UI::PushFont(Fonts::HeaderSub);
-            UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
+
+            UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
             UI::SetPreviousTooltip("Time spent on this map");
+
             UI::PopFont();
         }
     }
@@ -29,10 +40,10 @@ class RMObjective : RMC {
         UI::SameLine();
 
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {
-            UI::AlignTextToImage("-" + tostring(PluginSettings::RMC_ObjectiveMode_Goal - RMC::GoalMedalCount), Fonts::TimerFont);
+            UI::AlignTextToImage("-" + tostring(PluginSettings::RMC_ObjectiveMode_Goal - GoalMedalCount), Fonts::TimerFont);
             UI::SetPreviousTooltip("Remaining medals. Click to set to total count.");
         } else {
-            UI::AlignTextToImage(tostring(RMC::GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), Fonts::TimerFont);
+            UI::AlignTextToImage(tostring(GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), Fonts::TimerFont);
             UI::SetPreviousTooltip("Medal count. Click to set to remaining medals.");
         }
         if (UI::IsItemClicked()) {
@@ -49,7 +60,7 @@ class RMObjective : RMC {
 
     void SkipButtons() override {
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (IsPaused) IsPaused = false;
             Skips++;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
@@ -60,17 +71,17 @@ class RMObjective : RMC {
 #endif
                 (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
             ) {
-                TimeLeft += RMC::TimeSpentMap;
+                TimeLeft += TimeSpentMap;
             }
             startnew(CoroutineFunc(SwitchMap));
         }
     }
 
     void NextMapButton() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (IsPaused) IsPaused = false;
             Log::Trace("ObjectiveMode: Next map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));
@@ -84,8 +95,8 @@ class RMObjective : RMC {
     void DevButtons() override {}
 
     void StartTimer() override {
-        RMC::IsPaused = false;
-        RMC::IsRunning = true;
+        IsPaused = false;
+        IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
         startnew(CoroutineFunc(PreloadNextMap));
@@ -93,7 +104,7 @@ class RMObjective : RMC {
 
     void GotGoalMedalNotification() override {
         Log::Trace("ObjectiveMode: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
-        if (RMC::GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
+        if (GoalMedalCount < PluginSettings::RMC_ObjectiveMode_Goal) {
             if (PluginSettings::RMC_AutoSwitch) {
                 UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
                 startnew(CoroutineFunc(SwitchMap));
@@ -107,15 +118,15 @@ class RMObjective : RMC {
         auto app = cast<CTrackMania>(GetApp());
         int lastUpdate = Time::Now;
 
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             yield();
 
-            if (!RMC::IsPaused) {
+            if (!IsPaused) {
                 if (!InCurrentMap()) {
-                    RMC::IsPaused = true;
-                } else if (RMC::GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
+                    IsPaused = true;
+                } else if (GoalMedalCount >= PluginSettings::RMC_ObjectiveMode_Goal) {
                     UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "You have reached your goal in " + RMC::FormatTimer(TotalTime));
-                    RMC::IsRunning = false;
+                    IsRunning = false;
                     RMC::ShowTimer = false;
                     if (PluginSettings::RMC_ExitMapOnEndTime) {
                         app.BackToMainMenu();
@@ -123,7 +134,7 @@ class RMObjective : RMC {
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TotalTime += delta;
-                    RMC::TimeSpentMap += delta;
+                    TimeSpentMap += delta;
                 }
             }
 
@@ -132,10 +143,10 @@ class RMObjective : RMC {
     }
 
     void PbLoop() override {
-        while (RMC::IsRunning) {
+        while (IsRunning) {
             yield();
 
-            if (!RMC::IsPaused && !RMC::GotGoalMedal) {
+            if (!IsPaused && !GotGoalMedal) {
                 uint score = TM::GetFinishScore();
                 bool inverse = TM::CurrentMapType() == MapTypes::Stunt;
 
@@ -145,14 +156,14 @@ class RMObjective : RMC {
                 }
 
                 if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
-                    RMC::GoalMedalCount++;
+                    GoalMedalCount++;
                     GotGoalMedalNotification();
-                    RMC::GotGoalMedal = true;
+                    GotGoalMedal = true;
                 }
 
-                if (RMC::PBOnMap == -1 || (!inverse && int(score) < RMC::PBOnMap) || (inverse && int(score) > RMC::PBOnMap)) {
+                if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
                     // PB
-                    RMC::PBOnMap = score;
+                    PBOnMap = score;
                     CreateSave();
                 }
 

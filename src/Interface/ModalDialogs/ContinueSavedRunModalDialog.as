@@ -1,9 +1,11 @@
 class ContinueSavedRunModalDialog : ModalDialog {
     bool HasCompletedCheckbox = false;
+    RMC@ run;
 
-    ContinueSavedRunModalDialog() {
+    ContinueSavedRunModalDialog(RMC@ mode) {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zContinue Saved Run?");
         m_size = vec2(400, 160);
+        @run = mode;
     }
 
     void RenderDialog() override {
@@ -11,7 +13,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         UI::BeginChild("Content", vec2(0, -32) * scale);
 
-        string lastLetter = tostring(RMC::currentGameMode).SubStr(0,1);
+        string lastLetter = tostring(run.GameMode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
 
@@ -33,7 +35,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
         UI::SetCursorPos(vec2(UI::GetWindowSize().x - 100 * scale, UI::GetCursorPos().y));
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Continue")) {
-            RMC::ContinueSavedRun = true;
+            run.ContinueSavedRun = true;
             Close();
             HasCompletedCheckbox = true;
         }

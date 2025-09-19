@@ -5,6 +5,10 @@ class RMS : RMC {
         return "Random Map Survival";
     }
 
+    RMC::GameMode get_GameMode() override {
+        return RMC::GameMode::Survival;
+    }
+
     int get_TimeLimit() override { return (PluginSettings::RMC_SurvivalMaxTime - Skips) * 60 * 1000; }
 
     int get_SurvivedTime() {
@@ -23,34 +27,36 @@ class RMS : RMC {
 
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
-        if (RMC::IsRunning) {
-            if (RMC::IsPaused) UI::TextDisabled(RMC::FormatTimer(TimeLeft));
-            else UI::Text(RMC::FormatTimer(TimeLeft));
 
-            UI::Dummy(vec2(0, 8));
+        if (IsPaused || !IsRunning) {
+            UI::TextDisabled(RMC::FormatTimer(TimeLeft));
+        } else {
+            UI::Text(RMC::FormatTimer(TimeLeft));
+        }
 
-            if (PluginSettings::RMC_SurvivalShowSurvivedTime && SurvivedTime > 0) {
-                UI::PopFont();
-                UI::PushFont(Fonts::HeaderSub);
+        UI::PopFont();
+
+        UI::Dummy(vec2(0, 8));
+
+        if (IsRunning && SurvivedTime > 0) {
+            UI::PushFont(Fonts::HeaderSub);
+
+            if (PluginSettings::RMC_SurvivalShowSurvivedTime) {
                 UI::Text(RMC::FormatTimer(SurvivedTime));
                 UI::SetPreviousTooltip("Total time survived");
             }
 
-            if (PluginSettings::RMC_DisplayMapTimeSpent) {
-                if (PluginSettings::RMC_SurvivalShowSurvivedTime && SurvivedTime > 0) {
-                    UI::SameLine();
-                }
-                UI::PushFont(Fonts::HeaderSub);
-                UI::Text(Icons::Map + " " + RMC::FormatTimer(RMC::TimeSpentMap));
-                UI::SetPreviousTooltip("Time spent on this map");
-                UI::PopFont();
+            if (PluginSettings::RMC_SurvivalShowSurvivedTime && PluginSettings::RMC_DisplayMapTimeSpent) {
+                UI::SameLine();
             }
-        } else {
-            UI::TextDisabled(RMC::FormatTimer(TimeLimit));
-            UI::Dummy(vec2(0, 8));
-        }
 
-        UI::PopFont();
+            if (PluginSettings::RMC_DisplayMapTimeSpent) {
+                UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
+                UI::SetPreviousTooltip("Time spent on this map");
+            }
+
+            UI::PopFont();
+        }
     }
 
     void RenderBelowGoalMedal() override {
@@ -61,10 +67,10 @@ class RMS : RMC {
     }
 
     void SkipButtons() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
 
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (IsPaused) IsPaused = false;
             Skips += 1;
             Log::Trace("RMS: Skipping map");
             UI::ShowNotification("Please wait...");
@@ -75,7 +81,7 @@ class RMS : RMC {
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Skip Broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
-            RMC::IsPaused = true;
+            IsPaused = true;
             Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
@@ -85,10 +91,10 @@ class RMS : RMC {
     }
 
     void NextMapButton() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || RMC::IsSwitchingMap);
+        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            if (RMC::IsPaused) RMC::IsPaused = false;
+            if (IsPaused) IsPaused = false;
             Log::Trace("RMS: Next map");
             UI::ShowNotification("Please wait...");
             TimeLeft += (3*60*1000);
@@ -101,14 +107,10 @@ class RMS : RMC {
     }
 
     void StartTimer() override {
-        if (RMC::ContinueSavedRun) {
-            TimeLeft = int(RMC::CurrentRunData["TimeLeft"]);
-            TotalTime = int(RMC::CurrentRunData["TotalTime"]);
-        }
+        IsRunning = true;
 
-        RMC::IsPaused = false;
-        RMC::IsRunning = true;
-        if (RMC::GotGoalMedal) GotGoalMedalNotification();
+        if (GotGoalMedal) GotGoalMedalNotification();
+
         startnew(CoroutineFunc(TimerYield));
         startnew(CoroutineFunc(PbLoop));
         startnew(CoroutineFunc(PreloadNextMap));
@@ -118,13 +120,13 @@ class RMS : RMC {
         UI::ShowNotification(
             "\\$0f0" + ModeName + " ended!",
             "You survived with a time of " + RMC::FormatTimer(SurvivedTime) +
-            ".\nYou got " + RMC::GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
+            ".\nYou got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
             " medals and " + Skips + " skips."
         );
 
 #if TMNEXT
-        if (RMC::currentGameMode == RMC::GameMode::Survival) {
-            RMCLeaderAPI::postRMS(RMC::GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
+        if (this.GameMode == RMC::GameMode::Survival) {
+            RMCLeaderAPI::postRMS(GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
         }
 #endif
     }
