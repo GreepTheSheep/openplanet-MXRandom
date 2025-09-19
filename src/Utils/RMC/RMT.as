@@ -16,7 +16,7 @@ class RMT : RMC {
     void DevButtons() override {}
 
     void Render() override {
-        if (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns) {
+        if (RenderButtons) {
             if (UI::RedButton(Icons::Times + " Stop RMT")) {
                 UserEndedRun = true;
                 IsRunning = false;
@@ -46,7 +46,7 @@ class RMT : RMC {
             RenderCurrentMap();
         }
 
-        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        if (IsRunning && RenderButtons) {
             UI::Separator();
             RenderPlayingButtons();
             UI::Separator();

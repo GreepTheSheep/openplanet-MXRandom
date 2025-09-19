@@ -150,9 +150,13 @@ class RMC {
         return currentMap !is null && TM::IsMapCorrect(currentMap.MapUid);
     }
 
+    bool get_RenderButtons() {
+        return PluginSettings::RMC_AlwaysShowBtns || UI::IsOverlayShown();
+    }
+
     void Render() {
         string lastLetter = tostring(this.GameMode).SubStr(0,1);
-        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        if (IsRunning && RenderButtons) {
             if (UI::RedButton(Icons::Times + " Stop RM" + lastLetter)) {
                 UserEndedRun = true;
                 IsRunning = false;
@@ -193,7 +197,7 @@ class RMC {
         RenderCustomSearchWarning();
 #endif
 
-        if (IsRunning && (UI::IsOverlayShown() || PluginSettings::RMC_AlwaysShowBtns)) {
+        if (IsRunning && RenderButtons) {
             UI::Separator();
             RenderPlayingButtons();
         }
