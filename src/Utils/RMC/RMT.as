@@ -22,7 +22,7 @@ class RMT : RMC {
                 IsRunning = false;
                 RMC::ShowTimer = false;
 #if DEPENDENCY_BETTERCHAT
-                BetterChat::SendChatMessage(Icons::Users + " Random Map Together stopped");
+                BetterChat::SendChatMessage(Icons::Users + " " + ModeName + " stopped");
                 startnew(CoroutineFunc(BetterChatSendLeaderboard));
 #endif
                 startnew(CoroutineFunc(ResetToLobbyMap));
@@ -63,7 +63,7 @@ class RMT : RMC {
         LobbyMapUID = RMTRoom.room.currentMapUid;
         Log::Trace("RMT: Lobby map UID: " + LobbyMapUID);
 #if DEPENDENCY_BETTERCHAT
-        BetterChat::SendChatMessage(Icons::Users + " Starting Random Map Together. Have Fun!");
+        BetterChat::SendChatMessage(Icons::Users + " Starting " + ModeName + ". Have Fun!");
         sleep(200);
         BetterChat::SendChatMessage(Icons::Users + " Goal medal: " + tostring(PluginSettings::RMC_Medal));
 #endif
@@ -184,7 +184,7 @@ class RMT : RMC {
                     GameEndNotification();
                     m_playerScores.SortDesc();
 #if DEPENDENCY_BETTERCHAT
-                    BetterChat::SendChatMessage(Icons::Users + " Random Map Together ended, thanks for playing!");
+                    BetterChat::SendChatMessage(Icons::Users + " " + ModeName + " ended, thanks for playing!");
                     sleep(200);
                     BetterChatSendLeaderboard();
 #endif
