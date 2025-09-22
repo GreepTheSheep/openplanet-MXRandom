@@ -293,28 +293,43 @@ class RMT : RMC {
     void RenderPlayingButtons() override {
         if (InCurrentMap()) {
             SkipButtons();
+            BrokenSkipButton();
         }
     }
 
     void SkipButtons() override {
-        Medals BelowMedal = PluginSettings::RMC_Medal;
-        if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
-
         UI::BeginDisabled(IsSwitchingMap);
-        if (UI::Button(Icons::PlayCircleO + " Skip" + (GotBelowMedal ? " and take " + tostring(BelowMedal) + " medal" : ""))) {
-            if (IsPaused) IsPaused = false;
 
-            if (GotBelowMedal) {
-                BelowMedalCount++;
-                RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
-                playerScored.AddBelowGoal();
-            } else if (
-                (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) ||
-                (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
-            ) {
-                TimeLeft += TimeSpentMap;
-                TotalTime -= TimeSpentMap;
+        if (!GotBelowMedal) {
+            int skipsLeft = Math::Max(0, PluginSettings::RMC_FreeSkipAmount - FreeSkipsUsed);
+
+            UI::BeginDisabled(skipsLeft == 0);
+
+            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)")) {
+                FreeSkipsUsed++;
+                Log::Trace("RMT: Skipping map");
+                UI::ShowNotification("Please wait...");
+
+#if DEPENDENCY_BETTERCHAT
+                BetterChat::SendChatMessage(Icons::Users + " Skipping map...");
+#endif
+
+                startnew(CoroutineFunc(SwitchMap));
             }
+
+            UI::EndDisabled();
+
+            UI::SetPreviousTooltip(
+                "Free Skips are if the map is finishable but your team still want to skip it for any reason.\n\n" +
+                "If the map is broken, please use the button below instead."
+            );
+        } else if (PluginSettings::RMC_Medal != Medals::Bronze && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal")) {
+            BelowMedalCount++;
+            RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
+            playerScored.AddBelowGoal();
+            m_playerScores.SortDesc();
+            Log::Trace("RMT: Skipping map");
+            UI::ShowNotification("Please wait...");
 #if DEPENDENCY_BETTERCHAT
             BetterChat::SendChatMessage(Icons::Users + " Skipping map...");
 #endif

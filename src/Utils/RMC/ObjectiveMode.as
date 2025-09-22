@@ -59,35 +59,26 @@ class RMObjective : RMC {
     }
 
     void SkipButtons() override {
+        UI::BeginDisabled(IsSwitchingMap);
+
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
-            if (IsPaused) IsPaused = false;
             Skips++;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
-
-            if (
-#if TMNEXT
-                (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) ||
-#endif
-                (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals())
-            ) {
-                TimeLeft += TimeSpentMap;
-            }
             startnew(CoroutineFunc(SwitchMap));
         }
+
+        UI::EndDisabled();
     }
 
     void NextMapButton() override {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
+        UI::BeginDisabled(IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            if (IsPaused) IsPaused = false;
             Log::Trace("ObjectiveMode: Next map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));
         }
-
-        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
 
         UI::EndDisabled();
     }

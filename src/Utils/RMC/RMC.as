@@ -345,6 +345,9 @@ class RMC {
             PausePlayButton();
             UI::SameLine();
             SkipButtons();
+
+            BrokenSkipButton();
+
             if (!PluginSettings::RMC_AutoSwitch && GotGoalMedal) {
                 NextMapButton();
             }
@@ -367,62 +370,57 @@ class RMC {
 
 
     void SkipButtons() {
-        Medals BelowMedal = PluginSettings::RMC_Medal;
-        if (BelowMedal != Medals::Bronze) BelowMedal = Medals(BelowMedal - 1);
+        UI::BeginDisabled(IsSwitchingMap);
 
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
-        if (PluginSettings::RMC_FreeSkipAmount > FreeSkipsUsed) {
-            int skipsLeft = PluginSettings::RMC_FreeSkipAmount - FreeSkipsUsed;
-            if (UI::Button(Icons::PlayCircleO + (GotBelowMedal ? " Take " + tostring(BelowMedal) + " medal" : "Free Skip (" + skipsLeft + " left)"))) {
-                if (IsPaused) IsPaused = false;
-                if (GotBelowMedal) {
-                    BelowMedalCount++;
-                } else {
-                    FreeSkipsUsed++;
-                    RMC::CurrentRunData["FreeSkipsUsed"] = FreeSkipsUsed;
-                    DataManager::SaveCurrentRunData();
-                }
+        if (!GotBelowMedal) {
+            int skipsLeft = Math::Max(0, PluginSettings::RMC_FreeSkipAmount - FreeSkipsUsed);
+
+            UI::BeginDisabled(skipsLeft == 0);
+
+            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)")) {
+                FreeSkipsUsed++;
+                CreateSave();
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
                 startnew(CoroutineFunc(SwitchMap));
             }
-        } else if (GotBelowMedal) {
-            if (UI::Button(Icons::PlayCircleO + " Take " + tostring(BelowMedal) + " medal")) {
-                if (IsPaused) IsPaused = false;
-                BelowMedalCount++;
-                Log::Trace("RMC: Skipping map");
-                UI::ShowNotification("Please wait...");
-                startnew(CoroutineFunc(SwitchMap));
-            }
-        } else {
-            UI::NewLine();
+
+            UI::EndDisabled();
+
+            UI::SetPreviousTooltip(
+                "Free Skips are if the map is finishable but you still want to skip it for any reason.\n\n" +
+                "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
+            );
+        } else if (PluginSettings::RMC_Medal != Medals::Bronze && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal")) {
+            BelowMedalCount++;
+            Log::Trace("RMC: Skipping map");
+            UI::ShowNotification("Please wait...");
+            startnew(CoroutineFunc(SwitchMap));
         }
-        if (!GotBelowMedal) UI::SetPreviousTooltip(
-            "Free Skips are if the map is finishable but you still want to skip it for any reason.\n" +
-            "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
-        );
 
-        if (UI::OrangeButton(Icons::PlayCircleO + "Skip broken Map")) {
+        UI::EndDisabled();
+    }
+
+    void BrokenSkipButton() {
+        UI::BeginDisabled(IsSwitchingMap);
+
+        if (UI::OrangeButton(Icons::PlayCircleO + " Skip broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             IsPaused = true;
             Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
-        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To skip the map, please exit the pause menu.");
         UI::EndDisabled();
     }
 
     void NextMapButton() {
-        UI::BeginDisabled(TM::IsPauseMenuDisplayed() || IsSwitchingMap);
+        UI::BeginDisabled(IsSwitchingMap);
 
         if (UI::GreenButton(Icons::Play + " Next map")) {
-            if (IsPaused) IsPaused = false;
             Log::Trace("RMC: Next map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));
         }
-
-        if (TM::IsPauseMenuDisplayed()) UI::SetPreviousTooltip("To move to the next map, please exit the pause menu.");
 
         UI::EndDisabled();
     }
