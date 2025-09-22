@@ -1,8 +1,4 @@
 class BrokenMapSkipWarnModalDialog : ModalDialog {
-    Net::HttpRequest@ m_request;
-    string resErrorString;
-    Json::Value m_rulesJson;
-    bool m_requestError = false;
     RMC@ mode;
 
     BrokenMapSkipWarnModalDialog(RMC@ gamemode) {

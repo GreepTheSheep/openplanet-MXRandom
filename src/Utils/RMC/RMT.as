@@ -591,7 +591,5 @@ class RMTPlayerScore {
         if (this.goals == other.goals) return 0;
         return 1;
     }
-#else
-    string get_ModeName() override { return "Random Map Together (NOT SUPPORTED ON THIS GAME)";}
 #endif
 }
