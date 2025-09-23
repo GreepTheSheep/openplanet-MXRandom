@@ -38,7 +38,14 @@ namespace MX {
             return null;
         }
 
-        MX::MapInfo@ map = MX::MapInfo(res["Results"][0]);
+        MX::MapInfo@ map;
+
+        try {
+            @map = MX::MapInfo(res["Results"][0]);
+        } catch {
+            Log::Warn("[GetRandomMap] Failed to parse map info from MX, skipping...");
+            return null;
+        }
 
         if (map is null) {
             Log::Warn("[GetRandomMap] Map is null, skipping...");
@@ -55,6 +62,16 @@ namespace MX {
 
             if ((!PluginSettings::CustomRules || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
                 Log::Warn("[GetRandomMap] Map is from a blacklisted author, skipping...");
+                return null;
+            }
+
+            if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
+                Log::Warn("[GetRandomMap] Map is most likely low effort, skipping...");
+                return null;
+            }
+
+            if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
+                Log::Warn("[GetRandomMap] Map is most likely missing a default filtered tag, skipping...");
                 return null;
             }
 
@@ -89,16 +106,6 @@ namespace MX {
 #endif
         }
 
-        if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
-            Log::Warn("[GetRandomMap] Map is most likely low effort, skipping...");
-            return null;
-        }
-
-        if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
-            Log::Warn("[GetRandomMap] Map is most likely missing a default filtered tag, skipping...");
-            return null;
-        }
-
         if (PluginSettings::CustomRules) {
             if (PluginSettings::UseDateInterval) {
                 int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
@@ -121,9 +128,6 @@ namespace MX {
                     Log::Warn("[GetRandomMap] Map is longer than the requested length, skipping...");
                     return null;
                 }
-            } else if (map.AuthorTime > RMC::config.length) {
-                Log::Warn("Map is too long, retrying...");
-                return null;
             }
 
             if (PluginSettings::ExcludedTerms != "") {
