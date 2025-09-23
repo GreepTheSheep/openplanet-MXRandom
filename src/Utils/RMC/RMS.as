@@ -23,6 +23,10 @@ class RMS : RMC {
         BelowMedalCount = Math::Max(0, n);
     }
 
+    bool get_ModeHasBelowMedal() override {
+        return false;
+    }
+
     void RenderPace() override { }
 
     void RenderTimer() override {

@@ -48,6 +48,9 @@ namespace PluginSettings {
     [Setting hidden]
     bool RMC_EditedMedalsWarns = true;
 
+    [Settings hidden]
+    bool RMC_DisplayGoalTimes = false;
+
     [Setting hidden]
     int RMC_ImageSize = 25;
 
@@ -85,14 +88,10 @@ namespace PluginSettings {
                 RMC_Medal = Medals::Author;
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
-                RMC_Duration = 60;
-                RMC_SurvivalMaxTime = 15;
-#if TMNEXT
-                RMC_PrepatchTagsWarns = true;
-#endif
-                RMC_EditedMedalsWarns = true;
                 RMC_RUN_AUTOSAVE = true;
+                RMC_Duration = 60;
                 RMC_FreeSkipAmount = 1;
+                RMC_SurvivalMaxTime = 15;
                 RMC_PushLeaderboardResults = true;
             }
 
@@ -123,12 +122,6 @@ namespace PluginSettings {
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer in Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
 #if TMNEXT
-            RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch map warnings", RMC_PrepatchTagsWarns);
-            UI::SettingDescription("Display a warning if the map was built before certain physics patches (e.g. the bobsleigh update)");
-
-            RMC_EditedMedalsWarns = UI::Checkbox("Edited medals warnings", RMC_EditedMedalsWarns);
-            UI::SettingDescription("Display a warning if the map has medal times that differ from the default formula.");
-
             RMC_PushLeaderboardResults = UI::Checkbox("Send every RMC & RMS runs to the leaderboard", RMC_PushLeaderboardResults);
             UI::SettingDescription("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif
@@ -138,19 +131,28 @@ namespace PluginSettings {
 
         if (UI::BeginTabItem(Icons::WindowMaximize + " Display")) {
             if (UI::OrangeButton("Reset to default")) {
-                RMC_DisplayCurrentMap = true;
                 RMC_AlwaysShowBtns = true;
-                RMC_SurvivalShowSurvivedTime = true;
+                RMC_DisplayGoalTimes = false;
                 RMC_DisplayMapTimeSpent = true;
+                RMC_DisplayPace = false;
+                RMC_SurvivalShowSurvivedTime = true;
+                RMC_ImageSize = 25;
+                RMC_DisplayCurrentMap = true;
+                RMC_ShowAwards = false;
                 RMC_DisplayMapDate = true;
+#if TMNEXT
+                RMC_PrepatchTagsWarns = true;
+#endif
+                RMC_EditedMedalsWarns = true;
                 RMC_TagsLength = 1;
-                RMC_ImageSize = 20;
+                
             }
 
             UI::PaddedHeaderSeparator("Game modes");
 
-            RMC_DisplayMapTimeSpent = UI::Checkbox("Time spent on the map", RMC_DisplayMapTimeSpent);
             RMC_AlwaysShowBtns = UI::Checkbox("Show buttons when the Openplanet overlay is hidden", RMC_AlwaysShowBtns);
+            RMC_DisplayGoalTimes = UI::Checkbox("Display goal times", RMC_DisplayGoalTimes);
+            RMC_DisplayMapTimeSpent = UI::Checkbox("Time spent on the map", RMC_DisplayMapTimeSpent);
             RMC_DisplayPace = UI::Checkbox("Show the pace of the current run", RMC_DisplayPace);
             RMC_SurvivalShowSurvivedTime = UI::Checkbox("Total time survived (Survival only)", RMC_SurvivalShowSurvivedTime);
             UI::SetNextItemWidth(300);
@@ -162,8 +164,16 @@ namespace PluginSettings {
 
             UI::BeginDisabled(!RMC_DisplayCurrentMap);
 
-            RMC_DisplayMapDate = UI::Checkbox("Upload date", RMC_DisplayMapDate);
             RMC_ShowAwards = UI::Checkbox("Award count", RMC_ShowAwards);
+            RMC_DisplayMapDate = UI::Checkbox("Upload date", RMC_DisplayMapDate);
+
+#if TMNEXT
+            RMC_PrepatchTagsWarns = UI::Checkbox("Prepatch warnings", RMC_PrepatchTagsWarns);
+            UI::SettingDescription("Display a warning if the map was built before certain physics patches (e.g. the bobsleigh update)");
+#endif
+            RMC_EditedMedalsWarns = UI::Checkbox("Edited medals warnings", RMC_EditedMedalsWarns);
+            UI::SettingDescription("Display a warning if the map has medal times that differ from the default formula.");
+
             UI::SetNextItemWidth(200);
             RMC_TagsLength = UI::SliderInt("Tags displayed (0: hidden)", RMC_TagsLength, 0, 3);
 

@@ -14,6 +14,9 @@ namespace MX {
         string GbxMapName;
         string TitlePack;
         int AuthorTime;
+        int GoldTime;
+        int SilverTime;
+        int BronzeTime;
         int AwardCount;
         int Length;
         bool ServerSizeExceeded;
@@ -49,6 +52,24 @@ namespace MX {
 
                 if (json["Medals"].GetType() != Json::Type::Null) {
                     AuthorTime = json["Medals"]["Author"];
+
+                    if (!json["Medals"].HasKey("Gold")) {
+                        GoldTime = GetDefaultMedalTime(Medals::Gold);
+                    } else {
+                        GoldTime = json["Medals"]["Gold"];
+                    }
+
+                    if (!json["Medals"].HasKey("Silver")) {
+                        SilverTime = GetDefaultMedalTime(Medals::Silver);
+                    } else {
+                        SilverTime = json["Medals"]["Silver"];
+                    }
+
+                    if (!json["Medals"].HasKey("Bronze")) {
+                        BronzeTime = GetDefaultMedalTime(Medals::Bronze);
+                    } else {
+                        BronzeTime = json["Medals"]["Bronze"];
+                    }
                 }
 
                 if (json["Length"].GetType() != Json::Type::Null) {
@@ -106,6 +127,9 @@ namespace MX {
 
                 Json::Value medalsObject = Json::Object();
                 medalsObject["Author"] = AuthorTime;
+                medalsObject["Gold"] = GoldTime;
+                medalsObject["Silver"] = SilverTime;
+                medalsObject["Bronze"] = BronzeTime;
 
                 json["Medals"] = medalsObject;
 
@@ -136,6 +160,111 @@ namespace MX {
                 if (Tags[i].Name == tagName) {
                     return true;
                 }
+            }
+
+            return false;
+        }
+
+        MapTypes get_Type() {
+            if (this.MapType.Contains("Stunt")) {
+                return MapTypes::Stunt;
+            } else if (this.MapType.Contains("Platform")) {
+                return MapTypes::Platform;
+            } else if (this.MapType.EndsWith("Royal")) {
+                return MapTypes::Royal;
+            }
+
+            return MapTypes::Race;
+        }
+
+        uint GetMedalTime(Medals medal) {
+            switch (medal) {
+#if TMNEXT
+                case Medals::WR:
+                    return TM::GetWorldRecordFromCache(this.MapUid);
+#endif
+                case Medals::Author:
+                    return this.AuthorTime;
+                case Medals::Gold:
+                    return this.GoldTime;
+                case Medals::Silver:
+                    return this.SilverTime;
+                case Medals::Bronze:
+                    return this.BronzeTime;
+                default:
+                    return uint(-1);
+            }
+        }
+
+        uint GetDefaultMedalTime(Medals medal) {
+            uint normalGold;
+            uint normalSilver;
+            uint normalBronze;
+
+            switch (this.Type) {
+                case MapTypes::Stunt:
+                    // Credits to beu and Ezio for the formula
+                    normalGold = uint(Math::Floor(AuthorTime * 0.085) * 10);
+                    normalSilver = uint(Math::Floor(AuthorTime * 0.06) * 10);
+                    normalBronze = uint(Math::Floor(AuthorTime * 0.037) * 10);
+                    break;
+                case MapTypes::Platform:
+                    normalGold = AuthorTime + 3;
+                    normalSilver = AuthorTime + 10;
+                    normalBronze = AuthorTime + 30;
+                    break;
+                case MapTypes::Race:
+                case MapTypes::Royal:
+                default:
+                    normalGold = uint((AuthorTime * 1.06) / 1000 + 1) * 1000;
+                    normalSilver = uint((AuthorTime * 1.2) / 1000 + 1) * 1000;
+                    normalBronze = uint((AuthorTime * 1.5) / 1000 + 1) * 1000;
+                    break;
+            }
+
+            switch (medal) {
+#if TMNEXT
+                case Medals::WR:
+                    return TM::GetWorldRecordFromCache(this.MapUid);
+#endif
+                case Medals::Author:
+                    return AuthorTime;
+                case Medals::Gold:
+                    return normalGold;
+                case Medals::Silver:
+                    return normalSilver;
+                case Medals::Bronze:
+                    return normalBronze;
+                default:
+                    return uint(-1);
+            }
+        }
+
+        bool get_HasEditedMedals() {
+            for (uint i = 0; i <= Medals::Gold; i++) {
+                if (IsMedalEdited(Medals(i))) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool IsMedalEdited(Medals medal) {
+            if (medal >= Medals::Author) {
+                return false;
+            }
+
+            bool inverse = this.Type == MapTypes::Stunt;
+            int medalTime = GetMedalTime(medal);
+            int defaultTime = GetDefaultMedalTime(medal);
+
+            if (!inverse && medalTime < defaultTime) {
+                return true;
+            }
+
+            if (inverse && medalTime > defaultTime) {
+                return true;
             }
 
             return false;

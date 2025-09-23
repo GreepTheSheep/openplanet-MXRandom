@@ -77,55 +77,6 @@ namespace TM {
         return uint(playground.Arena.Rules.RulesStateStartTime);
     }
 
-    bool HasEditedMedals() {
-        CTrackMania@ app = cast<CTrackMania>(GetApp());
-        if (app.RootMap is null) return false;
-
-        auto map = app.RootMap;
-        int authorTime = map.TMObjective_AuthorTime;
-        MapTypes type = CurrentMapType();
-        bool inverse = type == MapTypes::Stunt;
-
-        uint normalGold;
-        uint normalSilver;
-        uint normalBronze;
-
-        switch (type) {
-            case MapTypes::Stunt:
-                // Credits to beu and Ezio for the formula
-                normalGold = uint(Math::Floor(authorTime * 0.085) * 10);
-                normalSilver = uint(Math::Floor(authorTime * 0.06) * 10);
-                normalBronze = uint(Math::Floor(authorTime * 0.037) * 10);
-                break;
-            case MapTypes::Platform:
-                normalGold = authorTime + 3;
-                normalSilver = authorTime + 10;
-                normalBronze = authorTime + 30;
-                break;
-            case MapTypes::Race:
-            case MapTypes::Royal:
-            default:
-                normalGold = uint((authorTime * 1.06) / 1000 + 1) * 1000;
-                normalSilver = uint((authorTime * 1.2) / 1000 + 1) * 1000;
-                normalBronze = uint((authorTime * 1.5) / 1000 + 1) * 1000;
-                break;
-        }
-
-        if ((!inverse && map.TMObjective_GoldTime < normalGold) || (inverse && map.TMObjective_GoldTime > normalGold)) {
-            return true;
-        }
-
-        if ((!inverse && map.TMObjective_SilverTime < normalSilver) || (inverse && map.TMObjective_SilverTime > normalSilver)) {
-            return true;
-        }
-
-        if ((!inverse && map.TMObjective_BronzeTime < normalBronze) || (inverse && map.TMObjective_BronzeTime > normalBronze)) {
-            return true;
-        }
-
-        return false;
-    }
-
     string CurrentTitlePack() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
         if (app.LoadedManiaTitle is null) return "";

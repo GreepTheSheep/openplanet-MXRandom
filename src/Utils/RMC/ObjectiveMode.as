@@ -8,6 +8,10 @@ class RMObjective : RMC {
         return RMC::GameMode::Objective;
     }
 
+    bool get_ModeHasBelowMedal() override {
+        return false;
+    }
+
     void RenderPace() override { }
 
     void CheckSave() override { }

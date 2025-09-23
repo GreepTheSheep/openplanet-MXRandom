@@ -150,6 +150,33 @@ class RMC {
         return currentMap !is null && TM::IsMapCorrect(currentMap.MapUid);
     }
 
+    bool get_ModeHasBelowMedal() {
+        return PluginSettings::RMC_Medal != Medals::Bronze;
+    }
+
+    void RenderGoalTimes() {
+        UI::Text(UI::GetMedalIcon(PluginSettings::RMC_Medal) + " Goal: " + UI::FormatTime(GoalTime, currentMap.Type));
+
+        if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
+            UI::SameLine();
+            UI::Text(Icons::Pencil);
+            UI::SetPreviousTooltip("The author has edited the " + tostring(PluginSettings::RMC_Medal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
+        }
+
+        if (!ModeHasBelowMedal) {
+            return;
+        }
+
+        Medals belowMedal = Medals(PluginSettings::RMC_Medal - 1);
+        UI::Text(UI::GetMedalIcon(belowMedal) + " Below goal: " + UI::FormatTime(BelowGoalTime, currentMap.Type));
+
+        if (currentMap.IsMedalEdited(belowMedal)) {
+            UI::SameLine();
+            UI::Text(Icons::Pencil);
+            UI::SetPreviousTooltip("The author has edited the " + tostring(belowMedal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
+        }
+    }
+
     bool get_RenderButtons() {
         return PluginSettings::RMC_AlwaysShowBtns || UI::IsOverlayShown();
     }
@@ -184,6 +211,10 @@ class RMC {
         UI::Separator();
         RenderGoalMedal();
         RenderBelowGoalMedal();
+
+        if (PluginSettings::RMC_DisplayGoalTimes) {
+            RenderGoalTimes();
+        }
 
         if (PluginSettings::RMC_DisplayPace) {
             RenderPace();
@@ -255,7 +286,7 @@ class RMC {
     }
 
     void RenderBelowGoalMedal() {
-        if (PluginSettings::RMC_Medal != Medals::Bronze) {
+        if (ModeHasBelowMedal) {
             UI::HPadding(25);
             UI::Image(Textures[PluginSettings::RMC_Medal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             UI::SameLine();
@@ -297,14 +328,23 @@ class RMC {
 #if TMNEXT
                     if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
                         RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
-                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z" + tag.title);
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
                         UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
 #endif
 
-                    if (PluginSettings::RMC_EditedMedalsWarns && TM::HasEditedMedals()) {
+                    if (PluginSettings::RMC_EditedMedalsWarns && currentMap.HasEditedMedals) {
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
-                        UI::SetPreviousTooltip("The map has medal times that differ from the default.\n\nYou can broken skip it if preferred.");
+
+                        if (UI::BeginItemTooltip()) {
+                            UI::Text("The map has medal times that differ from the default. The plugin will use the default times for the medals.");
+                            
+                            if (!PluginSettings::RMC_DisplayGoalTimes) {
+                                UI::NewLine();
+                                UI::Text("You can enable \"Display goal times\" in the settings or use the \"Default Medals\" plugin to see the times.");
+                            }
+                            UI::EndTooltip();
+                        }
                     }
 
                     if (PluginSettings::RMC_TagsLength != 0) {
@@ -391,7 +431,7 @@ class RMC {
                 "Free Skips are if the map is finishable but you still want to skip it for any reason.\n\n" +
                 "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
             );
-        } else if (PluginSettings::RMC_Medal != Medals::Bronze && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal")) {
+        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal")) {
             BelowMedalCount++;
             Log::Trace("RMC: Skipping map");
             UI::ShowNotification("Please wait...");
@@ -452,7 +492,7 @@ class RMC {
     void GameEndNotification() {
         string notificationText = "You got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
 
-        if (PluginSettings::RMC_Medal != Medals::Bronze && BelowMedalCount > 0) {
+        if (ModeHasBelowMedal && BelowMedalCount > 0) {
             notificationText += " and " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1));
         }
         notificationText += " medals!";
@@ -519,19 +559,11 @@ class RMC {
 
     uint get_GoalTime() {
         if (InCurrentMap()) {
-            auto app = cast<CTrackMania>(GetApp());
-            auto map = app.RootMap;
-
-            switch (PluginSettings::RMC_Medal) {
-#if TMNEXT
-                case Medals::WR: return TM::GetWorldRecordFromCache(map.IdName);
-#endif
-                case Medals::Author: return map.TMObjective_AuthorTime;
-                case Medals::Gold: return map.TMObjective_GoldTime;
-                case Medals::Silver: return map.TMObjective_SilverTime;
-                case Medals::Bronze: return map.TMObjective_BronzeTime;
-                default: return uint(-1);
+            if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
+                return currentMap.GetDefaultMedalTime(PluginSettings::RMC_Medal);
             }
+
+            return currentMap.GetMedalTime(PluginSettings::RMC_Medal);
         }
 
         return uint(-1);
@@ -539,16 +571,13 @@ class RMC {
 
     uint get_BelowGoalTime() {
         if (InCurrentMap()) {
-            auto app = cast<CTrackMania>(GetApp());
-            auto map = app.RootMap;
+            Medals belowMedal = Medals(PluginSettings::RMC_Medal - 1);
 
-            switch (PluginSettings::RMC_Medal - 1) {
-                case Medals::Author: return map.TMObjective_AuthorTime;
-                case Medals::Gold: return map.TMObjective_GoldTime;
-                case Medals::Silver: return map.TMObjective_SilverTime;
-                case Medals::Bronze: return map.TMObjective_BronzeTime;
-                default: return uint(-1);
+            if (currentMap.IsMedalEdited(belowMedal)) {
+                return currentMap.GetDefaultMedalTime(belowMedal);
             }
+
+            return currentMap.GetMedalTime(belowMedal);
         }
 
         return uint(-1);
@@ -572,7 +601,7 @@ class RMC {
                     GotGoalMedalNotification();
                     GotGoalMedal = true;
                     CreateSave();
-                } else if (!GotBelowMedal && PluginSettings::RMC_Medal != Medals::Bronze && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
+                } else if (ModeHasBelowMedal && !GotBelowMedal && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
                     GotBelowGoalMedalNotification();
                     GotBelowMedal = true;
                     CreateSave();
