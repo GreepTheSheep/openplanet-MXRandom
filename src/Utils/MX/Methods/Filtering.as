@@ -26,12 +26,12 @@ namespace MX {
             }
 
             if (map.AwardCount < 5) {
-                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG|R?TGE)\\b", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG|R?TGE|RTG)\\b", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely randomly generated.");
                     return true;
                 }
 
-                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|lunatic|sorry|annoying|shit|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|lunatic|sorry|annoying|shit(ty)?|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely low effort.");
                     return true;
                 }
