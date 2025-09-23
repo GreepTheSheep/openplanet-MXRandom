@@ -299,6 +299,9 @@ namespace PluginSettings {
 
         UI::PaddedHeaderSeparator("Other");
 
+        SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
+        UI::SettingDescription("If enabled, every map will only appear once per run.");
+
         string difficultyText;
         switch (DifficultiesArray.Length) {
             case 0: difficultyText = "Any"; break;
@@ -332,9 +335,6 @@ namespace PluginSettings {
         }
 
         Difficulties = ConvertArrayToList(DifficultiesArray);
-
-        SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
-        UI::SettingDescription("If enabled, every map will only appear once per run.");
 
 #if TMNEXT
         UI::SetNextItemWidth(160);
