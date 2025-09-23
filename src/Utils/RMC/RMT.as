@@ -360,8 +360,8 @@ class RMT : RMC {
         if (UI::BeginTable("RMTScores", 3, UI::TableFlags::Hideable)) {
             UI::TableSetupScrollFreeze(0, 1);
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn(tostring(PluginSettings::RMC_Medal), UI::TableColumnFlags::WidthFixed, 40);
-            UI::TableSetupColumn(tostring(BelowMedal), UI::TableColumnFlags::WidthFixed, 40);
+            UI::TableSetupColumn(tostring(PluginSettings::RMC_Medal), UI::TableColumnFlags::WidthFixed);
+            UI::TableSetupColumn(tostring(BelowMedal), UI::TableColumnFlags::WidthFixed);
             UI::TableHeadersRow();
 
             UI::TableSetColumnEnabled(2, ModeHasBelowMedal);
