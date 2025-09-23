@@ -587,9 +587,15 @@ class RMTPlayerScore {
     }
 
     int opCmp(RMTPlayerScore@ other) const {
-        if (this.goals < other.goals) return -1;
-        if (this.goals == other.goals) return 0;
-        return 1;
+        if (this.goals == other.goals) {
+            if (this.belowGoals == other.belowGoals) {
+                return SortString(this.name, other.name);
+            }
+
+            return Math::Clamp(this.belowGoals - other.belowGoals, -1, 1);
+        }
+
+        return Math::Clamp(this.goals - other.goals, -1, 1);
     }
 #endif
 }
