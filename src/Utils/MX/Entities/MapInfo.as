@@ -269,5 +269,9 @@ namespace MX {
 
             return false;
         }
+
+        bool opEquals(MapInfo@ other) {
+            return this.MapId == other.MapId;
+        }
     }
 }

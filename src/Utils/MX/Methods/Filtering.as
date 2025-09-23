@@ -78,4 +78,8 @@ namespace MX {
 
         return false;
     }
+
+    bool IsMapImpossible(MX::MapInfo@ map) {
+        return impossibleMaps.Find(map) > -1;
+    }
 }

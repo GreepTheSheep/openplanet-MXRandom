@@ -89,6 +89,10 @@ void Main() {
 
     await(startnew(MX::FetchMapTags));
 
+#if TMNEXT
+    startnew(MX::GetImpossibleMaps);
+#endif
+
     if (DataJson.GetType() == Json::Type::Null) {
         if (DataJsonFromDataFolder.GetType() != Json::Type::Null) {
             DataManager::InitData(false);

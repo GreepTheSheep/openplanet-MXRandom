@@ -60,6 +60,11 @@ namespace MX {
                 }
             }
 
+            if (IsMapImpossible(map)) {
+                Log::Warn("Map is part of the cheated/broken/impossible ATs mappack, skipping...");
+                return null;
+            }
+
             if ((!PluginSettings::CustomRules || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
                 Log::Warn("[GetRandomMap] Map is from a blacklisted author, skipping...");
                 return null;
