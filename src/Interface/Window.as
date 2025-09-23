@@ -15,7 +15,7 @@ class Window {
 
     string GetWindowTitle() {
         if (isInRMCMode) {
-            return MX_COLOR_STR + Icons::ClockO + " \\$z" + " RMC";
+            return MX_COLOR_STR + Icons::ClockO + "\\$z RMC";
         }
 
         return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v" + PLUGIN_VERSION;

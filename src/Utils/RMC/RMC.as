@@ -524,6 +524,7 @@ class RMC {
     }
 
     void TimerYield() {
+        auto app = cast<CTrackMania>(GetApp());
         int lastUpdate = Time::Now;
 
         while (IsRunning) {
@@ -542,7 +543,6 @@ class RMC {
                     }
 
                     if (PluginSettings::RMC_ExitMapOnEndTime) {
-                        CTrackMania@ app = cast<CTrackMania>(GetApp());
                         app.BackToMainMenu();
                     }
                 } else {
