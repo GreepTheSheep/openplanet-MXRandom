@@ -126,6 +126,9 @@ class RMObjective : RMC {
                     if (PluginSettings::RMC_ExitMapOnEndTime) {
                         app.BackToMainMenu();
                     }
+                } else if (PluginSettings::RMC_PauseWhenMenuOpen && TM::IsPauseMenuDisplayed()) {
+                    Log::Info("Pause menu opened, paused timer!", true);
+                    IsPaused = true;
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TotalTime += delta;

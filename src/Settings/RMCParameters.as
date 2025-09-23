@@ -70,6 +70,9 @@ namespace PluginSettings {
     bool RMC_RUN_AUTOSAVE = true;
 
     [Setting hidden]
+    bool RMC_PauseWhenMenuOpen = true;
+
+    [Setting hidden]
     int RMC_FreeSkipAmount = 1;  // one free skip as per official rules
 
     [Setting hidden]
@@ -89,6 +92,7 @@ namespace PluginSettings {
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
                 RMC_RUN_AUTOSAVE = true;
+                RMC_PauseWhenMenuOpen = true;
                 RMC_Duration = 60;
                 RMC_FreeSkipAmount = 1;
                 RMC_SurvivalMaxTime = 15;
@@ -113,6 +117,7 @@ namespace PluginSettings {
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(RMC_Medal) + " medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quit the map when the timer is up", RMC_ExitMapOnEndTime);
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
+            RMC_PauseWhenMenuOpen = UI::Checkbox("Pause timer when the pause menu is open", RMC_PauseWhenMenuOpen);
 
             UI::SetNextItemWidth(300);
             RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 5, 300);
