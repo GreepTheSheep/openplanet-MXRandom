@@ -37,7 +37,7 @@ namespace RMCLeaderAPI {
         while (!IsConnected && connectionAttempts < 5)  {
             connectionAttempts++;
 
-            Log::Log("Starting Auth...");
+            Log::Info("Starting Auth...");
 
             if (AccountToken == "") {
                 Auth::PluginAuthTask@ tokenTask = Auth::GetToken();
@@ -63,7 +63,7 @@ namespace RMCLeaderAPI {
 
 #if SIG_DEVELOPER
             Log::Trace("Token: " + AccountToken);
-            Log::Log("Sending Token...");
+            Log::Info("Sending Token...");
 #endif
 
             Json::Value@ json = Json::Object();
@@ -78,7 +78,7 @@ namespace RMCLeaderAPI {
 
                 if (isSuccess) {
                     string srvDisplayName = res["player_name"];
-                    Log::Log("Connected! Display name: " + srvDisplayName, Meta::IsDeveloperMode());
+                    Log::Info("Connected! Display name: " + srvDisplayName, Meta::IsDeveloperMode());
                     Status = ConnectionStatus::Connected;
                     return;
                 } else {
@@ -149,7 +149,7 @@ namespace RMCLeaderAPI {
                 string message = res["message"];
 
                 if (isSuccess) {
-                    Log::Log(message, true);
+                    Log::Info(message, true);
                     return;
                 } else {
                     Log::Warn("Posting RMC results failed: " + message + " - Retrying...");
@@ -218,7 +218,7 @@ namespace RMCLeaderAPI {
                 string message = res["message"];
 
                 if (isSuccess) {
-                    Log::Log(message, true);
+                    Log::Info(message, true);
                     return;
                 } else {
                     Log::Warn("Posting RMS results failed: " + message + " - Retrying...");

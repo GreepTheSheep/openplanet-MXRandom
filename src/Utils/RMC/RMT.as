@@ -496,7 +496,7 @@ class RMT : RMC {
     }
 
     void GotGoalMedalNotification() override {
-        Log::Log(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
+        Log::Info(playerGotGoal.name + " got the goal medal with a time of " + playerGotGoal.time);
         UI::ShowNotification(Icons::Trophy + " " + playerGotGoal.name + " got the " + tostring(PluginSettings::RMC_Medal) + " medal with a time of " + playerGotGoal.timeStr, "Switching map...", Text::ParseHexColor("#01660f"));
 
 #if DEPENDENCY_BETTERCHAT
@@ -507,7 +507,7 @@ class RMT : RMC {
     }
 
     void GotBelowGoalMedalNotification() override {
-        Log::Log(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
+        Log::Info(playerGotBelowGoal.name + " got the below goal medal with a time of " + playerGotBelowGoal.time);
         UI::ShowNotification(Icons::Trophy + " " + playerGotBelowGoal.name + " got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal with a time of " + playerGotBelowGoal.timeStr, "You can skip and take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal", Text::ParseHexColor("#4d3e0a"));
 
 #if DEPENDENCY_BETTERCHAT

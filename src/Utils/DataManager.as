@@ -27,7 +27,7 @@ namespace DataManager {
 
     void CheckData() {
         if (Versioning::IsPluginUpdated()) {
-            Log::Log("Plugin was updated, old version was " + Json::Write(DataJson["version"]));
+            Log::Info("Plugin was updated, old version was " + Json::Write(DataJson["version"]));
             DataJson["version"] = PLUGIN_VERSION;
         }
     }

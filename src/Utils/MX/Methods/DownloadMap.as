@@ -26,7 +26,7 @@ namespace MX {
             _fileName = Path::SanitizeFileName(_fileName);
 
             netMap.SaveToFile(mxDLFolder + "/" + _fileName + ".Map.Gbx");
-            Log::Log("[DownloadMap] Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
+            Log::Info("[DownloadMap] Map downloaded to " + mxDLFolder + "/" + _fileName + ".Map.Gbx");
         } catch {
             Log::Error("Error while downloading map with ID #" + mapId, true);
         }

@@ -26,7 +26,7 @@ class SaveRunQuestionModalDialog : ModalDialog {
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
             currentRun.CreateSave();
-            Log::Log("Saved run data", true);
+            Log::Info("Saved run data", true);
         }
     }
 }

@@ -245,7 +245,7 @@ namespace Migration {
             IO::Copy(oldSaves[f], backupSavePath + fileName);
         }
 
-        Log::Log("Succesfully backed up old data at " + MX_V1_BACKUP_LOCATION);
+        Log::Info("Succesfully backed up old data at " + MX_V1_BACKUP_LOCATION);
     }
 
     void RemoveMX1SaveFiles() {

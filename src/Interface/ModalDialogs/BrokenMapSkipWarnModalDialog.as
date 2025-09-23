@@ -28,7 +28,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Yes")) {
             Close();
-            Log::Log("RMC: Skipping broken map.");
+            Log::Info("RMC: Skipping broken map.");
             UI::ShowNotification("Please wait...");
 
 #if DEPENDENCY_BETTERCHAT
