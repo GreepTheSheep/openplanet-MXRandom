@@ -81,9 +81,16 @@ namespace MX {
             }
 
 #if TMNEXT
-            if (RMC::currentRun.GameMode == RMC::GameMode::Together && map.ServerSizeExceeded) {
-                Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
-                return null;
+            if (RMC::currentRun.GameMode == RMC::GameMode::Together) {
+                if (map.ServerSizeExceeded) {
+                    Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
+                    return null;
+                }
+
+                if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
+                    Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
+                    return null;
+                }
             }
 
             if (PluginSettings::RMC_Medal == Medals::WR) {
