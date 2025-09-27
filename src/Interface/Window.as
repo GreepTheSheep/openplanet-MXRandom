@@ -27,6 +27,14 @@ class Window {
             return;
         }
 
+        if (PluginSettings::HideWithGameUI && !UI::IsGameUIVisible()) {
+            return;
+        }
+
+        if (PluginSettings::HideWithOP && !UI::IsOverlayShown()) {
+            return;
+        }
+
         UI::PushStyleVar(UI::StyleVar::WindowPadding, vec2(10, 10));
         UI::PushStyleVar(UI::StyleVar::WindowRounding, 10.0);
         UI::PushStyleVar(UI::StyleVar::FramePadding, vec2(10, 6));
