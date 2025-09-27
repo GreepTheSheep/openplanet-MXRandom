@@ -46,15 +46,26 @@ class RMT : RMC {
             RenderPace();
         }
 
-        if (PluginSettings::RMC_DisplayCurrentMap) {
-            RenderCurrentMap();
-        }
+        if (TM::IsInServer()) {
+            if (PluginSettings::RMC_DisplayCurrentMap) {
+                RenderCurrentMap();
+            }
 
-        if (IsRunning && RenderButtons) {
+            if (IsRunning && RenderButtons) {
+                UI::Separator();
+                RenderPlayingButtons();
+                UI::Separator();
+                DrawPlayerProgress();
+            }
+        } else {
             UI::Separator();
-            RenderPlayingButtons();
-            UI::Separator();
-            DrawPlayerProgress();
+            UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zNot in a room.");
+
+#if DEPENDENCY_BETTERROOMMANAGER
+            if (UI::GreenButton(Icons::SignIn + " Rejoin room")) {
+                startnew(MXNadeoServicesGlobal::JoinRMTRoom);
+            }
+#endif
         }
     }
 
