@@ -177,9 +177,7 @@ class RMT : RMC {
             yield();
 
             if (!IsPaused) {
-                if (!InCurrentMap()) {
-                    IsPaused = true;
-                } else if (!UserEndedRun && (!IsRunning || TimeLeft == 0)) {
+                if (!UserEndedRun && (!IsRunning || TimeLeft == 0)) {
                     IsRunning = false;
                     RMC::ShowTimer = false;
                     GameEndNotification();
