@@ -56,7 +56,7 @@ namespace MX {
             } else if (
                 map.AwardCount <= 5
                 && map.HasTag("Remake")
-                && Regex::Contains(map.Name, "((Summer|Fall|Winter|Spring) 202\\d (- )?\\d{1,2})|\\b[a-e]0[1-5]\\b|Training (- )?[0-2]?\\d", Regex::Flags::CaseInsensitive)
+                && Regex::Contains(map.Name, "((Summer|Fall|Winter|Spring) 202\\d (- )?\\d{1,2})|\\b[a-e]0[1-5](\\b|-(Acrobatic|Race|Obstacle|Endurance|Speed))|Training (- )?[0-2]?\\d", Regex::Flags::CaseInsensitive)
             ) {
                 Log::Warn("Map is most likely untagged Altered Nadeo.");
                 return true;
