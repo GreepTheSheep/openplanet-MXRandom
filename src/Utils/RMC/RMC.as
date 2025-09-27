@@ -295,17 +295,15 @@ class RMC {
     }
 
     void RenderCurrentMap() {
-        if (IsSwitchingMap) {
+        if (IsSwitchingMap && IsPaused) {
             UI::Separator();
-            if (IsPaused) {
-                UI::AlignTextToFramePadding();
-                UI::Text("Switching map...");
-                UI::SameLine();
-                if (UI::Button("Force switch")) {
-                    startnew(CoroutineFunc(SwitchMap));
-                }
+            UI::AlignTextToFramePadding();
+            UI::Text("Switching map...");
+            UI::SameLine();
+
+            if (UI::Button("Force switch")) {
+                startnew(CoroutineFunc(SwitchMap));
             }
-            else IsPaused = true;
         } else if (IsInited && TM::IsMapLoaded()) {
             if (InCurrentMap()) {
                 UI::Separator();
