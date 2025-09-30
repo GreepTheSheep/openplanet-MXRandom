@@ -79,7 +79,7 @@ void Main() {
         return;
     }
 
-    startnew(RMCLeaderAPI::Login);
+    startnew(RMCLeaderAPI::FetchAccountId);
 #endif
 
     Fonts::Load();
