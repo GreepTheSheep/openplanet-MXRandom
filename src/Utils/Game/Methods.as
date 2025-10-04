@@ -100,9 +100,12 @@ namespace TM {
     bool IsLoadingScreen() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
 
-        auto scriptAPI = app.Network.PlaygroundClientScriptAPI;
-        if (scriptAPI !is null && scriptAPI.IsLoadingScreen) {
-            return true;
+        if (app.Network !is null) {
+            auto scriptAPI = app.Network.PlaygroundClientScriptAPI;
+
+            if (scriptAPI !is null && scriptAPI.IsLoadingScreen) {
+                return true;
+            }
         }
 
         auto script = app.PlaygroundScript;
