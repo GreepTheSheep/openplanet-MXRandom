@@ -15,8 +15,14 @@ namespace MX {
         for (uint i = 0; i < names.Length; i++) {
             string name = names[i];
 
-            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?RM[CST]", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map contains the word RMC, RMS, or RMT.");
+                return true;
+            }
+
+            // Suggested by chybrydra
+            if (Regex::Contains(name, "snowo map for snowo haters", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is from a low-effort series.");
                 return true;
             }
 
@@ -31,7 +37,7 @@ namespace MX {
                     return true;
                 }
 
-                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|lunatic|sorry|annoying|shit(ty)?|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|ruining?|lunatic|sorry|annoying|shit(ty)?|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely low effort.");
                     return true;
                 }
