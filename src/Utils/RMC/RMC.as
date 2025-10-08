@@ -487,6 +487,12 @@ class RMC {
         startnew(CoroutineFunc(PreloadNextMap));
     }
 
+    void SubmitToLeaderboard() {
+#if TMNEXT
+        RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
+#endif
+    }
+
     void GameEndNotification() {
         string notificationText = "You got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
 
@@ -496,12 +502,6 @@ class RMC {
         notificationText += " medals!";
 
         UI::ShowNotification("\\$0f0" + ModeName + " ended!", notificationText);
-
-#if TMNEXT
-        if (this.GameMode == RMC::GameMode::Challenge) {
-            RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
-        }
-#endif
     }
 
     void GotGoalMedalNotification() {
@@ -538,6 +538,7 @@ class RMC {
                     if (!UserEndedRun) {
                         GameEndNotification();
                         DataManager::RemoveCurrentSaveFile();  // run ended on time -> no point in saving it as it can't be continued
+                        startnew(CoroutineFunc(SubmitToLeaderboard));
                     }
 
                     if (PluginSettings::RMC_ExitMapOnEndTime) {

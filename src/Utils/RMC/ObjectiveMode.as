@@ -16,6 +16,8 @@ class RMObjective : RMC {
 
     void CheckSave() override { }
 
+    void SubmitToLeaderboard() override { }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
 

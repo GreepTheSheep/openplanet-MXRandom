@@ -14,6 +14,8 @@ class RMT : RMC {
 
     void DevButtons() override {}
 
+    void SubmitToLeaderboard() override { }
+
     void Render() override {
         if (RenderButtons) {
             if (UI::RedButton(Icons::Times + " Stop RMT")) {

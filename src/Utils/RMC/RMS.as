@@ -106,6 +106,12 @@ class RMS : RMC {
         startnew(CoroutineFunc(PreloadNextMap));
     }
 
+    void SubmitToLeaderboard() override {
+#if TMNEXT
+        RMCLeaderAPI::postRMS(GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
+#endif
+    }
+
     void GameEndNotification() override {
         UI::ShowNotification(
             "\\$0f0" + ModeName + " ended!",
@@ -113,12 +119,6 @@ class RMS : RMC {
             ".\nYou got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal) +
             " medals and " + Skips + " skips."
         );
-
-#if TMNEXT
-        if (this.GameMode == RMC::GameMode::Survival) {
-            RMCLeaderAPI::postRMS(GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
-        }
-#endif
     }
 
     void GotGoalMedalNotification() override {
