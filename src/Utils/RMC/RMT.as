@@ -133,7 +133,9 @@ class RMT : RMC {
         if (nextMap is null) {
             PreloadNextMap();
         }
+
         @currentMap = nextMap;
+        startnew(CoroutineFunc(PreloadNextMap));
 
         if (TimeSpentMap < 15000) {
             // Only notify if the server has spent fewer than 15 secs on the map
@@ -166,7 +168,6 @@ class RMT : RMC {
 
         IsPaused = false;
         IsSwitchingMap = false;
-        startnew(CoroutineFunc(PreloadNextMap));
     }
 
     void ResetToLobbyMap() {

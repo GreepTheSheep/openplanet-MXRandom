@@ -653,6 +653,7 @@ class RMC {
         await(startnew(TM::LoadMap, nextMap));
 
         @currentMap = nextMap;
+        startnew(CoroutineFunc(PreloadNextMap));
 
         while (!TM::IsMapLoaded()) {
             sleep(100);
@@ -669,7 +670,5 @@ class RMC {
         }
 
         IsPaused = false;
-
-        PreloadNextMap();
     }
 }
