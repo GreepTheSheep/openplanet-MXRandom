@@ -1,9 +1,9 @@
 class RMCConfig {
     array<RMCConfigMapTag@> prepatchMapTags;
 #if TMNEXT
-    string etags = "23,37,40,49";
+    string etags = "6,10,23,37,40,46,49";
 #else
-    string etags = "20";
+    string etags = "6,10,20,39";
 #endif
     int length = 180000;
     array<string> blacklistedAuthors;

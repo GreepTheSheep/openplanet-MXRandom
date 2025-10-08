@@ -58,11 +58,11 @@ namespace PluginSettings {
 
     [Setting hidden]
 #if TMNEXT
-    string ExcludeMapTags = "23,37,40,49";
-    array<int> ExcludeMapTagsArr = {23, 37, 40, 49};
+    string ExcludeMapTags = "6,10,23,37,40,46,49";
+    array<int> ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49};
 #else
-    string ExcludeMapTags = "20";
-    array<int> ExcludeMapTagsArr = {20};
+    string ExcludeMapTags = "6,10,20,39";
+    array<int> ExcludeMapTagsArr = {6, 10, 20, 39};
 #endif
 
     bool initArrays = false;
