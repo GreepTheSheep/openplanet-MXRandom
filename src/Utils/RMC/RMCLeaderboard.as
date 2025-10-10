@@ -56,6 +56,7 @@ namespace RMCLeaderAPI {
         json["objective"] = tostring(objective).ToLower();
         json["goal"] = goal;
         json["below_goal"] = belowGoal;
+        json["category"] = "standard"; // other categories not available yet
 
         int attempts = 0;
 
@@ -115,6 +116,7 @@ namespace RMCLeaderAPI {
         json["goal"] = goal;
         json["skips"] = skips;
         json["time_survived"] = survivedTime / 1000;
+        json["category"] = "standard"; // other categories not available yet
 
         int attempts = 0;
 
