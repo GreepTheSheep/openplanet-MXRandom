@@ -648,6 +648,11 @@ class RMC {
 
         yield(100);
 
+        if (nextMap is null) {
+            // Shouldn't happen normally
+            PreloadNextMap();
+        }
+
         Log::LoadingMapNotification(nextMap);
         DataManager::SaveMapToRecentlyPlayed(nextMap);
         await(startnew(TM::LoadMap, nextMap));
