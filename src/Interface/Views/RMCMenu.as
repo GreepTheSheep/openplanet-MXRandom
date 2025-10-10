@@ -81,13 +81,9 @@ namespace RMC {
                         UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zNadeoServices dependency not found.");
                         UI::SetPreviousTooltip("RMT needs the NadeoServices dependency (shipped with Openplanet) in order to send events to a room.\n\nYour Openplanet installation may be corrupted.");
 #endif
-#if !DEPENDENCY_MLHOOK
-                        UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zMLHook dependency not found.");
-                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLHook & Event Inspector\" from the Plugin Manager.");
-#endif
 #if !DEPENDENCY_MLFEEDRACEDATA
                         UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zMLFeed dependency not found.");
-                        UI::SetPreviousTooltip("RMT needs MLHook and MLFeed dependencies (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
+                        UI::SetPreviousTooltip("RMT needs the MLFeed dependency (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
 #endif
 #if !DEPENDENCY_BETTERCHAT
                         UI::Text(Icons::ExclamationCircle + " Better Chat plugin not found.");
@@ -99,7 +95,7 @@ namespace RMC {
 #endif
                     }
 
-#if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLHOOK && DEPENDENCY_MLFEEDRACEDATA
+#if DEPENDENCY_NADEOSERVICES && DEPENDENCY_MLFEEDRACEDATA
 #if DEPENDENCY_BETTERROOMMANAGER
                     if (BRM::IsInAServer(GetApp())) {
                         UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);

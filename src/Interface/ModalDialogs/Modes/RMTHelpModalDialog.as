@@ -27,10 +27,9 @@ The game mode requires all players to join the server you have set up. The other
 The game mode requires 3 dependencies / plugins:
 
 - **NadeoServices:** This is automatically shipped with Openplanet. If you are missing it, please reinstall Openplanet, as your installation might be corruped.
-- **[MLHook](https://openplanet.dev/plugin/mlhook)**
-- **[MLFeed](https://openplanet.dev/plugin/mlfeedracedata)**
+- **[MLFeed](https://openplanet.dev/plugin/mlfeedracedata) (Which requires you to install [MLHook](https://openplanet.dev/plugin/mlhook))**
 
-The MLHook and MLFeed dependencies are external plugins made by Xertrov; you will have to install them through the Plugin Manager or download them from the site.
+The MLFeed dependency is an external plugin made by Xertrov; you will have to install it through the Plugin Manager or download it from the site.
 
 
 Furthermore, the game mode can use 2 optional plugins if they are installed:

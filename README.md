@@ -15,7 +15,7 @@ Select "Random Map Challenge" to play one of the following game modes:
 * Random Map Challenge (RMC)
 * Random Map Survival (RMS)
 * Random Map Objective (RMO)
-* Random Map Together (RMT) (TM2020 only, requires [MLFeed](https://openplanet.dev/plugin/mlfeedracedata) and [MLHook](https://openplanet.dev/plugin/mlhook))
+* Random Map Together (RMT) (TM2020 only, requires [MLFeed](https://openplanet.dev/plugin/mlfeedracedata))
 
 ## Exports
 

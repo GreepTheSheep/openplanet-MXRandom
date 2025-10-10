@@ -8,7 +8,7 @@ version = "2.7.1"
 
 [script]
 dependencies = [ "Controls" ]
-optional_dependencies = [ "ManiaExchange", "NadeoServices", "MLHook", "MLFeedRaceData", "BetterChat", "BetterRoomManager" ]
+optional_dependencies = [ "ManiaExchange", "NadeoServices", "MLFeedRaceData", "BetterChat", "BetterRoomManager" ]
 
 exports = [ "src/Exports/Exports.as" ]
 
