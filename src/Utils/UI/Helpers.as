@@ -75,11 +75,15 @@ namespace UI {
         UI::PopFont();
     }
 
-    void SetItemText(const string &in text, int width = 300) {
-        UI::AlignTextToFramePadding();
-        UI::Text(text);
-        UI::SameLine();
-        UI::SetNextItemWidth(width - Draw::MeasureString(text).x);
+    void SetItemText(const string &in text, int width = 300, bool centered = false) {
+        if (centered) {
+            SetCenteredItemText(text, width);
+        } else {
+            UI::AlignTextToFramePadding();
+            UI::Text(text);
+            UI::SameLine();
+            UI::SetNextItemWidth(width - Draw::MeasureString(text).x);
+        }
     }
 
     void SetCenteredItemText(const string &in text, int width = 300) {

@@ -88,6 +88,8 @@ namespace PluginSettings {
 
     [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab() {
+        bool inSameLine = UI::GetContentRegionAvail().x > 950;
+
         CustomRules = UI::Checkbox("\\$fc0" + Icons::ExclamationTriangle + " \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
         UI::Separator();
 
@@ -141,7 +143,18 @@ namespace PluginSettings {
             MinLength = 0;
         }
 
-        UI::SetCenteredItemText("To:");
+        if (inSameLine) {
+            UI::SetCenteredItemText("To:");
+        } else {
+            UI::BeginDisabled();
+
+            UI::SetItemText("Time:");
+            UI::Text(Time::Format(MinLength));
+            UI::EndDisabled();
+
+            UI::SetItemText("To:");
+        }
+
         MaxLength = UI::InputInt("##ToLengthFilter", MaxLength, 0);
 #if TMNEXT
         UI::SettingDescription("Maximum duration of the map, based on the author medal, in milliseconds.\n\nCan also be used for respawns (Platform) and points (Stunt).");
@@ -157,11 +170,16 @@ namespace PluginSettings {
 
         UI::BeginDisabled();
 
-        UI::SetItemText("Time:");
-        UI::Text(Time::Format(MinLength));
+        if (inSameLine) {
+            UI::SetItemText("Time:");
+            UI::Text(Time::Format(MinLength));
 
-        UI::SetCenteredItemText("Time:");
-        UI::Text(Time::Format(MaxLength));
+            UI::SetCenteredItemText("Time:");
+            UI::Text(Time::Format(MaxLength));
+        } else {
+            UI::SetItemText("Time:");
+            UI::Text(Time::Format(MaxLength));
+        }
 
         UI::EndDisabled();
 
@@ -179,7 +197,8 @@ namespace PluginSettings {
             FromDate = releaseDate;
         }
 
-        UI::SetCenteredItemText("To:");
+        UI::SetItemText("To:", 300, inSameLine);
+
         ToDate = UI::InputText("##ToDateFilter", ToDate, UI::InputTextFlags::AutoSelectAll | UI::InputTextFlags::CharsDecimal | UI::InputTextFlags::CallbackAlways | UI::InputTextFlags::CallbackCharFilter, UI::InputTextCallback(UI::DateCallback));
         UI::SettingDescription("Maximum date when the map was uploaded to " + SHORT_MX + ", formatted as YYYY-MM-DD.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Different formats won't work / will give unexpected results!");
 
@@ -198,7 +217,8 @@ namespace PluginSettings {
             MapName = "";
         }
 
-        UI::SetCenteredItemText("Map Author Filter:");
+        UI::SetItemText("Map Author Filter:", 300, inSameLine);
+
         MapAuthor = UI::InputText("##AuthorFilter", MapAuthor, false);
 
         if (MapAuthor != "" && UI::ResetButton()) {
@@ -220,7 +240,8 @@ namespace PluginSettings {
         TermsExactMatch = UI::Checkbox("Exact match", TermsExactMatch);
         UI::SettingDescription("If enabled, terms will only be excluded when there's an exact match.\n\nExample: If you exclude the word \"AI\", it won't filter out maps with the words \"Air\" or \"Fail\".");
 
-        UI::SetCenteredItemText("Excluded Author(s):");
+        UI::SetItemText("Excluded Author(s):", 300, inSameLine);
+
         ExcludedAuthors = UI::InputText("##ExcludedAuthors", ExcludedAuthors, false);
         UI::SettingDescription("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
 
