@@ -236,14 +236,14 @@ namespace RMC {
             currentRun.RenderGoalMedal();
             currentRun.RenderBelowGoalMedal();
 
-            if (currentRun.GameMode == GameMode::Survival) {
+            if (currentRun.Mode == GameMode::Survival) {
                 UI::AlignTextToFramePadding();
                 UI::Text("Survived time: " + RMC::FormatTimer(currentRun.TotalTime));
-            } else if (currentRun.GameMode == GameMode::Objective) {
+            } else if (currentRun.Mode == GameMode::Objective) {
                 UI::AlignTextToFramePadding();
                 UI::Text("Total time: " + RMC::FormatTimer(currentRun.TotalTime));
 #if TMNEXT
-            } else if (currentRun.GameMode == GameMode::Together) {
+            } else if (currentRun.Mode == GameMode::Together) {
                 RMT@ run = cast<RMT>(currentRun);
                 run.RenderScores();
 #endif

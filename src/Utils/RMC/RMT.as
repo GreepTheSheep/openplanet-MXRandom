@@ -8,7 +8,7 @@ class RMT : RMC {
 
     string get_ModeName() override { return "Random Map Together";}
 
-    RMC::GameMode get_GameMode() override {
+    RMC::GameMode get_Mode() override {
         return RMC::GameMode::Together;
     }
 

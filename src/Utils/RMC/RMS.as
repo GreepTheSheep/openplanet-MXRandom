@@ -5,7 +5,7 @@ class RMS : RMC {
         return "Random Map Survival";
     }
 
-    RMC::GameMode get_GameMode() override {
+    RMC::GameMode get_Mode() override {
         return RMC::GameMode::Survival;
     }
 

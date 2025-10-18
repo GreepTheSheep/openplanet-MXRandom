@@ -45,7 +45,7 @@ class RMC {
         return "Random Map Challenge";
     }
 
-    RMC::GameMode get_GameMode() {
+    RMC::GameMode get_Mode() {
         return RMC::GameMode::Challenge;
     }
 
@@ -182,7 +182,7 @@ class RMC {
     }
 
     void Render() {
-        string lastLetter = tostring(this.GameMode).SubStr(0,1);
+        string lastLetter = tostring(this.Mode).SubStr(0,1);
         if (IsRunning && RenderButtons) {
             if (UI::RedButton(Icons::Times + " Stop RM" + lastLetter)) {
                 UserEndedRun = true;

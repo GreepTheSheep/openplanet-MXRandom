@@ -81,7 +81,7 @@ namespace MX {
             }
 
 #if TMNEXT
-            if (RMC::currentRun.GameMode == RMC::GameMode::Together) {
+            if (RMC::currentRun.Mode == RMC::GameMode::Together) {
                 if (map.ServerSizeExceeded) {
                     Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
                     return null;

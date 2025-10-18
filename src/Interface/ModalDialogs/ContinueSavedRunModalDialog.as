@@ -13,7 +13,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         UI::BeginChild("Content", vec2(0, -32) * scale);
 
-        string lastLetter = tostring(run.GameMode).SubStr(0,1);
+        string lastLetter = tostring(run.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
 

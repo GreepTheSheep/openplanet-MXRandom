@@ -6,7 +6,7 @@ namespace MXRandom {
     bool RMCGotGoalMedal() { return RMC::currentRun.GotGoalMedal; }
     bool RMCGotBelowMedal() { return RMC::currentRun.GotBelowMedal; }
     int RMCGoalMedalCount() { return RMC::currentRun.GoalMedalCount; }
-    int RMCGameMode() { return RMC::currentRun.GameMode; }
+    int RMCGameMode() { return RMC::currentRun.Mode; }
     bool get_WithCustomParameters() { return PluginSettings::CustomRules; }
 
     void LoadRandomMap(bool customParameters = false) { 

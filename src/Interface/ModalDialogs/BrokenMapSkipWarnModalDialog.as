@@ -1,10 +1,10 @@
 class BrokenMapSkipWarnModalDialog : ModalDialog {
-    RMC@ mode;
+    RMC@ run;
 
     BrokenMapSkipWarnModalDialog(RMC@ gamemode) {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zWarning###BrokenMapSkip");
         m_size = vec2(400, 130);
-        @mode = gamemode;
+        @run = gamemode;
     }
 
     void RenderDialog() override {
@@ -16,7 +16,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
 
         if (UI::Button(Icons::Times + " No")) {
             Close();
-            mode.IsPaused = false;
+            run.IsPaused = false;
         }
 
         UI::SameLine();
@@ -28,13 +28,13 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
             UI::ShowNotification("Please wait...");
 
 #if DEPENDENCY_BETTERCHAT
-            if (mode.GameMode == RMC::GameMode::Together) {
+            if (run.Mode == RMC::GameMode::Together) {
                 BetterChat::SendChatMessage(Icons::Users + " Skipping broken map...");
             }
 #endif
-            mode.TimeLeft += mode.TimeSpentMap;
-            mode.TotalTime -= mode.TimeSpentMap;
-            startnew(CoroutineFunc(mode.SwitchMap));
+            run.TimeLeft += run.TimeSpentMap;
+            run.TotalTime -= run.TimeSpentMap;
+            startnew(CoroutineFunc(run.SwitchMap));
         }
     }
 }

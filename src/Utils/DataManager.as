@@ -75,7 +75,7 @@ namespace DataManager {
     }
 
     void CreateSaveFile() {
-        string lastLetter = tostring(RMC::currentRun.GameMode).SubStr(0,1);
+        string lastLetter = tostring(RMC::currentRun.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         Json::Value SaveFileData = Json::Object();
         SaveFileData["PBOnMap"] = -1;
@@ -93,7 +93,7 @@ namespace DataManager {
     }
 
     void RemoveCurrentSaveFile() {
-        string lastLetter = tostring(RMC::currentRun.GameMode).SubStr(0,1);
+        string lastLetter = tostring(RMC::currentRun.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         string fileName = SAVE_DATA_LOCATION + gameMode + ".json";
         if (IO::FileExists(fileName)) {
@@ -103,7 +103,7 @@ namespace DataManager {
     }
 
     void SaveCurrentRunData() {
-        string lastLetter = tostring(RMC::currentRun.GameMode).SubStr(0,1);
+        string lastLetter = tostring(RMC::currentRun.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", RMC::CurrentRunData);
     }
@@ -163,7 +163,7 @@ namespace DataManager {
     }
 
     bool LoadRunData() {
-        string lastLetter = tostring(RMC::currentRun.GameMode).SubStr(0,1);
+        string lastLetter = tostring(RMC::currentRun.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
 
         if (IO::FileExists(SAVE_DATA_LOCATION + gameMode + ".json")) {

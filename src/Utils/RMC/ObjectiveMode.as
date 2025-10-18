@@ -4,7 +4,7 @@ class RMObjective : RMC {
 
     string get_ModeName() override { return "Random Map Objective"; }
 
-    RMC::GameMode get_GameMode() override {
+    RMC::GameMode get_Mode() override {
         return RMC::GameMode::Objective;
     }
 
