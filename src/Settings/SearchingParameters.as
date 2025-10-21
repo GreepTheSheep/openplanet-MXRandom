@@ -307,8 +307,9 @@ namespace PluginSettings {
             || (MapType == MapTypes::Platform && ExcludeMapTagsArr.Find(18) >= 0)
             || (MapType == MapTypes::Royal && ExcludeMapTagsArr.Find(37) >= 0)
         ) {
-            UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$z" + tostring(MapType) + " tag excluded while searching for " + tostring(MapType) + " maps.");
-            UI::SetPreviousTooltip("It's recommended to not exclude this tag while searching for " + tostring(MapType));         
+            Controls::BeginFrameWarning("\\$f90" + Icons::ExclamationTriangle + " \\$z" + tostring(MapType) + " tag excluded while searching for " + tostring(MapType) + " maps.");
+            UI::TextWrapped("It's recommended to not exclude this tag when searching for " + tostring(MapType) + " maps, as it will greatly reduce the map pool available.");
+            Controls::EndFrame();
         }
 #endif
 
