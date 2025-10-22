@@ -145,6 +145,18 @@ namespace MX {
             return json;
         }
 
+        bool get_IsUploadedToServers() {
+#if TMNEXT
+            if (this.OnlineMapId != "") {
+                return true;
+            } 
+            
+            return MXNadeoServicesGlobal::CheckIfMapExistsAsync(this.MapUid);
+#else
+            return false;
+#endif
+        }
+
         bool HasTag(int tagId) {
             for (uint i = 0; i < Tags.Length; i++) {
                 if (Tags[i].ID == tagId) {

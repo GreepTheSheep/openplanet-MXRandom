@@ -87,7 +87,7 @@ namespace MX {
                     return null;
                 }
 
-                if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
+                if (!map.IsUploadedToServers) {
                     Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
                     return null;
                 }
@@ -99,7 +99,7 @@ namespace MX {
                     Log::Warn("[GetRandomMap] Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
                 } else {
-                    if (map.OnlineMapId == "" && !MXNadeoServicesGlobal::CheckIfMapExistsAsync(map.MapUid)) {
+                    if (!map.IsUploadedToServers) {
                         Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
                         return null;
                     }
