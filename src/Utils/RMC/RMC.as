@@ -182,6 +182,12 @@ class RMC {
     }
 
     void Render() {
+#if TMNEXT
+        if (this.Mode == RMC::GameMode::Challenge && PluginSettings::RMC_Medal == Medals::Author && !PluginSettings::CustomRules) {
+            UI::RotatingSponsor();
+        }
+#endif
+
         string lastLetter = tostring(this.Mode).SubStr(0,1);
         if (IsRunning && RenderButtons) {
             if (UI::RedButton(Icons::Times + " Stop RM" + lastLetter)) {

@@ -124,4 +124,44 @@ namespace UI {
             UI::EndTooltip();
         }
     }
+
+    UI::Texture@ PredatorTexture = UI::LoadTexture("src/Assets/Images/Predator.png");
+    UI::Texture@ LevlupTexture = UI::LoadTexture("src/Assets/Images/Levlup.png");
+
+    array<UI::Texture@> sponsorsTextures = { PredatorTexture, LevlupTexture };
+    uint textureIndex = 0;
+    uint lastUpdate = Time::Now;
+    uint sponsorDuration = 30000;
+    int endDate = Time::ParseFormatString("%FT%T", '2025-10-31T22:59:59');
+
+    void RotatingSponsor() {
+        if (Time::Stamp > uint(endDate)) {
+            // Competition is over
+            return;
+        }
+
+        if (Time::Now > lastUpdate + sponsorDuration) {
+            lastUpdate = Time::Now;
+
+            if (textureIndex == sponsorsTextures.Length - 1) {
+                textureIndex = 0;
+            } else {
+                textureIndex++;
+            }
+        }
+
+        UI::CenterAlign(75 * UI::GetScale());
+        UI::Image(sponsorsTextures[textureIndex], vec2(75 * UI::GetScale()));
+
+        if (UI::IsItemClicked()) {
+            OpenBrowserURL("https://flinkblog.de/RMC/breaktherecord");
+        }
+
+        if (UI::BeginItemTooltip()) {
+            UI::PushTextWrapPos(500);
+            UI::TextWrapped("Join the RMC Break the Record competition!\n\nFrom 25/10 to 31/10, you can participate by playing RMC and win prizes \\$FD0" + Icons::Trophy + "\\$z\n\nClick the logo to learn how to participate.");
+            UI::PopTextWrapPos();
+            UI::EndTooltip();
+        }
+    }
 }
