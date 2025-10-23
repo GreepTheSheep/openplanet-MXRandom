@@ -1,8 +1,5 @@
 namespace PluginSettings {
     [Setting hidden]
-    bool closeOverlayOnMapLoaded = true;
-
-    [Setting hidden]
     string RMC_MX_Url = MX_URL;
 
     [Setting hidden]
@@ -14,7 +11,6 @@ namespace PluginSettings {
     [SettingsTab name="Advanced" order="4" icon="Wrench"]
     void RenderAdvancedSettings() {
         if (UI::OrangeButton("Reset to default")) {
-            closeOverlayOnMapLoaded = true;
             RMC_MX_Url = MX_URL;
             RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
             LoggingLevel = LogLevel::Info;
@@ -45,8 +41,6 @@ namespace PluginSettings {
 
         UI::Separator();
 #endif
-
-        closeOverlayOnMapLoaded = UI::Checkbox("Close overlay on map loading", closeOverlayOnMapLoaded);
 
         if (UI::BeginCombo("Log level", tostring(LoggingLevel))) {
             for (int i = 0; i <= LogLevel::Trace; i++) {

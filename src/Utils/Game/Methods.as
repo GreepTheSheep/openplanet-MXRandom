@@ -17,7 +17,7 @@ namespace TM {
 
         MX::MapInfo@ map = cast<MX::MapInfo>(mapData);
 
-        if (PluginSettings::closeOverlayOnMapLoaded) UI::HideOverlay();
+        if (PluginSettings::CloseOverlayOnMapLoad) UI::HideOverlay();
 #if TMNEXT
         ClosePauseMenu();
 #endif

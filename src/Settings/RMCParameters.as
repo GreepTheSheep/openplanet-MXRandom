@@ -6,6 +6,9 @@ namespace PluginSettings {
     bool HideWithOP = false;
 
     [Setting hidden]
+    bool CloseOverlayOnMapLoad = true;
+
+    [Setting hidden]
     Medals RMC_Medal = Medals::Author;
 
     [Setting hidden]
@@ -144,6 +147,7 @@ namespace PluginSettings {
             if (UI::OrangeButton("Reset to default")) {
                 HideWithGameUI = true;
                 HideWithOP = false;
+                CloseOverlayOnMapLoad = true;
                 RMC_AlwaysShowBtns = true;
                 RMC_DisplayGoalTimes = false;
                 RMC_DisplayMapTimeSpent = true;
@@ -163,6 +167,7 @@ namespace PluginSettings {
 
             HideWithGameUI = UI::Checkbox("Show/Hide with game UI", HideWithGameUI);
             HideWithOP = UI::Checkbox("Show/Hide with Openplanet overlay", HideWithOP);
+            CloseOverlayOnMapLoad = UI::Checkbox("Close Openplanet overlay on map loading", CloseOverlayOnMapLoad);
 
             UI::PaddedHeaderSeparator("Game modes");
 
