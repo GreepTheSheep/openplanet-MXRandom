@@ -8,6 +8,7 @@ namespace MXNadeoServicesGlobal {
     NadeoServices::ClubRoom@ foundRoom;
     string AddMapToServer_MapUid = "";
     int AddMapToServer_MapMXId;
+    array<string> uploadedMaps;
 
 #if DEPENDENCY_NADEOSERVICES
     void LoadNadeoLiveServices() {
@@ -91,6 +92,10 @@ namespace MXNadeoServicesGlobal {
     }
 
     bool CheckIfMapExistsAsync(const string &in mapUid) {
+        if (uploadedMaps.Find(mapUid) != -1) {
+            return true;
+        }
+
         string url = NadeoServices::BaseURLLive() + "/api/token/map/" + mapUid;
 
         Log::Trace("[CheckIfMapExists] URL: " + url);
@@ -114,6 +119,11 @@ namespace MXNadeoServicesGlobal {
 
         try {
             string resMapUid = res["uid"];
+
+            if (resMapUid == mapUid) {
+                uploadedMaps.InsertLast(mapUid);
+            }
+
             return resMapUid == mapUid;
         } catch {
             return false;
