@@ -16,6 +16,10 @@ namespace PluginSettings {
             LoggingLevel = LogLevel::Info;
         }
 
+        if (RMC_MX_Url != MX_URL) {
+            Controls::FrameWarning(Icons::ExclamationTriangle + " Using a different API from MX might cause unexpected issues, including crashes and filters not working.");
+        }
+
         UI::SetNextItemWidth(300);
         RMC_MX_Url = UI::InputText("MX Base URL", RMC_MX_Url);
         UI::SettingDescription("Use this URL for API calls to ManiaExchange. Useful for hosting your own service for caching and preloading API responses for better performance.\n\nOnly change if you know what you're doing!");
@@ -31,6 +35,7 @@ namespace PluginSettings {
 
         if (PluginSettings::RMC_PushLeaderboardResults) {
             UI::NewLine();
+            UI::SetNextItemWidth(300);
             RMC_Leaderboard_Url = UI::InputText("RMC & RMS Leaderboard URL", RMC_Leaderboard_Url);
             UI::SettingDescription("Use this URL for API calls to RMC & RMS Leaderboard. Useful for hosting your own service for storing your own scores.\n\nOnly change if you know what you're doing!");
 
@@ -42,6 +47,7 @@ namespace PluginSettings {
         UI::Separator();
 #endif
 
+        UI::SetNextItemWidth(175);
         if (UI::BeginCombo("Log level", tostring(LoggingLevel))) {
             for (int i = 0; i <= LogLevel::Trace; i++) {
                 if (UI::Selectable(tostring(LogLevel(i)), LoggingLevel == LogLevel(i))) {

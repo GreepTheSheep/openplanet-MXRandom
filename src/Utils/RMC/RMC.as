@@ -155,6 +155,10 @@ class RMC {
     }
 
     void RenderGoalTimes() {
+        if (!InCurrentMap()) {
+            return;
+        }
+
         UI::Text(UI::GetMedalIcon(PluginSettings::RMC_Medal) + " Goal: " + UI::FormatTime(GoalTime, currentMap.Type));
 
         if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
@@ -350,7 +354,7 @@ class RMC {
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
 
                         if (UI::BeginItemTooltip()) {
-                            UI::Text("The map has medal times that differ from the default. The plugin will use the default times for the medals.");
+                            UI::Text("The map has medal times that differ from the default. The plugin will use the default times instead.");
                             
                             if (!PluginSettings::RMC_DisplayGoalTimes) {
                                 UI::NewLine();
