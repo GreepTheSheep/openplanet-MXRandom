@@ -23,7 +23,6 @@ class Window {
 
     void Render() {
         if (!isOpened) {
-            isInRMCMode = false;
             return;
         }
 

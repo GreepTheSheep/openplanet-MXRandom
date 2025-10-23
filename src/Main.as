@@ -24,14 +24,20 @@ void RenderMenu() {
                     }
                     UI::SetPreviousTooltip("This will load and play instantly a random map from " + MX_NAME + ".");
 
-                    if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zRandomizer Menu", "", window.isOpened)) {
-                        window.isOpened = !window.isOpened;
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zRandomizer Menu", "", window.isOpened && !window.isInRMCMode)) {
+                        if (window.isOpened && window.isInRMCMode) {
+                            window.isInRMCMode = false;
+                        } else {
+                            window.isOpened = !window.isOpened;
+                            window.isInRMCMode = false;
+                        }
                     }
                     UI::Separator();
-                    if (UI::MenuItem(MX_COLOR_STR + Icons::ClockO + " \\$zRandom Map Challenge", "", window.isInRMCMode)) {
-                        if (window.isInRMCMode) window.isInRMCMode = false;
-                        else {
-                            if (!window.isOpened) window.isOpened = true;
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::ClockO + " \\$zRandom Map Challenge", "", window.isOpened && window.isInRMCMode)) {
+                        if (window.isOpened && !window.isInRMCMode) {
+                            window.isInRMCMode = true;
+                        } else {
+                            window.isOpened = !window.isOpened;
                             window.isInRMCMode = true;
                         }
                     }
@@ -66,9 +72,14 @@ void OnKeyPress(bool down, VirtualKey key) {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
-    if (!MX::APIDown && !MX::RandomMapIsLoading && !held && key == PluginSettings::S_QuickMapKey) {
-        startnew(MX::LoadRandomMap);
+    if (!held) {
+        if (!MX::APIDown && !MX::RandomMapIsLoading && key == PluginSettings::S_QuickMapKey) {
+            startnew(MX::LoadRandomMap);
+        } else if (key == PluginSettings::S_WindowToggle) {
+            window.isOpened = !window.isOpened;
+        }
     }
+
     held = down;
 }
 
