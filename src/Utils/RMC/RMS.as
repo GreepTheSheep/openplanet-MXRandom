@@ -29,6 +29,10 @@ class RMS : RMC {
 
     void RenderPace() override { }
 
+    bool get_IsRunValid() override {
+        return !PluginSettings::CustomRules && Skips <= 15;
+    }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
 
@@ -108,7 +112,9 @@ class RMS : RMC {
 
     void SubmitToLeaderboard() override {
 #if TMNEXT
-        RMCLeaderAPI::postRMS(GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
+        if (IsRunValid) {
+            RMCLeaderAPI::postRMS(GoalMedalCount, Skips, SurvivedTime, PluginSettings::RMC_Medal);
+        }
 #endif
     }
 

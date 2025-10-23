@@ -18,6 +18,8 @@ class RMObjective : RMC {
 
     void SubmitToLeaderboard() override { }
 
+    void RenderCustomSearchWarning() override { }
+
     void RenderTimer() override {
         UI::PushFont(Fonts::TimerFont);
 

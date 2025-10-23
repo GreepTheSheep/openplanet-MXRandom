@@ -249,11 +249,20 @@ class RMC {
         }
     }
 
+    bool get_IsRunValid() {
+        return !PluginSettings::CustomRules && FreeSkipsUsed <= 1 && TotalTime < 61 * 60 * 1000;
+    }
+
     void RenderCustomSearchWarning() {
-        if ((IsRunning || IsStarting) && PluginSettings::CustomRules) {
+        if ((IsRunning || IsStarting) && !IsRunValid) {
             UI::Separator();
             UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$zInvalid for official leaderboards");
-            UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
+
+            if (PluginSettings::CustomRules) {
+                UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
+            } else {
+                UI::SetPreviousTooltip("This run has duration / skip settings that differ from the default.\n\nTo submit future runs to the leaderboard, please reset these settings.");
+            }
         }
     }
 
@@ -495,7 +504,9 @@ class RMC {
 
     void SubmitToLeaderboard() {
 #if TMNEXT
-        RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
+        if (IsRunValid) {
+            RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
+        }
 #endif
     }
 
