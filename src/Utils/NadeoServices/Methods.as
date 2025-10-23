@@ -224,6 +224,12 @@ namespace MXNadeoServicesGlobal {
     }
 
     int GetMapWorldRecord(const string &in mapUid) {
+        int worldRecord = TM::GetWorldRecordFromCache(mapUid);
+
+        if (worldRecord > -1) {
+            return worldRecord;
+        }
+
         string url = NadeoServices::BaseURLLive() + "/api/token/leaderboard/group/Personal_Best/map/" + mapUid + "/top?length=1&onlyWorld=true&offset=0";
 
         Log::Trace("[GetMapWorldRecord] URL: " + url);
