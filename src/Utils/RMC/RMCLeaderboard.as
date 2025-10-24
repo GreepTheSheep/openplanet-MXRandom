@@ -74,7 +74,14 @@ namespace RMCLeaderAPI {
 
             if (res.HasKey("success")) {
                 bool isSuccess = res["success"];
-                string message = res["message"];
+
+                string message = "";
+                
+                if (res.HasKey("message")) {
+                    message = res["message"];
+                } else if (res.HasKey("error")) {
+                    message = res["error"];
+                }
 
                 if (isSuccess) {
                     Log::Info(message, true);
@@ -134,7 +141,13 @@ namespace RMCLeaderAPI {
 
             if (res.HasKey("success")) {
                 bool isSuccess = res["success"];
-                string message = res["message"];
+                string message = "";
+                
+                if (res.HasKey("message")) {
+                    message = res["message"];
+                } else if (res.HasKey("error")) {
+                    message = res["error"];
+                }
 
                 if (isSuccess) {
                     Log::Info(message, true);

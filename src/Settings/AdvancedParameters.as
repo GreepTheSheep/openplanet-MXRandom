@@ -32,7 +32,7 @@ namespace PluginSettings {
             RMC_MX_Url = RMC_MX_Url.SubStr(0, RMC_MX_Url.Length - 1);
         }
 
-        if (UI::Button("Use official TMX API")) {
+        if (UI::Button("Use official MX API")) {
             RMC_MX_Url = MX_URL;
         }
 
@@ -41,7 +41,6 @@ namespace PluginSettings {
         UI::SettingDescription("Use Xertrov's API to load TMX maps (Plugin will still use the MX base URL for everything else).\n\n\\$f80" + Icons::ExclamationTriangle + "\\$z Only use this setting if you are experiencing crashes while loading maps.");
 
         if (PluginSettings::RMC_PushLeaderboardResults) {
-            UI::NewLine();
             UI::SetNextItemWidth(300);
             RMC_Leaderboard_Url = UI::InputText("RMC & RMS Leaderboard URL", RMC_Leaderboard_Url);
             UI::SettingDescription("Use this URL for API calls to RMC & RMS Leaderboard. Useful for hosting your own service for storing your own scores.\n\nOnly change if you know what you're doing!");
