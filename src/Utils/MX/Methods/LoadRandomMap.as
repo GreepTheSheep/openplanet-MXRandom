@@ -264,6 +264,10 @@ namespace MX {
                 } else {
                     Log::Warn("Invalid date interval selected, ignoring...");
                 }
+            } else {
+                // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
+                string yesterday = Time::FormatStringUTC("%F", Time::Stamp - (24 * 60 * 60));
+                params.Set("before", yesterday);
             }
 
             if (!PluginSettings::MapTagsArr.IsEmpty()) {
@@ -316,6 +320,10 @@ namespace MX {
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
                 params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
+
+                // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
+                string yesterday = Time::FormatStringUTC("%F", Time::Stamp - (24 * 60 * 60));
+                params.Set("before", yesterday);
 
 #if TMNEXT
                 if (PluginSettings::RMC_Medal == Medals::WR) {
