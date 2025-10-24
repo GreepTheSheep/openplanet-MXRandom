@@ -6,12 +6,16 @@ namespace PluginSettings {
     string RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
 
     [Setting hidden]
+    bool RMC_Xertrov_API_Download = false;
+
+    [Setting hidden]
     LogLevel LoggingLevel = LogLevel::Info;
 
     [SettingsTab name="Advanced" order="4" icon="Wrench"]
     void RenderAdvancedSettings() {
         if (UI::OrangeButton("Reset to default")) {
             RMC_MX_Url = MX_URL;
+            RMC_Xertrov_API_Download = false;
             RMC_Leaderboard_Url = "https://flinkblog.de/RMC";
             LoggingLevel = LogLevel::Info;
         }
@@ -28,10 +32,13 @@ namespace PluginSettings {
             RMC_MX_Url = RMC_MX_Url.SubStr(0, RMC_MX_Url.Length - 1);
         }
 
-#if TMNEXT
         if (UI::Button("Use official TMX API")) {
             RMC_MX_Url = MX_URL;
         }
+
+#if TMNEXT
+        RMC_Xertrov_API_Download = UI::Checkbox("Use Xertrov's API to load maps", RMC_Xertrov_API_Download);
+        UI::SettingDescription("Use Xertrov's API to load TMX maps (Plugin will still use the MX base URL for everything else).\n\n\\$f80" + Icons::ExclamationTriangle + "\\$z Only use this setting if you are experiencing crashes while loading maps.");
 
         if (PluginSettings::RMC_PushLeaderboardResults) {
             UI::NewLine();

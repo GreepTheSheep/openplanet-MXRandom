@@ -29,6 +29,12 @@ namespace TM {
 
         string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
 
+#if TMNEXT
+        if (PluginSettings::RMC_Xertrov_API_Download) {
+            url = "https://map-monitor.xk.io/mapgbx/" + map.MapId;
+        }
+#endif
+
         string gameMode;
         MX::ModesFromMapType.Get(map.MapType, gameMode);
 
