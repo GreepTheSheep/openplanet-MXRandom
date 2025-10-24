@@ -130,18 +130,18 @@ namespace UI {
 
     array<UI::Texture@> sponsorsTextures = { PredatorTexture, LevlupTexture };
     uint textureIndex = 0;
-    uint lastUpdate = Time::Now;
-    uint sponsorDuration = 30000;
+    uint lastUpdate = Time::Stamp;
+    uint sponsorDuration = 30;
     int endDate = Time::ParseFormatString("%FT%T", '2025-10-31T22:59:59');
 
     void RotatingSponsor() {
-        if (Time::Stamp > uint(endDate)) {
+        if (Time::Stamp > endDate) {
             // Competition is over
             return;
         }
 
-        if (Time::Now > lastUpdate + sponsorDuration) {
-            lastUpdate = Time::Now;
+        if (Time::Stamp > lastUpdate + sponsorDuration) {
+            lastUpdate = Time::Stamp;
 
             if (textureIndex == sponsorsTextures.Length - 1) {
                 textureIndex = 0;
