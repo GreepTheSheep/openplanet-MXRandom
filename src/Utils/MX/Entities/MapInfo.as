@@ -285,5 +285,9 @@ namespace MX {
         bool opEquals(MapInfo@ other) {
             return this.MapId == other.MapId;
         }
+
+        string toString() {
+            return this.Name + " by " + this.Username;
+        }
     }
 }

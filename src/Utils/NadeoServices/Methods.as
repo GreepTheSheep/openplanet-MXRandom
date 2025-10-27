@@ -121,7 +121,10 @@ namespace MXNadeoServicesGlobal {
             string resMapUid = res["uid"];
 
             if (resMapUid == mapUid) {
+                Log::Trace("[CheckIfMapExists] Map \"" + mapUid + "\" exists in Nadeo servers.");
                 uploadedMaps.InsertLast(mapUid);
+            } else {
+                Log::Trace("[CheckIfMapExists] Map \"" + mapUid + "\" doesn't exist in Nadeo servers.");
             }
 
             return resMapUid == mapUid;

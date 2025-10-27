@@ -642,6 +642,8 @@ class RMC {
     }
 
     void PreloadNextMap() {
+        Log::Trace("[PreloadNextMap] Preloading a new map.");
+
         while (IsStarting || IsRunning) {
             @nextMap = MX::GetRandomMap();
 
@@ -661,6 +663,8 @@ class RMC {
 
             sleep(2000);
         }
+
+        Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
     }
 
     void SwitchMap() {
@@ -671,8 +675,11 @@ class RMC {
 
         if (nextMap is null) {
             // Shouldn't happen normally
+            Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
         }
+
+        Log::Trace("[SwitchMap] Switching map to " + nextMap.toString());
 
         Log::LoadingMapNotification(nextMap);
         DataManager::SaveMapToRecentlyPlayed(nextMap);
@@ -681,9 +688,13 @@ class RMC {
         @currentMap = nextMap;
         startnew(CoroutineFunc(PreloadNextMap));
 
+        Log::Trace("[SwitchMap] Waiting for map to be loaded.");
+
         while (!TM::IsMapLoaded()) {
             sleep(100);
         }
+
+        Log::Trace("[SwitchMap] Map is loaded!");
 
         IsSwitchingMap = false;
         GotGoalMedal = false;
@@ -691,9 +702,13 @@ class RMC {
         TimeSpentMap = 0;
         PBOnMap = -1;
 
+        Log::Trace("[SwitchMap] Waiting for player to be ready.");
+
         while (!TM::IsPlayerReady()) {
             yield();
         }
+
+        Log::Trace("[SwitchMap] Player is ready, unpausing timer.");
 
         IsPaused = false;
     }

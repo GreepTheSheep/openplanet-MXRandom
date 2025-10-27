@@ -105,16 +105,23 @@ class RMT : RMC {
             sleep(2000);
         }
 
+        Log::Trace("[SetupMapStart] Loading map " + currentMap.toString());
         Log::LoadingMapNotification(currentMap);
         DataManager::SaveMapToRecentlyPlayed(currentMap);
+
+        Log::Trace("[SetupMapStart] Setting up RMT room.");
 
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLimit / 1000);
 
+        Log::Trace("[SetupMapStart] Waiting for server to be ready.");
+
         while (!TM::IsServerReady()) {
             yield();
         }
+
+        Log::Trace("[SetupMapStart] Server is ready.");
 
         IsRunning = true;
         startnew(CoroutineFunc(TimerYield));
@@ -131,6 +138,7 @@ class RMT : RMC {
         GotBelowMedal = false;
         
         if (nextMap is null) {
+            Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
         }
 
@@ -142,17 +150,31 @@ class RMT : RMC {
             UI::ShowNotification(Icons::InfoCircle + " RMT - Information on map switching", "Map switch might be prevented by Nadeo if done too quickly.\nIf the podium screen is not shown after 10 seconds, you can start a vote to change to the next map in the game pause menu.", Text::ParseHexColor("#420399"));
         }
 
+        Log::Trace("RMC: Switching map to " + currentMap.toString());
+
         Log::LoadingMapNotification(currentMap);
         DataManager::SaveMapToRecentlyPlayed(currentMap);
+
+        Log::Trace("[SwitchMap] Setting up next RMT map.");
         MXNadeoServicesGlobal::ClubRoomSetMapAndSwitchAsync(RMTRoom, currentMap.MapUid);
+
+        Log::Trace("[SwitchMap] Waiting for correct map.");
+
         while (!TM::IsMapCorrect(currentMap.MapUid)) sleep(1000);
+
+        Log::Trace("[SwitchMap] Correct map is loaded to room.");
+
         TimeSpentMap = 0;
 
         MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, TimeLeft / 1000);
 
+        Log::Trace("[SwitchMap] Waiting for server to be ready.");
+
         while (!TM::IsServerReady()) {
             yield();
         }
+
+        Log::Trace("[SwitchMap] Server is ready.");
 
 #if DEPENDENCY_BETTERCHAT
         if (!m_playerScores.IsEmpty()) {

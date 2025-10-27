@@ -52,6 +52,8 @@ namespace MX {
             return null;
         }
 
+        Log::Trace("[GetRandomMap] Checking if map " + map.toString() + " is valid.");
+
         if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::config.length) {
@@ -208,6 +210,7 @@ namespace MX {
                 sleep(2000);
             }
 
+            Log::Trace("[LoadRandomMap] Loading map " + map.toString());
             Log::LoadingMapNotification(map);
 
             DataManager::SaveMapToRecentlyPlayed(map);

@@ -58,6 +58,9 @@ namespace RMCLeaderAPI {
         json["below_goal"] = belowGoal;
         json["category"] = "standard"; // other categories not available yet
 
+        Log::Trace("[PostRMC] Submitting RMC run to leaderboard.");
+        Log::Trace("[PostRMC] Payload: " + Json::Write(json, true));
+
         int attempts = 0;
 
         while (attempts < 10) {
@@ -124,6 +127,9 @@ namespace RMCLeaderAPI {
         json["skips"] = skips;
         json["time_survived"] = survivedTime / 1000;
         json["category"] = "standard"; // other categories not available yet
+
+        Log::Trace("[PostRMS] Submitting RMS run to leaderboard.");
+        Log::Trace("[PostRMS] Payload: " + Json::Write(json, true));
 
         int attempts = 0;
 

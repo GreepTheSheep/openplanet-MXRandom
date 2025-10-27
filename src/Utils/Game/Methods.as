@@ -42,6 +42,9 @@ namespace TM {
         if (gameMode == "") MX::ModesFromTitlePack.Get(map.TitlePack, gameMode);
 #endif
 
+        Log::Info("[LoadMap] Loading " + map.toString());
+        Log::Info("[LoadMap] URL: " + url + ". Game mode: " + gameMode);
+
         app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
 
         const uint start = Time::Now;
