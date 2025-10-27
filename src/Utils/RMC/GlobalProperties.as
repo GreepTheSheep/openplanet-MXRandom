@@ -1,7 +1,7 @@
 namespace RMC {
     bool ShowTimer = false;
     Json::Value CurrentRunData = Json::Object();
-    RMCConfig@ config;
+    RMCConfig@ config = RMCConfig();
 
     RMC@ currentRun = RMC();
 

@@ -8,6 +8,8 @@ class RMCConfig {
     int length = 180000;
     array<string> blacklistedAuthors;
 
+    RMCConfig() { }
+
     RMCConfig(const Json::Value &in json) {
         if (json.GetType() == Json::Type::Null || !json.HasKey("next") || !json.HasKey("mp4")) {
             Log::Warn("Failed to fetch RMC config, Openplanet might be down. Defaulting to offline config.", true);
