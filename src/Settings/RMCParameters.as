@@ -57,7 +57,7 @@ namespace PluginSettings {
     [Setting hidden]
     bool RMC_EditedMedalsWarns = true;
 
-    [Settings hidden]
+    [Setting hidden]
     bool RMC_DisplayGoalTimes = false;
 
     [Setting hidden]
