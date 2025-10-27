@@ -111,8 +111,12 @@ namespace MXNadeoServicesGlobal {
         if (req.ResponseCode() >= 400 || res.GetType() != Json::Type::Object || !res.HasKey("uid")) {
             if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {
                 string errorMsg = res[0];
-                if (errorMsg.Contains("notFound")) return false;
+
+                if (errorMsg == "NotFoundHttpException" || errorMsg.Contains("notFound")) {
+                    return false;
+                }
             }
+
             Log::Error("[CheckIfMapExists] Error checking if map exists: " + req.String());
             return false;
         }
