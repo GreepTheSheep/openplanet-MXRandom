@@ -230,9 +230,7 @@ class RMC {
             RenderPace();
         }
 
-        if (PluginSettings::RMC_DisplayCurrentMap) {
-            RenderCurrentMap();
-        }
+        RenderCurrentMap();
 
 #if TMNEXT
         RenderCustomSearchWarning();
@@ -325,6 +323,10 @@ class RMC {
             }
         } else if (IsInited && TM::IsMapLoaded()) {
             if (InCurrentMap()) {
+                if (!PluginSettings::RMC_DisplayCurrentMap) {
+                    return;
+                }
+
                 UI::Separator();
 
                 if (currentMap !is null) {
@@ -382,10 +384,20 @@ class RMC {
             } else {
                 UI::Separator();
                 UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zLoaded map is not the one we got.");
-                UI::Text("Please change the map.");
-                if (UI::Button("Change map")) {
+                UI::Text("Please return to the correct map.");
+
+                if (UI::Button("Return to map")) {
+                    UI::ShowNotification("Returning to current map...");
+                    startnew(TM::LoadMap, currentMap);
+                }
+
+                UI::SameLine();
+
+                if (UI::Button("Force Switch")) {
                     startnew(CoroutineFunc(SwitchMap));
                 }
+
+                UI::SetItemTooltip("If returning to the map doesn't work, you can force switch instead.");
             }
         } else if (!IsStarting) {
             UI::Separator();

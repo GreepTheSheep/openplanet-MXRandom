@@ -49,9 +49,7 @@ class RMT : RMC {
         }
 
         if (TM::IsInServer()) {
-            if (PluginSettings::RMC_DisplayCurrentMap) {
-                RenderCurrentMap();
-            }
+            RenderCurrentMap();
 
             if (IsRunning && RenderButtons) {
                 UI::Separator();
@@ -273,7 +271,7 @@ class RMT : RMC {
 
     void RenderCurrentMap() override {
         if (!IsSwitchingMap) {
-            if (InCurrentMap()) {
+            if (PluginSettings::RMC_DisplayCurrentMap && InCurrentMap()) {
                 UI::Separator();
 
                 if (currentMap !is null) {
