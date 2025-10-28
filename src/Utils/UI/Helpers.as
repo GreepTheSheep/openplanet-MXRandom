@@ -130,8 +130,8 @@ namespace UI {
 
     array<UI::Texture@> sponsorsTextures = { PredatorTexture, LevlupTexture };
     uint textureIndex = 0;
-    uint lastUpdate = Time::Stamp;
-    uint sponsorDuration = 30;
+    int lastUpdate = Time::Stamp;
+    int sponsorDuration = 30;
     int endDate = Time::ParseFormatString("%FT%T", '2025-10-31T22:59:59');
 
     void RotatingSponsor() {

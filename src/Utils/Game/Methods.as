@@ -156,7 +156,7 @@ namespace TM {
     int GetWorldRecordFromCache(const string &in mapUid) {
         int valueReturn;
         if (worldRecordsCache.Get(mapUid, valueReturn)) return valueReturn;
-        else return -1;
+        return -1;
     }
 
     void SetWorldRecordToCache(const string &in mapUid, const uint &in time) {
