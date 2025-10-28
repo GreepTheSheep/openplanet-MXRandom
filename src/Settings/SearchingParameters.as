@@ -120,9 +120,9 @@ namespace PluginSettings {
             FilterLowEffort = true;
             FilterUntagged = true;
 #if TMNEXT
-            ExcludeMapTagsArr = {23, 37, 40, 49};
+            ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49};
 #else
-            ExcludeMapTagsArr = {20};
+            ExcludeMapTagsArr = {6, 10, 20, 39};
 #endif
         }
     
