@@ -150,6 +150,28 @@ class RMC {
         return currentMap !is null && TM::IsMapCorrect(currentMap.MapUid);
     }
 
+    void ReturnToMap() {
+        UI::ShowNotification("Returning to current map...");
+        await(startnew(TM::LoadMap, currentMap));
+
+        Log::Trace("[ReturnToMap] Waiting to be back to the current map.");
+
+        while (!TM::IsMapLoaded()) {
+            sleep(100);
+        }
+
+        Log::Trace("[ReturnToMap] Back to current map!");
+        Log::Trace("[ReturnToMap] Waiting for player to be ready.");
+
+        while (!TM::IsPlayerReady()) {
+            yield();
+        }
+
+        Log::Trace("[ReturnToMap] Player is ready, unpausing timer.");
+
+        IsPaused = false;
+    }
+
     bool get_ModeHasBelowMedal() {
         return PluginSettings::RMC_Medal != Medals::Bronze;
     }
@@ -387,8 +409,7 @@ class RMC {
                 UI::Text("Please return to the correct map.");
 
                 if (UI::Button("Return to map")) {
-                    UI::ShowNotification("Returning to current map...");
-                    startnew(TM::LoadMap, currentMap);
+                    startnew(CoroutineFunc(ReturnToMap));
                 }
 
                 UI::SameLine();
@@ -403,8 +424,7 @@ class RMC {
             UI::Separator();
 
             if (UI::Button("Return to map")) {
-                UI::ShowNotification("Returning to current map...");
-                startnew(TM::LoadMap, currentMap);
+                startnew(CoroutineFunc(ReturnToMap));
             }
         }
     }
