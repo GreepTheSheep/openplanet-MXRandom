@@ -75,7 +75,7 @@ namespace PluginSettings {
     array<int> DifficultiesArray = {};
 
     [Setting hidden]
-    bool SkipSeenMaps = false;
+    bool SkipSeenMaps = true;
 
     [Setting hidden]
     MapTypes MapType = MapTypes::Race;
@@ -115,6 +115,7 @@ namespace PluginSettings {
             ExcludedAuthorsArr = {};
             DifficultiesArray = {};
             TermsExactMatch = false;
+            SkipSeenMaps = true;
             MapType = MapTypes::Race;
             FilterLowEffort = true;
             FilterUntagged = true;
