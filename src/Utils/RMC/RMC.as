@@ -671,7 +671,7 @@ class RMC {
         IsPaused = true;
         IsSwitchingMap = true;
 
-        yield(100);
+        yield(150);
 
         if (nextMap is null) {
             // Shouldn't happen normally
