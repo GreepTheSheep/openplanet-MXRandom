@@ -190,6 +190,16 @@ class RMT : RMC {
         IsSwitchingMap = false;
     }
 
+#if DEPENDENCY_BETTERROOMMANAGER
+    void PreloadNextMap() override {
+        RMC::PreloadNextMap();
+
+        if (nextMap !is null) {
+            BRM::PreCacheMapByUid_Async(nextMap.MapUid, nextMap.Name);
+        }
+    }
+#endif
+
     void ResetToLobbyMap() {
         if (LobbyMapUID != "") {
             UI::ShowNotification("Returning to lobby map", "Please wait...", Text::ParseHexColor("#993f03"));
