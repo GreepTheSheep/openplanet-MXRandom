@@ -1,6 +1,7 @@
 namespace TM {
     const uint COOLDOWN = 5000;
     array<uint> royalTimes = { 0, 0, 0, 0 };
+    dictionary downloadUrls = {};
 
     void LoadMap(ref@ mapData) {
 #if TMNEXT
@@ -39,7 +40,11 @@ namespace TM {
         string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
 
 #if TMNEXT
-        if (PluginSettings::RMC_Xertrov_API_Download) {
+        string nadeoUrl = TM::GetMapUrl(map.MapUid);
+
+        if (nadeoUrl != "") {
+            url = nadeoUrl;
+        } else if (PluginSettings::RMC_Xertrov_API_Download) {
             url = "https://map-monitor.xk.io/mapgbx/" + map.MapId;
         }
 #endif
@@ -156,6 +161,47 @@ namespace TM {
 
     void SetWorldRecordToCache(const string &in mapUid, const uint &in time) {
         worldRecordsCache.Set(mapUid, time);
+    }
+
+    string GetMapUrl(const string &in mapUid) {
+#if TMNEXT
+        if (downloadUrls.Exists(mapUid)) {
+            return string(downloadUrls[mapUid]);
+        }
+
+        string url = NadeoServices::BaseURLLive() + "/api/token/map/" + mapUid;
+
+        Log::Trace("[GetMapUrl] API request URL: " + url);
+        Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
+        req.Start();
+
+        while (!req.Finished()) {
+            yield();
+        }
+
+        auto res = req.Json();
+
+        if (req.ResponseCode() >= 400 || res.GetType() != Json::Type::Object || !res.HasKey("downloadUrl")) {
+            if (res.GetType() == Json::Type::Array && res[0].GetType() == Json::Type::String) {
+                string errorMsg = res[0];
+
+                if (errorMsg == "NotFoundHttpException" || errorMsg.Contains("notFound")) {
+                    return "";
+                }
+            }
+
+            Log::Error("[GetMapUrl] Error getting map download URL: " + req.String());
+            return "";
+        }
+
+        string mapUrl = string(res["downloadUrl"]);
+        Log::Trace("Found map URL for UID \"" + mapUid + "\". URL: " + mapUrl);
+
+        downloadUrls.Set(mapUid, mapUrl);
+        return mapUrl;
+#else
+        return "";
+#endif
     }
 
     int GetFinishScore() {

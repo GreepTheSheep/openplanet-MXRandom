@@ -55,6 +55,13 @@ namespace MX {
         Log::Trace("[GetRandomMap] Checking if map " + map.toString() + " is valid.");
 
         if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
+#if TMNEXT
+            if (!map.IsUploadedToServers) {
+                Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
+                return null;
+            }
+#endif
+
             if (!PluginSettings::CustomRules) {
                 if (map.AuthorTime > RMC::config.length) {
                     Log::Warn("[GetRandomMap] Map AT (" + Time::Format(map.AuthorTime) + ") is longer than the max length for RMC (" + Time::Format(RMC::config.length) + "), skipping...");
@@ -88,11 +95,6 @@ namespace MX {
                     Log::Warn("[GetRandomMap] Map is too big to play in Random Map Together, skipping...");
                     return null;
                 }
-
-                if (!map.IsUploadedToServers) {
-                    Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
-                    return null;
-                }
             }
 
             if (PluginSettings::RMC_Medal == Medals::WR) {
@@ -101,11 +103,6 @@ namespace MX {
                     Log::Warn("[GetRandomMap] Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
                 } else {
-                    if (!map.IsUploadedToServers) {
-                        Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
-                        return null;
-                    }
-
                     // if uploaded, get wr
                     int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
 
