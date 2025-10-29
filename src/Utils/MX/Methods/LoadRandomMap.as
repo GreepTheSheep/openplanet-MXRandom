@@ -245,6 +245,8 @@ namespace MX {
             if (PluginSettings::UseCustomLength) {
                 if (PluginSettings::MinLength != 0) {
                     params.Set("authortimemin", tostring(PluginSettings::MinLength));
+                } else if (PluginSettings::MapType != MapTypes::Platform) {
+                    params.Set("authortimemin", "50");
                 }
 
                 if (PluginSettings::MaxLength != 0) {
@@ -320,6 +322,7 @@ namespace MX {
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
                 params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
+                params.Set("authortimemin", "50");
 
                 // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
                 string yesterday = Time::FormatStringUTC("%F", Time::Stamp - (24 * 60 * 60));

@@ -15,7 +15,7 @@ namespace MX {
         for (uint i = 0; i < names.Length; i++) {
             string name = names[i];
 
-            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?RM[CST]", Regex::Flags::CaseInsensitive)) {
+            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?RM[CST]|RMCF", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map contains the word RMC, RMS, or RMT.");
                 return true;
             }
@@ -86,6 +86,21 @@ namespace MX {
     }
 
     bool IsMapImpossible(MX::MapInfo@ map) {
+        if (Regex::Contains(map.Name, "((24|48|64|128|255) ?x|template|console base)", Regex::Flags::CaseInsensitive)) {
+            Log::Warn("Map is most likely a base / template map.");
+            return true;
+        }
+
+        if (Regex::Contains(map.Name, "base( map)?\\b", Regex::Flags::CaseInsensitive) && map.AuthorTime < 15000) {
+            Log::Warn("Map is most likely a base / template map.");
+            return true;
+        }
+
+        if (map.Type != MapTypes::Platform && map.AuthorTime < 50) {
+            Log::Warn("Map is shorter than 50ms, it's most likely impossible.");
+            return true;
+        }
+
         return impossibleMaps.Find(map) > -1;
     }
 }
