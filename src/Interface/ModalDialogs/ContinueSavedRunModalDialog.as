@@ -27,8 +27,8 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         if (UI::Button(Icons::Times + " New Run")) {
             DataManager::RemoveCurrentSaveFile();
-            Close();
             HasCompletedCheckbox = true;
+            Close();
         }
 
         UI::SameLine();
@@ -36,8 +36,8 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         if (UI::OrangeButton(Icons::PlayCircleO + " Continue")) {
             run.ContinueSavedRun = true;
-            Close();
             HasCompletedCheckbox = true;
+            Close();
         }
     }
 }

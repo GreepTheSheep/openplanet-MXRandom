@@ -25,6 +25,7 @@ class RMC {
     int _TotalTime = 0;
 
     bool ContinueSavedRun = false;
+    bool CancelledRun = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
@@ -71,6 +72,11 @@ class RMC {
         Renderables::Add(saveDialog);
 
         while (!saveDialog.HasCompletedCheckbox) {
+            if (saveDialog.ShouldDisappear()) {
+                CancelledRun = true;
+                return;
+            }
+
             sleep(100);
         }
 
@@ -92,6 +98,13 @@ class RMC {
         IsStarting = true;
 
         CheckSave();
+
+        if (CancelledRun) {
+            IsStarting = false;
+            RMC::ShowTimer = false;
+
+            return;
+        }
 
         if (!ContinueSavedRun) {
             MX::LoadRandomMap();
