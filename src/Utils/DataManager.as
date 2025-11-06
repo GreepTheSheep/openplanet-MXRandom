@@ -116,6 +116,11 @@ namespace DataManager {
             string fileName = Path::GetFileNameWithoutExtension(path);
             Json::Value@ save = Json::FromFile(path);
 
+            if (save.GetType() != Json::Type::Object) {
+                IO::Delete(path);
+                continue;
+            }
+
             if (!save.HasKey("TotalTime")) {
                 if (fileName == "RMO" && IO::FileExists(path)) {
                     // These are not used
@@ -148,6 +153,10 @@ namespace DataManager {
     }
 
     bool EnsureSaveDataIsLoadable(const string &in gameMode, Json::Value data) {
+        if (data.GetType() != Json::Type::Object) {
+            return false;
+        }
+
         for (uint i = 0; i < requiredKeys.Length; i++) {
             if (!data.HasKey(requiredKeys[i])) {
                 Log::Error("Save file for " + gameMode + " is corrupted, missing key '" + requiredKeys[i] + "'");
