@@ -26,6 +26,7 @@ class RMC {
 
     bool ContinueSavedRun = false;
     bool CancelledRun = false;
+    bool UnpauseOnExit = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
 
     UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
@@ -509,6 +510,7 @@ class RMC {
         if (UI::OrangeButton(Icons::PlayCircleO + " Skip broken Map")) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             IsPaused = true;
+            UnpauseOnExit = false;
             Renderables::Add(BrokenMapSkipWarnModalDialog(this));
         }
 
@@ -613,12 +615,17 @@ class RMC {
                 } else if (PluginSettings::RMC_PauseWhenMenuOpen && TM::IsPauseMenuDisplayed()) {
                     Log::Info("Pause menu opened, paused timer!", true);
                     IsPaused = true;
+                    UnpauseOnExit = true;
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TimeLeft -= delta;
                     TotalTime += delta;
                     TimeSpentMap += delta;
                 }
+            } else if (UnpauseOnExit && !TM::IsPauseMenuDisplayed()) {
+                Log::Info("Pause menu closed, resuming timer!", true);
+                UnpauseOnExit = false;
+                IsPaused = false;
             }
 
             lastUpdate = Time::Now;
@@ -713,6 +720,7 @@ class RMC {
     }
 
     void SwitchMap() {
+        UnpauseOnExit = false;
         IsPaused = true;
         IsSwitchingMap = true;
 

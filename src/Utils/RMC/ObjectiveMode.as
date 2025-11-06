@@ -133,11 +133,15 @@ class RMObjective : RMC {
                 } else if (PluginSettings::RMC_PauseWhenMenuOpen && TM::IsPauseMenuDisplayed()) {
                     Log::Info("Pause menu opened, paused timer!", true);
                     IsPaused = true;
+                    UnpauseOnExit = true;
                 } else {
                     int delta = Time::Now - lastUpdate;
                     TotalTime += delta;
                     TimeSpentMap += delta;
                 }
+            } else if (UnpauseOnExit && !TM::IsPauseMenuDisplayed()) {
+                UnpauseOnExit = false;
+                IsPaused = false;
             }
 
             lastUpdate = Time::Now;
