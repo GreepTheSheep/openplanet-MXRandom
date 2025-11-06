@@ -121,32 +121,28 @@ namespace RMC {
                     UI::SetItemText("Room ID:", 200);
                     PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
 
-                    if (PluginSettings::RMC_Together_ClubId > 0 && PluginSettings::RMC_Together_RoomId > 0) {
-                        UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
+                    UI::BeginDisabled(PluginSettings::RMC_Together_ClubId == 0 || PluginSettings::RMC_Together_RoomId == 0 || MXNadeoServicesGlobal::isCheckingRoom);
 
-                        if (UI::Button(Icons::Search + " Check room")) {
-                            startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
-                        }
+                    if (UI::Button(Icons::Search + " Check room")) {
+                        startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
+                    }
 
-                        UI::EndDisabled();
+                    UI::EndDisabled();
 
-                        UI::SameLine();
+                    UI::SameLine();
 
-                        if (UI::GreyButton(Icons::QuestionCircle + " Help")) {
-                            Renderables::Add(RMTHelpModalDialog());
-                        }
+                    if (UI::GreyButton(Icons::QuestionCircle + " Help", vec2(UI::GetContentRegionAvail().x, 0.))) {
+                        Renderables::Add(RMTHelpModalDialog());
+                    }
 
-                        if (MXNadeoServicesGlobal::isCheckingRoom) {
-                            UI::TextDisabled(Icons::AnimatedHourglass + " Checking...");
-                        }
-
-                        if (MXNadeoServicesGlobal::foundRoom !is null) {
-                            UI::Text("Room found:");
-                            UI::Text("'" + Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.name) + "', in club '" + Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName) + "'");
-                        }
+                    if (MXNadeoServicesGlobal::isCheckingRoom) {
+                        UI::TextDisabled(Icons::AnimatedHourglass + " Checking...");
                     }
 
                     if (MXNadeoServicesGlobal::foundRoom !is null) {
+                        UI::Text("Club: " + Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.clubName));
+                        UI::Text("Room: " + Text::OpenplanetFormatCodes(MXNadeoServicesGlobal::foundRoom.name));
+        
                         bool inServer = TM::IsInServer();
 
                         UI::BeginDisabled(!inServer || PluginSettings::MapType != MapTypes::Race);
