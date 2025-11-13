@@ -18,7 +18,7 @@ namespace Render {
                 UI::TableNextColumn();
 
                 if (map.PlayedAt > 0) {
-                    UI::Text(GeneratePlayedAtString(map.PlayedAt));
+                    UI::Text(Time::FormatString("%F %T", map.PlayedAt));
                 } else {
                     UI::Text("Unknown");
                     UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
@@ -42,6 +42,9 @@ namespace Render {
                     OpenBrowserURL(MX_URL + "/mapshow/" + map.MapId);
 #endif
                 }
+
+                UI::SetItemTooltip("Open on " + MX_NAME);
+
                 UI::SameLine();
 #if TMNEXT
                 if (Permissions::PlayLocalMap() && UI::GreenButton(Icons::Play)) {
@@ -67,9 +70,5 @@ namespace Render {
                 UI::PopID();
             }
         }
-    }
-
-    string GeneratePlayedAtString(int stamp) {
-        return Time::FormatString("%F %T", stamp);
     }
 }

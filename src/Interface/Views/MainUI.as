@@ -40,25 +40,28 @@ namespace MainUIView {
     }
 
     void RecentlyPlayedMapsTab() {
+        if (DataJson.GetType() == Json::Type::Null || DataJson["recentlyPlayed"].Length == 0) {
+            UI::Text("No recently played maps");
+            return;
+        }
+
         UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.10f, 0.10f, 0.10f, 1));
         UI::PushStyleColor(UI::Col::TableRowBg, vec4(0.13f, 0.13f, 0.13f, 1));
 
-        if (DataJson.GetType() != Json::Type::Null && DataJson["recentlyPlayed"].Length > 0 && UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollX | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg)) {
+        if (UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollY | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg)) {
+            UI::TableSetupScrollFreeze(0, 1);
             float scale = UI::GetScale();
 
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn("Created by", UI::TableColumnFlags::WidthStretch);
-            UI::TableSetupColumn("Played", UI::TableColumnFlags::WidthFixed, 135 * scale);
+            UI::TableSetupColumn("Author", UI::TableColumnFlags::WidthStretch);
+            UI::TableSetupColumn("Played at", UI::TableColumnFlags::WidthFixed, 135 * scale);
             UI::TableSetupColumn("Tags", UI::TableColumnFlags::WidthStretch);
             UI::TableSetupColumn("Actions", UI::TableColumnFlags::WidthFixed, 90 * scale);
-            UI::TableSetupScrollFreeze(0, 1);
             UI::TableHeadersRow();
 
             Render::RecentlyPlayedMaps();
 
             UI::EndTable();
-        } else {
-            UI::Text("No recently played maps");
         }
 
         UI::PopStyleColor(2);
