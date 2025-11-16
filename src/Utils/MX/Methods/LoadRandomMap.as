@@ -269,7 +269,7 @@ namespace MX {
             } else {
                 // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
                 string yesterday = Time::FormatStringUTC("%F", Time::Stamp - (24 * 60 * 60));
-                params.Set("before", yesterday);
+                params.Set("uploadedbefore", yesterday);
             }
 
             if (!PluginSettings::MapTagsArr.IsEmpty()) {
@@ -326,7 +326,7 @@ namespace MX {
 
                 // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
                 string yesterday = Time::FormatStringUTC("%F", Time::Stamp - (24 * 60 * 60));
-                params.Set("before", yesterday);
+                params.Set("uploadedbefore", yesterday);
 
 #if TMNEXT
                 if (PluginSettings::RMC_Medal == Medals::WR) {
