@@ -37,7 +37,7 @@ class RMObjective : RMC {
             UI::PushFont(Fonts::HeaderSub);
 
             UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
-            UI::SetPreviousTooltip("Time spent on this map");
+            UI::SetItemTooltip("Time spent on this map");
 
             UI::PopFont();
         }
@@ -49,10 +49,10 @@ class RMObjective : RMC {
 
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {
             UI::AlignTextToImage("-" + tostring(PluginSettings::RMC_ObjectiveMode_Goal - GoalMedalCount), Fonts::TimerFont);
-            UI::SetPreviousTooltip("Remaining medals. Click to set to total count.");
+            UI::SetItemTooltip("Remaining medals. Click to set to total count.");
         } else {
             UI::AlignTextToImage(tostring(GoalMedalCount) + " / " + tostring(PluginSettings::RMC_ObjectiveMode_Goal), Fonts::TimerFont);
-            UI::SetPreviousTooltip("Medal count. Click to set to remaining medals.");
+            UI::SetItemTooltip("Medal count. Click to set to remaining medals.");
         }
         if (UI::IsItemClicked()) {
             PluginSettings::RMC_ObjectiveMode_DisplayRemaininng = !PluginSettings::RMC_ObjectiveMode_DisplayRemaininng;

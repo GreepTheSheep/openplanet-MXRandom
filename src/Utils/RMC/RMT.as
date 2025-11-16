@@ -303,7 +303,7 @@ class RMT : RMC {
                         RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
 
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
-                        UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
+                        UI::SetItemTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
 
                     if (PluginSettings::RMC_EditedMedalsWarns && currentMap.HasEditedMedals) {
@@ -342,7 +342,7 @@ class RMT : RMC {
             UI::Text("Switching map...");
             UI::SameLine();
             UI::TextDisabled(Icons::InfoCircle);
-            UI::SetPreviousTooltip("Map switch might be prevented by Nadeo if done too quickly.\n\nIf the podium screen is not shown after 10 seconds, you can \nstart a vote to change to the next map in the game pause menu.");
+            UI::SetItemTooltip("Map switch might be prevented by Nadeo if done too quickly.\n\nIf the podium screen is not shown after 10 seconds, you can \nstart a vote to change to the next map in the game pause menu.");
         }
     }
 
@@ -375,7 +375,7 @@ class RMT : RMC {
 
             UI::EndDisabled();
 
-            UI::SetPreviousTooltip(
+            UI::SetItemTooltip(
                 "Free Skips are if the map is finishable but your team still want to skip it for any reason.\n\n" +
                 "If the map is broken, please use the button below instead."
             );

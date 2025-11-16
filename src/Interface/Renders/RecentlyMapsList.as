@@ -21,7 +21,7 @@ namespace Render {
                     UI::Text(Time::FormatString("%F %T", map.PlayedAt));
                 } else {
                     UI::Text("Unknown");
-                    UI::SetPreviousTooltip("Unable to parse date, maybe this map was migrated from old version.");
+                    UI::SetItemTooltip("Unable to parse date, maybe this map was migrated from old version.");
                 }
                 UI::TableNextColumn();
 

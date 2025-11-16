@@ -51,7 +51,7 @@ class RMS : RMC {
 
             if (PluginSettings::RMC_SurvivalShowSurvivedTime) {
                 UI::Text(RMC::FormatTimer(SurvivedTime));
-                UI::SetPreviousTooltip("Total time survived");
+                UI::SetItemTooltip("Total time survived");
             }
 
             if (PluginSettings::RMC_SurvivalShowSurvivedTime && PluginSettings::RMC_DisplayMapTimeSpent) {
@@ -60,7 +60,7 @@ class RMS : RMC {
 
             if (PluginSettings::RMC_DisplayMapTimeSpent) {
                 UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
-                UI::SetPreviousTooltip("Time spent on this map");
+                UI::SetItemTooltip("Time spent on this map");
             }
 
             UI::PopFont();

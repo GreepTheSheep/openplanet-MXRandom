@@ -200,7 +200,7 @@ class RMC {
         if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
             UI::SameLine();
             UI::Text(Icons::Pencil);
-            UI::SetPreviousTooltip("The author has edited the " + tostring(PluginSettings::RMC_Medal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
+            UI::SetItemTooltip("The author has edited the " + tostring(PluginSettings::RMC_Medal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
         }
 
         if (!ModeHasBelowMedal) {
@@ -213,7 +213,7 @@ class RMC {
         if (currentMap.IsMedalEdited(belowMedal)) {
             UI::SameLine();
             UI::Text(Icons::Pencil);
-            UI::SetPreviousTooltip("The author has edited the " + tostring(belowMedal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
+            UI::SetItemTooltip("The author has edited the " + tostring(belowMedal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
         }
     }
 
@@ -297,9 +297,9 @@ class RMC {
             UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$zInvalid for official leaderboards");
 
             if (PluginSettings::CustomRules) {
-                UI::SetPreviousTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
+                UI::SetItemTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
             } else {
-                UI::SetPreviousTooltip("This run has duration / skip settings that differ from the default.\n\nTo submit future runs to the leaderboard, please reset these settings.");
+                UI::SetItemTooltip("This run has duration / skip settings that differ from the default.\n\nTo submit future runs to the leaderboard, please reset these settings.");
             }
         }
     }
@@ -320,7 +320,7 @@ class RMC {
         if (PluginSettings::RMC_DisplayMapTimeSpent) {
             UI::PushFont(Fonts::HeaderSub);
             UI::Text(Icons::Map + " " + RMC::FormatTimer(TimeSpentMap));
-            UI::SetPreviousTooltip("Time spent on this map");
+            UI::SetItemTooltip("Time spent on this map");
             UI::PopFont();
         }
 
@@ -384,7 +384,7 @@ class RMC {
                     if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
                         RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
-                        UI::SetPreviousTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
+                        UI::SetItemTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
 #endif
 
@@ -490,7 +490,7 @@ class RMC {
 
             UI::EndDisabled();
 
-            UI::SetPreviousTooltip(
+            UI::SetItemTooltip(
                 "Free Skips are if the map is finishable but you still want to skip it for any reason.\n\n" +
                 "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
             );

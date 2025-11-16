@@ -79,19 +79,19 @@ namespace RMC {
                     } else {
 #if !DEPENDENCY_NADEOSERVICES
                         UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zNadeoServices dependency not found.");
-                        UI::SetPreviousTooltip("RMT needs the NadeoServices dependency (shipped with Openplanet) in order to send events to a room.\n\nYour Openplanet installation may be corrupted.");
+                        UI::SetItemTooltip("RMT needs the NadeoServices dependency (shipped with Openplanet) in order to send events to a room.\n\nYour Openplanet installation may be corrupted.");
 #endif
 #if !DEPENDENCY_MLFEEDRACEDATA
                         UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zMLFeed dependency not found.");
-                        UI::SetPreviousTooltip("RMT needs the MLFeed dependency (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
+                        UI::SetItemTooltip("RMT needs the MLFeed dependency (by XertroV) in order to catch correctly the best times of other players in a room.\n\nPlease enable or install \"MLFeed: Race Data\" from the Plugin Manager.");
 #endif
 #if !DEPENDENCY_BETTERCHAT
                         UI::Text(Icons::ExclamationCircle + " Better Chat plugin not found.");
-                        UI::SetPreviousTooltip("RMT can use Better Chat plugin (by Miss) in order to send events to other people in game chat. This is optional.");
+                        UI::SetItemTooltip("RMT can use Better Chat plugin (by Miss) in order to send events to other people in game chat. This is optional.");
 #endif
 #if !DEPENDENCY_BETTERROOMMANAGER
                         UI::Text(Icons::ExclamationCircle + " Better Room Manager plugin not found.");
-                        UI::SetPreviousTooltip("RMT can use Better Room Manager plugin (by XertroV) in order to autodetect Club and Room ID. This is optional.");
+                        UI::SetItemTooltip("RMT can use Better Room Manager plugin (by XertroV) in order to autodetect Club and Room ID. This is optional.");
 #endif
                     }
 
@@ -156,7 +156,7 @@ namespace RMC {
 
                         if (PluginSettings::MapType != MapTypes::Race) {
                             UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zInvalid map type " + tostring(PluginSettings::MapType) + " selected");
-                            UI::SetPreviousTooltip("RMT only works with the \"Race\" map type.\n\nPlease change the setting before continuing.");
+                            UI::SetItemTooltip("RMT only works with the \"Race\" map type.\n\nPlease change the setting before continuing.");
                         }
 
                         if (!inServer) {
@@ -194,7 +194,7 @@ namespace RMC {
         if (UI::Button(Icons::Table)) {
             OpenBrowserURL(PluginSettings::RMC_Leaderboard_Url);
         }
-        UI::SetPreviousTooltip("Leaderboard standings");
+        UI::SetItemTooltip("Leaderboard standings");
 
         UI::SameLine();
 #endif
@@ -202,14 +202,14 @@ namespace RMC {
         if (UI::PurpleButton(Icons::Cog)) {
             Meta::OpenSettings();
         }
-        UI::SetPreviousTooltip("Settings");
+        UI::SetItemTooltip("Settings");
 
         UI::SameLine();
 
         if (UI::GreyButton(Icons::Book)) {
             Renderables::Add(RMCRulesModalDialog());
         }
-        UI::SetPreviousTooltip("Rules");
+        UI::SetItemTooltip("Rules");
 
         UI::SameLine();
 
