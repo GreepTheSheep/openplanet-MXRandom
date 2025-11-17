@@ -13,19 +13,23 @@ namespace PluginSettings {
         }
 
         UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Quick map hotkey", S_QuickMapKey == VirtualKey(0) ? "None" : tostring(S_QuickMapKey))) {
+        if (UI::BeginCombo("Quick map hotkey", GetKeyName(S_QuickMapKey))) {
             for (int i = 0; i <= 254; i++) {
-                if (tostring(VirtualKey(i)) == tostring(i)) {
+                VirtualKey key = VirtualKey(i);
+                string keyName = GetKeyName(key);
+                bool taken = key != S_QuickMapKey && IsKeyUsed(key);
+
+                if (keyName == "") {
                     continue;
                 }
 
-                UI::BeginDisabled(S_WindowToggle == VirtualKey(i));
+                UI::BeginDisabled(taken);
 
-                if (UI::Selectable(tostring(VirtualKey(i)), S_QuickMapKey == VirtualKey(i))) {
-                    S_QuickMapKey = VirtualKey(i);
+                if (UI::Selectable(keyName, S_QuickMapKey == key)) {
+                    S_QuickMapKey = key;
                 }
 
-                if (S_WindowToggle == VirtualKey(i)) {
+                if (taken) {
                     UI::SetItemTooltip("Key already used for a different setting!");
                 }
 
@@ -37,19 +41,23 @@ namespace PluginSettings {
         }
 
         UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Show/Hide window hotkey", S_WindowToggle == VirtualKey(0) ? "None" : tostring(S_WindowToggle))) {
+        if (UI::BeginCombo("Show/Hide window hotkey", GetKeyName(S_WindowToggle))) {
             for (int i = 0; i <= 254; i++) {
-                if (tostring(VirtualKey(i)) == tostring(i)) {
+                VirtualKey key = VirtualKey(i);
+                string keyName = GetKeyName(key);
+                bool taken = key != S_WindowToggle && IsKeyUsed(key);
+
+                if (keyName == "") {
                     continue;
                 }
 
-                UI::BeginDisabled(S_QuickMapKey == VirtualKey(i));
+                UI::BeginDisabled(taken);
 
-                if (UI::Selectable(tostring(VirtualKey(i)), S_WindowToggle == VirtualKey(i))) {
-                    S_WindowToggle = VirtualKey(i);
+                if (UI::Selectable(keyName, S_WindowToggle == key)) {
+                    S_WindowToggle = key;
                 }
 
-                if (S_QuickMapKey == VirtualKey(i)) {
+                if (taken) {
                     UI::SetItemTooltip("Key already used for a different setting!");
                 }
 
@@ -58,5 +66,32 @@ namespace PluginSettings {
 
             UI::EndCombo();
         }
+    }
+
+    string GetKeyName(VirtualKey key) {
+        if (key == VirtualKey(0)) {
+            return "None";
+        }
+
+        const string name = tostring(key);
+
+        if (name == tostring(int(key))) {
+            return "";
+        }
+
+        return name;
+    }
+
+    bool IsKeyUsed(VirtualKey key) {
+        if (key == VirtualKey(0)) {
+            return false;
+        }
+
+        array<VirtualKey> usedKeys = {
+            S_QuickMapKey,
+            S_WindowToggle
+        };
+
+        return usedKeys.Find(key) > -1;
     }
 }
