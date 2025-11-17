@@ -293,7 +293,7 @@ class RMT : RMC {
                     }
 
                     if (PluginSettings::RMC_DisplayMapDate) {
-                        UI::TextDisabled(Date::FormatISO(currentMap.UpdatedAt, "%d-%m-%Y"));
+                        UI::TextDisabled(Time::FormatString("%F", currentMap.UpdatedAtTimestamp));
                         UI::SameLine();
                     }
 

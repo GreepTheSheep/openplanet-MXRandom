@@ -9,6 +9,8 @@ namespace MX {
         string ExeBuild;
         string UploadedAt;
         string UpdatedAt;
+        int UploadedAtTimestamp;
+        int UpdatedAtTimestamp;
         int PlayedAt;
         string Name;
         string GbxMapName;
@@ -43,6 +45,14 @@ namespace MX {
                     UpdatedAt = json["UpdatedAt"];
                 } else {
                     UpdatedAt = json["UploadedAt"];
+                }
+
+                try {
+                    UploadedAtTimestamp = Time::ParseFormatString('%FT%T', this.UploadedAt);
+                    UpdatedAtTimestamp = Time::ParseFormatString('%FT%T', this.UpdatedAt);
+                } catch {
+                    UploadedAtTimestamp = 0;
+                    UpdatedAtTimestamp = 0;
                 }
 
                 if (json["Uploader"].GetType() != Json::Type::Null) {
