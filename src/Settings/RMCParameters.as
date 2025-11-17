@@ -136,7 +136,7 @@ namespace PluginSettings {
             RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer in Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
 #if TMNEXT
-            RMC_PushLeaderboardResults = UI::Checkbox("Send every RMC & RMS runs to the leaderboard", RMC_PushLeaderboardResults);
+            RMC_PushLeaderboardResults = UI::Checkbox("Upload every RMC/RMS run to the leaderboard", RMC_PushLeaderboardResults);
             UI::SettingDescription("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif
 

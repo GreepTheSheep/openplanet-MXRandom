@@ -200,6 +200,10 @@ namespace RMC {
 #endif
 
         if (UI::PurpleButton(Icons::Cog)) {
+            if (!UI::IsOverlayShown()) {
+                UI::ShowOverlay();
+            }
+
             Meta::OpenSettings();
         }
         UI::SetItemTooltip("Settings");
