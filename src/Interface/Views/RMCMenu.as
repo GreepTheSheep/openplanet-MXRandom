@@ -190,6 +190,17 @@ namespace RMC {
         }
 #endif
         UI::Separator();
+
+        if (UI::OrangeButton(Icons::Backward + " Go back")) {
+            if (!UI::IsOverlayShown()) {
+                UI::ShowOverlay();
+            }
+
+            window.isInRMCMode = false;
+        }
+
+        UI::SameLine();
+
 #if TMNEXT
         if (UI::Button(Icons::Table)) {
             OpenBrowserURL(PluginSettings::RMC_Leaderboard_Url);
@@ -198,6 +209,12 @@ namespace RMC {
 
         UI::SameLine();
 #endif
+        if (UI::GreyButton(Icons::Book)) {
+            Renderables::Add(RMCRulesModalDialog());
+        }
+        UI::SetItemTooltip("Rules");
+
+        UI::SameLine();
 
         if (UI::PurpleButton(Icons::Cog)) {
             if (!UI::IsOverlayShown()) {
@@ -207,23 +224,6 @@ namespace RMC {
             Meta::OpenSettings();
         }
         UI::SetItemTooltip("Settings");
-
-        UI::SameLine();
-
-        if (UI::GreyButton(Icons::Book)) {
-            Renderables::Add(RMCRulesModalDialog());
-        }
-        UI::SetItemTooltip("Rules");
-
-        UI::SameLine();
-
-        if (UI::OrangeButton(Icons::Backward + " Go back")) {
-            if (!UI::IsOverlayShown()) {
-                UI::ShowOverlay();
-            }
-
-            window.isInRMCMode = false;
-        }
 
         if (
             currentRun.GoalMedalCount > 0 ||

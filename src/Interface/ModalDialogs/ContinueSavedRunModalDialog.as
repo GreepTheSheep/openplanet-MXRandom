@@ -25,7 +25,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         UI::EndChild();
 
-        if (UI::Button(Icons::Times + " New Run")) {
+        if (UI::OrangeButton(Icons::Times + " New Run")) {
             DataManager::RemoveCurrentSaveFile();
             HasCompletedCheckbox = true;
             Close();
@@ -34,7 +34,7 @@ class ContinueSavedRunModalDialog : ModalDialog {
         UI::SameLine();
         UI::SetCursorPos(vec2(UI::GetWindowSize().x - 100 * scale, UI::GetCursorPos().y));
 
-        if (UI::OrangeButton(Icons::PlayCircleO + " Continue")) {
+        if (UI::GreenButton(Icons::PlayCircleO + " Continue")) {
             run.ContinueSavedRun = true;
             HasCompletedCheckbox = true;
             Close();
