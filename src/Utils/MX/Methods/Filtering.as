@@ -20,8 +20,9 @@ namespace MX {
                 return true;
             }
 
-            // Suggested by chybrydra
-            if (Regex::Contains(name, "snowo map for snowo haters", Regex::Flags::CaseInsensitive)) {
+            // Snowo was suggested by chybrydra
+            // Everios was okay with filtering yeet max-up
+            if (Regex::Contains(name, "(snowo map for snowo haters|Everios96 \\[Yeet\\])", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map is from a low-effort series.");
                 return true;
             }
@@ -32,12 +33,12 @@ namespace MX {
             }
 
             if (map.AwardCount < 5) {
-                if (Regex::Contains(name, "Generator|Generated|Random map|\\b(RMM|RMG|R?TGE|RTG)\\b", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "Generator|Generated|Random map|BPM - Random|\\b(RMM|RMG|R?TGE|RTG)\\b", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely randomly generated.");
                     return true;
                 }
 
-                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|ruining?|lunatic|sorry|annoying|shit(ty)?|trash|garbage|impossible|AI)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "(^|[^a-z])(awful|pain|ruin(ed|ing?)|worst|lunatic|hell|sorry|killer|cancer|annoying|dumb|stupid|shit(e|ty)?|trash|garbage|impossible|AI|GPT)($|[^a-z])", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely low effort.");
                     return true;
                 }
@@ -55,15 +56,45 @@ namespace MX {
 
     bool IsMapUntagged(MX::MapInfo@ map) {
 #if TMNEXT
-        if (map.Username != "Ubisoft Nadeo" && !map.HasTag("Altered Nadeo")) {
-            if (Regex::Contains(map.Name, "^(Icy |Yeet )?(Summer|Fall|Winter|Spring) 202\\d (- )?\\d{1,2}", Regex::Flags::CaseInsensitive)) {
+        if (map.Username != "Ubisoft Nadeo" && map.Username != "BigBang1112" && !map.HasTag("Altered Nadeo")) {
+            // Seasonal campaign map
+            if (
+                Regex::Contains(map.Name, "(Summer|Fall|Winter|Spring) 202\\d[ -]+\\d{1,2}", Regex::Flags::CaseInsensitive)
+                && !Regex::Contains(map.Name, "(Community|Project)", Regex::Flags::CaseInsensitive)
+            ) {
                 Log::Warn("Map is most likely untagged Altered Nadeo.");
                 return true;
-            } else if (
-                map.AwardCount <= 5
-                && map.HasTag("Remake")
-                && Regex::Contains(map.Name, "((Summer|Fall|Winter|Spring) 202\\d (- )?\\d{1,2})|\\b[a-e]0[1-5](\\b|-(Acrobatic|Race|Obstacle|Endurance|Speed))|Training (- )?[0-2]?\\d", Regex::Flags::CaseInsensitive)
+            } 
+
+            // Training campaign
+            if (Regex::Contains(map.Name, "Training (- )?[0-2]?\\d", Regex::Flags::CaseInsensitive) && !map.Name.Contains("Better")) {
+                Log::Warn("Map is most likely untagged Altered Nadeo.");
+                return true;
+            }
+
+            // TMNF / TM2
+            if (
+                Regex::Contains(map.Name, "\\b[a-e]-?(0[1-9]|1[0-5])(\\b|[- ](Acrobatic|Race|Obstacle|Endurance|Speed))", Regex::Flags::CaseInsensitive)
+                && !map.Name.ToLower().Contains("a08")
             ) {
+                Log::Warn("Map is most likely untagged Altered Nadeo.");
+                return true;
+            }
+
+            // ESWC
+            if (map.Username != "MrFunreal" && map.Username != "Schwabsi" && Regex::Contains(map.Name, "ESWC.*?[A-I][ -][1-9]", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is most likely untagged Altered Nadeo.");
+                return true;
+            }
+
+            // Common Altered Nadeo alterations
+            if (Regex::Contains(map.Name, "(1[ -]?(UP|DOWN|BACK))|Max[ -]Up|CP1 (is )?End|CPLess|hidden fin|series combined", Regex::Flags::CaseInsensitive)) {
+                Log::Warn("Map is most likely untagged Altered Nadeo.");
+                return true;
+            }
+
+            // Alterations usually between parentheses or brackets, like "(Underwater)" or "[Snowcar]", or after a hyphen, like "- Reversed"
+            if (Regex::Contains(map.Name, "(\\(|\\[|- )(((car)?(Snow|Rally|Desert)( ?car)?)|UW|Underwater|Yeet|Reverse)", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map is most likely untagged Altered Nadeo.");
                 return true;
             }
@@ -71,7 +102,7 @@ namespace MX {
 #endif
 
         if (map.AwardCount < 5) {
-            if (!map.HasTag("Kacky") && map.Name.ToLower().Contains("kacky")) {
+            if (!map.HasTag("Kacky") && Regex::Contains(map.Name, "kacky|uber ?bug|\\buber\\b|wtf of what", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map is most likely untagged Kacky.");
                 return true;
             }
