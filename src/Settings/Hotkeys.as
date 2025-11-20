@@ -5,11 +5,24 @@ namespace PluginSettings {
     [Setting hidden]
     VirtualKey S_WindowToggle = VirtualKey(0);
 
+    bool DetectingQuickMapKey = false;
+    bool DetectingWindowKey = false;
+
+    bool get_ListeningForKey() {
+        return DetectingQuickMapKey || DetectingWindowKey;
+    }
+
+    void StopListeningForKey() {
+        DetectingQuickMapKey = false;
+        DetectingWindowKey = false;
+    }
+
     [SettingsTab name="Hotkeys" order="3" icon="KeyboardO"]
     void RenderHotkeySettingTab() {
         if (UI::OrangeButton("Reset to default")) {
             S_QuickMapKey = VirtualKey(0);
             S_WindowToggle = VirtualKey(0);
+            StopListeningForKey();
         }
 
         UI::SetNextItemWidth(225);
@@ -27,6 +40,7 @@ namespace PluginSettings {
 
                 if (UI::Selectable(keyName, S_QuickMapKey == key)) {
                     S_QuickMapKey = key;
+                    StopListeningForKey();
                 }
 
                 if (taken) {
@@ -39,6 +53,18 @@ namespace PluginSettings {
 
             UI::EndCombo();
         }
+
+        UI::SameLine();
+
+        UI::BeginDisabled(ListeningForKey);
+
+        if (DetectingQuickMapKey) {
+            UI::Text("Press a key");
+        } else if (UI::GreyButton("Detect##QuickMap")) {
+            DetectingQuickMapKey = true;
+        }
+
+        UI::EndDisabled();
 
         UI::SetNextItemWidth(225);
         if (UI::BeginCombo("Show/Hide window hotkey", GetKeyName(S_WindowToggle))) {
@@ -55,6 +81,7 @@ namespace PluginSettings {
 
                 if (UI::Selectable(keyName, S_WindowToggle == key)) {
                     S_WindowToggle = key;
+                    StopListeningForKey();
                 }
 
                 if (taken) {
@@ -66,6 +93,18 @@ namespace PluginSettings {
 
             UI::EndCombo();
         }
+
+        UI::SameLine();
+
+        UI::BeginDisabled(ListeningForKey);
+
+        if (DetectingWindowKey) {
+            UI::Text("Press a key");
+        } else if (UI::GreyButton("Detect##Window")) {
+            DetectingWindowKey = true;
+        }
+
+        UI::EndDisabled();
     }
 
     string GetKeyName(VirtualKey key) {
@@ -93,5 +132,35 @@ namespace PluginSettings {
         };
 
         return usedKeys.Find(key) > -1;
+    }
+
+    void RemoveHotkey(VirtualKey key) {
+        if (!IsKeyUsed(key)) {
+            return;
+        }
+
+        if (S_QuickMapKey == key) {
+            S_QuickMapKey = VirtualKey(0);
+        }
+
+        if (S_WindowToggle == key) {
+            S_WindowToggle = VirtualKey(0);
+        }
+    }
+
+    void AssignHotkey(VirtualKey key) {
+        if (!ListeningForKey) {
+            return;
+        }
+
+        RemoveHotkey(key);
+
+        if (DetectingQuickMapKey) {
+            S_QuickMapKey = key;
+        } else if (DetectingWindowKey) {
+            S_WindowToggle = key;
+        }
+
+        StopListeningForKey();
     }
 }

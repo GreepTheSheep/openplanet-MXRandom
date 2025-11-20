@@ -67,20 +67,27 @@ void Render() {
     Renderables::Render();
 }
 
-bool held = false;
-void OnKeyPress(bool down, VirtualKey key) {
+UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
 #if TMNEXT
-    if (!hasPermissions) return;
+    if (!hasPermissions) return UI::InputBlocking::DoNothing;
 #endif
-    if (!held) {
-        if (!MX::APIDown && !MX::RandomMapIsLoading && key == PluginSettings::S_QuickMapKey) {
-            startnew(MX::LoadRandomMap);
-        } else if (key == PluginSettings::S_WindowToggle) {
-            window.isOpened = !window.isOpened;
-        }
+
+    if (PluginSettings::ListeningForKey) {
+        PluginSettings::AssignHotkey(key);
+        return UI::InputBlocking::Block;
     }
 
-    held = down;
+    if (!MX::APIDown && !MX::RandomMapIsLoading && key == PluginSettings::S_QuickMapKey) {
+        startnew(MX::LoadRandomMap, false);
+        return UI::InputBlocking::Block;
+    } 
+    
+    if (key == PluginSettings::S_WindowToggle) {
+        window.isOpened = !window.isOpened;
+        return UI::InputBlocking::Block;
+    }
+
+    return UI::InputBlocking::DoNothing;
 }
 
 void Main() {
