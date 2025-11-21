@@ -43,6 +43,9 @@ class Window {
         if (UI::Begin(GetWindowTitle(), isOpened, GetFlags())) {
             if (!isInRMCMode) {
                 MainUIView::Header();
+
+                UI::Separator();
+
                 UI::BeginTabBar("MainUITabBar", UI::TabBarFlags::FittingPolicyResizeDown);
 
                 if (UI::BeginTabItem(Icons::ListUl + " Recently Played Maps")) {

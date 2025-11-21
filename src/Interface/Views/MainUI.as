@@ -1,42 +1,42 @@
 namespace MainUIView {
     void Header() {
-        float scale = UI::GetScale();
+#if TMNEXT
+        if (!Permissions::PlayLocalMap()) {
+            UI::CenteredText(Icons::TimesCircle + " You don't have the permissions to play local maps");
+            return;
+        }
+#endif
 
         if (MX::APIDown) {
-            if (!MX::APIRefreshing) {
+            if (MX::APIRefreshing) {
+                UI::CenteredText(Icons::AnimatedHourglass + " Loading...", true);
+            } else {
                 UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$z" + MX_NAME + " is not responding. It might be down.");
+
                 if (UI::CenteredButton("Retry")) {
                     startnew(MX::FetchMapTags);
                 }
-            } else {
-                UI::CenteredText(Icons::AnimatedHourglass + " Loading...", true);
             }
-        } else {
-#if TMNEXT
-            if (Permissions::PlayLocalMap()) {
-#endif
-                if (TM::CurrentTitlePack() == "") {
-                    UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$zPlease select a title pack.");
-                } else {
-                    if (!MX::RandomMapIsLoading) {
-                        if (UI::CenteredButton(Icons::Play + " Play a random map", 0.33f)) {
-                            startnew(MX::LoadRandomMap);
-                        }
-                    } else {
-                        UI::CenteredText(Icons::AnimatedHourglass + " Loading...");
-                    }
 
-                    if (UI::CenteredButton(Icons::ClockO + " Random Map Challenge", 0.155)) {
-                        window.isInRMCMode = !window.isInRMCMode;
-                    }
-                }
-#if TMNEXT
-            } else {
-                UI::CenteredText(Icons::TimesCircle + " You don't have the permissions to play local maps");
-            }
-#endif
+            return;
         }
-        UI::Separator();
+
+        if (TM::CurrentTitlePack() == "") {
+            UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$zPlease select a title pack.");
+            return;
+        }
+
+        if (MX::RandomMapIsLoading) {
+            UI::CenteredText(Icons::AnimatedHourglass + " Loading...");
+        } else {
+            if (UI::CenteredButton(Icons::Play + " Play a random map", 0.33f)) {
+                startnew(MX::LoadRandomMap);
+            }
+        }
+
+        if (UI::CenteredButton(Icons::ClockO + " Random Map Challenge", 0.155)) {
+            window.isInRMCMode = !window.isInRMCMode;
+        }
     }
 
     void RecentlyPlayedMapsTab() {
@@ -70,33 +70,34 @@ namespace MainUIView {
     void ChangelogTabs() {
         GH::CheckReleasesReq();
 
-        if (GH::ReleasesReq is null && GH::Releases.IsEmpty()) {
+        if (GH::ReleasesReq !is null) {
+            UI::Text(Icons::AnimatedHourglass + " Loading...");
+            return;
+        }
+
+        if (GH::Releases.IsEmpty()) {
             if (!GH::releasesRequestError) {
                 GH::StartReleasesReq();
             } else {
                 UI::Text("Error while loading releases");
             }
+
+            return;
         }
 
-        if (GH::ReleasesReq !is null) {
-            UI::Text(Icons::AnimatedHourglass + " Loading...");
-        }
+        UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyScroll);
 
-        if (GH::ReleasesReq is null && !GH::Releases.IsEmpty()) {
-            UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyScroll);
+        for (uint i = 0; i < GH::Releases.Length; i++) {
+            GH::Release@ release = GH::Releases[i];
 
-            for (uint i = 0; i < GH::Releases.Length; i++) {
-                GH::Release@ release = GH::Releases[i];
-
-                if (UI::BeginTabItem((release.name.Replace("v", "") == PLUGIN_VERSION ? "\\$090": "") + Icons::Tag + " \\$z" + release.name)) {
-                    UI::BeginChild("Changelog"+release.name);
-                    UI::Markdown(Render::FormatChangelogBody(release.body));
-                    UI::EndChild();
-                    UI::EndTabItem();
-                }
+            if (UI::BeginTabItem((release.name.Replace("v", "") == PLUGIN_VERSION ? "\\$090": "") + Icons::Tag + " \\$z" + release.name)) {
+                UI::BeginChild("Changelog"+release.name);
+                UI::Markdown(Render::FormatChangelogBody(release.body));
+                UI::EndChild();
+                UI::EndTabItem();
             }
-
-            UI::EndTabBar();
         }
+
+        UI::EndTabBar();
     }
 }
