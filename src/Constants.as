@@ -51,7 +51,7 @@ const bool IS_DEV_MODE                  = Meta::IsDeveloperMode();
 #endif
 
 const string DATA_JSON_LOCATION         = IO::FromStorageFolder("MXRandom_Data.json");
-const string SAVE_DATA_LOCATION         = DATA_JSON_LOCATION.Replace("MXRandom_Data.json", "Saves/");
+const string SAVE_DATA_LOCATION         = IO::FromStorageFolder("Saves/");
 Json::Value DataJson                    = Json::FromFile(DATA_JSON_LOCATION);
 Json::Value DataJsonOldVersion          = Json::FromFile(IO::FromDataFolder("TMXRandom_Data.json"));
 const string DATA_JSON_LOCATION_DATADIR = IO::FromDataFolder("MXRandom_Data.json");

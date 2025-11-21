@@ -154,8 +154,12 @@ namespace TM {
     }
 
     int GetWorldRecordFromCache(const string &in mapUid) {
-        int valueReturn;
-        if (worldRecordsCache.Get(mapUid, valueReturn)) return valueReturn;
+        int worldRecord;
+
+        if (worldRecordsCache.Get(mapUid, worldRecord)) {
+            return worldRecord;
+        }
+
         return -1;
     }
 

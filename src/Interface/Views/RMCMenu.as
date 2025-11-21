@@ -12,8 +12,8 @@ namespace RMC {
 
 #if SIG_SCHOOL
         UI::Text("\\$fa0" + Icons::University + " \\$zSchool mode is enabled.");
-        if (!Meta::IsSchoolModeWhitelisted()) UI::TextWrapped("\\$f00" + Icons::TimesCircleO + " \\$zThe results will not be uploaded to the leaderboard.");
-        else UI::TextWrapped("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted, results will be uploaded to the leaderboard.");
+        if (!Meta::IsSchoolModeWhitelisted()) UI::TextWrapped("\\$f00" + Icons::TimesCircleO + " \\$zRuns won't be submitted.");
+        else UI::TextWrapped("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted.");
 #endif
 
             UI::SetItemText("Mode:", 200);
