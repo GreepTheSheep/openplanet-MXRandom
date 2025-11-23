@@ -309,8 +309,8 @@ namespace PluginSettings {
             default: difficultyText = tostring(DifficultiesArray.Length) + " difficulties"; break;
         }
 
-        UI::SetNextItemWidth(160);
-        if (UI::BeginCombo("Difficulties###DifficultyFilter", difficultyText)) {
+        UI::SetItemText("Difficulties:", 200);
+        if (UI::BeginCombo("###DifficultyFilter", difficultyText)) {
             for (uint i = 0; i <= MX::Difficulties::Impossible; i++) {
                 UI::PushID("DifficultyBtn" + i);
 
@@ -337,8 +337,8 @@ namespace PluginSettings {
         Difficulties = ConvertArrayToList(DifficultiesArray);
 
 #if TMNEXT
-        UI::SetNextItemWidth(160);
-        if (UI::BeginCombo("Map Type", tostring(MapType))) {
+        UI::SetItemText("Map Type:", 200);
+        if (UI::BeginCombo("##MapTypes", tostring(MapType))) {
             for (int i = 0; i < MapTypes::Last; i++) {
                 if (UI::Selectable(tostring(MapTypes(i)), MapType == MapTypes(i))) {
                     MapType = MapTypes(i);

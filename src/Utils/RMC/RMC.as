@@ -520,7 +520,7 @@ class RMC {
     void BrokenSkipButton() {
         UI::BeginDisabled(IsSwitchingMap);
 
-        if (UI::OrangeButton(Icons::PlayCircleO + " Skip broken Map")) {
+        if (UI::OrangeButton(Icons::PlayCircleO + " Skip broken Map", vec2(-1, 0))) {
             if (!UI::IsOverlayShown()) UI::ShowOverlay();
             IsPaused = true;
             UnpauseOnExit = false;

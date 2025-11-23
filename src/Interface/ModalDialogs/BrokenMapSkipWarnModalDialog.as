@@ -27,7 +27,7 @@ class BrokenMapSkipWarnModalDialog : ModalDialog {
             Log::Info("RMC: Skipping broken map.");
             UI::ShowNotification("Please wait...");
 
-#if DEPENDENCY_BETTERCHAT
+#if TMNEXT && DEPENDENCY_BETTERCHAT
             if (run.Mode == RMC::GameMode::Together) {
                 BetterChat::SendChatMessage(Icons::Users + " Skipping broken map...");
             }

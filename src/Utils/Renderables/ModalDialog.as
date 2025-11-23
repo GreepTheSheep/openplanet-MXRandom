@@ -17,6 +17,7 @@ class ModalDialog : IRenderable {
 			UI::OpenPopup(m_id);
 		}
 
+		UI::PushStyleVar(UI::StyleVar::WindowTitleAlign, vec2(.5, .5));
 		UI::SetNextWindowSize(int(m_size.x), int(m_size.y));
 
 		bool isOpen = false;
@@ -31,6 +32,8 @@ class ModalDialog : IRenderable {
 			RenderDialog();
 			UI::EndPopup();
 		}
+
+		UI::PopStyleVar();
 	}
 
 	bool CanClose()

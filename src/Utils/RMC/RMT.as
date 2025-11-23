@@ -361,7 +361,7 @@ class RMT : RMC {
 
             UI::BeginDisabled(skipsLeft == 0);
 
-            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)")) {
+            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)", vec2(-1, 0))) {
                 FreeSkipsUsed++;
                 Log::Trace("RMT: Skipping map");
                 UI::ShowNotification("Please wait...");
@@ -379,7 +379,7 @@ class RMT : RMC {
                 "Free Skips are if the map is finishable but your team still want to skip it for any reason.\n\n" +
                 "If the map is broken, please use the button below instead."
             );
-        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal")) {
+        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal", vec2(-1, 0))) {
             BelowMedalCount++;
             RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
             playerScored.AddBelowGoal();
@@ -434,20 +434,21 @@ class RMT : RMC {
         array<PBTime@> ret;
 #if DEPENDENCY_MLFEEDRACEDATA
         try {
-            auto app = cast<CTrackMania>(GetApp());
-            if (app.Network is null || app.Network.ClientManiaAppPlayground is null) return {};
+            if (!TM::IsInServer()) return {};
+
             auto raceData = MLFeed::GetRaceData_V4();
             if (raceData is null) return {};
+
             auto @players = raceData.SortedPlayers_TimeAttack;
-            if (players.IsEmpty()) return {};
+
             for (uint i = 0; i < players.Length; i++) {
                 auto player = cast<MLFeed::PlayerCpInfo_V4>(players[i]);
-                if (player is null) continue;
-                if (player.bestTime < 1) continue;
+                if (player is null || player.bestTime < 1) continue;
                 if (player.BestRaceTimes is null || player.BestRaceTimes.Length != raceData.CPsToFinish) continue;
                 auto pbTime = PBTime(player);
                 ret.InsertLast(pbTime);
             }
+
             ret.SortAsc();
         } catch {
             warn("Error while getting player PBs: " + getExceptionInfo());

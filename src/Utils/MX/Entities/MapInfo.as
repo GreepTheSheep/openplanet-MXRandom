@@ -297,7 +297,7 @@ namespace MX {
         }
 
         bool opEquals(MapInfo@ other) {
-            return this.MapId == other.MapId;
+            return other !is null && this.MapId == other.MapId;
         }
 
         string toString() {

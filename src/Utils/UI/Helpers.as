@@ -83,7 +83,7 @@ namespace UI {
             UI::Text(text);
             UI::SameLine();
 
-            int itemWidth = Math::Max(-1, width - Draw::MeasureString(text).x);
+            float itemWidth = Math::Max(-1, width - Draw::MeasureString(text).x);
             UI::SetNextItemWidth(itemWidth);
         }
     }

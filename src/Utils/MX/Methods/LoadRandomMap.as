@@ -375,20 +375,17 @@ namespace MX {
     }
 
     string DictToApiParams(dictionary params) {
-        string urlParams = "";
-
-        if (!params.IsEmpty()) {
-            auto keys = params.GetKeys();
-            for (uint i = 0; i < keys.Length; i++) {
-                string key = keys[i];
-                string value;
-                params.Get(key, value);
-
-                urlParams += (i == 0 ? "?" : "&");
-                urlParams += key + "=" + Net::UrlEncode(value.Trim());
-            }
+        if (params.IsEmpty()) {
+            return "";
         }
 
-        return urlParams;
+        array<string> formattedParams;
+
+        foreach (string key : params.GetKeys()) {
+            string value = string(params[key]);
+            formattedParams.InsertLast(key + "=" + Net::UrlEncode(value.Trim()));
+        }
+
+        return "?" + string::Join(formattedParams, "&");
     }
 }
