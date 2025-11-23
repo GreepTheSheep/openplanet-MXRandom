@@ -16,9 +16,10 @@ class ContinueSavedRunModalDialog : ModalDialog {
         string lastLetter = tostring(run.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
         int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
+        Medals runMedal = RMC::CurrentRunData.HasKey("Settings") ? Medals(int(RMC::CurrentRunData["Settings"]["GoalMedal"])) : PluginSettings::GoalMedal;
 
         UI::Text(
-            "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + " " + tostring(PluginSettings::RMC_Medal) + "s"
+            "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + " " + tostring(runMedal) + "s"
             "\n\nDo you want to continue this run or start a new one?\n"
             "\nNOTE: Starting a new run will delete the current save!"
         );

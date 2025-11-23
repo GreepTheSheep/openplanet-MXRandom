@@ -82,7 +82,9 @@ namespace UI {
             UI::AlignTextToFramePadding();
             UI::Text(text);
             UI::SameLine();
-            UI::SetNextItemWidth(width - Draw::MeasureString(text).x);
+
+            int itemWidth = Math::Max(-1, width - Draw::MeasureString(text).x);
+            UI::SetNextItemWidth(itemWidth);
         }
     }
 

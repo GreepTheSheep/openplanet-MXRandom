@@ -36,7 +36,7 @@ namespace RMCLeaderAPI {
         AccountId = app.LocalPlayerInfo.WebServicesUserId;
     }
 
-    void postRMC(const int &in goal, const int &in belowGoal, Medals objective = Medals::Author) {
+    void postRMC(const int &in goal, const int &in belowGoal, RunSettings@ settings) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
 #if SIG_SCHOOL
@@ -46,17 +46,17 @@ namespace RMCLeaderAPI {
         }
 #endif
 
-        if (PluginSettings::CustomRules) {
+        if (settings.Category == RMC::Category::Custom) {
             Log::Warn("Custom rules is enabled, the results will not be uploaded to the leaderboard", true);
             return;
         }
 
         Json::Value@ json = Json::Object();
         json["accountId"] = AccountId;
-        json["objective"] = tostring(objective).ToLower();
+        json["objective"] = tostring(settings.GoalMedal).ToLower();
         json["goal"] = goal;
         json["below_goal"] = belowGoal;
-        json["category"] = "standard"; // other categories not available yet
+        json["category"] = tostring(settings.Category).ToLower();
 
         Log::Trace("[PostRMC] Submitting RMC run to leaderboard.");
         Log::Trace("[PostRMC] Payload: " + Json::Write(json, true));
@@ -105,7 +105,7 @@ namespace RMCLeaderAPI {
         Log::Error("Too many failed attempts on posting results on the leaderboard.", true);
     }
 
-    void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, Medals objective = Medals::Author) {
+    void postRMS(const int &in goal, const int &in skips, const int &in survivedTime, RunSettings@ settings) {
         if (!PluginSettings::RMC_PushLeaderboardResults || goal == 0) return; // Do nothing if setting disabled, or goals number is 0
 
 #if SIG_SCHOOL
@@ -115,18 +115,18 @@ namespace RMCLeaderAPI {
         }
 #endif
 
-        if (PluginSettings::CustomRules) {
+        if (settings.Category == RMC::Category::Custom) {
             Log::Warn("Custom rules is enabled, the results will not be uploaded to the leaderboard", true);
             return;
         }
 
         Json::Value@ json = Json::Object();
         json["accountId"] = AccountId;
-        json["objective"] = tostring(objective).ToLower();
+        json["objective"] = tostring(settings.GoalMedal).ToLower();
         json["goal"] = goal;
         json["skips"] = skips;
         json["time_survived"] = survivedTime / 1000;
-        json["category"] = "standard"; // other categories not available yet
+        json["category"] = tostring(settings.Category).ToLower();
 
         Log::Trace("[PostRMS] Submitting RMS run to leaderboard.");
         Log::Trace("[PostRMS] Payload: " + Json::Write(json, true));

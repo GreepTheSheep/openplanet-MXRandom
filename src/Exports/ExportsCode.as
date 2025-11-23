@@ -1,13 +1,13 @@
 namespace MXRandom {
     bool IsRMCRunning() { return RMC::currentRun.IsRunning; }
     bool IsRMCPaused() { return RMC::currentRun.IsPaused; }
-    int RMCGoalMedal() { return int(PluginSettings::RMC_Medal); }
-    string RMCGoalMedalName() { return tostring(PluginSettings::RMC_Medal); }
+    int RMCGoalMedal() { return int(RMC::currentRun.RunConfig.GoalMedal); }
+    string RMCGoalMedalName() { return tostring(RMC::currentRun.RunConfig.GoalMedal); }
     bool RMCGotGoalMedal() { return RMC::currentRun.GotGoalMedal; }
     bool RMCGotBelowMedal() { return RMC::currentRun.GotBelowMedal; }
     int RMCGoalMedalCount() { return RMC::currentRun.GoalMedalCount; }
     int RMCGameMode() { return RMC::currentRun.Mode; }
-    bool get_WithCustomParameters() { return PluginSettings::CustomRules; }
+    bool get_WithCustomParameters() { return RMC::currentRun.RunConfig.CustomSearchFilters; }
 
     void LoadRandomMap(bool customParameters = false) { 
         if (customParameters) {

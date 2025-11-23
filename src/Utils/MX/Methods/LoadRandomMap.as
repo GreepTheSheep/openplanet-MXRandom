@@ -13,8 +13,8 @@ namespace MX {
     }
 
 
-    MX::MapInfo@ GetRandomMap() {
-        string URL = CreateQueryURL();
+    MX::MapInfo@ GetRandomMap(bool customParameters = false) {
+        string URL = CreateQueryURL(customParameters);
         Json::Value res;
 
         try {
@@ -30,7 +30,7 @@ namespace MX {
             Log::Error("[GetRandomMap] Something went wrong while getting a random map from ManiaExchange");
             return null;
         } else if (res["Results"].Length == 0) {
-            if (PluginSettings::CustomRules) {
+            if (customParameters) {
                 Log::Error("[GetRandomMap] Failed to find a random map with custom parameters");    
             } else {
                 Log::Error("[GetRandomMap] Failed to find a random map without custom parameters. This should never happen!");
@@ -62,7 +62,7 @@ namespace MX {
             }
 #endif
 
-            if (!PluginSettings::CustomRules) {
+            if (!customParameters) {
                 if (map.AuthorTime > RMC::config.length) {
                     Log::Warn("[GetRandomMap] Map AT (" + Time::Format(map.AuthorTime) + ") is longer than the max length for RMC (" + Time::Format(RMC::config.length) + "), skipping...");
                     return null;
@@ -74,17 +74,19 @@ namespace MX {
                 return null;
             }
 
-            if ((!PluginSettings::CustomRules || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
+            if ((!customParameters || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
                 Log::Warn("[GetRandomMap] Map is from a blacklisted author, skipping...");
                 return null;
             }
 
-            if ((!PluginSettings::CustomRules || PluginSettings::FilterLowEffort) && IsMapLowEffort(map)) {
+            RunSettings@ runConfig = RMC::currentRun.RunConfig;
+
+            if (runConfig.FilterLowEffort && IsMapLowEffort(map)) {
                 Log::Warn("[GetRandomMap] Map is most likely low effort, skipping...");
                 return null;
             }
 
-            if ((!PluginSettings::CustomRules || PluginSettings::FilterUntagged) && IsMapUntagged(map)) {
+            if (runConfig.FilterUntagged && IsMapUntagged(map)) {
                 Log::Warn("[GetRandomMap] Map is most likely missing a default filtered tag, skipping...");
                 return null;
             }
@@ -97,27 +99,39 @@ namespace MX {
                 }
             }
 
-            if (PluginSettings::RMC_Medal == Medals::WR) {
-                if (PluginSettings::CustomRules && (PluginSettings::MapType == MapTypes::Platform || PluginSettings::MapType == MapTypes::Royal)) {
-                    // Platform and Royal don't support leaderboards
-                    Log::Warn("[GetRandomMap] Game mode " + tostring(PluginSettings::MapType) + " doesn't support leaderboards. Using AT as fallback for WR.");
+            if (map.Type == MapTypes::Platform || map.Type == MapTypes::Royal) {
+                // Platform and Royal don't support leaderboards
+                if (runConfig.GoalMedal == Medals::WR) {
+                    Log::Warn("[GetRandomMap] Game mode " + tostring(map.Type) + " doesn't support leaderboards. Using AT as fallback for WR.");
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
-                } else {
-                    // if uploaded, get wr
-                    int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
+                }
+            } else if (runConfig.SkipUnbeatenMaps || runConfig.SkipUnbeatenMedals || runConfig.GoalMedal == Medals::WR) {
+                // For Race and Stunt maps, get WR
+                int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
 
-                    if (mapWorldRecord == -1) {
-                        Log::Warn("[GetRandomMap] Couldn't get the World Record for map ID #" + map.MapId + ", skipping...");
+                if (mapWorldRecord == -1) {
+                    Log::Warn("[GetRandomMap] Couldn't get the World Record for map ID #" + map.MapId + ", skipping...");
+                    return null;
+                }
+
+                TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
+
+                if (runConfig.SkipUnbeatenMedals) {
+                    int medalTime = map.GetMedalTime(runConfig.GoalMedal, runConfig.CalculateMedals);
+
+                    if (
+                        (map.Type == MapTypes::Race && mapWorldRecord > medalTime)
+                        || (map.Type == MapTypes::Stunt && mapWorldRecord < medalTime)
+                    ) {
+                        Log::Warn("[GetRandomMap] World Record is worse than goal medal for map ID #" + map.MapId + ", skipping...");
                         return null;
                     }
-
-                    TM::SetWorldRecordToCache(map.MapUid, mapWorldRecord);
                 }
             }
 #endif
         }
 
-        if (PluginSettings::CustomRules) {
+        if (customParameters) {
             if (PluginSettings::UseDateInterval) {
                 int64 toDate = Time::ParseFormatString('%F', PluginSettings::ToDate);
                 int64 fromDate = Time::ParseFormatString('%F', PluginSettings::FromDate);
@@ -168,7 +182,7 @@ namespace MX {
         return map;
     }
 
-    void LoadRandomMap() {
+    void LoadRandomMap(bool customParameters) {
         try {
             while (RandomMapIsLoading) {
                 yield();
@@ -185,7 +199,7 @@ namespace MX {
             int attempts = 0;
 
             while (true) {
-                @map = GetRandomMap();
+                @map = GetRandomMap(customParameters);
 
                 if (map !is null) {
                     break;
@@ -194,9 +208,9 @@ namespace MX {
                 attempts++;
 
                 if (attempts >= 15) {
-                    if (PluginSettings::CustomRules) {
+                    if (customParameters) {
                         Log::Warn("[LoadRandomMap] Failed to find a map with custom parameters. Searching without them...", true);
-                        PluginSettings::CustomRules = false;
+                        customParameters = false;
                         attempts = 0;
                     } else {
                         Log::Error("[LoadRandomMap] Failed to get a random map after 15 attempts.", true);
@@ -223,7 +237,7 @@ namespace MX {
         }
     }
 
-    string CreateQueryURL(bool customParameters = true) {
+    string CreateQueryURL(bool customParameters = false) {
         string url = PluginSettings::RMC_MX_Url + "/api/maps";
 
         dictionary params;
@@ -241,7 +255,7 @@ namespace MX {
         }
 #endif
 
-        if (PluginSettings::CustomRules && customParameters) {
+        if (customParameters) {
             if (PluginSettings::UseCustomLength) {
                 if (PluginSettings::MinLength != 0) {
                     params.Set("authortimemin", tostring(PluginSettings::MinLength));
@@ -252,8 +266,6 @@ namespace MX {
                 if (PluginSettings::MaxLength != 0) {
                     params.Set("authortimemax", tostring(PluginSettings::MaxLength));
                 }
-            } else {
-                params.Set("authortimemax", tostring(RMC::config.length));
             }
 
             if (PluginSettings::UseDateInterval) {
@@ -272,11 +284,11 @@ namespace MX {
                 params.Set("uploadedbefore", yesterday);
             }
 
-            if (!PluginSettings::MapTagsArr.IsEmpty()) {
+            if (PluginSettings::MapTags != "") {
                 params.Set("tag", PluginSettings::MapTags);
             }
 
-            if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()) {
+            if (PluginSettings::ExcludeMapTags != "") {
                 params.Set("etag", PluginSettings::ExcludeMapTags);
             }
 
@@ -284,7 +296,7 @@ namespace MX {
                 params.Set("taginclusive", "true");
             }
 
-            if (!PluginSettings::DifficultiesArray.IsEmpty()) {
+            if (PluginSettings::Difficulties != "") {
                 params.Set("difficulty", PluginSettings::Difficulties);
             }
 
@@ -308,8 +320,11 @@ namespace MX {
             }
 
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
+                if (!PluginSettings::UseCustomLength) {
+                    params.Set("authortimemax", tostring(RMC::config.length));
+                }
 #if TMNEXT
-                if (PluginSettings::RMC_Medal == Medals::WR) {
+                if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps || RMC::currentRun.RunConfig.SkipUnbeatenMedals) {
                     if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
                         params.Set("inhasrecord", "1");
                     }
@@ -320,7 +335,6 @@ namespace MX {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
 
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
-                params.Set("etag", RMC::config.etags);
                 params.Set("authortimemax", tostring(RMC::config.length));
                 params.Set("authortimemin", "50");
 
@@ -329,11 +343,30 @@ namespace MX {
                 params.Set("uploadedbefore", yesterday);
 
 #if TMNEXT
-                if (PluginSettings::RMC_Medal == Medals::WR) {
+                if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps) {
                     // We only want maps with a WR
                     params.Set("inhasrecord", "1");
                 }
 #endif
+
+                switch (RMC::currentRun.RunConfig.Category) {
+#if TMNEXT
+                    case RMC::Category::TOTD:
+                        params.Set("intotd", "1");
+                        break;
+#endif
+                    case RMC::Category::Nadeo:
+                        params.Set("lbtype", "2");
+                        break;
+                    default:
+                        break;
+                }
+
+                string tags = RMC::config.GetCategoryTags(RMC::currentRun.RunConfig.Category);
+                if (tags != "") params.Set("tag", tags);
+
+                string etags = RMC::config.GetCategoryExcludedTags(RMC::currentRun.RunConfig.Category);
+                if (etags != "") params.Set("etag", etags);
             }
         }
 

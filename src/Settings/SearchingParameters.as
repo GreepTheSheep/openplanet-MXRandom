@@ -1,7 +1,4 @@
 namespace PluginSettings {
-    [Setting hidden]
-    bool CustomRules = false;
-
     array<string> MapAuthorNamesArr = {};
 
     array<string> ExcludedTermsArr = {};
@@ -75,25 +72,11 @@ namespace PluginSettings {
     array<int> DifficultiesArray = {};
 
     [Setting hidden]
-    bool SkipSeenMaps = true;
-
-    [Setting hidden]
     MapTypes MapType = MapTypes::Race;
-
-    [Setting hidden]
-    bool FilterLowEffort = true;
-
-    [Setting hidden]
-    bool FilterUntagged = true;
 
     [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab() {
         bool inSameLine = UI::GetContentRegionAvail().x > 950;
-
-        CustomRules = UI::Checkbox("\\$fc0" + Icons::ExclamationTriangle + " \\$zUse custom filter parameters. Forbidden on official leaderboards.", CustomRules);
-        UI::Separator();
-
-        UI::BeginDisabled(!CustomRules);
 
         if (UI::OrangeButton("Reset to default")) {
             UseCustomLength = false;
@@ -115,10 +98,7 @@ namespace PluginSettings {
             ExcludedAuthorsArr = {};
             DifficultiesArray = {};
             TermsExactMatch = false;
-            SkipSeenMaps = true;
             MapType = MapTypes::Race;
-            FilterLowEffort = true;
-            FilterUntagged = true;
 #if TMNEXT
             ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49};
 #else
@@ -322,9 +302,6 @@ namespace PluginSettings {
 
         UI::PaddedHeaderSeparator("Other");
 
-        SkipSeenMaps = UI::Checkbox("Skip Seen Maps", SkipSeenMaps);
-        UI::SettingDescription("If enabled, every map will only appear once per run.");
-
         string difficultyText;
         switch (DifficultiesArray.Length) {
             case 0: difficultyText = "Any"; break;
@@ -373,14 +350,6 @@ namespace PluginSettings {
 
         UI::SettingDescription("The game mode of the map.\n\n\\$f90" + Icons::ExclamationTriangle + "\\$z Only Race will work online!");
 #endif
-
-        FilterLowEffort = UI::Checkbox("Filter low effort maps", FilterLowEffort);
-        UI::SettingDescription("If enabled, the plugin will try to detect and filter low effort maps.\n\nE.g., RMC free, maps created for streamers, and randomly generated tracks.");
-
-        FilterUntagged = UI::Checkbox("Filter untagged maps", FilterUntagged);
-        UI::SettingDescription("If enabled, the plugin will try to detect and filter maps missing default filtered tags.\n\nE.g., untagged Kacky / Altered Nadeo maps.");
-
-        UI::EndDisabled();
     }
 
     array<int> ToggleMapTag(array<int> tags, int tagID) {

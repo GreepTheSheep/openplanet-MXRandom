@@ -1,4 +1,7 @@
 class RMC {
+    // Settings
+    RunSettings@ RunConfig = RunSettings(this.Mode);
+
     // Medals
     int GoalMedalCount = 0;
     bool GotGoalMedal = false;
@@ -19,6 +22,7 @@ class RMC {
     array<string> seenMaps;
     int TimeSpentMap = -1;
     int PBOnMap = -1; // for autosaves on PBs
+    bool IsMapInvalidated = false;
 
     // Timer
     int _TimeLeft = TimeLimit;
@@ -61,6 +65,14 @@ class RMC {
         FreeSkipsUsed = RMC::CurrentRunData["FreeSkipsUsed"];
         TimeLeft = RMC::CurrentRunData["TimeLeft"];
         TotalTime = RMC::CurrentRunData["TotalTime"];
+
+        if (RMC::CurrentRunData.HasKey("Settings")) {
+            @RunConfig = RunSettings(RMC::CurrentRunData["Settings"]);
+        }
+
+        if (RMC::CurrentRunData.HasKey("IsMapInvalidated")) {
+            IsMapInvalidated = bool(RMC::CurrentRunData["IsMapInvalidated"]);
+        }
     }
 
     void CheckSave() {
@@ -108,7 +120,7 @@ class RMC {
         }
 
         if (!ContinueSavedRun) {
-            MX::LoadRandomMap();
+            MX::LoadRandomMap(RunConfig.CustomSearchFilters);
         }
 
         while (!TM::IsMapLoaded() || !TM::IsPlayerReady()) {
@@ -138,11 +150,13 @@ class RMC {
         RMC::CurrentRunData["TimeLeft"] = TimeLeft;
         RMC::CurrentRunData["TimeSpentOnMap"] = TimeSpentMap;
         RMC::CurrentRunData["PBOnMap"] = PBOnMap;
+        RMC::CurrentRunData["Settings"] = RunConfig.ToJson();
+        RMC::CurrentRunData["IsMapInvalidated"] = IsMapInvalidated;
 
         DataManager::SaveCurrentRunData();
     }
 
-    int get_TimeLimit() { return PluginSettings::RMC_Duration * 60 * 1000; }
+    int get_TimeLimit() { return RunConfig.MaxTimer * 60 * 1000; }
 
     int get_TimeLeft() {
         return Math::Max(0, Math::Min(TimeLimit, _TimeLeft));
@@ -187,7 +201,7 @@ class RMC {
     }
 
     bool get_ModeHasBelowMedal() {
-        return PluginSettings::RMC_Medal != Medals::Bronze;
+        return RunConfig.GoalMedal != Medals::Bronze;
     }
 
     void RenderGoalTimes() {
@@ -195,22 +209,22 @@ class RMC {
             return;
         }
 
-        UI::Text(UI::GetMedalIcon(PluginSettings::RMC_Medal) + " Goal: " + UI::FormatTime(GoalTime, currentMap.Type));
+        UI::Text(UI::GetMedalIcon(RunConfig.GoalMedal) + " Goal: " + UI::FormatTime(GoalTime, currentMap.Type));
 
-        if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
+        if (RunConfig.CalculateMedals && currentMap.IsMedalEdited(RunConfig.GoalMedal)) {
             UI::SameLine();
             UI::Text(Icons::Pencil);
-            UI::SetItemTooltip("The author has edited the " + tostring(PluginSettings::RMC_Medal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
+            UI::SetItemTooltip("The author has edited the " + tostring(RunConfig.GoalMedal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
         }
 
         if (!ModeHasBelowMedal) {
             return;
         }
 
-        Medals belowMedal = Medals(PluginSettings::RMC_Medal - 1);
+        Medals belowMedal = Medals(RunConfig.GoalMedal - 1);
         UI::Text(UI::GetMedalIcon(belowMedal) + " Below goal: " + UI::FormatTime(BelowGoalTime, currentMap.Type));
 
-        if (currentMap.IsMedalEdited(belowMedal)) {
+        if (RunConfig.CalculateMedals && currentMap.IsMedalEdited(belowMedal)) {
             UI::SameLine();
             UI::Text(Icons::Pencil);
             UI::SetItemTooltip("The author has edited the " + tostring(belowMedal) + " medal to make it harder.\n\nThe plugin will use this time instead.");
@@ -282,7 +296,7 @@ class RMC {
     }
 
     bool get_IsRunValid() {
-        return !PluginSettings::CustomRules && FreeSkipsUsed <= 1 && TotalTime < 61 * 60 * 1000;
+        return RunConfig.Category != RMC::Category::Custom && FreeSkipsUsed <= 1 && TotalTime < 61 * 60 * 1000;
     }
 
     void RenderCustomSearchWarning() {
@@ -290,10 +304,10 @@ class RMC {
             UI::Separator();
             UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$zInvalid for official leaderboards");
 
-            if (PluginSettings::CustomRules) {
-                UI::SetItemTooltip("This run has custom search parameters enabled, you will only get maps based on the settings you configured.\n\nTo change this, toggle \"Use custom filter parameters\" in the \"Filters\" tab in the settings.");
+            if (RunConfig.Category == RMC::Category::Custom) {
+                UI::SetItemTooltip("This run is using custom run settings, you will only get maps based on the settings you configured.");
             } else {
-                UI::SetItemTooltip("This run has duration / skip settings that differ from the default.\n\nTo submit future runs to the leaderboard, please reset these settings.");
+                UI::SetItemTooltip("This run's duration / skips used are impossible under normal settings.");
             }
         }
     }
@@ -327,7 +341,7 @@ class RMC {
     }
 
     void RenderGoalMedal() {
-        UI::Image(Textures[PluginSettings::RMC_Medal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+        UI::Image(Textures[RunConfig.GoalMedal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(GoalMedalCount), Fonts::TimerFont);
     }
@@ -335,7 +349,7 @@ class RMC {
     void RenderBelowGoalMedal() {
         if (ModeHasBelowMedal) {
             UI::HPadding(25);
-            UI::Image(Textures[PluginSettings::RMC_Medal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+            UI::Image(Textures[RunConfig.GoalMedal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             UI::SameLine();
             UI::AlignTextToImage(tostring(BelowMedalCount), Fonts::TimerFont);
         }
@@ -380,9 +394,14 @@ class RMC {
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
                         UI::SetItemTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }
+
+                    if (RunConfig.InvalidateGhosts && IsMapInvalidated) {
+                        UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Invalidated map");
+                        UI::SetItemTooltip("You have watched a ghost on this map, you won't be able to get any remaining medals.\n\nYou will have to skip it or stop the run.");
+                    }
 #endif
 
-                    if (PluginSettings::RMC_EditedMedalsWarns && currentMap.HasEditedMedals) {
+                    if (PluginSettings::RMC_EditedMedalsWarns && RunConfig.CalculateMedals && currentMap.HasEditedMedals) {
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
 
                         if (UI::BeginItemTooltip()) {
@@ -456,7 +475,7 @@ class RMC {
     }
 
     void PausePlayButton() {
-        UI::BeginDisabled(IsSwitchingMap || !IsRunning);
+        UI::BeginDisabled(IsSwitchingMap || !IsRunning || IsMapInvalidated);
 
         if (UI::Button((IsPaused ? Icons::HourglassO + Icons::Play : Icons::AnimatedHourglass + Icons::Pause))) {
             IsPaused = !IsPaused;
@@ -470,7 +489,7 @@ class RMC {
         UI::BeginDisabled(IsSwitchingMap);
 
         if (!GotBelowMedal) {
-            int skipsLeft = Math::Max(0, PluginSettings::RMC_FreeSkipAmount - FreeSkipsUsed);
+            int skipsLeft = Math::Max(0, RunConfig.FreeSkips - FreeSkipsUsed);
 
             UI::BeginDisabled(skipsLeft == 0);
 
@@ -488,7 +507,7 @@ class RMC {
                 "Free Skips are if the map is finishable but you still want to skip it for any reason.\n\n" +
                 "Standard RMC rules allow 1 Free skip. If the map is broken, please use the button below instead."
             );
-        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal")) {
+        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal")) {
             BelowMedalCount++;
             Log::Trace("RMC: Skipping map");
             UI::ShowNotification("Please wait...");
@@ -550,16 +569,16 @@ class RMC {
     void SubmitToLeaderboard() {
 #if TMNEXT
         if (IsRunValid) {
-            RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, PluginSettings::RMC_Medal);
+            RMCLeaderAPI::postRMC(GoalMedalCount, BelowMedalCount, RunConfig);
         }
 #endif
     }
 
     void GameEndNotification() {
-        string notificationText = "You got " + GoalMedalCount + " " + tostring(PluginSettings::RMC_Medal);
+        string notificationText = "You got " + GoalMedalCount + " " + tostring(RunConfig.GoalMedal);
 
         if (ModeHasBelowMedal && BelowMedalCount > 0) {
-            notificationText += " and " + BelowMedalCount + " " + tostring(Medals(PluginSettings::RMC_Medal - 1));
+            notificationText += " and " + BelowMedalCount + " " + tostring(Medals(RunConfig.GoalMedal - 1));
         }
         notificationText += " medals!";
 
@@ -567,18 +586,18 @@ class RMC {
     }
 
     void GotGoalMedalNotification() {
-        Log::Trace("RMC: Got the " + tostring(PluginSettings::RMC_Medal) + " medal!");
+        Log::Trace("RMC: Got the " + tostring(RunConfig.GoalMedal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
-            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "We're searching for another map...");
+            UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(RunConfig.GoalMedal) + " medal!", "We're searching for another map...");
             startnew(CoroutineFunc(SwitchMap));
-        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(PluginSettings::RMC_Medal) + " medal!", "Select 'Next map' to change the map");
+        } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(RunConfig.GoalMedal) + " medal!", "Select 'Next map' to change the map");
     }
 
     void GotBelowGoalMedalNotification() {
-        Log::Trace("RMC: Got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal!");
+        Log::Trace("RMC: Got the " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal!");
         if (!GotBelowMedal)
             UI::ShowNotification(
-                "\\$db4" + Icons::Trophy + " You got the " + tostring(Medals(PluginSettings::RMC_Medal - 1)) + " medal",
+                "\\$db4" + Icons::Trophy + " You got the " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal",
                 "You can take the medal and skip the map"
             );
     }
@@ -628,11 +647,11 @@ class RMC {
 
     uint get_GoalTime() {
         if (InCurrentMap()) {
-            if (currentMap.IsMedalEdited(PluginSettings::RMC_Medal)) {
-                return currentMap.GetDefaultMedalTime(PluginSettings::RMC_Medal);
+            if (RunConfig.CalculateMedals && currentMap.IsMedalEdited(RunConfig.GoalMedal)) {
+                return currentMap.GetDefaultMedalTime(RunConfig.GoalMedal);
             }
 
-            return currentMap.GetMedalTime(PluginSettings::RMC_Medal);
+            return currentMap.GetMedalTime(RunConfig.GoalMedal);
         }
 
         return uint(-1);
@@ -640,9 +659,9 @@ class RMC {
 
     uint get_BelowGoalTime() {
         if (InCurrentMap()) {
-            Medals belowMedal = Medals(PluginSettings::RMC_Medal - 1);
+            Medals belowMedal = Medals(RunConfig.GoalMedal - 1);
 
-            if (currentMap.IsMedalEdited(belowMedal)) {
+            if (RunConfig.CalculateMedals && currentMap.IsMedalEdited(belowMedal)) {
                 return currentMap.GetDefaultMedalTime(belowMedal);
             }
 
@@ -656,30 +675,48 @@ class RMC {
         while (IsRunning) {
             yield();
 
-            if (!IsPaused && !GotGoalMedal) {
-                uint score = TM::GetFinishScore();
-                bool inverse = TM::CurrentMapType() == MapTypes::Stunt;
-
-                if (score == uint(-1)) {
-                    sleep(50);
+            if (!GotGoalMedal && !IsMapInvalidated) {
+#if TMNEXT
+                if (RunConfig.InvalidateGhosts && TM::IsWatchingOtherGhost()) {
+                    IsPaused = true;
+                    IsMapInvalidated = true;
+                    Log::Warn("You can't watch ghosts while in a run! Map has been invalidated, you will have to skip it or stop the run.", true);
                     continue;
                 }
+#endif
+                if (!IsPaused) {
+                    uint score = TM::GetFinishScore();
+                    bool inverse = TM::CurrentMapType() == MapTypes::Stunt;
 
-                if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
-                    GoalMedalCount++;
-                    GotGoalMedalNotification();
-                    GotGoalMedal = true;
-                    CreateSave();
-                } else if (ModeHasBelowMedal && !GotBelowMedal && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
-                    GotBelowGoalMedalNotification();
-                    GotBelowMedal = true;
-                    CreateSave();
-                }
+                    if (score == uint(-1)) {
+                        sleep(50);
+                        continue;
+                    }
 
-                if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
-                    // PB
-                    PBOnMap = score;
-                    CreateSave();
+                    if (RunConfig.UseNoRespawnTime && TM::CurrentMapType() == MapTypes::Race) {
+                        uint noRespawnTime = TM::GetNoRespawnTime();
+
+                        if (noRespawnTime != uint(-1)) {
+                            score = Math::Min(score, TM::GetNoRespawnTime());
+                        }
+                    }
+
+                    if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
+                        GoalMedalCount++;
+                        GotGoalMedalNotification();
+                        GotGoalMedal = true;
+                        CreateSave();
+                    } else if (ModeHasBelowMedal && !GotBelowMedal && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
+                        GotBelowGoalMedalNotification();
+                        GotBelowMedal = true;
+                        CreateSave();
+                    }
+
+                    if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
+                        // PB
+                        PBOnMap = score;
+                        CreateSave();
+                    }
                 }
 
                 sleep(1000);
@@ -691,10 +728,10 @@ class RMC {
         Log::Trace("[PreloadNextMap] Preloading a new map.");
 
         while (IsStarting || IsRunning) {
-            @nextMap = MX::GetRandomMap();
+            @nextMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
             if (nextMap !is null) {
-                if (PluginSettings::SkipSeenMaps) {
+                if (RunConfig.SkipDuplicateMaps) {
                     if (seenMaps.Find(nextMap.MapUid) != -1) {
                         Log::Trace("Map has been played already, skipping...");
                         sleep(2000);
@@ -748,6 +785,7 @@ class RMC {
         GotBelowMedal = false;
         TimeSpentMap = 0;
         PBOnMap = -1;
+        IsMapInvalidated = false;
 
         Log::Trace("[SwitchMap] Waiting for player to be ready.");
 

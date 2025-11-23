@@ -80,6 +80,46 @@ namespace TM {
         return app.RootMap.IdName == mapUid;
     }
 
+    bool IsWatchingOtherGhost() {
+#if TMNEXT
+        if (!IsMapLoaded()) return false;
+
+        CGameCtnApp@ app = GetApp();
+
+        if (app.LocalPlayerInfo is null || app.LocalPlayerInfo.Login == "") {
+            return false;
+        }
+
+        string accountLogin = app.LocalPlayerInfo.Login;
+
+        auto mgr = GetGhostClipsMgr(app);
+
+        if (mgr is null) {
+            return false;
+        }
+
+        for (uint i = 0; i < mgr.Ghosts.Length; i++) {
+            CGameCtnGhost@ ghost = mgr.Ghosts[i].GhostModel;
+            
+            if (accountLogin != ghost.GhostLogin) {
+                return true;
+            }
+        }
+#endif
+
+        return false;
+    }
+
+    // from Ghosts++ by Xertrov https://openplanet.dev/plugin/ghosts-pp
+#if TMNEXT
+    NGameGhostClips_SMgr@ GetGhostClipsMgr(CGameCtnApp@ app) {
+        if (app.GameScene is null) return null;
+        auto nod = Dev::GetOffsetNod(app.GameScene, 0x120);
+        if (nod is null) return null;
+        return Dev::ForceCast<NGameGhostClips_SMgr@>(nod).Get();
+    }
+#endif
+
     // from TMX Together by Xertrov https://openplanet.dev/plugin/tmx-together
 
     uint PlaygroundGameTime() {
@@ -290,6 +330,26 @@ namespace TM {
         }
 #endif
         return score;
+    }
+
+    int GetNoRespawnTime() {
+#if DEPENDENCY_MLFEEDRACEDATA
+        if (!TM::IsMapLoaded() || TM::CurrentMapType() != MapTypes::Race) {
+            return -1;
+        }
+
+        auto data = MLFeed::GetRaceData_V4();
+        if (data is null) return -1;
+
+        auto player = data.LocalPlayer;
+        if (player is null) return -1;
+
+        if (player.cpCount == int(data.CPsToFinish)) {
+            return player.LastTheoreticalCpTime;
+        }
+#endif
+
+        return -1;
     }
 
     MapTypes CurrentMapType() {

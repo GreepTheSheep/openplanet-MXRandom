@@ -1,10 +1,22 @@
 class RMCConfig {
     array<RMCConfigMapTag@> prepatchMapTags;
+    dictionary tags = {
 #if TMNEXT
-    string etags = "6,10,23,37,40,46,49";
-#else
-    string etags = "6,10,20,39";
+        { "altcar",     "50,54,55,59" }
 #endif
+    };
+    dictionary etags = {
+#if TMNEXT
+        { "standard",   "6,10,23,37,40,46,49" },
+        { "custom",     "6,10,23,37,40,46,49" },
+        { "classic",    "23,37,40" },
+        { "altcar",     "6,10,11,23,37,40,46,49,52" }
+#else
+        { "standard",   "6,10,20,39" },
+        { "custom",     "6,10,20,39" },
+        { "classic",    "20,39" }
+#endif
+    };
     int length = 180000;
     array<string> blacklistedAuthors;
 
@@ -34,8 +46,12 @@ class RMCConfig {
             }
         }
 
-        if (data.HasKey("search-etags") && data["search-etags"].GetType() == Json::Type::String) {
-            etags = data["search-etags"];
+        if (data.HasKey("category-tags") && data["category-tags"].GetType() == Json::Type::Object) {
+            tags = JsonToDict(data["category-tags"]);
+        }
+
+        if (data.HasKey("category-etags") && data["category-etags"].GetType() == Json::Type::Object) {
+            etags = JsonToDict(data["category-etags"]);
         }
 
         if (data.HasKey("search-maxlength") && data["search-maxlength"].GetType() == Json::Type::Number) {
@@ -73,6 +89,24 @@ class RMCConfig {
         }
 
         return null;
+    }
+
+    string GetCategoryTags(RMC::Category runCategory) {
+        string name = tostring(runCategory).ToLower();
+        string categoryTags = "";
+
+        tags.Get(name, categoryTags);
+
+        return categoryTags;
+    }
+
+    string GetCategoryExcludedTags(RMC::Category runCategory) {
+        string name = tostring(runCategory).ToLower();
+        string categoryTags = "";
+
+        etags.Get(name, categoryTags);
+
+        return categoryTags;
     }
 }
 

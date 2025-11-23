@@ -9,7 +9,7 @@ namespace DataManager {
         "TotalTime",
         "GotBelowMedal",
         "GotGoalMedal",
-        "FreeSkipsUsed"
+        "FreeSkipsUsed",
     };
 
     const array<Json::Type> requiredTypesOfKeys = {
@@ -22,7 +22,7 @@ namespace DataManager {
         Json::Type::Number,
         Json::Type::Boolean,
         Json::Type::Boolean,
-        Json::Type::Number
+        Json::Type::Number,
     };
 
     void CheckData() {
@@ -88,6 +88,8 @@ namespace DataManager {
         SaveFileData["GotBelowMedal"] = false;
         SaveFileData["GotGoalMedal"] = false;
         SaveFileData["FreeSkipsUsed"] = 0;
+        SaveFileData["Settings"] = RunSettings(RMC::currentRun.Mode);
+        SaveFileData["IsMapInvalidated"] = false;
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
         RMC::CurrentRunData = SaveFileData;
     }
@@ -143,7 +145,7 @@ namespace DataManager {
                 if (fileName == "RMS") {
                     save["TotalTime"] = int(save["CurrentRunTime"]);
                 } else {
-                    save["TotalTime"] = (PluginSettings::RMC_Duration * 60 * 1000) - int(save["TimeLeft"]);
+                    save["TotalTime"] = (PluginSettings::RMC_MaxTimer * 60 * 1000) - int(save["TimeLeft"]);
                 }
                 save.Remove("CurrentRunTime");
 

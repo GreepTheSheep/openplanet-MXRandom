@@ -20,9 +20,14 @@ void RenderMenu() {
                 if (Permissions::PlayLocalMap()) {
 #endif
                     if (UI::MenuItem(Icons::Play + " Quick map")) {
-                        startnew(MX::LoadRandomMap);
+                        startnew(MX::LoadRandomMap, false);
                     }
-                    UI::SetItemTooltip("This will load and play instantly a random map from " + MX_NAME + ".");
+                    UI::SetItemTooltip("This will open a random map from " + MX_NAME + ".");
+
+                    if (UI::MenuItem(Icons::Play + " Quick map (with filters)")) {
+                        startnew(MX::LoadRandomMap, true);
+                    }
+                    UI::SetItemTooltip("This will open a random map from " + MX_NAME + " based on the filters applied in the settings.");
 
                     if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zRandomizer Menu", "", window.isOpened && !window.isInRMCMode)) {
                         if (window.isOpened && window.isInRMCMode) {

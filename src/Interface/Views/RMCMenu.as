@@ -16,7 +16,7 @@ namespace RMC {
         else UI::TextWrapped("\\$0f0" + Icons::CheckCircle + " \\$zSession whitelisted.");
 #endif
 
-            UI::SetItemText("Mode:", 200);
+            UI::SetItemText("Mode:", -1);
             if (UI::BeginCombo("##GamemodeSelect", tostring(selectedGameMode).Replace("_", " "))) {
 #if TMNEXT
                 for (uint i = 0; i <= GameMode::Together; i++) {
@@ -35,14 +35,14 @@ namespace RMC {
                 UI::EndCombo();
             }
 
-            UI::SetItemText("Medal:", 200);
-            if (UI::BeginCombo("##GoalMedal", tostring(PluginSettings::RMC_Medal))) {
+            UI::SetItemText("Medal:", -1);
+            if (UI::BeginCombo("##GoalMedal", tostring(PluginSettings::GoalMedal))) {
                 for (uint i = 0; i < Medals::Last; i++) {
-                    if (UI::Selectable(tostring(Medals(i)), PluginSettings::RMC_Medal == Medals(i))) {
-                        PluginSettings::RMC_Medal = Medals(i);
+                    if (UI::Selectable(tostring(Medals(i)), PluginSettings::GoalMedal == Medals(i))) {
+                        PluginSettings::GoalMedal = Medals(i);
                     }
 
-                    if (PluginSettings::RMC_Medal == Medals(i)) {
+                    if (PluginSettings::GoalMedal == Medals(i)) {
                         UI::SetItemDefaultFocus();
                     }
                 }
@@ -50,26 +50,58 @@ namespace RMC {
                 UI::EndCombo();
             }
 
+            UI::SetItemText("Category:", -1);
+            if (UI::BeginCombo("##CategorySelect", tostring(PluginSettings::SelectedCategory).Replace("_", " "))) {
+
+                for (uint i = 0; i <= RMC::Category::Custom; i++) {
+                    UI::PushID("CategoryButton" + i);
+
+                    if (UI::Selectable(tostring(RMC::Category(i)).Replace("_", " "), PluginSettings::SelectedCategory == RMC::Category(i))) {
+                        PluginSettings::SelectedCategory = RMC::Category(i);
+                    }
+
+                    UI::SetItemTooltip(RMC::CategoryDescriptions[i]);
+
+                    UI::PopID();
+                }
+
+                UI::EndCombo();
+            }
+
             switch (selectedGameMode) {
                 case GameMode::Challenge:
-                    if (UI::GreenButton(Icons::ClockO + " Start Random Map Challenge")) {
+                    if (UI::GreenButton(Icons::ClockO + " Start RMC")) {
                         @currentRun = RMC();
                         startnew(CoroutineFunc(currentRun.Start));
                     }
+
+                    UI::SameLine();
+
+                    if (UI::Button("Options", vec2(-1, 0))) {
+                        Renderables::Add(RunSettingsModalDialog());
+                    }
                     break;
                 case GameMode::Survival:
-                    if (UI::GreenButton(Icons::Heart + " Start Random Map Survival")) {
+                    if (UI::GreenButton(Icons::Heart + " Start RMS")) {
                         @currentRun = RMS();
                         startnew(CoroutineFunc(currentRun.Start));
                     }
+                    UI::SameLine();
+                    if (UI::Button("Options", vec2(-1, 0))) {
+                        Renderables::Add(RunSettingsModalDialog());
+                    }
                     break;
                 case GameMode::Objective:
-                    UI::SetItemText("Goal:", 200);
-                    PluginSettings::RMC_ObjectiveMode_Goal = Math::Max(1, UI::InputInt("##ObjectiveMedals", PluginSettings::RMC_ObjectiveMode_Goal));
+                    UI::SetItemText("Goal:", -1);
+                    PluginSettings::RMO_Goal = Math::Max(1, UI::InputInt("##ObjectiveMedals", PluginSettings::RMO_Goal));
 
-                    if (UI::GreenButton(Icons::Trophy + " Start Random Map Objective")) {
+                    if (UI::GreenButton(Icons::Trophy + " Start RMO")) {
                         @currentRun = RMObjective();
                         startnew(CoroutineFunc(currentRun.Start));
+                    }
+                    UI::SameLine();
+                    if (UI::Button("Options", vec2(-1, 0))) {
+                        Renderables::Add(RunSettingsModalDialog());
                     }
                     break;
 #if TMNEXT
@@ -131,7 +163,7 @@ namespace RMC {
 
                     UI::SameLine();
 
-                    if (UI::GreyButton(Icons::QuestionCircle + " Help", vec2(UI::GetContentRegionAvail().x, 0.))) {
+                    if (UI::GreyButton(Icons::QuestionCircle + " Help", vec2(-1, 0))) {
                         Renderables::Add(RMTHelpModalDialog());
                     }
 
@@ -147,12 +179,18 @@ namespace RMC {
 
                         UI::BeginDisabled(!inServer || PluginSettings::MapType != MapTypes::Race);
 
-                        if (UI::GreenButton(Icons::Users + " Start Random Map Together")) {
+                        if (UI::GreenButton(Icons::Users + " Start RMT")) {
                             @currentRun = RMT();
                             startnew(CoroutineFunc(currentRun.Start));
                         }
 
                         UI::EndDisabled();
+
+                        UI::SameLine();
+
+                        if (UI::Button("Options", vec2(-1, 0))) {
+                            Renderables::Add(RunSettingsModalDialog());
+                        }
 
                         if (PluginSettings::MapType != MapTypes::Race) {
                             UI::Text("\\$f90" + Icons::ExclamationTriangle + " \\$zInvalid map type " + tostring(PluginSettings::MapType) + " selected");

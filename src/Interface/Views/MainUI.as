@@ -30,7 +30,11 @@ namespace MainUIView {
             UI::CenteredText(Icons::AnimatedHourglass + " Loading...");
         } else {
             if (UI::CenteredButton(Icons::Play + " Play a random map", 0.33f)) {
-                startnew(MX::LoadRandomMap);
+                startnew(MX::LoadRandomMap, false);
+            }
+
+            if (UI::CenteredButton(Icons::Play + " Play a random map (with filters)", 0.33f)) {
+                startnew(MX::LoadRandomMap, true);
             }
         }
 

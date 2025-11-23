@@ -199,7 +199,11 @@ namespace MX {
             return MapTypes::Race;
         }
 
-        uint GetMedalTime(Medals medal) {
+        uint GetMedalTime(Medals medal, bool defaultTime = false) {
+            if (defaultTime && this.IsMedalEdited(medal)) {
+                return this.GetDefaultMedalTime(medal);
+            }
+
             switch (medal) {
 #if TMNEXT
                 case Medals::WR:

@@ -9,9 +9,6 @@ namespace PluginSettings {
     bool CloseOverlayOnMapLoad = true;
 
     [Setting hidden]
-    Medals RMC_Medal = Medals::Author;
-
-    [Setting hidden]
     bool RMC_DisplayCurrentMap = true;
 
     [Setting hidden]
@@ -42,12 +39,6 @@ namespace PluginSettings {
     bool RMC_DisplayMapDate = true;
 
     [Setting hidden]
-    int RMC_Duration = 60;
-
-    [Setting hidden]
-    int RMC_SurvivalMaxTime = 15;
-
-    [Setting hidden]
 #if TMNEXT
     bool RMC_PrepatchTagsWarns = true;
 #else
@@ -62,9 +53,6 @@ namespace PluginSettings {
 
     [Setting hidden]
     int RMC_ImageSize = 25;
-
-    [Setting hidden]
-    int RMC_ObjectiveMode_Goal = 5;
 
     [Setting hidden]
     bool RMC_ObjectiveMode_DisplayRemaininng = true;
@@ -82,9 +70,6 @@ namespace PluginSettings {
     bool RMC_PauseWhenMenuOpen = true;
 
     [Setting hidden]
-    int RMC_FreeSkipAmount = 1;  // one free skip as per official rules
-
-    [Setting hidden]
 #if TMNEXT
     bool RMC_PushLeaderboardResults = true;
 #else
@@ -97,43 +82,17 @@ namespace PluginSettings {
 
         if (UI::BeginTabItem(Icons::Cogs + " General")) {
             if (UI::OrangeButton("Reset to default")) {
-                RMC_Medal = Medals::Author;
                 RMC_AutoSwitch = true;
                 RMC_ExitMapOnEndTime = false;
                 RMC_RUN_AUTOSAVE = true;
                 RMC_PauseWhenMenuOpen = true;
-                RMC_Duration = 60;
-                RMC_FreeSkipAmount = 1;
-                RMC_SurvivalMaxTime = 15;
                 RMC_PushLeaderboardResults = true;
             }
 
-            UI::SetNextItemWidth(200);
-            if (UI::BeginCombo("Goal", tostring(RMC_Medal))) {
-                for (uint i = 0; i < Medals::Last; i++) {
-                    if (UI::Selectable(tostring(Medals(i)), RMC_Medal == Medals(i))) {
-                        RMC_Medal = Medals(i);
-                    }
-
-                    if (RMC_Medal == Medals(i)) {
-                        UI::SetItemDefaultFocus();
-                    }
-                }
-
-                UI::EndCombo();
-            }
-
-            RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(RMC_Medal) + " medal", RMC_AutoSwitch);
+            RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(GoalMedal) + " medal", RMC_AutoSwitch);
             RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quit the map when the timer is up", RMC_ExitMapOnEndTime);
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
             RMC_PauseWhenMenuOpen = UI::Checkbox("Pause timer when the pause menu is open", RMC_PauseWhenMenuOpen);
-
-            UI::SetNextItemWidth(300);
-            RMC_Duration = UI::SliderInt("Random Map Challenge duration (in minutes)", RMC_Duration, 5, 300);
-            UI::SetNextItemWidth(300);
-            RMC_FreeSkipAmount = UI::SliderInt("Free skips per RMC run", RMC_FreeSkipAmount, 1, 200);
-            UI::SetNextItemWidth(300);
-            RMC_SurvivalMaxTime = UI::SliderInt("Maximum timer in Survival mode (in minutes)", RMC_SurvivalMaxTime, 2, 60);
 
 #if TMNEXT
             RMC_PushLeaderboardResults = UI::Checkbox("Upload every RMC/RMS run to the leaderboard", RMC_PushLeaderboardResults);
