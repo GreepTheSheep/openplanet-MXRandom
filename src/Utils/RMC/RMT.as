@@ -93,10 +93,7 @@ class RMT : RMC {
             @currentMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
             if (currentMap !is null) {
-                if (RunConfig.SkipDuplicateMaps) {
-                    seenMaps.InsertLast(currentMap.MapUid);
-                }
-
+                playedMaps.InsertLast(currentMap);
                 break;
             }
 
@@ -141,6 +138,7 @@ class RMT : RMC {
         }
 
         @currentMap = nextMap;
+        playedMaps.InsertLast(currentMap);
         startnew(CoroutineFunc(PreloadNextMap));
 
         if (TimeSpentMap < 15000) {

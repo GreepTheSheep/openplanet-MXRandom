@@ -90,6 +90,7 @@ namespace DataManager {
         SaveFileData["FreeSkipsUsed"] = 0;
         SaveFileData["Settings"] = RunSettings(RMC::currentRun.Mode);
         SaveFileData["IsMapInvalidated"] = false;
+        SaveFileData["PlayedMaps"] = Json::Array();
         Json::ToFile(SAVE_DATA_LOCATION + gameMode + ".json", SaveFileData);
         RMC::CurrentRunData = SaveFileData;
     }

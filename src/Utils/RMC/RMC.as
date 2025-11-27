@@ -19,7 +19,7 @@ class RMC {
     // Map
     MX::MapInfo@ currentMap;
     MX::MapInfo@ nextMap;
-    array<string> seenMaps;
+    array<MX::MapInfo@> playedMaps;
     int TimeSpentMap = -1;
     int PBOnMap = -1; // for autosaves on PBs
     bool IsMapInvalidated = false;
@@ -72,6 +72,19 @@ class RMC {
 
         if (RMC::CurrentRunData.HasKey("IsMapInvalidated")) {
             IsMapInvalidated = bool(RMC::CurrentRunData["IsMapInvalidated"]);
+        }
+
+        if (RMC::CurrentRunData.HasKey("PlayedMaps")) {
+            Json::Value@ saveMaps = RMC::CurrentRunData["PlayedMaps"];
+
+            for (uint i = 0; i < saveMaps.Length; i++) {
+                try {
+                    Json::Value@ map = saveMaps[i];
+                    playedMaps.InsertLast(MX::MapInfo(map));
+                } catch {
+                    Log::Error("Error converting map in save file.");
+                }
+            }
         }
     }
 
@@ -128,6 +141,7 @@ class RMC {
         }
 
         @currentMap = MX::MapInfo(DataJson["recentlyPlayed"][0]);
+        playedMaps.InsertLast(currentMap);
         StartTimer();
 
         UI::ShowNotification("\\$080" + ModeName + " started!", "Good Luck!");
@@ -152,6 +166,13 @@ class RMC {
         RMC::CurrentRunData["PBOnMap"] = PBOnMap;
         RMC::CurrentRunData["Settings"] = RunConfig.ToJson();
         RMC::CurrentRunData["IsMapInvalidated"] = IsMapInvalidated;
+
+        Json::Value mapsArray = Json::Array();
+        for (uint i = 0; i < playedMaps.Length; i++) {
+            mapsArray.Add(playedMaps[i].ToJson());
+        }
+
+        RMC::CurrentRunData["PlayedMaps"] = mapsArray;
 
         DataManager::SaveCurrentRunData();
     }
@@ -732,13 +753,11 @@ class RMC {
 
             if (nextMap !is null) {
                 if (RunConfig.SkipDuplicateMaps) {
-                    if (seenMaps.Find(nextMap.MapUid) != -1) {
+                    if (playedMaps.Find(nextMap) != -1) {
                         Log::Trace("Map has been played already, skipping...");
                         sleep(2000);
                         continue;
                     }
-
-                    seenMaps.InsertLast(nextMap.MapUid);
                 }
 
                 break;
@@ -770,6 +789,7 @@ class RMC {
         await(startnew(TM::LoadMap, nextMap));
 
         @currentMap = nextMap;
+        playedMaps.InsertLast(currentMap);
         startnew(CoroutineFunc(PreloadNextMap));
 
         Log::Trace("[SwitchMap] Waiting for map to be loaded.");
