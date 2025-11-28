@@ -12,6 +12,7 @@ namespace Render {
 
                 UI::AlignTextToFramePadding();
                 UI::Text(map.Name);
+                UI::MXMapThumbnailTooltip(map.MapId);
                 UI::TableNextColumn();
 
                 UI::Text(map.Username);
