@@ -22,7 +22,7 @@ class RunSettingsModalDialog : ModalDialog {
             UI::PushFontSize(18);
 
             UI::SetItemText(Icons::Gamepad + " Mode: ", 250);
-            if (UI::BeginCombo("##GamemodeSelect", tostring(RMC::selectedGameMode).Replace("_", " "))) {
+            if (UI::BeginCombo("##GamemodeSelect", tostring(PluginSettings::SelectedGameMode).Replace("_", " "))) {
 #if TMNEXT
                 for (uint i = 0; i <= RMC::GameMode::Together; i++) {
 #else
@@ -30,8 +30,8 @@ class RunSettingsModalDialog : ModalDialog {
 #endif
                     UI::PushID("GamemodeButton" + i);
 
-                    if (UI::Selectable(tostring(RMC::GameMode(i)).Replace("_", " "), RMC::selectedGameMode == RMC::GameMode(i))) {
-                        RMC::selectedGameMode = RMC::GameMode(i);
+                    if (UI::Selectable(tostring(RMC::GameMode(i)).Replace("_", " "), PluginSettings::SelectedGameMode == RMC::GameMode(i))) {
+                        PluginSettings::SelectedGameMode = RMC::GameMode(i);
                     }
 
                     UI::PopID();
@@ -69,7 +69,7 @@ class RunSettingsModalDialog : ModalDialog {
                 UI::EndCombo();
             }
 
-            bool canCustomize = PluginSettings::SelectedCategory == RMC::Category::Custom || RMC::selectedGameMode == RMC::GameMode::Objective;
+            bool canCustomize = PluginSettings::SelectedCategory == RMC::Category::Custom || PluginSettings::SelectedGameMode == RMC::GameMode::Objective;
 
             if (!canCustomize) {
                 UI::NewLine();
@@ -80,7 +80,7 @@ class RunSettingsModalDialog : ModalDialog {
 
             UI::BeginDisabled(!canCustomize);
 
-            switch (RMC::selectedGameMode) {
+            switch (PluginSettings::SelectedGameMode) {
                 case RMC::GameMode::Survival:
                     UI::SetItemText(Icons::ClockO + " Max timer: ", 250);
                     PluginSettings::RMS_MaxTimer = UI::InputInt("##RMSTimer", PluginSettings::RMS_MaxTimer);
@@ -122,7 +122,7 @@ class RunSettingsModalDialog : ModalDialog {
 
             UI::EndDisabled();
 
-            if (PluginSettings::SelectedCategory != RMC::Category::Custom && RMC::selectedGameMode == RMC::GameMode::Objective) {
+            if (PluginSettings::SelectedCategory != RMC::Category::Custom && PluginSettings::SelectedGameMode == RMC::GameMode::Objective) {
                 UI::NewLine();
                 Controls::FrameInfo(Icons::InfoCircle + " Select the Custom category to edit the following settings ");
             }
@@ -159,7 +159,7 @@ class RunSettingsModalDialog : ModalDialog {
             PluginSettings::SkipUnbeatenMaps = UI::Checkbox(Icons::FlagO + " Filter out unfinished maps", PluginSettings::SkipUnbeatenMaps);
             UI::SetItemTooltip("Skip maps with no finishes.");
 
-            if (RMC::selectedGameMode != RMC::GameMode::Together) {
+            if (PluginSettings::SelectedGameMode != RMC::GameMode::Together) {
                 UI::SameLine();
                 UI::CenterAlign();
                 PluginSettings::InvalidateGhosts = UI::Checkbox(Icons::EyeSlash + " Disallow watching ghosts", PluginSettings::InvalidateGhosts);

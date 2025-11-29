@@ -1,5 +1,6 @@
 namespace PluginSettings {
     const RMC::Category _DEFAULT_CATEGORY       = RMC::Category::Standard;
+    const RMC::GameMode _DEFAULT_GAMEMODE       = RMC::GameMode::Challenge;
     const Medals _DEFAULT_MEDAL                 = Medals::Author;
     const int _DEFAULT_FREE_SKIPS               = 1;
     const int _DEFAULT_TIMER                    = 60;
@@ -18,6 +19,9 @@ namespace PluginSettings {
 
     [Setting hidden]
     RMC::Category SelectedCategory = _DEFAULT_CATEGORY;
+
+    [Setting hidden]
+    RMC::GameMode SelectedGameMode = RMC::GameMode::Challenge;
 
     [Setting hidden]
     Medals RMC_Medal = _DEFAULT_MEDAL;
@@ -72,6 +76,7 @@ namespace PluginSettings {
 
     void ResetRMCSettings() {
         SelectedCategory     = _DEFAULT_CATEGORY;
+        SelectedGameMode     = _DEFAULT_GAMEMODE;
         RMC_Medal            = _DEFAULT_MEDAL;
         RMO_Goal             = _DEFAULT_GOAL;
         _RMC_MaxTimer        = _DEFAULT_TIMER;

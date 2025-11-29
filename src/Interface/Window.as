@@ -1,28 +1,18 @@
-class Window {
-    bool isOpened = false;
-    bool isInRMCMode = false;
+abstract class Window {
+    protected bool m_opened = false;
 
-    int GetFlags() {
-        int flags = UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
+    bool get_IsOpened() { return m_opened; }
+    void set_IsOpened(bool i) { m_opened = i; }
 
-        if (isInRMCMode) {
-            flags |=  UI::WindowFlags::NoResize | UI::WindowFlags::AlwaysAutoResize;
-            if (RMC::ShowTimer) flags |= UI::WindowFlags::NoTitleBar;
-        }
+    void Open() { IsOpened = true; }
+    void Close() { IsOpened = false; }
+    void Toggle() { IsOpened = !IsOpened; }
 
-        return flags;
-    }
-
-    string GetWindowTitle() {
-        if (isInRMCMode) {
-            return MX_COLOR_STR + Icons::ClockO + "\\$z RMC";
-        }
-
-        return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v" + PLUGIN_VERSION;
-    }
+    int get_Flags() { return UI::WindowFlags::None; }
+    string get_Title() { return ""; }
 
     void Render() {
-        if (!isOpened) {
+        if (!this.IsOpened) {
             return;
         }
 
@@ -40,56 +30,13 @@ class Window {
         UI::PushStyleVar(UI::StyleVar::WindowTitleAlign, vec2(.5, .5));
         UI::SetNextWindowSize(600, 400, UI::Cond::FirstUseEver);
 
-        if (UI::Begin(GetWindowTitle(), isOpened, GetFlags())) {
-            if (!isInRMCMode) {
-                MainUIView::Header();
-
-                UI::Separator();
-
-                UI::BeginTabBar("MainUITabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-
-                if (UI::BeginTabItem(Icons::ListUl + " Recently Played Maps")) {
-                    UI::BeginChild("RecentlyPlayedChild");
-                    MainUIView::RecentlyPlayedMapsTab();
-                    UI::EndChild();
-                    UI::EndTabItem();
-                }
-
-                if (UI::BeginTabItem(Icons::Cogs + " Settings")) {
-                    PluginSettings::Render();
-                    UI::EndTabItem();
-                }
-
-                if (UI::BeginTabItem(Icons::InfoCircle + " About")) {
-                    UI::BeginTabBar("MainUISettingsTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
-
-                    if (UI::BeginTabItem(Icons::InfoCircle + " About")) {
-                        UI::BeginChild("AboutChild");
-                        RenderAboutTab();
-                        UI::EndChild();
-                        UI::EndTabItem();
-                    }
-
-                    if (UI::BeginTabItem(Icons::Tags + " Changelogs")) {
-                        UI::BeginChild("ChangelogsChild");
-                        MainUIView::ChangelogTabs();
-                        UI::EndChild();
-                        UI::EndTabItem();
-                    }
-
-                    UI::EndTabBar();
-                    UI::EndTabItem();
-                }
-                UI::EndTabBar();
-            } else {
-                if (!RMC::ShowTimer) RMC::RenderRMCMenu();
-                else RMC::RenderRMCTimer();
-            }
+        if (UI::Begin(this.Title, this.IsOpened, this.Flags)) {
+            RenderWindow();
         }
 
         UI::End();
         UI::PopStyleVar(4);
     }
-}
 
-Window window;
+    void RenderWindow() {}
+}

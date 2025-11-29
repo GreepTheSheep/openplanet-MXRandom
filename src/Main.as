@@ -1,3 +1,6 @@
+MainWindow mainMenu;
+RMCWindow rmcMenu;
+
 void RenderMenu() {
 #if TMNEXT
     if (!hasPermissions) return;
@@ -29,22 +32,12 @@ void RenderMenu() {
                     }
                     UI::SetItemTooltip("This will open a random map from " + MX_NAME + " based on the filters applied in the settings.");
 
-                    if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zRandomizer Menu", "", window.isOpened && !window.isInRMCMode)) {
-                        if (window.isOpened && window.isInRMCMode) {
-                            window.isInRMCMode = false;
-                        } else {
-                            window.isOpened = !window.isOpened;
-                            window.isInRMCMode = false;
-                        }
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::Random + " \\$zMain Menu", "", mainMenu.IsOpened)) {
+                        mainMenu.Toggle();
                     }
                     UI::Separator();
-                    if (UI::MenuItem(MX_COLOR_STR + Icons::ClockO + " \\$zRandom Map Challenge", "", window.isOpened && window.isInRMCMode)) {
-                        if (window.isOpened && !window.isInRMCMode) {
-                            window.isInRMCMode = true;
-                        } else {
-                            window.isOpened = !window.isOpened;
-                            window.isInRMCMode = true;
-                        }
+                    if (UI::MenuItem(MX_COLOR_STR + Icons::ClockO + " \\$zRandom Map Challenge", "", rmcMenu.IsOpened)) {
+                        rmcMenu.Toggle();
                     }
 #if TMNEXT
                 } else {
@@ -61,14 +54,14 @@ void RenderInterface() {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
-    if (!window.isInRMCMode) window.Render();
+    mainMenu.Render();
 }
 
 void Render() {
 #if TMNEXT
     if (!hasPermissions) return;
 #endif
-    if (window.isInRMCMode) window.Render();
+    rmcMenu.Render();
     Renderables::Render();
 }
 
@@ -88,7 +81,7 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
     } 
     
     if (key == PluginSettings::S_WindowToggle) {
-        window.isOpened = !window.isOpened;
+        rmcMenu.Toggle();
         return UI::InputBlocking::Block;
     }
 

@@ -39,7 +39,7 @@ namespace MainUIView {
         }
 
         if (UI::CenteredButton(Icons::ClockO + " Random Map Challenge", 0.155)) {
-            window.isInRMCMode = !window.isInRMCMode;
+            rmcMenu.Open();
         }
     }
 

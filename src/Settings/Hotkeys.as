@@ -67,7 +67,7 @@ namespace PluginSettings {
         UI::EndDisabled();
 
         UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Show/Hide window hotkey", GetKeyName(S_WindowToggle))) {
+        if (UI::BeginCombo("Show/Hide RMC window hotkey", GetKeyName(S_WindowToggle))) {
             for (int i = 0; i <= 254; i++) {
                 VirtualKey key = VirtualKey(i);
                 string keyName = GetKeyName(key);
