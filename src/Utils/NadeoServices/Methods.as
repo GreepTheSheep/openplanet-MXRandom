@@ -3,11 +3,7 @@ namespace MXNadeoServicesGlobal {
     bool APIRefresh = false;
     bool isCheckingRoom = false;
     bool joiningRoom = false;
-    string roomCheckErrorCode = "";
-    string roomCheckError = "";
     NadeoServices::ClubRoom@ foundRoom;
-    string AddMapToServer_MapUid = "";
-    int AddMapToServer_MapMXId;
     array<string> uploadedMaps;
 
 #if DEPENDENCY_NADEOSERVICES
@@ -35,10 +31,10 @@ namespace MXNadeoServicesGlobal {
 
     void CheckNadeoRoomAsync() {
         isCheckingRoom = true;
-        roomCheckErrorCode = "";
-        roomCheckError = "";
+        Log::Trace("[CheckNadeoRoom] Checking room ID " + PluginSettings::RMC_Together_RoomId + " from club ID " + PluginSettings::RMC_Together_ClubId);
 
-        Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", NadeoServices::BaseURLLive() + "/api/token/club/" + PluginSettings::RMC_Together_ClubId + "/room/" + PluginSettings::RMC_Together_RoomId);
+        string reqUrl = NadeoServices::BaseURLLive() + "/api/token/club/" + PluginSettings::RMC_Together_ClubId + "/room/" + PluginSettings::RMC_Together_RoomId;
+        Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", reqUrl);
         req.Start();
 
         while (!req.Finished()) {
@@ -50,44 +46,20 @@ namespace MXNadeoServicesGlobal {
         isCheckingRoom = false;
 
         if (res.GetType() == Json::Type::Array) {
-            roomCheckErrorCode = res[0];
-            if (roomCheckErrorCode.Contains("notFound")) roomCheckError = "Room is not Found";
-            else roomCheckError = "Unknown error";
+            string errorMessage = res[0];
+
+            if (errorMessage.Contains("notFound")) {
+                Log::Error("Failed to find club / room with the provided IDs", true);
+            } else {
+                Log::Error("Unknown error while checking club room: " + errorMessage, true);
+            }
+
             return;
         }
 
-        if (res.GetType() == Json::Type::Object)
+        if (res.GetType() == Json::Type::Object) {
             @foundRoom = NadeoServices::ClubRoom(res);
-
-        return;
-    }
-
-    void UploadMapToNadeoServices() {
-        MX::DownloadMap(AddMapToServer_MapMXId, AddMapToServer_MapUid);
-
-        auto app = cast<CGameManiaPlanet>(GetApp());
-        auto cma = app.MenuManager.MenuCustom_CurrentManiaApp;
-        auto dfm = cma.DataFileMgr;
-        auto userId = cma.UserMgr.Users[0].Id;
-
-        yield();
-
-        auto regScript = dfm.Map_NadeoServices_Register(userId, AddMapToServer_MapUid);
-
-        while (regScript.IsProcessing) yield();
-
-        if (regScript.HasFailed) {
-            Log::Error("[UploadMapToNadeoServices] Map upload failed: " + regScript.ErrorType + ", " + regScript.ErrorCode + ", " + regScript.ErrorDescription);
-        } else if (regScript.HasSucceeded) {
-            Log::Trace("[UploadMapToNadeoServices] Map uploaded: " + AddMapToServer_MapUid);
-        }
-
-        dfm.TaskResult_Release(regScript.Id);
-
-        string mapLocation = IO::FromUserGameFolder("Maps/Downloaded") + "/" + AddMapToServer_MapUid + ".Map.Gbx";
-
-        if (IO::FileExists(mapLocation)) {
-            IO::Delete(mapLocation);
+            Log::Trace("[CheckNadeoRoom] Found room \"" + foundRoom.room.name + "\" (ID " + foundRoom.roomId + ") in club \"" + foundRoom.clubName + "\" (ID " + foundRoom.clubId + ")");
         }
     }
 
@@ -277,6 +249,58 @@ namespace MXNadeoServicesGlobal {
     }
 
 #if DEPENDENCY_BETTERROOMMANAGER
+    void AutoDetectRoom() {
+        isCheckingRoom = true;
+        Log::Trace("[AutoDetectRoom] Detecting current room.");
+
+        auto cs = BRM::GetCurrentServerInfo(GetApp());
+
+        if (cs is null) {
+            Log::Error("Couldn't get current server info", true);
+            return;
+        }
+        
+        if (cs.clubId <= 0) {
+            Log::Error("Could not detect club ID for current server (" + cs.name + " / " + cs.login + ")", true);
+            return;
+        }
+
+        Log::Trace("[AutoDetectRoom] Current room's club ID: " + cs.clubId);
+
+        auto myClubs = BRM::GetMyClubs();
+        const Json::Value@ foundClub = null;
+
+        for (uint i = 0; i < myClubs.Length; i++) {
+            if (cs.clubId == int(myClubs[i]['id'])) {
+                @foundClub = myClubs[i];
+                break;
+            }
+        }
+
+        if (foundClub is null) {
+            Log::Error("Club not found in your list of clubs (refresh from Better Room Manager if you joined the club recently).", true);
+            return;
+        }
+
+        if (cs.roomId <= 0) {
+            Log::Error("[AutoDetectRoom] Room ID is invalid", true);
+            return;
+        }
+
+        if (!bool(foundClub['isAnyAdmin'])) {
+            Log::Error("Club was found but your role isn't enough to edit rooms (refresh from Better Room Manager if this changed recently).", true);
+            return;
+        }
+
+        Log::Trace("[AutoDetectRoom] Found current room information. Club ID: " + cs.clubId + ", Room ID: " + cs.roomId);
+
+        PluginSettings::RMC_Together_ClubId = cs.clubId;
+        PluginSettings::RMC_Together_RoomId = cs.roomId;
+
+        CheckNadeoRoomAsync();
+        isCheckingRoom = false;
+    }
+
     void JoinRMTRoom() {
         if (PluginSettings::RMC_Together_ClubId <= 0 || PluginSettings::RMC_Together_RoomId <= 0) {
             Log::Error("Invalid club or room ID when trying to join RMT server", true);

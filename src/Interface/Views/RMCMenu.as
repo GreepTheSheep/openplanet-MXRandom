@@ -1,7 +1,4 @@
 namespace RMC {
-    bool autodetectError = false;
-    string autodetectStatus = "";
-
     [Setting hidden]
     GameMode selectedGameMode = GameMode::Challenge;
 
@@ -133,17 +130,10 @@ namespace RMC {
                         UI::BeginDisabled(MXNadeoServicesGlobal::isCheckingRoom);
 
                         if (UI::Button("Auto-detect Club and Room ID")) {
-                            startnew(BRMStartAutoDetectRoomRMT);
+                            startnew(CoroutineFunc(MXNadeoServicesGlobal::AutoDetectRoom));
                         }
 
                         UI::EndDisabled();
-
-                        if (autodetectStatus != "" || autodetectStatus == "Done") UI::Text(autodetectStatus);
-                        if (autodetectError) UI::Text(MXNadeoServicesGlobal::roomCheckError);
-                        if (autodetectStatus == "Done") {
-                            autodetectStatus = "";
-                            startnew(MXNadeoServicesGlobal::CheckNadeoRoomAsync);
-                        }
                     }
 #endif
 
@@ -305,64 +295,4 @@ namespace RMC {
             OpenBrowserURL("https://flinkblog.de/RMC/");
         }
     }
-
-#if DEPENDENCY_BETTERROOMMANAGER
-    void BRMStartAutoDetectRoomRMT() {
-        MXNadeoServicesGlobal::isCheckingRoom = true;
-        autodetectError = false;
-        autodetectStatus = "Detecting... ";
-
-        auto cs = BRM::GetCurrentServerInfo(GetApp());
-
-        if (cs is null) {
-            MXNadeoServicesGlobal::roomCheckError = "Couldn't get current server info";
-            autodetectError = true;
-            return;
-        }
-        
-        if (cs.clubId <= 0) {
-            MXNadeoServicesGlobal::roomCheckError = "Could not detect club ID for this server (" + cs.name + " / " + cs.login + ")";
-            autodetectError = true;
-            return;
-        }
-
-        autodetectStatus = "Found Club ID: " + cs.clubId;
-
-        auto myClubs = BRM::GetMyClubs();
-        const Json::Value@ foundClub = null;
-
-        for (uint i = 0; i < myClubs.Length; i++) {
-            if (cs.clubId == int(myClubs[i]['id'])) {
-                @foundClub = myClubs[i];
-                break;
-            }
-        }
-
-        if (foundClub is null) {
-            MXNadeoServicesGlobal::roomCheckError = "Club not found in your list of clubs (refresh from Better Room Manager if you joined the club recently).";
-            autodetectError = true;
-            return;
-        }
-
-        if (!bool(foundClub['isAnyAdmin'])) {
-            MXNadeoServicesGlobal::roomCheckError = "Club was found but your role isn't enough to edit rooms (refresh from Better Room Manager if this changed recently).";
-            autodetectError = true;
-            return;
-        }
-
-        autodetectStatus = "Checking for matching rooms...";
-
-        if (cs.roomId <= 0) {
-            MXNadeoServicesGlobal::roomCheckError = "Room not found in club";
-            autodetectError = true;
-            return;
-        }
-
-        PluginSettings::RMC_Together_ClubId = cs.clubId;
-        PluginSettings::RMC_Together_RoomId = cs.roomId;
-
-        autodetectStatus = "Done";
-        MXNadeoServicesGlobal::isCheckingRoom = false;
-    }
-#endif
 }
