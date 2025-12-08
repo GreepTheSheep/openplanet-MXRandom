@@ -1,5 +1,6 @@
 MainWindow mainMenu;
 RMCWindow rmcMenu;
+DebugWindow debugMenu;
 
 void RenderMenu() {
 #if TMNEXT
@@ -55,6 +56,7 @@ void RenderInterface() {
     if (!hasPermissions) return;
 #endif
     mainMenu.Render();
+    debugMenu.Render();
 }
 
 void Render() {

@@ -23,6 +23,7 @@ namespace MX {
         int Length;
         bool ServerSizeExceeded;
         array<MapTag@> Tags;
+        Json::Value@ jsonCache;
 
         MapInfo(const Json::Value &in json) {
             try {
@@ -112,7 +113,13 @@ namespace MX {
         }
 
         Json::Value ToJson() {
+            if (jsonCache !is null) {
+                jsonCache["PlayedAt"] = PlayedAt; // value might have been updated since the cache was created
+                return jsonCache;
+            }
+
             Json::Value json = Json::Object();
+
             try {
                 json["MapId"] = MapId;
                 json["MapUid"] = MapUid;
@@ -149,9 +156,12 @@ namespace MX {
                 }
 
                 json["Tags"] = tagArray;
+
+                @jsonCache = json;
             } catch {
                 Log::Error("Error converting map info to JSON for map " + Name, true);
             }
+
             return json;
         }
 

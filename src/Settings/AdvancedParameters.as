@@ -63,5 +63,9 @@ namespace PluginSettings {
 
             UI::EndCombo();
         }
+
+        if (UI::Button("Debug Window")) {
+            debugMenu.Open();
+        }
     }
 }
