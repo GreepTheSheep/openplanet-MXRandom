@@ -77,7 +77,7 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
         return UI::InputBlocking::Block;
     }
 
-    if (!MX::APIDown && !MX::RandomMapIsLoading && key == PluginSettings::S_QuickMapKey) {
+    if (key == PluginSettings::S_QuickMapKey && ShouldLoadRandomMap()) {
         startnew(MX::LoadRandomMap, false);
         return UI::InputBlocking::Block;
     } 
@@ -88,6 +88,26 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
     }
 
     return UI::InputBlocking::DoNothing;
+}
+
+bool ShouldLoadRandomMap() {
+    if (MX::APIDown || MX::RandomMapIsLoading) {
+        return false;
+    }
+
+    if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
+        return false;
+    }
+
+    if (UI::WantCaptureKeyboard()) {
+        return false;
+    }
+
+    if (TM::IsInServer()) {
+        return false;
+    }
+
+    return true;
 }
 
 void Main() {
