@@ -103,6 +103,17 @@ namespace UI {
         return text + padding;
     }
 
+    bool FlexButton(const string &in label) {
+        float buttonWidth = MeasureButton(label).x;
+        float itemSpacing = UI::GetStyleVarVec2(UI::StyleVar::ItemSpacing).x;
+
+        if (buttonWidth + itemSpacing > UI::GetContentRegionAvail().x) {
+            return UI::Button(label);
+        }
+
+        return UI::Button(label, vec2(-1, 0));
+    }
+
     bool ResetButton() {
         UI::SameLine();
         UI::Text(Icons::Times);
@@ -126,6 +137,77 @@ namespace UI {
             UI::EndTooltip();
         }
     }
+
+    // Text
+
+    // Original code from the plugin Ultimate Medals (https://openplanet.dev/plugin/ultimatemedals)
+    // Copyright by Phlarx and Miss
+    // Fort modified it in 2025
+
+    const uint timeOffsetStart = 1000;
+    const uint timeOffsetEnd = 2000;
+    const uint scrollSpeed = 20;
+    uint scrollingTimeStart = 0;
+    uint scrollingTimeEnd = 0;
+
+    void ScrollingText(const string &in text) {
+        vec2 size = Draw::MeasureString(text);
+        vec2 region = UI::GetContentRegionAvail().x; 
+
+        if (size.x < region.x) {
+            UI::Text(text);
+            return;
+        }
+
+        auto dl = UI::GetWindowDrawList();
+        vec2 cursorPos = UI::GetCursorScreenPos();
+
+        // Create a dummy for the text
+        UI::Dummy(vec2(region.x, size.y));
+
+        // If the text is hovered, reset now
+        if (UI::IsItemHovered()) {
+            scrollingTimeStart = Time::Now;
+            scrollingTimeEnd = 0;
+        }
+
+        vec2 textPos = vec2(0, 0);
+
+        // Move the text forwards after the start time has passed
+        uint timeOffset = Time::Now - scrollingTimeStart;
+
+        if (timeOffset > timeOffsetStart) {
+            uint moveTimeOffset = timeOffset - timeOffsetStart;
+            textPos.x = -(moveTimeOffset / scrollSpeed);
+        }
+
+        // Stop moving when we've reached the end
+        if (textPos.x < -(size.x - region.x)) {
+            textPos.x = -(size.x - region.x);
+
+            // Begin waiting for the end time
+            if (scrollingTimeEnd == 0) {
+                scrollingTimeEnd = Time::Now;
+            }
+        }
+
+        // Go back to the starting position after the end time has passed
+        if (scrollingTimeEnd > 0) {
+            uint endTimeOffset = Time::Now - scrollingTimeEnd;
+
+            if (endTimeOffset > timeOffsetEnd) {
+                scrollingTimeStart = Time::Now;
+                scrollingTimeEnd = 0;
+            }
+        }
+
+        vec4 rectBox = vec4(cursorPos.x, cursorPos.y, region.x, size.y);
+        dl.PushClipRect(rectBox, true);
+        dl.AddText(cursorPos + textPos, vec4(1, 1, 1, 1), text);
+        dl.PopClipRect();
+    }
+
+    // Other
 
     UI::Texture@ PredatorTexture = UI::LoadTexture("src/Assets/Images/Predator.png");
     UI::Texture@ LevlupTexture = UI::LoadTexture("src/Assets/Images/Levlup.png");

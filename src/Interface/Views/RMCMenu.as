@@ -90,7 +90,7 @@ namespace RMC {
 
                 UI::SameLine();
 
-                if (UI::Button("Options", vec2(-1, 0))) {
+                if (UI::FlexButton(Icons::Sliders + " Options")) {
                     Renderables::Add(RunSettingsModalDialog());
                 }
                 break;
@@ -100,7 +100,7 @@ namespace RMC {
                     startnew(CoroutineFunc(currentRun.Start));
                 }
                 UI::SameLine();
-                if (UI::Button("Options", vec2(-1, 0))) {
+                if (UI::FlexButton(Icons::Sliders + " Options")) {
                     Renderables::Add(RunSettingsModalDialog());
                 }
                 break;
@@ -113,7 +113,7 @@ namespace RMC {
                     startnew(CoroutineFunc(currentRun.Start));
                 }
                 UI::SameLine();
-                if (UI::Button("Options", vec2(-1, 0))) {
+                if (UI::FlexButton(Icons::Sliders + " Options")) {
                     Renderables::Add(RunSettingsModalDialog());
                 }
                 break;
@@ -194,7 +194,7 @@ namespace RMC {
 
                     UI::SameLine();
 
-                    if (UI::Button("Options", vec2(-1, 0))) {
+                    if (UI::FlexButton(Icons::Sliders + " Options")) {
                         Renderables::Add(RunSettingsModalDialog());
                     }
 

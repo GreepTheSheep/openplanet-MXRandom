@@ -283,7 +283,7 @@ class RMT : RMC {
                 UI::Separator();
 
                 if (currentMap !is null) {
-                    UI::Text(currentMap.Name);
+                    UI::ScrollingText(currentMap.Name);
 
                     if (PluginSettings::RMC_ShowAwards) {
                         UI::SameLine();
@@ -323,10 +323,20 @@ class RMT : RMC {
                             UI::TextDisabled("No tags");
                         } else {
                             uint tagsRender = Math::Min(currentMap.Tags.Length, PluginSettings::RMC_TagsLength);
+
                             for (uint i = 0; i < tagsRender; i++) {
+                                if (tagsRender > 1 && i == tagsRender - 1) {
+                                    float buttonWidth = UI::MeasureButton(currentMap.Tags[i].Name).x;
+
+                                    if (buttonWidth >= UI::GetContentRegionAvail().x) {
+                                        UI::NewLine();
+                                    }
+                                }
+
                                 Render::MapTag(currentMap.Tags[i]);
                                 UI::SameLine();
                             }
+
                             UI::NewLine();
                         }
                     }
@@ -359,7 +369,7 @@ class RMT : RMC {
 
             UI::BeginDisabled(skipsLeft == 0);
 
-            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)", vec2(-1, 0))) {
+            if (UI::Button(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)")) {
                 FreeSkipsUsed++;
                 Log::Trace("RMT: Skipping map");
                 UI::ShowNotification("Please wait...");
@@ -377,7 +387,7 @@ class RMT : RMC {
                 "Free Skips are if the map is finishable but your team still want to skip it for any reason.\n\n" +
                 "If the map is broken, please use the button below instead."
             );
-        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal", vec2(-1, 0))) {
+        } else if (ModeHasBelowMedal && UI::Button(Icons::PlayCircleO + " Take " + tostring(Medals(RunConfig.GoalMedal - 1)) + " medal")) {
             BelowMedalCount++;
             RMTPlayerScore@ playerScored = GetPlayerScore(playerGotBelowGoal);
             playerScored.AddBelowGoal();
