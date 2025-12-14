@@ -322,12 +322,11 @@ class RMT : RMC {
                         UI::Text("\\$db4" + Icons::Trophy + "\\$z " + currentMap.AwardCount);
                     }
 
+                    UI::TextDisabled("by " + currentMap.Username);
+
                     if (PluginSettings::RMC_DisplayMapDate) {
                         UI::TextDisabled(Time::FormatString("%F", currentMap.UpdatedAtTimestamp));
-                        UI::SameLine();
                     }
-
-                    UI::TextDisabled("by " + currentMap.Username);
 
                     if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
                         RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
