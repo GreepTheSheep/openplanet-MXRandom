@@ -153,6 +153,21 @@ class RMC {
         IsStarting = false;
     }
 
+    void Reset() {
+        GoalMedalCount = 0;
+        BelowMedalCount = 0;
+        TimeLeft = TimeLimit;
+        TotalTime = 0;
+        FreeSkipsUsed = 0;
+        playedMaps.RemoveRange(0, playedMaps.Length);
+
+        DataManager::RemoveCurrentSaveFile();
+        DataManager::CreateSaveFile();
+
+        Log::Info("Resetting " + ModeName + "...",  true);
+        startnew(CoroutineFunc(SwitchMap));
+    }
+
     void CreateSave() {
         RMC::CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
         RMC::CurrentRunData["SecondaryCounterValue"] = BelowMedalCount;
@@ -277,6 +292,18 @@ class RMC {
                     DataManager::RemoveCurrentSaveFile();
                 }
             }
+
+            float buttonWidth = UI::GetItemRect().z;
+
+            UI::SameLine();
+
+            UI::BeginDisabled(!IsRunning || IsSwitchingMap);
+
+            if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
+                Reset();
+            }
+
+            UI::EndDisabled();
 
             UI::Separator();
         }

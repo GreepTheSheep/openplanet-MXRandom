@@ -29,6 +29,18 @@ class RMT : RMC {
                 startnew(CoroutineFunc(ResetToLobbyMap));
             }
 
+            float buttonWidth = UI::GetItemRect().z;
+
+            UI::SameLine();
+
+            UI::BeginDisabled(!IsRunning || IsSwitchingMap);
+
+            if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
+                Reset();
+            }
+
+            UI::EndDisabled();
+
             UI::Separator();
         }
 
@@ -124,6 +136,26 @@ class RMT : RMC {
         IsSwitchingMap = false;
         IsStarting = false;
         PreloadNextMap();
+    }
+
+    void Reset() override {
+        GoalMedalCount = 0;
+        BelowMedalCount = 0;
+        TimeLeft = TimeLimit;
+        TotalTime = 0;
+        FreeSkipsUsed = 0;
+        playedMaps.RemoveRange(0, playedMaps.Length);
+        @playerGotGoal = null;
+        m_playerScores.RemoveRange(0, m_playerScores.Length);;
+        @playerGotGoal = null;
+        @playerGotBelowGoal = null;
+
+        Log::Info("Resetting " + ModeName + "...", true);
+#if DEPENDENCY_BETTERCHAT
+        BetterChat::SendChatMessage(Icons::Refresh + " Resetting " + ModeName + "...");
+#endif
+
+        startnew(CoroutineFunc(SwitchMap));
     }
 
     void SwitchMap() override {

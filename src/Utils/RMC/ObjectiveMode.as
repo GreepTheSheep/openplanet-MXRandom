@@ -12,6 +12,11 @@ class RMObjective : RMC {
         return false;
     }
 
+    void Reset() override {
+        Skips = 0;
+        RMC::Reset();
+    }
+
     void RenderPace() override { }
 
     void CheckSave() override { }
