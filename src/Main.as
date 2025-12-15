@@ -77,8 +77,13 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
         return UI::InputBlocking::Block;
     }
 
-    if (key == PluginSettings::S_QuickMapKey && ShouldLoadRandomMap()) {
-        startnew(MX::LoadRandomMap, false);
+    if (key == PluginSettings::S_QuickMapKey || key == PluginSettings::S_QuickMapFiltersKey) {
+        if (!ShouldLoadRandomMap()) {
+            return UI::InputBlocking::DoNothing;
+        }
+
+        bool withFilters = key == PluginSettings::S_QuickMapFiltersKey;
+        startnew(MX::LoadRandomMap, withFilters);
         return UI::InputBlocking::Block;
     } 
     

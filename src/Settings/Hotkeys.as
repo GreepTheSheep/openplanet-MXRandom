@@ -3,17 +3,22 @@ namespace PluginSettings {
     VirtualKey S_QuickMapKey = VirtualKey(0);
 
     [Setting hidden]
+    VirtualKey S_QuickMapFiltersKey = VirtualKey(0);
+
+    [Setting hidden]
     VirtualKey S_WindowToggle = VirtualKey(0);
 
     bool DetectingQuickMapKey = false;
+    bool DetectingQuickMapFiltersKey = false;
     bool DetectingWindowKey = false;
 
     bool get_ListeningForKey() {
-        return DetectingQuickMapKey || DetectingWindowKey;
+        return DetectingQuickMapKey || DetectingQuickMapFiltersKey || DetectingWindowKey;
     }
 
     void StopListeningForKey() {
         DetectingQuickMapKey = false;
+        DetectingQuickMapFiltersKey = false;
         DetectingWindowKey = false;
     }
 
@@ -21,38 +26,12 @@ namespace PluginSettings {
     void RenderHotkeySettingTab() {
         if (UI::OrangeButton("Reset to default")) {
             S_QuickMapKey = VirtualKey(0);
+            S_QuickMapFiltersKey = VirtualKey(0);
             S_WindowToggle = VirtualKey(0);
             StopListeningForKey();
         }
 
-        UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Quick map hotkey", GetKeyName(S_QuickMapKey))) {
-            for (int i = 0; i <= 254; i++) {
-                VirtualKey key = VirtualKey(i);
-                string keyName = GetKeyName(key);
-                bool taken = key != S_QuickMapKey && IsKeyUsed(key);
-
-                if (keyName == "") {
-                    continue;
-                }
-
-                UI::BeginDisabled(taken);
-
-                if (UI::Selectable(keyName, S_QuickMapKey == key)) {
-                    S_QuickMapKey = key;
-                    StopListeningForKey();
-                }
-
-                if (taken) {
-                    UI::SetItemTooltip("Key already used for a different setting!");
-                }
-
-                UI::EndDisabled();
-
-            }
-
-            UI::EndCombo();
-        }
+        RenderHotkeyCombo("Quick map hotkey", S_QuickMapKey);
 
         UI::SameLine();
 
@@ -66,33 +45,21 @@ namespace PluginSettings {
 
         UI::EndDisabled();
 
-        UI::SetNextItemWidth(225);
-        if (UI::BeginCombo("Show/Hide RMC window hotkey", GetKeyName(S_WindowToggle))) {
-            for (int i = 0; i <= 254; i++) {
-                VirtualKey key = VirtualKey(i);
-                string keyName = GetKeyName(key);
-                bool taken = key != S_WindowToggle && IsKeyUsed(key);
+        RenderHotkeyCombo("Quick map (with filters) hotkey", S_QuickMapFiltersKey);
 
-                if (keyName == "") {
-                    continue;
-                }
+        UI::SameLine();
 
-                UI::BeginDisabled(taken);
+        UI::BeginDisabled(ListeningForKey);
 
-                if (UI::Selectable(keyName, S_WindowToggle == key)) {
-                    S_WindowToggle = key;
-                    StopListeningForKey();
-                }
-
-                if (taken) {
-                    UI::SetItemTooltip("Key already used for a different setting!");
-                }
-
-                UI::EndDisabled();
-            }
-
-            UI::EndCombo();
+        if (DetectingQuickMapFiltersKey) {
+            UI::Text("Press a key");
+        } else if (UI::GreyButton("Detect##QuickMapFilters")) {
+            DetectingQuickMapFiltersKey = true;
         }
+
+        UI::EndDisabled();
+
+        RenderHotkeyCombo("Show/Hide RMC window hotkey", S_WindowToggle);
 
         UI::SameLine();
 
@@ -128,6 +95,7 @@ namespace PluginSettings {
 
         array<VirtualKey> usedKeys = {
             S_QuickMapKey,
+            S_QuickMapFiltersKey,
             S_WindowToggle
         };
 
@@ -141,6 +109,10 @@ namespace PluginSettings {
 
         if (S_QuickMapKey == key) {
             S_QuickMapKey = VirtualKey(0);
+        }
+
+        if (S_QuickMapFiltersKey == key) {
+            S_QuickMapFiltersKey = VirtualKey(0);
         }
 
         if (S_WindowToggle == key) {
@@ -157,10 +129,42 @@ namespace PluginSettings {
 
         if (DetectingQuickMapKey) {
             S_QuickMapKey = key;
+        } else if (DetectingQuickMapFiltersKey) {
+            S_QuickMapFiltersKey = key;
         } else if (DetectingWindowKey) {
             S_WindowToggle = key;
         }
 
         StopListeningForKey();
+    }
+
+    void RenderHotkeyCombo(const string &in label, VirtualKey currentKey) {
+        UI::SetNextItemWidth(175);
+
+        if (UI::BeginCombo(label, GetKeyName(currentKey))) {
+            for (int i = 0; i <= 254; i++) {
+                VirtualKey key = VirtualKey(i);
+                string keyName = GetKeyName(key);
+                bool taken = key != currentKey && IsKeyUsed(key);
+
+                if (keyName == "") {
+                    continue;
+                }
+
+                UI::BeginDisabled(taken);
+
+                if (UI::Selectable(keyName, currentKey == key)) {
+                    AssignHotkey(key);
+                }
+
+                if (taken) {
+                    UI::SetItemTooltip("Key already used for a different setting!");
+                }
+
+                UI::EndDisabled();
+            }
+
+            UI::EndCombo();
+        }
     }
 }
