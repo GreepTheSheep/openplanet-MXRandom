@@ -328,8 +328,8 @@ class RMT : RMC {
                         UI::TextDisabled(Time::FormatString("%F", currentMap.UpdatedAtTimestamp));
                     }
 
-                    if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
-                        RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
+                    if (PluginSettings::RMC_PrepatchTagsWarns && currentMap.IsPrepatch) {
+                        PrepatchMapTag@ tag = currentMap.PrepatchTag;
 
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
                         UI::SetItemTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));

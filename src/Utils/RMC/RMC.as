@@ -436,8 +436,9 @@ class RMC {
                     }
 
 #if TMNEXT
-                    if (PluginSettings::RMC_PrepatchTagsWarns && RMC::config.HasPrepatchTags(currentMap)) {
-                        RMCConfigMapTag@ tag = RMC::config.GetPrepatchTag(currentMap);
+                    if (PluginSettings::RMC_PrepatchTagsWarns && currentMap.IsPrepatch) {
+                        PrepatchMapTag@ tag = currentMap.PrepatchTag;
+
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z " + tag.title);
                         UI::SetItemTooltip(tag.reason + (IS_DEV_MODE ? ("\nExeBuild: " + currentMap.ExeBuild) : ""));
                     }

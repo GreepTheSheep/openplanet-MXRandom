@@ -24,6 +24,7 @@ namespace MX {
         bool ServerSizeExceeded;
         array<MapTag@> Tags;
         Json::Value@ jsonCache;
+        PrepatchMapTag@ PrepatchTag;
 
         MapInfo(const Json::Value &in json) {
             try {
@@ -106,6 +107,8 @@ namespace MX {
                         Tags.Sort(function(a, b) { return a.Name < b.Name; });
                     }
                 }
+
+                @PrepatchTag = RMC::config.GetPrepatchTag(this);
             } catch {
                 Name = json["Name"];
                 Log::Warn("Error parsing infos for the map: " + Name + "\nReason: " + getExceptionInfo(), true);
@@ -175,6 +178,10 @@ namespace MX {
 #else
             return false;
 #endif
+        }
+
+        bool get_IsPrepatch() {
+            return PrepatchTag !is null;
         }
 
         bool HasTag(int tagId) {

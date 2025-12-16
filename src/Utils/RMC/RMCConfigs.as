@@ -1,5 +1,5 @@
 class RMCConfig {
-    array<RMCConfigMapTag@> prepatchMapTags;
+    array<PrepatchMapTag@> prepatchMapTags;
     dictionary tags = {
 #if TMNEXT
         { "altcar",     "50,54,55,59" }
@@ -36,7 +36,7 @@ class RMCConfig {
 
         if (data.HasKey("prepatch-maps-tags")) {
             for (uint i = 0; i < data["prepatch-maps-tags"].Length; i++) {
-                prepatchMapTags.InsertLast(RMCConfigMapTag(data["prepatch-maps-tags"][i]));
+                prepatchMapTags.InsertLast(PrepatchMapTag(data["prepatch-maps-tags"][i]));
             }
         }
 
@@ -65,26 +65,17 @@ class RMCConfig {
         return blacklistedAuthors.Find(map.Username.ToLower()) > -1;
     }
 
-    bool HasPrepatchTags(MX::MapInfo@ map) {
+    PrepatchMapTag@ GetPrepatchTag(MX::MapInfo@ map) {
+        auto mapCreation = Date(map.ExeBuild, "%F_%H_%M");
+
         for (uint i = 0; i < prepatchMapTags.Length; i++) {
             if (map.HasTag(prepatchMapTags[i].ID)) {
                 auto patchDate = Date(prepatchMapTags[i].ExeBuild, "%F_%H_%M");
-                auto mapCreation = Date(map.ExeBuild, "%F_%H_%M");
 
                 if (mapCreation.isBefore(patchDate)) {
                     // if map was released before the patch, it's broken
-                    return true;
+                    return prepatchMapTags[i];
                 }
-            }
-        }
-
-        return false;
-    }
-
-    RMCConfigMapTag@ GetPrepatchTag(MX::MapInfo@ map) {
-        for (uint i = 0; i < prepatchMapTags.Length; i++) {
-            if (map.HasTag(prepatchMapTags[i].ID)) {
-                return prepatchMapTags[i];
             }
         }
 
@@ -110,13 +101,13 @@ class RMCConfig {
     }
 }
 
-class RMCConfigMapTag {
+class PrepatchMapTag {
     int ID;
     string ExeBuild;
     string title;
     string reason;
 
-    RMCConfigMapTag(const Json::Value &in json) {
+    PrepatchMapTag(const Json::Value &in json) {
         ID = json["ID"];
         ExeBuild = json["ExeBuild"];
         title = json["title"];

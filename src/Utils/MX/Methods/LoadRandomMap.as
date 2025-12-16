@@ -61,7 +61,7 @@ namespace MX {
                 return null;
             }
 
-            if (PluginSettings::RMC_SkipPrepatch && RMC::config.HasPrepatchTags(map)) {
+            if (PluginSettings::RMC_SkipPrepatch && map.IsPrepatch) {
                 Log::Warn("[GetRandomMap] Map has prepatch tags, skipping...");
                 return null;
             }
