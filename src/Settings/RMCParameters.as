@@ -70,7 +70,10 @@ namespace PluginSettings {
     bool RMC_PauseWhenMenuOpen = true;
 
     [Setting hidden]
+    bool RMC_SkipPrepatch = false;
+
 #if TMNEXT
+    [Setting hidden]
     bool RMC_PushLeaderboardResults = true;
 #else
     bool RMC_PushLeaderboardResults = false;
@@ -86,15 +89,20 @@ namespace PluginSettings {
                 RMC_ExitMapOnEndTime = false;
                 RMC_RUN_AUTOSAVE = true;
                 RMC_PauseWhenMenuOpen = true;
+#if TMNEXT
+                RMC_SkipPrepatch = false;
                 RMC_PushLeaderboardResults = true;
+#endif
             }
 
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(GoalMedal) + " medal", RMC_AutoSwitch);
-            RMC_ExitMapOnEndTime = UI::Checkbox("Automatically quit the map when the timer is up", RMC_ExitMapOnEndTime);
+            RMC_ExitMapOnEndTime = UI::Checkbox("Exit the map when the timer is up", RMC_ExitMapOnEndTime);
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
             RMC_PauseWhenMenuOpen = UI::Checkbox("Pause timer when the pause menu is open", RMC_PauseWhenMenuOpen);
 
 #if TMNEXT
+            RMC_SkipPrepatch = UI::Checkbox("Automatically skip prepatch maps", RMC_SkipPrepatch);
+
             RMC_PushLeaderboardResults = UI::Checkbox("Upload every RMC/RMS run to the leaderboard", RMC_PushLeaderboardResults);
             UI::SettingDescription("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif

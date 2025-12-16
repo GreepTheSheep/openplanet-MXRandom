@@ -60,6 +60,11 @@ namespace MX {
                 Log::Warn("[GetRandomMap] Map is not uploaded to Nadeo Services, skipping...");
                 return null;
             }
+
+            if (PluginSettings::RMC_SkipPrepatch && RMC::config.HasPrepatchTags(map)) {
+                Log::Warn("[GetRandomMap] Map has prepatch tags, skipping...");
+                return null;
+            }
 #endif
 
             if (!customParameters) {
