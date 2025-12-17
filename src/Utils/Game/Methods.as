@@ -354,7 +354,21 @@ namespace TM {
 
     MapTypes CurrentMapType() {
         CTrackMania@ app = cast<CTrackMania>(GetApp());
-        string mapType = app.RootMap.MapType;
+        string mapType = "";
+
+        if (app.Network !is null && app.Network.ServerInfo !is null) {
+            auto serverInfo = cast<CTrackManiaNetworkServerInfo>(app.Network.ServerInfo);
+
+            if (serverInfo !is null) {
+                // Game mode can be more accurate in certain cases
+                // See https://trackmania.exchange/mapshow/189902 where the map type in the GBX file doesn't match the actual map type when playing
+                mapType = serverInfo.CurGameModeStr;
+            }
+        }
+
+        if (mapType == "") {
+            mapType = app.RootMap.MapType;
+        }
 
         if (mapType.Contains("Stunt")) {
             return MapTypes::Stunt;
