@@ -1,18 +1,16 @@
 namespace UI {
-    float scale = UI::GetScale();
-
     // Padding
 
     void VPadding(int y) {
         UI::PushStyleVar(UI::StyleVar::ItemSpacing, vec2(0, 0));
-        UI::Dummy(vec2(0, y * scale));
+        UI::Dummy(vec2(0, y * UI::GetScale()));
         UI::PopStyleVar();
     }
 
     void HPadding(int x) {
         UI::PushStyleVar(UI::StyleVar::ItemSpacing, vec2(0, 0));
         UI::SameLine();
-        UI::Dummy(vec2(x * scale, 0));
+        UI::Dummy(vec2(x * UI::GetScale(), 0));
         UI::SameLine();
         UI::PopStyleVar();
     }
@@ -66,7 +64,7 @@ namespace UI {
 
     void AlignTextToImage(const string &in text, UI::Font@ font) {
         float textHeight = Draw::MeasureString(text, font, font.FontSize).y + 6; // MeasureString is a little off
-        float difference = ((PluginSettings::RMC_ImageSize * 2 * scale) - textHeight) * 0.5;
+        float difference = ((PluginSettings::RMC_ImageSize * 2 * UI::GetScale()) - textHeight) * 0.5;
 
         UI::SetCursorPos(UI::GetCursorPos() + vec2(0, difference));
 
@@ -100,7 +98,7 @@ namespace UI {
         vec2 text = Draw::MeasureString(label);
         vec2 padding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding);
 
-        return text + padding;
+        return text + padding * 2;
     }
 
     bool FlexButton(const string &in label) {
@@ -212,11 +210,11 @@ namespace UI {
     UI::Texture@ PredatorTexture = UI::LoadTexture("src/Assets/Images/Predator.png");
     UI::Texture@ LevlupTexture = UI::LoadTexture("src/Assets/Images/Levlup.png");
 
-    array<UI::Texture@> sponsorsTextures = { PredatorTexture, LevlupTexture };
+    const array<UI::Texture@> sponsorsTextures = { PredatorTexture, LevlupTexture };
     uint textureIndex = 0;
     int lastUpdate = Time::Stamp;
-    int sponsorDuration = 30;
-    int endDate = Time::ParseFormatString("%FT%T", '2025-10-31T22:59:59');
+    const int sponsorDuration = 30;
+    const int endDate = Time::ParseFormatString("%FT%T", '2025-10-31T22:59:59');
 
     void RotatingSponsor() {
         if (Time::Stamp > endDate) {

@@ -134,7 +134,7 @@ namespace PluginSettings {
 
             HideWithGameUI = UI::Checkbox("Show/Hide with game UI", HideWithGameUI);
             HideWithOP = UI::Checkbox("Show/Hide with Openplanet overlay", HideWithOP);
-            CloseOverlayOnMapLoad = UI::Checkbox("Close Openplanet overlay on map loading", CloseOverlayOnMapLoad);
+            CloseOverlayOnMapLoad = UI::Checkbox("Hide Openplanet overlay on map loading", CloseOverlayOnMapLoad);
 
             UI::PaddedHeaderSeparator("Game modes");
 

@@ -12,7 +12,6 @@ namespace MX {
         return (mapUpdatedDate <= toDate && mapUpdatedDate >= fromDate);
     }
 
-
     MX::MapInfo@ GetRandomMap(bool customParameters = false) {
         string URL = CreateQueryURL(customParameters);
         Json::Value res;

@@ -449,7 +449,7 @@ class RMT : RMC {
 
             UI::ListClipper clipper(m_playerScores.Length);
             while (clipper.Step()) {
-                for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++) {
+                for (int i = clipper.DisplayStart; i < Math::Min(m_playerScores.Length, clipper.DisplayEnd); i++) {
                     UI::TableNextRow();
                     UI::PushID("RMTScore"+i);
                     RMTPlayerScore@ s = m_playerScores[i];

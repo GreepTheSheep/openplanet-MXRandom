@@ -716,7 +716,7 @@ class RMC {
     }
 
     uint get_BelowGoalTime() {
-        if (InCurrentMap()) {
+        if (ModeHasBelowMedal && InCurrentMap()) {
             Medals belowMedal = Medals(RunConfig.GoalMedal - 1);
 
             if (RunConfig.CalculateMedals && currentMap.IsMedalEdited(belowMedal)) {

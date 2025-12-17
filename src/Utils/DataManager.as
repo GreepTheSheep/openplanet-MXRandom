@@ -9,7 +9,7 @@ namespace DataManager {
         "TotalTime",
         "GotBelowMedal",
         "GotGoalMedal",
-        "FreeSkipsUsed",
+        "FreeSkipsUsed"
     };
 
     const array<Json::Type> requiredTypesOfKeys = {
@@ -22,7 +22,7 @@ namespace DataManager {
         Json::Type::Number,
         Json::Type::Boolean,
         Json::Type::Boolean,
-        Json::Type::Number,
+        Json::Type::Number
     };
 
     void CheckData() {

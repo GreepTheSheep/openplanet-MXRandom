@@ -43,7 +43,7 @@ namespace MX {
                 }
             } catch {
                 Log::Error("An error occurred while fetching the maps from mappack ID #" + mappackId + ": " + getExceptionInfo(), true);
-                return array<MapInfo@>();
+                return {};
             }
         }
 
