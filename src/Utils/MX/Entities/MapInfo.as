@@ -31,11 +31,11 @@ namespace MX {
                 MapId = json["MapId"];
                 MapUid = json["MapUid"];
                 if (json["OnlineMapId"].GetType() != Json::Type::Null) OnlineMapId = json["OnlineMapId"];
-                Name = json["Name"];
+                Name = Format::GbxText(json["Name"]);
                 MapType = json["MapType"];
                 ExeBuild = json["Exebuild"];
                 UploadedAt = json["UploadedAt"];
-                if (json["GbxMapName"].GetType() != Json::Type::Null) GbxMapName = json["GbxMapName"];
+                if (json["GbxMapName"].GetType() != Json::Type::Null) GbxMapName = Format::GbxText(json["GbxMapName"]);
                 if (json["TitlePack"].GetType() != Json::Type::Null) TitlePack = json["TitlePack"];
                 AwardCount = json["AwardCount"];
                 ServerSizeExceeded = json["ServerSizeExceeded"];
