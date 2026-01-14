@@ -8,18 +8,21 @@ namespace PluginSettings {
     [Setting hidden]
     VirtualKey S_WindowToggle = VirtualKey(0);
 
-    bool DetectingQuickMapKey = false;
-    bool DetectingQuickMapFiltersKey = false;
-    bool DetectingWindowKey = false;
+    enum HotkeySetting {
+        None,
+        Quick_Map,
+        Quick_Map_Filters,
+        Window
+    }
+
+    HotkeySetting DetectingSetting = HotkeySetting::None;
 
     bool get_ListeningForKey() {
-        return DetectingQuickMapKey || DetectingQuickMapFiltersKey || DetectingWindowKey;
+        return DetectingSetting != HotkeySetting::None;
     }
 
     void StopListeningForKey() {
-        DetectingQuickMapKey = false;
-        DetectingQuickMapFiltersKey = false;
-        DetectingWindowKey = false;
+        DetectingSetting = HotkeySetting::None;
     }
 
     [SettingsTab name="Hotkeys" order="3" icon="KeyboardO"]
@@ -37,10 +40,10 @@ namespace PluginSettings {
 
         UI::BeginDisabled(ListeningForKey);
 
-        if (DetectingQuickMapKey) {
+        if (DetectingSetting == HotkeySetting::Quick_Map) {
             UI::Text("Press a key");
         } else if (UI::GreyButton("Detect##QuickMap")) {
-            DetectingQuickMapKey = true;
+            DetectingSetting = HotkeySetting::Quick_Map;
         }
 
         UI::EndDisabled();
@@ -51,10 +54,10 @@ namespace PluginSettings {
 
         UI::BeginDisabled(ListeningForKey);
 
-        if (DetectingQuickMapFiltersKey) {
+        if (DetectingSetting == HotkeySetting::Quick_Map_Filters) {
             UI::Text("Press a key");
         } else if (UI::GreyButton("Detect##QuickMapFilters")) {
-            DetectingQuickMapFiltersKey = true;
+            DetectingSetting = HotkeySetting::Quick_Map_Filters;
         }
 
         UI::EndDisabled();
@@ -65,10 +68,10 @@ namespace PluginSettings {
 
         UI::BeginDisabled(ListeningForKey);
 
-        if (DetectingWindowKey) {
+        if (DetectingSetting == HotkeySetting::Window) {
             UI::Text("Press a key");
         } else if (UI::GreyButton("Detect##Window")) {
-            DetectingWindowKey = true;
+            DetectingSetting = HotkeySetting::Window;
         }
 
         UI::EndDisabled();
@@ -127,12 +130,16 @@ namespace PluginSettings {
 
         RemoveHotkey(key);
 
-        if (DetectingQuickMapKey) {
-            S_QuickMapKey = key;
-        } else if (DetectingQuickMapFiltersKey) {
-            S_QuickMapFiltersKey = key;
-        } else if (DetectingWindowKey) {
-            S_WindowToggle = key;
+        switch (DetectingSetting) {
+            case HotkeySetting::Quick_Map:
+                S_QuickMapKey = key;
+                break;
+            case HotkeySetting::Quick_Map_Filters:
+                S_QuickMapFiltersKey = key;
+                break;
+            case HotkeySetting::Window:
+                S_WindowToggle = key;
+                break;
         }
 
         StopListeningForKey();
