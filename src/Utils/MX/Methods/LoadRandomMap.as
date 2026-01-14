@@ -270,6 +270,8 @@ namespace MX {
                 if (PluginSettings::MaxLength != 0) {
                     params.Set("authortimemax", tostring(PluginSettings::MaxLength));
                 }
+            } else {
+                params.Set("authortimemax", tostring(RMC::config.length));
             }
 
             if (PluginSettings::UseDateInterval) {
@@ -323,11 +325,8 @@ namespace MX {
                 params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
             }
 
-            if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
-                if (!PluginSettings::UseCustomLength) {
-                    params.Set("authortimemax", tostring(RMC::config.length));
-                }
 #if TMNEXT
+            if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
                 if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps || RMC::currentRun.RunConfig.SkipUnbeatenMedals) {
                     if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
                         params.Set("inhasrecord", "1");
@@ -337,9 +336,9 @@ namespace MX {
             }
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
+            params.Set("authortimemax", tostring(RMC::config.length));
 
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
-                params.Set("authortimemax", tostring(RMC::config.length));
                 params.Set("authortimemin", "50");
 
                 // avoids broken uploads, maps not available yet in other APIs, and maps targeting runs
