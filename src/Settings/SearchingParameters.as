@@ -212,7 +212,7 @@ namespace PluginSettings {
         UI::PaddedHeaderSeparator("Map");
 
         UI::SetItemText("Map Name Filter:");
-        MapName = UI::InputText("##MapName", MapName, false);
+        MapName = UI::InputText("##MapName", MapName);
 
         if (MapName != "" && UI::ResetButton()) {
             MapName = "";
@@ -220,7 +220,7 @@ namespace PluginSettings {
 
         UI::SetItemText("Map Author Filter:", 300, inSameLine);
 
-        MapAuthor = UI::InputText("##AuthorFilter", MapAuthor, false);
+        MapAuthor = UI::InputText("##AuthorFilter", MapAuthor);
 
         if (MapAuthor != "" && UI::ResetButton()) {
             MapAuthor = "";
@@ -229,7 +229,7 @@ namespace PluginSettings {
         if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
 
         UI::SetItemText("Excluded term(s):");
-        ExcludedTerms = UI::InputText("##ExcludedTerms", ExcludedTerms, false);
+        ExcludedTerms = UI::InputText("##ExcludedTerms", ExcludedTerms);
         UI::SettingDescription("Filter out maps that contain specific words/phrases in their name.\nFor example, you can filter out \"slop\", \"yeet\", or \"random generated\".\n\nWhen filtering multiple terms, they must be comma-separated.");
 
         if (ExcludedTerms != "" && UI::ResetButton()) {
@@ -243,7 +243,7 @@ namespace PluginSettings {
 
         UI::SetItemText("Excluded Author(s):", 300, inSameLine);
 
-        ExcludedAuthors = UI::InputText("##ExcludedAuthors", ExcludedAuthors, false);
+        ExcludedAuthors = UI::InputText("##ExcludedAuthors", ExcludedAuthors);
         UI::SettingDescription("Exclude authors by their MX username.\n\nWhen filtering multiple authors, they must be comma-separated.");
 
         if (ExcludedAuthors != "" && UI::ResetButton()) {

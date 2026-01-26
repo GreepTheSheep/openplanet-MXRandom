@@ -115,11 +115,11 @@ namespace RMC {
                     }
 #endif
 
-                    UI::SetItemText("Club ID:", 200);
-                    PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), false, UI::InputTextFlags::CharsDecimal));
+                UI::SetItemText("Club ID:", -1);
+                PluginSettings::RMC_Together_ClubId = Text::ParseInt(UI::InputText("##RMTSetClubID", tostring(PluginSettings::RMC_Together_ClubId), UI::InputTextFlags::CharsDecimal));
 
-                    UI::SetItemText("Room ID:", 200);
-                    PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), false, UI::InputTextFlags::CharsDecimal));
+                UI::SetItemText("Room ID:", -1);
+                PluginSettings::RMC_Together_RoomId = Text::ParseInt(UI::InputText("##RMTSetRoomID", tostring(PluginSettings::RMC_Together_RoomId), UI::InputTextFlags::CharsDecimal));
 
                     UI::BeginDisabled(PluginSettings::RMC_Together_ClubId == 0 || PluginSettings::RMC_Together_RoomId == 0 || MXNadeoServicesGlobal::isCheckingRoom);
 
