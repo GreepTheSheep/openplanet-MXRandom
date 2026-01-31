@@ -8,7 +8,7 @@ class MX2MigrationWizardModalDialog : ModalDialog {
 
     MX2MigrationWizardModalDialog() {
         super(MX_COLOR_STR + Icons::Random + " \\$zMX 2.0 Migration Wizard");
-        m_size = vec2(Draw::GetWidth() / 3, Draw::GetHeight() / 3);
+        m_size = vec2(Display::GetWidth() / 3, Display::GetHeight() / 3);
     }
 
     void RenderStep1() {

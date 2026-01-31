@@ -6,7 +6,7 @@ class RMCRulesModalDialog : ModalDialog {
 
     RMCRulesModalDialog() {
         super(MX_COLOR_STR + Icons::Book + " \\$zRandom Map Challenge Rules");
-        m_size = vec2(Draw::GetWidth() / 2, 600);
+        m_size = vec2(Display::GetWidth() / 2, 600);
         StartRulesRequest();
     }
 
@@ -72,7 +72,7 @@ class RMCRulesModalDialog : ModalDialog {
     }
 
     void StartRulesRequest() {
-        string url = "https://openplanet.dev/plugin/mxrandom/config/user-rules";
+        string url = "https://api.openplanet.dev/plugin/mxrandom/config/user-rules";
         @m_request = API::Get(url);
     }
 

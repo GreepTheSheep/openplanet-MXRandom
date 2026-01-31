@@ -7,7 +7,7 @@ class DataMigrationWizardModalDialog : ModalDialog {
 
     DataMigrationWizardModalDialog() {
         super(MX_COLOR_STR + Icons::Random + " \\$zData Migration Wizard");
-        m_size = vec2(Draw::GetWidth()/2, Draw::GetHeight()/2);
+        m_size = vec2(Display::GetWidth()/2, Display::GetHeight()/2);
     }
 
     void RenderStep1() {

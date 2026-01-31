@@ -39,7 +39,7 @@ namespace RMC {
 
     void FetchConfig() {
         Log::Trace("Fetching RMC configs from openplanet.dev...");
-        string url = "https://openplanet.dev/plugin/mxrandom/config/rmc-config";
+        string url = "https://api.openplanet.dev/plugin/mxrandom/config/rmc-config";
         Json::Value json = API::GetAsync(url);
 
         @config = RMCConfig(json);

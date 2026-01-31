@@ -1,7 +1,7 @@
 namespace UI {
     void MXThumbnailTooltip(CachedImage@ img, float resize = 0.25) {
         if (UI::BeginItemTooltip()) {
-            float width = Draw::GetWidth() * resize;
+            float width = Display::GetWidth() * resize;
 
             if (img.m_texture !is null) {
                 vec2 thumbSize = img.m_texture.GetSize();

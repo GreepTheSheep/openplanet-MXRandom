@@ -41,7 +41,7 @@ namespace UI {
 
     void CenteredText(const string &in text, bool disabled = false) {
         UI::AlignTextToFramePadding();
-        float textWidth = Draw::MeasureString(text).x;
+        float textWidth = UI::MeasureString(text).x;
         UI::CenterAlign(textWidth);
 
         if (disabled) UI::TextDisabled(text);
@@ -63,7 +63,7 @@ namespace UI {
     }
 
     void AlignTextToImage(const string &in text, UI::Font@ font) {
-        float textHeight = Draw::MeasureString(text, font, font.FontSize).y + 6; // MeasureString is a little off
+        float textHeight = UI::MeasureString(text, font, font.FontSize).y + 6; // MeasureString is a little off
         float difference = ((PluginSettings::RMC_ImageSize * 2 * UI::GetScale()) - textHeight) * 0.5;
 
         UI::SetCursorPos(UI::GetCursorPos() + vec2(0, difference));
@@ -81,7 +81,7 @@ namespace UI {
             UI::Text(text);
             UI::SameLine();
 
-            float itemWidth = Math::Max(-1, width - Draw::MeasureString(text).x);
+            float itemWidth = Math::Max(-1, width - UI::MeasureString(text).x);
             UI::SetNextItemWidth(itemWidth);
         }
     }
@@ -95,7 +95,7 @@ namespace UI {
     // Buttons
 
     vec2 MeasureButton(const string &in label) {
-        vec2 text = Draw::MeasureString(label);
+        vec2 text = UI::MeasureString(label);
         vec2 padding = UI::GetStyleVarVec2(UI::StyleVar::FramePadding);
 
         return text + padding * 2;
@@ -149,7 +149,7 @@ namespace UI {
     uint scrollingTimeEnd = 0;
 
     void ScrollingText(const string &in text) {
-        vec2 size = Draw::MeasureString(text);
+        vec2 size = UI::MeasureString(text);
         vec2 region = UI::GetContentRegionAvail().x; 
 
         if (size.x < region.x) {
