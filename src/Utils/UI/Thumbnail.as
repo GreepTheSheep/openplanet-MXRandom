@@ -16,8 +16,6 @@ namespace UI {
 
             if (!img.m_error) {
                 UI::Text(Icons::AnimatedHourglass + " Loading Thumbnail...");
-            } else if (img.m_unsupportedFormat) {
-                UI::Text(Icons::FileImageO + "\\$z Unsupported file format WEBP");
             } else if (img.m_notFound) {
                 UI::Text("\\$fc0" + Icons::ExclamationTriangle + "\\$z Thumbnail not found");
             } else {
