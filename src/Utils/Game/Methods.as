@@ -40,10 +40,8 @@ namespace TM {
         string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
 
 #if TMNEXT
-        string nadeoUrl = TM::GetMapUrl(map.MapUid);
-
-        if (nadeoUrl != "") {
-            url = nadeoUrl;
+        if (map.OnlineMapId != "") {
+            url = "https://core.trackmania.nadeo.live/maps/" + map.OnlineMapId + "/file";
         } else if (PluginSettings::RMC_Xertrov_API_Download) {
             url = "https://map-monitor.xk.io/mapgbx/" + map.MapId;
         }
