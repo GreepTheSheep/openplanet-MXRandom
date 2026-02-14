@@ -803,7 +803,9 @@ class RMC {
             sleep(2000);
         }
 
-        Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
+        if (nextMap !is null) {
+            Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
+        }
     }
 
     void SwitchMap() {
