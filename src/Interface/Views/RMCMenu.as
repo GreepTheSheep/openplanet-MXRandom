@@ -63,7 +63,6 @@ namespace RMC {
 
         UI::SetItemText("Category:", -1);
         if (UI::BeginCombo("##CategorySelect", tostring(PluginSettings::SelectedCategory).Replace("_", " "))) {
-
             for (uint i = 0; i <= Category::Custom; i++) {
                 UI::PushID("CategoryButton" + i);
 
@@ -270,7 +269,6 @@ namespace RMC {
     }
 
     void RenderRunStats() {
-
         if (
             currentRun.GoalMedalCount > 0 ||
             currentRun.BelowMedalCount > 0 ||

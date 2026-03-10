@@ -42,7 +42,6 @@ class RunSettingsModalDialog : ModalDialog {
 
             UI::SetItemText(Icons::ThLarge + " Category: ", 250);
             if (UI::BeginCombo("##CategorySelect", tostring(PluginSettings::SelectedCategory).Replace("_", " "))) {
-
                 for (uint i = 0; i <= RMC::Category::Custom; i++) {
                     UI::PushID("CategoryButton" + i);
 

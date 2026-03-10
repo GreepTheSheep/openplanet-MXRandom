@@ -471,9 +471,9 @@ class RMC {
 
                             for (uint i = 0; i < tagsRender; i++) {
                                 if (tagsRender > 1 && i == tagsRender - 1) {
-                                    float buttonWidth = UI::MeasureButton(currentMap.Tags[i].Name).x;
+                                    float tagWidth = UI::MeasureButton(currentMap.Tags[i].Name).x;
 
-                                    if (buttonWidth >= UI::GetContentRegionAvail().x) {
+                                    if (tagWidth >= UI::GetContentRegionAvail().x) {
                                         UI::NewLine();
                                     }
                                 }

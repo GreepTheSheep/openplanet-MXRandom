@@ -1,5 +1,5 @@
 namespace TM {
-    const uint COOLDOWN = 5000;
+    const uint COOLDOWN = 2500;
     array<uint> royalTimes = { 0, 0, 0, 0 };
     dictionary downloadUrls = {};
 
