@@ -332,8 +332,8 @@ namespace MX {
                         params.Set("inhasrecord", "1");
                     }
                 }
-#endif
             }
+#endif
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
             params.Set("authortimemax", tostring(RMC::config.length));
