@@ -84,22 +84,29 @@ namespace TM {
 
         CGameCtnApp@ app = GetApp();
 
-        if (app.LocalPlayerInfo is null || app.LocalPlayerInfo.Login == "") {
+        if (app.LocalPlayerInfo is null || app.LocalPlayerInfo.Name == "") {
             return false;
         }
 
-        string accountLogin = app.LocalPlayerInfo.Login;
+        string playerName = app.LocalPlayerInfo.Name;
 
-        auto mgr = GetGhostClipsMgr(app);
+        array<CGameGhostScript@> loadedGhosts = GetGhosts();
 
-        if (mgr is null) {
-            return false;
+        bool hasClones;
+
+        if (app.RootMap.MapInfo !is null) {
+            hasClones = app.RootMap.MapInfo.TMObjective_NbClones > 0;
         }
 
-        for (uint i = 0; i < mgr.Ghosts.Length; i++) {
-            CGameCtnGhost@ ghost = mgr.Ghosts[i].GhostModel;
-            
-            if (accountLogin != ghost.GhostLogin) {
+        for (uint i = 0; i < loadedGhosts.Length; i++) {
+            if (hasClones && i == 0) {
+                continue;
+            }
+
+            CGameGhostScript@ ghost = loadedGhosts[i];
+            string ghostName = ghost.Nickname;
+
+            if (playerName.ToLower() != ghostName.ToLower() && !ghostName.Contains("$7FA") && !ghostName.ToLower().Contains("personal best")) {
                 return true;
             }
         }
@@ -108,13 +115,24 @@ namespace TM {
         return false;
     }
 
-    // from Ghosts++ by Xertrov https://openplanet.dev/plugin/ghosts-pp
 #if TMNEXT
-    NGameGhostClips_SMgr@ GetGhostClipsMgr(CGameCtnApp@ app) {
-        if (app.GameScene is null) return null;
-        auto nod = Dev::GetOffsetNod(app.GameScene, 0x120);
-        if (nod is null) return null;
-        return Dev::ForceCast<NGameGhostClips_SMgr@>(nod).Get();
+    array<CGameGhostScript@> GetGhosts() {
+        auto app = GetApp();
+
+        if (app.PlaygroundScript is null || app.PlaygroundScript.DataFileMgr is null) {
+            return {};
+        }
+
+        CGameDataFileManagerScript@ dataManager = app.PlaygroundScript.DataFileMgr;
+        array<CGameGhostScript@> ghosts;
+
+        for (uint i = 0; i < dataManager.Ghosts.Length; i++) {
+            if (dataManager.Ghosts[i] !is null) {
+                ghosts.InsertLast(dataManager.Ghosts[i]);
+            }
+        }
+
+        return ghosts;
     }
 #endif
 
