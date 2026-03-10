@@ -789,6 +789,11 @@ class RMC {
             @nextMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
             if (nextMap !is null) {
+                if (currentMap !is null && currentMap == nextMap) {
+                    sleep(2000);
+                    continue;
+                }
+
                 if (RunConfig.SkipDuplicateMaps) {
                     if (playedMaps.Find(nextMap) != -1) {
                         Log::Trace("Map has been played already, skipping...");
