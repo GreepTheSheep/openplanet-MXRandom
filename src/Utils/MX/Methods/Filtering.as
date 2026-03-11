@@ -15,7 +15,7 @@ namespace MX {
         for (uint i = 0; i < names.Length; i++) {
             string name = names[i];
 
-            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?RM[CST]|RMCF", Regex::Flags::CaseInsensitive)) {
+            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?(RM[CST]?|.*?AT)|RMCF", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map contains the word RMC, RMS, or RMT.");
                 return true;
             }
@@ -33,7 +33,7 @@ namespace MX {
             }
 
             if (map.AwardCount < 5) {
-                if (Regex::Contains(name, "Generator|Generated|Random map|BPM - Random|\\b(RMM|RMG|R?TGE|RTG)\\b", Regex::Flags::CaseInsensitive)) {
+                if (Regex::Contains(name, "Generator|Generated|random.*?gen|gen.*?random|Random map|BPM - Random|\\b(RMM|RMG|R?TGE|RTG)\\b", Regex::Flags::CaseInsensitive)) {
                     Log::Warn("Map is most likely randomly generated.");
                     return true;
                 }
