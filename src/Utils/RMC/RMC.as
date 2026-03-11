@@ -15,6 +15,7 @@ class RMC {
     bool IsRunning = false;
     bool IsStarting = false;
     bool IsSwitchingMap = false;
+    bool IsPreloading = false;
 
     // Map
     MX::MapInfo@ currentMap;
@@ -783,9 +784,17 @@ class RMC {
     }
 
     void PreloadNextMap() {
+        if (IsPreloading) {
+            return;
+        }
+
         Log::Trace("[PreloadNextMap] Preloading a new map.");
 
+        @nextMap = null;
+
         while (IsStarting || IsRunning) {
+            IsPreloading = true;
+
             @nextMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
             if (nextMap !is null) {
@@ -808,6 +817,8 @@ class RMC {
             sleep(2000);
         }
 
+        IsPreloading = false;
+
         if (nextMap !is null) {
             Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
         }
@@ -820,10 +831,14 @@ class RMC {
 
         yield(150);
 
-        if (nextMap is null) {
+        if (nextMap is null && !IsPreloading) {
             // Shouldn't happen normally
             Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
+        }
+
+        while (IsPreloading) {
+            yield();
         }
 
         Log::Trace("[SwitchMap] Switching map to " + nextMap.toString());

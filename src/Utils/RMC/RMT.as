@@ -164,9 +164,13 @@ class RMT : RMC {
         GotGoalMedal = false;
         GotBelowMedal = false;
         
-        if (nextMap is null) {
+        if (nextMap is null && !IsPreloading) {
             Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
+        }
+
+        while (IsPreloading) {
+            yield();
         }
 
         @currentMap = nextMap;
