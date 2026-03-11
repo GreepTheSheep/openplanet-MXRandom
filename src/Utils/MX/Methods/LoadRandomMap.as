@@ -251,7 +251,10 @@ namespace MX {
 #if TMNEXT
         params.Set("vehicle", "1,2,3,4"); // prevent loading CharacterPilot maps
 #elif MP4
-        if (TM::CurrentTitlePack() == "TMAll") {
+        // We only want to use the other compatible titlepacks if the player isn't requesting specific environments or vehicles
+        bool customEnvimix = customParameters && (PluginSettings::Environments != "" || PluginSettings::Vehicles != "");
+
+        if (TM::CurrentTitlePack() == "TMAll" && !customEnvimix) {
             int envi = Math::Rand(0, tmAllCompatibleTitlepacks.Length);
             params.Set("titlepack", tmAllCompatibleTitlepacks[envi]);
         } else {
@@ -306,6 +309,14 @@ namespace MX {
                 params.Set("difficulty", PluginSettings::Difficulties);
             }
 
+            if (PluginSettings::Environments != "") {
+                params.Set("environment", PluginSettings::Environments);
+            }
+
+            if (PluginSettings::Vehicles != "") {
+                params.Set("vehicle", PluginSettings::Vehicles);
+            }
+
             if (PluginSettings::MapAuthor != "") {
                 if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
                 params.Set("author", PluginSettings::MapAuthor);
@@ -326,6 +337,16 @@ namespace MX {
             }
 
 #if TMNEXT
+            if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
+                if (PluginSettings::MinRecords > 0) {
+                    params.Set("recsmin", tostring(PluginSettings::MinRecords));
+                }
+
+                if (PluginSettings::MaxRecords > 0) {
+                    params.Set("recsmax", tostring(PluginSettings::MaxRecords));
+                }
+            }
+
             if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
                 if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps || RMC::currentRun.RunConfig.SkipUnbeatenMedals) {
                     if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {

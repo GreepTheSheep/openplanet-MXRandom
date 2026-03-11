@@ -14,7 +14,7 @@ namespace MainUIView {
                 UI::CenteredText("\\$fc0" + Icons::ExclamationTriangle + " \\$z" + MX_NAME + " is not responding. It might be down.");
 
                 if (UI::CenteredButton("Retry")) {
-                    startnew(MX::FetchMapTags);
+                    startnew(MX::FetchAPIData);
                 }
             }
 

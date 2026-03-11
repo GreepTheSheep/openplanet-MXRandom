@@ -51,6 +51,11 @@ namespace MX {
         return maps;
     }
 
+    void FetchAPIData() {
+        FetchMapTags();
+        FetchVehicles();
+    }
+
     void FetchMapTags() {
         m_mapTags.RemoveRange(0, m_mapTags.Length);
         APIRefreshing = true;
@@ -77,6 +82,43 @@ namespace MX {
             APIDown = true;
             APIRefreshing = false;
         }
+    }
+
+    void FetchVehicles() {
+        m_vehicles.RemoveRange(0, m_vehicles.Length);
+
+#if TMNEXT
+        // TMNEXT doesn't support custom vehicles, so we can skip the API call
+        m_vehicles.InsertLast("CarSport");
+        m_vehicles.InsertLast("CarSnow");
+        m_vehicles.InsertLast("CarRally");
+        m_vehicles.InsertLast("CarDesert");
+#else
+        APIRefreshing = true;
+
+        try {
+            Json::Value res = API::GetAsync(PluginSettings::RMC_MX_Url + "/api/meta/vehicles");
+            
+            for (uint i = 0; i < res.Length; i++) {
+                if (res[i].GetType() != Json::Type::String || res[i] == "") {
+                    continue;
+                }
+
+                Log::Trace("[FetchVehicles] Loading vehicle " + string(res[i]));
+
+                m_vehicles.InsertLast(res[i]);
+            }
+
+            Log::Trace(m_vehicles.Length + " vehicles loaded");
+            APIDown = false;
+            APIRefreshing = false;
+        } catch {
+            Log::Warn("[FetchVehicles] Error while loading vehicles: " + getExceptionInfo());
+            Log::Error(MX_NAME + " API is not responding, it might be down.", true);
+            APIDown = true;
+            APIRefreshing = false;
+        }
+#endif
     }
 
     void GetImpossibleMaps() {

@@ -11,7 +11,7 @@ void RenderAboutTab() {
             UI::PopFont();
 
             if (UI::Button("Retry")) {
-                startnew(MX::FetchMapTags);
+                startnew(MX::FetchAPIData);
             }
         } else {
             UI::TextDisabled(Icons::AnimatedHourglass + " Loading...");

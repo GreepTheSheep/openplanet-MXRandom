@@ -11,7 +11,7 @@ void RenderMenu() {
             if (!MX::APIRefreshing) {
                 UI::Text("\\$fc0" + Icons::ExclamationTriangle + " \\$z" + MX_NAME + " is not responding. It might be down.");
                 if (UI::Button("Retry")) {
-                    startnew(MX::FetchMapTags);
+                    startnew(MX::FetchAPIData);
                 }
             } else {
                 UI::TextDisabled(Icons::AnimatedHourglass + " Loading...");
@@ -130,7 +130,7 @@ void Main() {
     DataManager::EnsureSaveFileFolderPresent();
     DataManager::ConvertSaves();
 
-    await(startnew(MX::FetchMapTags));
+    await(startnew(MX::FetchAPIData));
 
 #if TMNEXT
     startnew(MX::GetImpossibleMaps);

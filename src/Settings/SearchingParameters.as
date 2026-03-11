@@ -68,6 +68,20 @@ namespace PluginSettings {
     bool TagInclusiveSearch = false;
 
     [Setting hidden]
+    string Vehicles = "";
+    array<string> VehiclesArr = {};
+
+    [Setting hidden]
+    string Environments = "";
+    array<int> EnvironmentsArr = {};
+
+    [Setting hidden]
+    int MinRecords = 0;
+
+    [Setting hidden]
+    int MaxRecords = 0;
+
+    [Setting hidden]
     string Difficulties = "";
     array<int> DifficultiesArray = {};
 
@@ -91,12 +105,18 @@ namespace PluginSettings {
             MapName = "";
             ExcludedTerms = "";
             Difficulties = "";
+            Vehicles = "";
+            Environments = "";
             MapPackID = 0;
             MapTagsArr = {};
+            VehiclesArr = {};
+            EnvironmentsArr = {};
             MapAuthorNamesArr = {};
             ExcludedTermsArr = {};
             ExcludedAuthorsArr = {};
             DifficultiesArray = {};
+            MinRecords = 0;
+            MaxRecords = 0;
             TermsExactMatch = false;
             MapType = MapTypes::Race;
 #if TMNEXT
@@ -246,6 +266,8 @@ namespace PluginSettings {
             MapTagsArr = ConvertListToArray(MapTags);
             ExcludeMapTagsArr = ConvertListToArray(ExcludeMapTags);
             DifficultiesArray = ConvertListToArray(Difficulties);
+            EnvironmentsArr = ConvertListToArray(Environments);
+            VehiclesArr = ConvertStringToArray(Vehicles);
             initArrays = true;
         }
 
@@ -300,6 +322,119 @@ namespace PluginSettings {
         MapTags = ConvertArrayToList(MapTagsArr);
         ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
 
+#if TMNEXT
+        UI::PaddedHeaderSeparator("Vista / Vehicle");
+
+        UI::SetItemText("Vistas:", 250);
+#else
+        UI::PaddedHeaderSeparator("Environment / Vehicle");
+
+        UI::SetItemText("Environments:", 250);
+#endif
+
+        string enviText;
+        switch (EnvironmentsArr.Length) {
+            case 0: enviText = "Any"; break;
+            case 1: enviText = tostring(MX::Environments(EnvironmentsArr[0])).Replace("_", " "); break;
+            default: enviText = tostring(EnvironmentsArr.Length) + " selected"; break;
+        }
+
+        if (UI::BeginCombo("###EnvironmentFilter", enviText)) {
+            for (uint i = 1; i < MX::Environments::Last; i++) {
+                MX::Environments envi = MX::Environments(i);
+
+#if MP4
+                // Skip environments not available yet
+                if (envi >= MX::Environments::Rally && envi <= MX::Environments::Bay) {
+                    continue;
+                }
+#endif
+    
+                UI::PushID("EnvironmentBtn" + i);
+
+                bool inArray = EnvironmentsArr.Find(envi) != -1;
+
+                if (UI::Checkbox(tostring(envi).Replace("_", " "), inArray)) {
+                    if (!inArray) {
+                        EnvironmentsArr.InsertLast(envi);
+                    }
+                } else if (inArray) {
+                    EnvironmentsArr.RemoveAt(EnvironmentsArr.Find(envi));
+                }
+
+                UI::PopID();
+            }
+
+            UI::EndCombo();
+        }
+
+        Environments = ConvertArrayToList(EnvironmentsArr);
+
+        if (!EnvironmentsArr.IsEmpty() && UI::ResetButton()) {
+            EnvironmentsArr.RemoveRange(0, EnvironmentsArr.Length);
+        }
+
+        UI::SetItemText("Vehicles:", 250, inSameLine);
+
+        string vehicleText;
+        switch (VehiclesArr.Length) {
+            case 0: vehicleText = "Any"; break;
+            case 1: vehicleText = VehiclesArr[0]; break;
+            default: vehicleText = tostring(VehiclesArr.Length) + " selected"; break;
+        }
+
+        if (UI::BeginCombo("##VehicleFilter", vehicleText)) {
+            for (uint i = 0; i < MX::m_vehicles.Length; i++) {
+                string vehicleName = MX::m_vehicles[i];
+
+                UI::PushID("VehicleBtn" + i);
+
+                bool inArray = VehiclesArr.Find(vehicleName) != -1;
+
+                if (UI::Checkbox(vehicleName, inArray)) {
+                    if (!inArray) {
+                        VehiclesArr.InsertLast(vehicleName);
+                    }
+                } else if (inArray) {
+                    VehiclesArr.RemoveAt(VehiclesArr.Find(vehicleName));
+                }
+
+                UI::PopID();
+            }
+
+            UI::EndCombo();
+        }
+
+        if (!VehiclesArr.IsEmpty() && UI::ResetButton()) {
+            VehiclesArr.RemoveRange(0, VehiclesArr.Length);
+        }
+
+#if TMNEXT
+        UI::SettingDescription("\\$f90" + Icons::ExclamationTriangle + "\\$z This will filter by the base vehicle used by the map, it won't include maps that use car triggers instead.\n\nTo include those maps, consider filtering by tags instead.");
+#endif
+
+        Vehicles = string::Join(VehiclesArr, ",");
+
+#if TMNEXT
+        UI::PaddedHeaderSeparator("Records");
+
+        UI::SetItemText("Min:", 250);
+        MinRecords = UI::InputInt("##MinRecordsFilter", MinRecords, 0);
+        UI::SettingDescription("Minimum amount of online records on the map.\n\nNote: Count might be delayed / inaccurate depending on the map.");
+
+        if (MinRecords != 0 && UI::ResetButton()) {
+            MinRecords = 0;
+        }
+
+        UI::SetItemText("Max:", 250, inSameLine);
+        MaxRecords = UI::InputInt("##MaxRecordsFilter", MaxRecords, 0);
+        UI::SettingDescription("Maximum amount of online records on the map.\n\nNote: Count might be delayed / inaccurate depending on the map.");
+
+        if (MaxRecords != 0 && UI::ResetButton()) {
+            MaxRecords = 0;
+        }
+#endif
+
         UI::PaddedHeaderSeparator("Other");
 
         string difficultyText;
@@ -309,7 +444,7 @@ namespace PluginSettings {
             default: difficultyText = tostring(DifficultiesArray.Length) + " difficulties"; break;
         }
 
-        UI::SetItemText("Difficulties:", 200);
+        UI::SetItemText("Difficulties:", 250);
         if (UI::BeginCombo("###DifficultyFilter", difficultyText)) {
             for (uint i = 0; i <= MX::Difficulties::Impossible; i++) {
                 UI::PushID("DifficultyBtn" + i);
@@ -337,7 +472,7 @@ namespace PluginSettings {
         Difficulties = ConvertArrayToList(DifficultiesArray);
 
 #if TMNEXT
-        UI::SetItemText("Map Type:", 200);
+        UI::SetItemText("Map Type:", 250, inSameLine);
         if (UI::BeginCombo("##MapTypes", tostring(MapType))) {
             for (int i = 0; i < MapTypes::Last; i++) {
                 if (UI::Selectable(tostring(MapTypes(i)), MapType == MapTypes(i))) {
@@ -395,10 +530,9 @@ namespace PluginSettings {
             if (res[i] == "") {
                 res.RemoveAt(i);
             } else {
-                res[i] = res[i].ToLower().Trim();
+                res[i] = res[i].Trim();
             }
         }
         return res;
     }
-
 }
