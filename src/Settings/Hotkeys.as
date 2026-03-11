@@ -34,7 +34,7 @@ namespace PluginSettings {
             StopListeningForKey();
         }
 
-        RenderHotkeyCombo("Quick map hotkey", S_QuickMapKey);
+        RenderHotkeyCombo("Quick map hotkey", S_QuickMapKey, HotkeySetting::Quick_Map);
 
         UI::SameLine();
 
@@ -48,7 +48,7 @@ namespace PluginSettings {
 
         UI::EndDisabled();
 
-        RenderHotkeyCombo("Quick map (with filters) hotkey", S_QuickMapFiltersKey);
+        RenderHotkeyCombo("Quick map (with filters) hotkey", S_QuickMapFiltersKey, HotkeySetting::Quick_Map_Filters);
 
         UI::SameLine();
 
@@ -62,7 +62,7 @@ namespace PluginSettings {
 
         UI::EndDisabled();
 
-        RenderHotkeyCombo("Show/Hide RMC window hotkey", S_WindowToggle);
+        RenderHotkeyCombo("Show/Hide RMC window hotkey", S_WindowToggle, HotkeySetting::Window);
 
         UI::SameLine();
 
@@ -145,10 +145,12 @@ namespace PluginSettings {
         StopListeningForKey();
     }
 
-    void RenderHotkeyCombo(const string &in label, VirtualKey currentKey) {
+    void RenderHotkeyCombo(const string &in label, VirtualKey currentKey, HotkeySetting settingKey) {
         UI::SetNextItemWidth(175);
 
         if (UI::BeginCombo(label, GetKeyName(currentKey))) {
+            DetectingSetting = settingKey;
+
             for (int i = 0; i <= 254; i++) {
                 VirtualKey key = VirtualKey(i);
                 string keyName = GetKeyName(key);
@@ -171,6 +173,7 @@ namespace PluginSettings {
                 UI::EndDisabled();
             }
 
+            StopListeningForKey();
             UI::EndCombo();
         }
     }
