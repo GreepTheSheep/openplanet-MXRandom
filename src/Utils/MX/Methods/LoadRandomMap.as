@@ -318,12 +318,15 @@ namespace MX {
             }
 
             if (PluginSettings::MapAuthor != "") {
-                if (PluginSettings::MapAuthor.Contains(",")) PluginSettings::MapAuthor = PluginSettings::MapAuthor.Split(",")[0];
-                params.Set("author", PluginSettings::MapAuthor);
+                array<string> authors = PluginSettings::MapAuthor.Split(",");
+                int index = Math::Rand(0, authors.Length);
+                params.Set("author", authors[index]);
             }
 
             if (PluginSettings::MapName != "") {
-                params.Set("name", PluginSettings::MapName);
+                array<string> words = PluginSettings::MapName.Split(",");
+                int index = Math::Rand(0, words.Length);
+                params.Set("name", words[index]);
             }
 
             if (PluginSettings::MapPackID != 0) {

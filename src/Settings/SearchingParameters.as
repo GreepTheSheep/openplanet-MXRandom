@@ -213,6 +213,7 @@ namespace PluginSettings {
 
         UI::SetItemText("Map Name Filter:");
         MapName = UI::InputText("##MapName", MapName);
+        UI::SettingDescription("Search maps by their name. When using multiple keywords, they must be comma-separated.\n\n\\$f80" + Icons::ExclamationTriangle + " \\$zNote: All words will have the same weight!");
 
         if (MapName != "" && UI::ResetButton()) {
             MapName = "";
@@ -221,12 +222,11 @@ namespace PluginSettings {
         UI::SetItemText("Map Author Filter:", 300, inSameLine);
 
         MapAuthor = UI::InputText("##AuthorFilter", MapAuthor);
+        UI::SettingDescription("Search authors by their MX username. When filtering multiple authors, they must be comma-separated.\n\n\\$f80" + Icons::ExclamationTriangle + " \\$zNote: All authors will have the same weight, regardless of their map count on MX!");
 
         if (MapAuthor != "" && UI::ResetButton()) {
             MapAuthor = "";
         }
-
-        if (MapAuthor.Contains(",")) UI::TextWrapped("\\$f90" + Icons::ExclamationTriangle + " \\$z MX 2.0 doesn't support searching multiple authors yet. Only the first one will be included.");
 
         UI::SetItemText("Excluded term(s):");
         ExcludedTerms = UI::InputText("##ExcludedTerms", ExcludedTerms);
