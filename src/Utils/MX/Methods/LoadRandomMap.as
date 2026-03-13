@@ -73,6 +73,13 @@ namespace MX {
                 }
             }
 
+            RunSettings@ runConfig = RMC::currentRun.RunConfig;
+
+            if (!map.AuthorBeatable && runConfig.GoalMedal == Medals::Author) {
+                Log::Warn("Author time has been deemed unbeatable by the MX crew");
+                return null;
+            }
+
             if (IsMapImpossible(map)) {
                 Log::Warn("Map is part of the cheated/broken/impossible ATs mappack, skipping...");
                 return null;
@@ -83,7 +90,6 @@ namespace MX {
                 return null;
             }
 
-            RunSettings@ runConfig = RMC::currentRun.RunConfig;
 
             if (runConfig.FilterLowEffort && IsMapLowEffort(map)) {
                 Log::Warn("[GetRandomMap] Map is most likely low effort, skipping...");
@@ -110,6 +116,11 @@ namespace MX {
                     TM::SetWorldRecordToCache(map.MapUid, map.AuthorTime);
                 }
             } else if (runConfig.SkipUnbeatenMaps || runConfig.SkipUnbeatenMedals || runConfig.GoalMedal == Medals::WR) {
+                if (runConfig.SkipUnbeatenMedals && runConfig.GoalMedal == Medals::Author && !map.AuthorBeaten) {
+                    Log::Warn("[GetRandomMap] Author time is unbeaten, skipping...");
+                    return null;
+                }
+
                 // For Race and Stunt maps, get WR
                 int mapWorldRecord = MXNadeoServicesGlobal::GetMapWorldRecord(map.MapUid);
 
@@ -339,8 +350,10 @@ namespace MX {
                 params.Set("maptype", "TM_" + tostring(PluginSettings::MapType));
             }
 
+            bool supportsRecords = PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal;
+
+            if (supportsRecords) {
 #if TMNEXT
-            if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
                 if (PluginSettings::MinRecords > 0) {
                     params.Set("recsmin", tostring(PluginSettings::MinRecords));
                 }
@@ -348,16 +361,20 @@ namespace MX {
                 if (PluginSettings::MaxRecords > 0) {
                     params.Set("recsmax", tostring(PluginSettings::MaxRecords));
                 }
-            }
+#endif
 
-            if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
-                if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps || RMC::currentRun.RunConfig.SkipUnbeatenMedals) {
-                    if (PluginSettings::MapType != MapTypes::Platform && PluginSettings::MapType != MapTypes::Royal) {
+                if (RMC::currentRun.IsRunning || RMC::currentRun.IsStarting) {
+                    if (RMC::currentRun.RunConfig.SkipUnbeatenMedals && RMC::currentRun.RunConfig.GoalMedal == Medals::Author) {
+                        params.Set("inauthortimebeaten", "1");
+                    }
+
+#if TMNEXT
+                    if (RMC::currentRun.RunConfig.GoalMedal == Medals::WR || RMC::currentRun.RunConfig.SkipUnbeatenMaps || RMC::currentRun.RunConfig.SkipUnbeatenMedals) {
                         params.Set("inhasrecord", "1");
                     }
+#endif
                 }
             }
-#endif
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
             params.Set("authortimemax", tostring(RMC::config.length));
@@ -375,6 +392,10 @@ namespace MX {
                     params.Set("inhasrecord", "1");
                 }
 #endif
+
+                if (RMC::currentRun.RunConfig.SkipUnbeatenMedals && RMC::currentRun.RunConfig.GoalMedal == Medals::Author) {
+                    params.Set("inauthortimebeaten", "1");
+                }
 
                 switch (RMC::currentRun.RunConfig.Category) {
 #if TMNEXT

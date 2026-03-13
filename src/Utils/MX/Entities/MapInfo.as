@@ -22,6 +22,8 @@ namespace MX {
         int AwardCount;
         int Length;
         bool ServerSizeExceeded;
+        bool AuthorBeaten;
+        bool AuthorBeatable = true;
         array<MapTag@> Tags;
         Json::Value@ jsonCache;
         PrepatchMapTag@ PrepatchTag;
@@ -42,6 +44,9 @@ namespace MX {
 
                 if (json.HasKey("PlayedAt") && json["PlayedAt"].GetType() != Json::Type::Null) PlayedAt = json["PlayedAt"];
                 else PlayedAt = Time::Stamp;
+
+                AuthorBeaten = json.Get("AuthorBeaten", AuthorBeaten);
+                AuthorBeatable = json.Get("AuthorBeatable", AuthorBeatable);
 
                 if (json["UpdatedAt"].GetType() != Json::Type::Null) {
                     UpdatedAt = json["UpdatedAt"];
@@ -138,6 +143,8 @@ namespace MX {
                 json["AwardCount"] = AwardCount;
                 json["ServerSizeExceeded"] = ServerSizeExceeded;
                 json["Length"] = Length;
+                json["AuthorBeatable"] = AuthorBeatable;
+                json["AuthorBeaten"] = AuthorBeaten;
 
                 Json::Value uploaderObject = Json::Object();
                 uploaderObject["UserId"] = UserId;

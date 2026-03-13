@@ -25,22 +25,22 @@ const string GITHUB_REPO_FULLNAME       = "GreepTheSheep/openplanet-mx-random";
 const string GITHUB_URL                 = "https://github.com/" + GITHUB_REPO_FULLNAME;
 
 enum MapTypes {
-	Race,
-	Stunt,
-	Platform,
-	Royal,
-	Last
+    Race,
+    Stunt,
+    Platform,
+    Royal,
+    Last
 }
 
 enum Medals {
-	Bronze,
-	Silver,
-	Gold,
-	Author,
+    Bronze,
+    Silver,
+    Gold,
+    Author,
 #if TMNEXT
-	WR,
+    WR,
 #endif
-	Last
+    Last
 }
 
 #if FORCE_NO_DEV
@@ -58,25 +58,27 @@ Json::Value DataJsonFromDataFolder      = Json::FromFile(DATA_JSON_LOCATION_DATA
 const string MX_V1_BACKUP_LOCATION      = IO::FromStorageFolder("Old/");
 
 const array<string> MAP_FIELDS_ARRAY = {
-	"MapId",
-	"MapUid",
-	"OnlineMapId",
-	"Uploader.UserId",
-	"Uploader.Name",
-	"MapType",
-	"UploadedAt",
-	"UpdatedAt",
-	"Name",
-	"GbxMapName",
-	"TitlePack",
-	"Length",
-	"Medals.Author",
-	"Medals.Gold",
-	"Medals.Silver",
-	"Medals.Bronze",
-	"AwardCount",
-	"ServerSizeExceeded",
-	"Tags",
-	"Exebuild"
+    "MapId",
+    "MapUid",
+    "OnlineMapId",
+    "Uploader.UserId",
+    "Uploader.Name",
+    "MapType",
+    "UploadedAt",
+    "UpdatedAt",
+    "Name",
+    "GbxMapName",
+    "TitlePack",
+    "Length",
+    "Medals.Author",
+    "Medals.Gold",
+    "Medals.Silver",
+    "Medals.Bronze",
+    "AwardCount",
+    "ServerSizeExceeded",
+    "Tags",
+    "Exebuild",
+    "AuthorBeaten",
+    "AuthorBeatable"
 };
 const string MAP_FIELDS = string::Join(MAP_FIELDS_ARRAY, ",");
