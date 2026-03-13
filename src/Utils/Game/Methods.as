@@ -106,6 +106,22 @@ namespace TM {
             return false;
         }
 
+#if DEPENDENCY_GHOSTS_PP
+        string accountLogin = app.LocalPlayerInfo.Login;
+        NGameGhostClips_SMgr@ manager = Ghosts_PP::GetGhostClipsMgr(app);
+
+        if (manager is null || accountLogin == "") {
+            return false;
+        }
+
+        for (uint i = 0; i < manager.Ghosts.Length; i++) {
+            CGameCtnGhost@ ghost = manager.Ghosts[i].GhostModel;
+            
+            if (accountLogin != ghost.GhostLogin) {
+                return true;
+            }
+        }
+#else
         string playerName = app.LocalPlayerInfo.Name;
 
         array<CGameGhostScript@> loadedGhosts = GetGhosts();
@@ -128,6 +144,7 @@ namespace TM {
                 return true;
             }
         }
+#endif
 #endif
 
         return false;
