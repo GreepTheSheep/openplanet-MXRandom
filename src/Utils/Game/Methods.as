@@ -2,67 +2,85 @@ namespace TM {
     const uint COOLDOWN = 2500;
     array<uint> royalTimes = { 0, 0, 0, 0 };
     dictionary downloadUrls = {};
+    bool loadingMap;
+
+    bool get_IsLoadingMap() {
+        return loadingMap;
+    }
 
     void LoadMap(ref@ mapData) {
+        try {
 #if TMNEXT
-        if (!Permissions::PlayLocalMap()) {
-            Log::Error("Missing permission to play local maps. Club / Standard access is required.", true);
-            return;
-        }
+            if (!Permissions::PlayLocalMap()) {
+                Log::Error("Missing permission to play local maps. Club / Standard access is required.", true);
+                return;
+            }
 #elif MP4
-        if (TM::CurrentTitlePack() == "") {
-            Log::Error("No titlepack is selected, can't load map!.", true);
-            return;
-        }
+            if (TM::CurrentTitlePack() == "") {
+                Log::Error("No titlepack is selected, can't load map!.", true);
+                return;
+            }
 #endif
 
-        MX::MapInfo@ map = cast<MX::MapInfo>(mapData);
+            if (IsLoadingMap) {
+                return;
+            }
 
-        if (PluginSettings::CloseOverlayOnMapLoad) UI::HideOverlay();
+            loadingMap = true;
+
+            MX::MapInfo@ map = cast<MX::MapInfo>(mapData);
+
+            if (PluginSettings::CloseOverlayOnMapLoad) UI::HideOverlay();
 #if TMNEXT
-        ClosePauseMenu();
+            ClosePauseMenu();
 #endif
-        CTrackMania@ app = cast<CTrackMania>(GetApp());
-        app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
+            CTrackMania@ app = cast<CTrackMania>(GetApp());
+            app.BackToMainMenu(); // If we're on a map, go back to the main menu else we'll get stuck on the current map
 
-        while (app.Switcher.ModuleStack.Length == 0) {
-            yield();
-        }
+            while (app.Switcher.ModuleStack.Length == 0) {
+                yield();
+            }
 
 #if DEPENDENCY_MLHOOK
-        MLHook::Queue_Menu_SendCustomEvent("Router_Push", {"/home", "{}", "{}"});
+            MLHook::Queue_Menu_SendCustomEvent("Router_Push", {"/home", "{}", "{}"});
 #endif
 
-        while (!app.ManiaTitleControlScriptAPI.IsReady) {
-            yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
-        }
+            while (!app.ManiaTitleControlScriptAPI.IsReady) {
+                yield(); // Wait until the ManiaTitleControlScriptAPI is ready for loading the next map
+            }
 
-        string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
+            string url = PluginSettings::RMC_MX_Url + "/mapgbx/" + map.MapId;
 
 #if TMNEXT
-        if (map.OnlineMapId != "") {
-            url = "https://core.trackmania.nadeo.live/maps/" + map.OnlineMapId + "/file";
-        } else if (PluginSettings::RMC_Xertrov_API_Download) {
-            url = "https://map-monitor.xk.io/mapgbx/" + map.MapId;
-        }
+            if (map.OnlineMapId != "") {
+                url = "https://core.trackmania.nadeo.live/maps/" + map.OnlineMapId + "/file";
+            } else if (PluginSettings::RMC_Xertrov_API_Download) {
+                url = "https://map-monitor.xk.io/mapgbx/" + map.MapId;
+            }
 #endif
 
-        string gameMode;
-        MX::ModesFromMapType.Get(map.MapType, gameMode);
+            string gameMode;
+            MX::ModesFromMapType.Get(map.MapType, gameMode);
 
 #if MP4
-        if (gameMode == "") MX::ModesFromTitlePack.Get(map.TitlePack, gameMode);
+            if (gameMode == "") MX::ModesFromTitlePack.Get(map.TitlePack, gameMode);
 #endif
 
-        Log::Info("[LoadMap] Loading " + map.toString());
-        Log::Info("[LoadMap] URL: " + url + ". Game mode: " + gameMode);
+            Log::Info("[LoadMap] Loading " + map.toString());
+            Log::Info("[LoadMap] URL: " + url + ". Game mode: " + gameMode);
 
-        app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
+            app.ManiaTitleControlScriptAPI.PlayMap(url, gameMode, "");
 
-        const uint start = Time::Now;
+            const uint start = Time::Now;
 
-        while (Time::Now < start + COOLDOWN || IsLoadingScreen()) {
-            yield();
+            while (Time::Now < start + COOLDOWN || IsLoadingScreen()) {
+                yield();
+            }
+
+            loadingMap = false;
+        } catch {
+            Log::Error("Error while loading map: " + getExceptionInfo(), true);
+            loadingMap = false;
         }
     }
 

@@ -494,9 +494,13 @@ class RMC {
                 UI::Text("\\$f30" + Icons::ExclamationTriangle + " \\$zLoaded map is not the one we got.");
                 UI::Text("Please return to the correct map.");
 
+                UI::BeginDisabled(TM::IsLoadingMap);
+
                 if (UI::Button("Return to map")) {
                     startnew(CoroutineFunc(ReturnToMap));
                 }
+
+                UI::EndDisabled();
 
                 UI::SameLine();
 
@@ -509,9 +513,13 @@ class RMC {
         } else if (!IsStarting) {
             UI::Separator();
 
+            UI::BeginDisabled(TM::IsLoadingMap);
+
             if (UI::Button("Return to map")) {
                 startnew(CoroutineFunc(ReturnToMap));
             }
+
+            UI::EndDisabled();
         }
     }
 
