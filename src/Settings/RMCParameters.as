@@ -163,7 +163,7 @@ namespace PluginSettings {
             UI::SettingDescription("Display a warning if the map has medal times that differ from the default formula.");
 
             UI::SetNextItemWidth(200);
-            RMC_TagsLength = UI::SliderInt("Tags displayed (0: hidden)", RMC_TagsLength, 0, 3);
+            RMC_TagsLength = UI::SliderInt("Tags displayed (0: hidden)", RMC_TagsLength, 0, 5);
 
             UI::EndDisabled();
 
