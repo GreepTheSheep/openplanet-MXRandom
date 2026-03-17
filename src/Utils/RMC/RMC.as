@@ -280,17 +280,19 @@ class RMC {
                 IsRunning = false;
                 RMC::ShowTimer = false;
 
-                if (GoalMedalCount != 0 || BelowMedalCount != 0 || GotBelowMedal || GotGoalMedal) {
-                    if (!PluginSettings::RMC_RUN_AUTOSAVE) {
-                        Renderables::Add(SaveRunQuestionModalDialog(this));
+                if (this.Mode == RMC::GameMode::Challenge || this.Mode == RMC::GameMode::Survival) {
+                    if (GoalMedalCount != 0 || BelowMedalCount != 0 || GotBelowMedal || GotGoalMedal) {
+                        if (!PluginSettings::RMC_RUN_AUTOSAVE) {
+                            Renderables::Add(SaveRunQuestionModalDialog(this));
+                        } else {
+                            CreateSave();
+                            vec4 color = UI::HSV(0.25, 1, 0.7);
+                            UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
+                        }
                     } else {
-                        CreateSave();
-                        vec4 color = UI::HSV(0.25, 1, 0.7);
-                        UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
+                        // no saves for instant resets
+                        DataManager::RemoveCurrentSaveFile();
                     }
-                } else {
-                    // no saves for instant resets
-                    DataManager::RemoveCurrentSaveFile();
                 }
             }
 
