@@ -49,7 +49,7 @@ class RMObjective : RMC {
     }
 
     void RenderGoalMedal() override {
-        UI::Image(Textures[RunConfig.GoalMedal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+        UI::Image(RMC::MedalTextures[RunConfig.GoalMedal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
 
         if (PluginSettings::RMC_ObjectiveMode_DisplayRemaininng) {

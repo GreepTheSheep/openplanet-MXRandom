@@ -34,20 +34,6 @@ class RMC {
     bool UnpauseOnExit = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
 
-    UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
-    UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
-    UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");
-    UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
-    UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
-
-    array<UI::Texture@> Textures = { 
-        BronzeTex,
-        SilverTex,
-        GoldTex,
-        AuthorTex,
-        WRTex
-    };
-
     string get_ModeName() { 
         return "Random Map Challenge";
     }
@@ -421,7 +407,7 @@ class RMC {
     }
 
     void RenderGoalMedal() {
-        UI::Image(Textures[RunConfig.GoalMedal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+        UI::Image(RMC::MedalTextures[RunConfig.GoalMedal], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(GoalMedalCount), Fonts::TimerFont);
     }
@@ -429,7 +415,7 @@ class RMC {
     void RenderBelowGoalMedal() {
         if (ModeHasBelowMedal) {
             UI::HPadding(25);
-            UI::Image(Textures[RunConfig.GoalMedal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+            UI::Image(RMC::MedalTextures[RunConfig.GoalMedal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             UI::SameLine();
             UI::AlignTextToImage(tostring(BelowMedalCount), Fonts::TimerFont);
         }

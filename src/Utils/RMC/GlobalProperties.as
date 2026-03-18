@@ -3,6 +3,20 @@ namespace RMC {
     Json::Value CurrentRunData = Json::Object();
     RMCConfig@ config = RMCConfig();
 
+    UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
+    UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
+    UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");
+    UI::Texture@ AuthorTex = UI::LoadTexture("src/Assets/Images/Author.png");
+    UI::Texture@ WRTex = UI::LoadTexture("src/Assets/Images/WRTrophy.png");
+
+    array<UI::Texture@> MedalTextures = { 
+        BronzeTex,
+        SilverTex,
+        GoldTex,
+        AuthorTex,
+        WRTex
+    };
+
     RMC@ currentRun = RMC();
 
     enum GameMode {
