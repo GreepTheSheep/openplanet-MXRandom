@@ -14,7 +14,8 @@ class RunSettings {
     bool CalculateMedals;
     bool FilterLowEffort;
     bool FilterUntagged;
-    Json::Value@ jsonCache;
+
+    RunSettings() { }
 
     RunSettings(RMC::GameMode mode) {
         Category            = PluginSettings::SelectedCategory;
@@ -73,10 +74,6 @@ class RunSettings {
     }
 
     Json::Value ToJson() {
-        if (jsonCache !is null) {
-            return jsonCache;
-        }
-
         Json::Value json = Json::Object();
 
         json["Category"]            = Category;
@@ -95,7 +92,6 @@ class RunSettings {
         json["RMS_TimeBack"]        = RMS_TimeBack;
         json["RMO_Goal"]            = RMO_Goal;
 
-        @jsonCache = json;
         return json;
     }
 }

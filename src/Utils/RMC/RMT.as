@@ -29,14 +29,27 @@ class RMT : RMC {
                 startnew(CoroutineFunc(ResetToLobbyMap));
             }
 
-            float buttonWidth = UI::GetItemRect().z;
-
             UI::SameLine();
 
             UI::BeginDisabled(!IsRunning || IsSwitchingMap);
 
-            if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
+            bool editSettings = RunConfig.Category == RMC::Category::Custom;
+
+            string resetText = editSettings ? Icons::Refresh : Icons::Refresh + " Reset";
+
+            if (UI::OrangeButton(resetText)) {
                 Reset();
+            }
+
+            if (editSettings) {
+                UI::SameLine();
+
+                if (UI::PurpleButton(Icons::Cog)) {
+                    IsPaused = true;
+                    Renderables::Add(EditSettingsModalDialog(this.Mode, this.RunConfig));
+                }
+
+                UI::SetItemTooltip("Edit run settings");
             }
 
             UI::EndDisabled();

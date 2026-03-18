@@ -57,6 +57,10 @@ class RMC {
     }
 
     void LoadSave() {
+        if (RMC::CurrentRunData.HasKey("Settings")) {
+            @RunConfig = RunSettings(RMC::CurrentRunData["Settings"]);
+        }
+
         GoalMedalCount = RMC::CurrentRunData["PrimaryCounterValue"];
         BelowMedalCount = RMC::CurrentRunData["SecondaryCounterValue"];
         GotGoalMedal = RMC::CurrentRunData["GotGoalMedal"];
@@ -66,10 +70,6 @@ class RMC {
         FreeSkipsUsed = RMC::CurrentRunData["FreeSkipsUsed"];
         TimeLeft = RMC::CurrentRunData["TimeLeft"];
         TotalTime = RMC::CurrentRunData["TotalTime"];
-
-        if (RMC::CurrentRunData.HasKey("Settings")) {
-            @RunConfig = RunSettings(RMC::CurrentRunData["Settings"]);
-        }
 
         if (RMC::CurrentRunData.HasKey("IsMapInvalidated")) {
             IsMapInvalidated = bool(RMC::CurrentRunData["IsMapInvalidated"]);
@@ -167,6 +167,22 @@ class RMC {
 
         Log::Info("Resetting " + ModeName + "...",  true);
         startnew(CoroutineFunc(SwitchMap));
+    }
+
+    void UpdateSettings(RunSettings@ newSettings) {
+        if (RunConfig.Category == RMC::Category::Custom || this.Mode == RMC::GameMode::Objective) {
+            int oldLimit = TimeLimit;
+            @RunConfig = newSettings;
+            TimeLeft += (TimeLimit - oldLimit);
+
+            if (!RunConfig.InvalidateGhosts && IsMapInvalidated) {
+                IsMapInvalidated = false;
+            }
+
+            if (IsPaused && !UnpauseOnExit) {
+                IsPaused = false;
+            }
+        }
     }
 
     void CreateSave() {
@@ -296,14 +312,27 @@ class RMC {
                 }
             }
 
-            float buttonWidth = UI::GetItemRect().z;
-
             UI::SameLine();
 
             UI::BeginDisabled(!IsRunning || IsSwitchingMap);
 
-            if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
+            bool editSettings = RunConfig.Category == RMC::Category::Custom || this.Mode == RMC::GameMode::Objective;
+
+            string resetText = editSettings ? Icons::Refresh : Icons::Refresh + " Reset";
+
+            if (UI::OrangeButton(resetText)) {
                 Reset();
+            }
+
+            if (editSettings) {
+                UI::SameLine();
+
+                if (UI::PurpleButton(Icons::Cog)) {
+                    IsPaused = true;
+                    Renderables::Add(EditSettingsModalDialog(this.Mode, this.RunConfig));
+                }
+
+                UI::SetItemTooltip("Edit run settings");
             }
 
             UI::EndDisabled();
