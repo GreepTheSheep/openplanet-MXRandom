@@ -298,19 +298,17 @@ class RMC {
                 }
             }
 
+            float buttonWidth = UI::GetItemRect().z;
+
             UI::SameLine();
 
             UI::BeginDisabled(!IsRunning || IsSwitchingMap);
 
-            bool editSettings = RunConfig.Category == RMC::Category::Custom || this.Mode == RMC::GameMode::Objective;
+            if (RunConfig.Category == RMC::Category::Custom) {
+                if (UI::OrangeButton(Icons::Refresh)) {
+                    Reset();
+                }
 
-            string resetText = editSettings ? Icons::Refresh : Icons::Refresh + " Reset";
-
-            if (UI::OrangeButton(resetText)) {
-                Reset();
-            }
-
-            if (editSettings) {
                 UI::SameLine();
 
                 if (UI::PurpleButton(Icons::Cog)) {
@@ -319,6 +317,8 @@ class RMC {
                 }
 
                 UI::SetItemTooltip("Edit run settings");
+            } else if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
+                Reset();
             }
 
             UI::EndDisabled();
