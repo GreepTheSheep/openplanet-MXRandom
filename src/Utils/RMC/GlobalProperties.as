@@ -3,6 +3,8 @@ namespace RMC {
     Json::Value CurrentRunData = Json::Object();
     RMCConfig@ config = RMCConfig();
 
+    UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
+
     UI::Texture@ BronzeTex = UI::LoadTexture("src/Assets/Images/Bronze.png");
     UI::Texture@ SilverTex = UI::LoadTexture("src/Assets/Images/Silver.png");
     UI::Texture@ GoldTex = UI::LoadTexture("src/Assets/Images/Gold.png");

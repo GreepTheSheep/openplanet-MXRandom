@@ -1,6 +1,4 @@
 class RMS : RMC {
-    UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
-
     string get_ModeName() override { 
         return "Random Map Survival";
     }
@@ -69,7 +67,7 @@ class RMS : RMC {
 
     void RenderBelowGoalMedal() override {
         UI::HPadding(25);
-        UI::Image(SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
+        UI::Image(RMC::SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(Skips), Fonts::TimerFont);
     }
