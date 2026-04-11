@@ -1,19 +1,20 @@
 class RMObjective : RMC {
-    int Skips = 0;
-
     string get_ModeName() override { return "Random Map Objective"; }
 
     RMC::GameMode get_Mode() override {
         return RMC::GameMode::Objective;
     }
 
-    bool get_ModeHasBelowMedal() override {
-        return false;
+    int get_Skips() {
+        return BelowMedalCount;
     }
 
-    void Reset() override {
-        Skips = 0;
-        RMC::Reset();
+    void set_Skips(int n) {
+        BelowMedalCount = Math::Max(0, n);
+    }
+
+    bool get_ModeHasBelowMedal() override {
+        return false;
     }
 
     void RenderPace() override { }
@@ -74,7 +75,7 @@ class RMObjective : RMC {
         UI::BeginDisabled(IsSwitchingMap);
 
         if (UI::Button(Icons::PlayCircleO + " Skip")) {
-            Skips++;
+            Skips += 1;
             Log::Trace("ObjectiveMode: Skipping map");
             UI::ShowNotification("Please wait...");
             startnew(CoroutineFunc(SwitchMap));
@@ -183,16 +184,15 @@ class RMObjective : RMC {
                         }
                     }
 
+                    if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
+                        // PB
+                        PBOnMap = score;
+                    }
+
                     if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
                         GoalMedalCount++;
                         GotGoalMedalNotification();
                         GotGoalMedal = true;
-                    }
-
-                    if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
-                        // PB
-                        PBOnMap = score;
-                        CreateSave();
                     }
 
                     sleep(1000);

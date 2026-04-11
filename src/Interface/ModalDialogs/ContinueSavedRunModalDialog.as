@@ -1,11 +1,13 @@
 class ContinueSavedRunModalDialog : ModalDialog {
     bool HasCompletedCheckbox = false;
     RMC@ run;
+    Json::Value@ runSave;
 
-    ContinueSavedRunModalDialog(RMC@ mode) {
+    ContinueSavedRunModalDialog(RMC@ mode, Json::Value@ save) {
         super("\\$f90" + Icons::ExclamationTriangle + " \\$zContinue Saved Run?");
         m_size = vec2(400, 160);
         @run = mode;
+        @runSave = save;
     }
 
     void RenderDialog() override {
@@ -15,8 +17,8 @@ class ContinueSavedRunModalDialog : ModalDialog {
 
         string lastLetter = tostring(run.Mode).SubStr(0,1);
         string gameMode = "RM" + lastLetter;
-        int PrimaryCounterValue = RMC::CurrentRunData["PrimaryCounterValue"];
-        Medals runMedal = RMC::CurrentRunData.HasKey("Settings") ? Medals(int(RMC::CurrentRunData["Settings"]["GoalMedal"])) : PluginSettings::GoalMedal;
+        int PrimaryCounterValue = runSave["PrimaryCounterValue"];
+        Medals runMedal = runSave.HasKey("Settings") ? Medals(int(runSave["Settings"]["GoalMedal"])) : PluginSettings::GoalMedal;
 
         UI::Text(
             "You already have a saved " + gameMode + " run with " + tostring(PrimaryCounterValue) + " " + tostring(runMedal) + "s"

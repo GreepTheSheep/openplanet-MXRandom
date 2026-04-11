@@ -42,27 +42,27 @@ class RMC {
         return RMC::GameMode::Challenge;
     }
 
-    void LoadSave() {
-        if (RMC::CurrentRunData.HasKey("Settings")) {
-            @RunConfig = RunSettings(RMC::CurrentRunData["Settings"]);
+    void LoadSave(Json::Value@ save) {
+        if (save.HasKey("Settings")) {
+            @RunConfig = RunSettings(save["Settings"]);
         }
 
-        GoalMedalCount = RMC::CurrentRunData["PrimaryCounterValue"];
-        BelowMedalCount = RMC::CurrentRunData["SecondaryCounterValue"];
-        GotGoalMedal = RMC::CurrentRunData["GotGoalMedal"];
-        PBOnMap = RMC::CurrentRunData["PBOnMap"];
-        TimeSpentMap = RMC::CurrentRunData["TimeSpentOnMap"];
-        GotBelowMedal = RMC::CurrentRunData["GotBelowMedal"];
-        FreeSkipsUsed = RMC::CurrentRunData["FreeSkipsUsed"];
-        TimeLeft = RMC::CurrentRunData["TimeLeft"];
-        TotalTime = RMC::CurrentRunData["TotalTime"];
+        GoalMedalCount = save["PrimaryCounterValue"];
+        BelowMedalCount = save["SecondaryCounterValue"];
+        GotGoalMedal = save["GotGoalMedal"];
+        PBOnMap = save["PBOnMap"];
+        TimeSpentMap = save["TimeSpentOnMap"];
+        GotBelowMedal = save["GotBelowMedal"];
+        FreeSkipsUsed = save["FreeSkipsUsed"];
+        TimeLeft = save["TimeLeft"];
+        TotalTime = save["TotalTime"];
 
-        if (RMC::CurrentRunData.HasKey("IsMapInvalidated")) {
-            IsMapInvalidated = bool(RMC::CurrentRunData["IsMapInvalidated"]);
+        if (save.HasKey("IsMapInvalidated")) {
+            IsMapInvalidated = bool(save["IsMapInvalidated"]);
         }
 
-        if (RMC::CurrentRunData.HasKey("PlayedMaps")) {
-            Json::Value@ saveMaps = RMC::CurrentRunData["PlayedMaps"];
+        if (save.HasKey("PlayedMaps")) {
+            Json::Value@ saveMaps = save["PlayedMaps"];
 
             for (uint i = 0; i < saveMaps.Length; i++) {
                 try {
@@ -76,12 +76,13 @@ class RMC {
     }
 
     void CheckSave() {
-        if (!DataManager::LoadRunData()) {
-            DataManager::CreateSaveFile();
+        Json::Value@ save = DataManager::GetRunSave();
+
+        if (save is null) {
             return;
         }
 
-        auto saveDialog = ContinueSavedRunModalDialog(this);
+        auto saveDialog = ContinueSavedRunModalDialog(this, save);
         Renderables::Add(saveDialog);
 
         while (!saveDialog.HasCompletedCheckbox) {
@@ -97,9 +98,9 @@ class RMC {
             return;
         }
 
-        LoadSave();
+        LoadSave(save);
 
-        MX::MapInfo@ map = MX::MapInfo(RMC::CurrentRunData["MapData"]);
+        MX::MapInfo@ map = MX::MapInfo(save["MapData"]);
         map.PlayedAt = Time::Stamp;
         Log::LoadingMapNotification(map);
         DataManager::SaveMapToRecentlyPlayed(map);
@@ -136,7 +137,6 @@ class RMC {
 
         // Clear the currently saved data so you cannot load into the same state multiple times
         DataManager::RemoveCurrentSaveFile();
-        DataManager::CreateSaveFile();
         IsStarting = false;
     }
 
@@ -149,7 +149,6 @@ class RMC {
         playedMaps.RemoveRange(0, playedMaps.Length);
 
         DataManager::RemoveCurrentSaveFile();
-        DataManager::CreateSaveFile();
 
         Log::Info("Resetting " + ModeName + "...",  true);
         startnew(CoroutineFunc(SwitchMap));
@@ -171,28 +170,30 @@ class RMC {
         }
     }
 
-    void CreateSave() {
-        RMC::CurrentRunData["PrimaryCounterValue"] = GoalMedalCount;
-        RMC::CurrentRunData["SecondaryCounterValue"] = BelowMedalCount;
-        RMC::CurrentRunData["FreeSkipsUsed"] = FreeSkipsUsed;
-        RMC::CurrentRunData["GotGoalMedal"] = GotGoalMedal;
-        RMC::CurrentRunData["GotBelowMedal"] = GotBelowMedal;
-        RMC::CurrentRunData["MapData"] = currentMap.ToJson();
-        RMC::CurrentRunData["TotalTime"] = TotalTime;
-        RMC::CurrentRunData["TimeLeft"] = TimeLeft;
-        RMC::CurrentRunData["TimeSpentOnMap"] = TimeSpentMap;
-        RMC::CurrentRunData["PBOnMap"] = PBOnMap;
-        RMC::CurrentRunData["Settings"] = RunConfig.ToJson();
-        RMC::CurrentRunData["IsMapInvalidated"] = IsMapInvalidated;
+    Json::Value@ ToJson() {
+        Json::Value@ json = Json::Object();
+
+        json["PrimaryCounterValue"] = GoalMedalCount;
+        json["SecondaryCounterValue"] = BelowMedalCount;
+        json["FreeSkipsUsed"] = FreeSkipsUsed;
+        json["GotGoalMedal"] = GotGoalMedal;
+        json["GotBelowMedal"] = GotBelowMedal;
+        json["MapData"] = currentMap.ToJson();
+        json["TotalTime"] = TotalTime;
+        json["TimeLeft"] = TimeLeft;
+        json["TimeSpentOnMap"] = TimeSpentMap;
+        json["PBOnMap"] = PBOnMap;
+        json["Settings"] = RunConfig.ToJson();
+        json["IsMapInvalidated"] = IsMapInvalidated;
 
         Json::Value mapsArray = Json::Array();
         for (uint i = 0; i < playedMaps.Length; i++) {
             mapsArray.Add(playedMaps[i].ToJson());
         }
 
-        RMC::CurrentRunData["PlayedMaps"] = mapsArray;
+        json["PlayedMaps"] = mapsArray;
 
-        DataManager::SaveCurrentRunData();
+        return json;
     }
 
     int get_TimeLimit() { return RunConfig.MaxTimer * 60 * 1000; }
@@ -287,7 +288,7 @@ class RMC {
                         if (!PluginSettings::RMC_RUN_AUTOSAVE) {
                             Renderables::Add(SaveRunQuestionModalDialog(this));
                         } else {
-                            CreateSave();
+                            DataManager::SaveCurrentRunData();
                             vec4 color = UI::HSV(0.25, 1, 0.7);
                             UI::ShowNotification(PLUGIN_NAME, "Saved the state of the current run", color, 5000);
                         }
@@ -579,7 +580,7 @@ class RMC {
 
             if (UI::FlexButton(Icons::PlayCircleO + "Free Skip (" + skipsLeft + " left)")) {
                 FreeSkipsUsed++;
-                CreateSave();
+                DataManager::SaveCurrentRunData();
                 Log::Trace("RMC: Skipping map");
                 UI::ShowNotification("Please wait...");
                 startnew(CoroutineFunc(SwitchMap));
@@ -785,21 +786,21 @@ class RMC {
                         }
                     }
 
+                    if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
+                        // PB
+                        PBOnMap = score;
+                        DataManager::SaveCurrentRunData();
+                    }
+
                     if ((!inverse && score <= GoalTime) || (inverse && score >= GoalTime)) {
                         GoalMedalCount++;
                         GotGoalMedalNotification();
                         GotGoalMedal = true;
-                        CreateSave();
+                        DataManager::SaveCurrentRunData();
                     } else if (ModeHasBelowMedal && !GotBelowMedal && ((!inverse && score <= BelowGoalTime) || (inverse && score >= BelowGoalTime))) {
                         GotBelowGoalMedalNotification();
                         GotBelowMedal = true;
-                        CreateSave();
-                    }
-
-                    if (PBOnMap == -1 || (!inverse && int(score) < PBOnMap) || (inverse && int(score) > PBOnMap)) {
-                        // PB
-                        PBOnMap = score;
-                        CreateSave();
+                        DataManager::SaveCurrentRunData();
                     }
                 }
 

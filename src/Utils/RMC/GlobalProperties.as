@@ -1,6 +1,5 @@
 namespace RMC {
     bool ShowTimer = false;
-    Json::Value CurrentRunData = Json::Object();
     RMCConfig@ config = RMCConfig();
 
     UI::Texture@ SkipTex = UI::LoadTexture("src/Assets/Images/YEPSkip.png");
