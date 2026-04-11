@@ -8,7 +8,7 @@ abstract class Window {
     void Close() { IsOpened = false; }
     void Toggle() { IsOpened = !IsOpened; }
 
-    int get_Flags() { return UI::WindowFlags::None; }
+    int get_Flags() { return UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking; }
     string get_Title() { return ""; }
 
     void Render() {

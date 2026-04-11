@@ -1,8 +1,4 @@
 class MainWindow : Window {
-    int get_Flags() override {
-        return UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
-    }
-
     string get_Title() override {
         return MX_COLOR_STR + Icons::Random + " \\$z" + PLUGIN_NAME + " \\$555v" + PLUGIN_VERSION;
     }

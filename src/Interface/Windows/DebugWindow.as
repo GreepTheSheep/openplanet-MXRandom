@@ -1,8 +1,4 @@
 class DebugWindow : Window {
-    int get_Flags() override {
-        return UI::WindowFlags::NoCollapse | UI::WindowFlags::NoDocking;
-    }
-
     string get_Title() override {
         return Icons::Bug + " Debug Window";
     }
