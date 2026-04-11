@@ -2,7 +2,7 @@ namespace TM {
     const uint COOLDOWN = 2500;
     array<uint> royalTimes = { 0, 0, 0, 0 };
     dictionary downloadUrls = {};
-    bool loadingMap;
+    bool loadingMap = false;
 
     bool get_IsLoadingMap() {
         return loadingMap;
@@ -126,7 +126,7 @@ namespace TM {
 
         array<CGameGhostScript@> loadedGhosts = GetGhosts();
 
-        bool hasClones;
+        bool hasClones = false;
 
         if (app.RootMap.MapInfo !is null) {
             hasClones = app.RootMap.MapInfo.TMObjective_NbClones > 0;

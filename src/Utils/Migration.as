@@ -86,7 +86,7 @@ namespace Migration {
     bool MigratedToMX2 = false;
 
     Net::HttpRequest@ v2_request;
-    bool v2_requestError;
+    bool v2_requestError = false;
     array<string> oldSaves = IO::IndexFolder(SAVE_DATA_LOCATION, true);
     array<MX::MapInfo@> v2_maps;
 
