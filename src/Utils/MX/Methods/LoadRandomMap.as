@@ -186,7 +186,7 @@ namespace MX {
 
             if (PluginSettings::ExcludedAuthors != "") {
                 foreach (string author : PluginSettings::ExcludedAuthorsArr) {
-                    if (map.Username.ToLower() == author) {
+                    if (map.Username.ToLower() == author.ToLower()) {
                         Log::Warn("[GetRandomMap] Map is uploaded by the excluded author \"" + author + "\", skipping...");
                         return null;
                     }
