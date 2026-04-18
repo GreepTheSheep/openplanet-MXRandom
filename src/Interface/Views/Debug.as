@@ -101,7 +101,11 @@ namespace DebugView {
 
         array<MX::MapInfo@> maps = RMC::currentRun.playedMaps;
 
-        if (UI::BeginTable("RunMaps", 4, UI::TableFlags::RowBg)) {
+        UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.10f, 0.10f, 0.10f, 1));
+        UI::PushStyleColor(UI::Col::TableRowBg, vec4(0.13f, 0.13f, 0.13f, 1));
+        UI::PushStyleVar(UI::StyleVar::CellPadding, UI::GetStyleVarVec2(UI::StyleVar::CellPadding) + vec2(6, 1));
+
+        if (UI::BeginTable("RunMaps", 4, UI::TableFlags::ScrollY | UI::TableFlags::RowBg | UI::TableFlags::PadOuterX)) {
             UI::TableSetupScrollFreeze(0, 1);
 
             UI::TableSetupColumn("Name", UI::TableColumnFlags::WidthStretch);
@@ -137,5 +141,8 @@ namespace DebugView {
 
             UI::EndTable();
         }
+
+        UI::PopStyleVar();
+        UI::PopStyleColor(2);
     }
 }

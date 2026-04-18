@@ -51,8 +51,9 @@ namespace MainUIView {
 
         UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.10f, 0.10f, 0.10f, 1));
         UI::PushStyleColor(UI::Col::TableRowBg, vec4(0.13f, 0.13f, 0.13f, 1));
+        UI::PushStyleVar(UI::StyleVar::CellPadding, UI::GetStyleVarVec2(UI::StyleVar::CellPadding) + vec2(6, 1));
 
-        if (UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollY | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg)) {
+        if (UI::BeginTable("RecentlyPlayedMaps", 5, UI::TableFlags::ScrollY | UI::TableFlags::NoKeepColumnsVisible | UI::TableFlags::RowBg | UI::TableFlags::PadOuterX)) {
             UI::TableSetupScrollFreeze(0, 1);
             float scale = UI::GetScale();
 
@@ -68,6 +69,7 @@ namespace MainUIView {
             UI::EndTable();
         }
 
+        UI::PopStyleVar();
         UI::PopStyleColor(2);
     }
 
