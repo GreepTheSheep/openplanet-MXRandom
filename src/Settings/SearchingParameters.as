@@ -19,6 +19,9 @@ namespace PluginSettings {
 
     [Setting hidden]
     string MapName = "";
+
+    [Setting hidden]
+    bool RandomNameAuthorFilter = false;
     
     [Setting hidden]
     string ExcludedTerms = "";
@@ -104,6 +107,7 @@ namespace PluginSettings {
             ExcludedAuthors = "";
             MapName = "";
             ExcludedTerms = "";
+            RandomNameAuthorFilter = false;
             Difficulties = "";
             Vehicles = "";
             Environments = "";
@@ -227,6 +231,13 @@ namespace PluginSettings {
         if (MapAuthor != "" && UI::ResetButton()) {
             MapAuthor = "";
         }
+
+        UI::BeginDisabled(MapName == "" || MapAuthor == "");
+
+        RandomNameAuthorFilter = UI::Checkbox("Pick between name and author", RandomNameAuthorFilter);
+        UI::SettingDescription("When enabled, the plugin will filter by either map name or author, picked randomly, instead of both.\n\nE.g., when filtering for \"winter\" and Ubisoft Nadeo, it will search for \"winter\" maps or maps created by Ubisoft Nadeo, instead of \"winter\" maps by Ubisoft Nadeo.");
+
+        UI::EndDisabled();
 
         UI::SetItemText("Excluded term(s):");
         ExcludedTerms = UI::InputText("##ExcludedTerms", ExcludedTerms);

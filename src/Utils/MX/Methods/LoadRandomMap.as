@@ -328,13 +328,21 @@ namespace MX {
                 params.Set("vehicle", PluginSettings::Vehicles);
             }
 
-            if (PluginSettings::MapAuthor != "") {
+            bool filterByAuthor = true;
+            bool filterByName = true;
+
+            if (PluginSettings::MapAuthor != "" && PluginSettings::MapName != "" && PluginSettings::RandomNameAuthorFilter) {
+                filterByAuthor = Math::Rand(0, 2) == 1;
+                filterByName = !filterByAuthor;
+            }
+
+            if (filterByAuthor && PluginSettings::MapAuthor != "") {
                 array<string> authors = PluginSettings::MapAuthor.Split(",");
                 int index = Math::Rand(0, authors.Length);
                 params.Set("author", authors[index]);
             }
 
-            if (PluginSettings::MapName != "") {
+            if (filterByName && PluginSettings::MapName != "") {
                 array<string> words = PluginSettings::MapName.Split(",");
                 int index = Math::Rand(0, words.Length);
                 params.Set("name", words[index]);
