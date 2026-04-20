@@ -157,7 +157,7 @@ class RMObjective : RMC {
         while (IsRunning) {
             yield();
 
-            if (!GotGoalMedal && !IsMapInvalidated) {
+            if (!GotGoalMedal && !IsMapInvalidated && InCurrentMap()) {
 #if TMNEXT
                 if (RunConfig.InvalidateGhosts && TM::IsWatchingOtherGhost()) {
                     IsPaused = true;
