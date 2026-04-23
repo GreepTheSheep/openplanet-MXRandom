@@ -129,7 +129,7 @@ class RMS : RMC {
         Log::Trace("RMS: Got the " + tostring(RunConfig.GoalMedal) + " medal!");
         if (PluginSettings::RMC_AutoSwitch) {
             UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(RunConfig.GoalMedal) + " medal!", "We're searching for another map...");
-            TimeLeft += (3*60*1000);
+            TimeLeft += (RunConfig.RMS_TimeBack * 60 * 1000);
             startnew(CoroutineFunc(SwitchMap));
         } else UI::ShowNotification("\\$071" + Icons::Trophy + " You got the " + tostring(RunConfig.GoalMedal) + " medal!", "Select 'Next map' to change the map");
     }
