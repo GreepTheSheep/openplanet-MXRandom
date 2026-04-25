@@ -9,6 +9,10 @@ class EditSettingsModalDialog : ModalDialog {
         m_settings = runSettings;
     }
 
+    bool CanClose() override {
+        return false;
+    }
+
     void RenderDialog() override {
         UI::BeginTabBar("RunSettings");
 
