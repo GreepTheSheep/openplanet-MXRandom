@@ -34,7 +34,7 @@ class RMC {
     bool UnpauseOnExit = false;
     bool UserEndedRun = false; // Check if the user has clicked on "Stop..." button
 
-    string get_ModeName() { 
+    string get_ModeName() {
         return "Random Map Challenge";
     }
 
@@ -242,6 +242,19 @@ class RMC {
 
     bool get_ModeHasBelowMedal() {
         return RunConfig.GoalMedal != Medals::Bronze;
+    }
+
+    bool AreGoalMedalsEdited() {
+        if (currentMap.IsMedalEdited(RunConfig.GoalMedal)) {
+            return true;
+        }
+
+        if (ModeHasBelowMedal) {
+            Medals belowMedal = Medals(RunConfig.GoalMedal - 1);
+            return currentMap.IsMedalEdited(belowMedal);
+        }
+
+        return false;
     }
 
     void RenderGoalTimes() {
@@ -468,12 +481,12 @@ class RMC {
                     }
 #endif
 
-                    if (PluginSettings::RMC_EditedMedalsWarns && RunConfig.CalculateMedals && currentMap.HasEditedMedals) {
+                    if (PluginSettings::RMC_EditedMedalsWarns && RunConfig.CalculateMedals && AreGoalMedalsEdited()) {
                         UI::Text("\\$f80" + Icons::ExclamationTriangle + "\\$z Edited Medals");
 
                         if (UI::BeginItemTooltip()) {
                             UI::Text("The map has medal times that differ from the default. The plugin will use the default times instead.");
-                            
+
                             if (!PluginSettings::RMC_DisplayGoalTimes) {
                                 UI::NewLine();
                                 UI::Text("You can enable \"Display goal times\" in the settings or use the \"Default Medals\" plugin to see the times.");
