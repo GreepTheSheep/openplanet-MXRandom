@@ -12,6 +12,9 @@ namespace PluginSettings {
     bool RMC_DisplayCurrentMap = true;
 
     [Setting hidden]
+    bool RMC_ConfirmReset = false;
+
+    [Setting hidden]
     bool RMC_AutoSwitch = true;
 
     [Setting hidden]
@@ -89,6 +92,7 @@ namespace PluginSettings {
                 RMC_ExitMapOnEndTime = false;
                 RMC_RUN_AUTOSAVE = true;
                 RMC_PauseWhenMenuOpen = true;
+                RMC_ConfirmReset = false;
 #if TMNEXT
                 RMC_SkipPrepatch = false;
                 RMC_PushLeaderboardResults = true;
@@ -99,6 +103,7 @@ namespace PluginSettings {
             RMC_ExitMapOnEndTime = UI::Checkbox("Exit the map when the timer is up", RMC_ExitMapOnEndTime);
             RMC_RUN_AUTOSAVE = UI::Checkbox("Automatically save the current run after stopping it", RMC_RUN_AUTOSAVE);
             RMC_PauseWhenMenuOpen = UI::Checkbox("Pause timer when the pause menu is open", RMC_PauseWhenMenuOpen);
+            RMC_ConfirmReset = UI::Checkbox("Display confirm dialog when resetting the current run", RMC_ConfirmReset);
 
 #if TMNEXT
             RMC_SkipPrepatch = UI::Checkbox("Automatically skip prepatch maps", RMC_SkipPrepatch);
@@ -129,7 +134,7 @@ namespace PluginSettings {
 #endif
                 RMC_EditedMedalsWarns = true;
                 RMC_TagsLength = 1;
-                
+
             }
 
             HideWithGameUI = UI::Checkbox("Show/Hide with game UI", HideWithGameUI);

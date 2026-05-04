@@ -37,7 +37,7 @@ class RMT : RMC {
 
             if (RunConfig.Category == RMC::Category::Custom) {
                 if (UI::OrangeButton(Icons::Refresh)) {
-                    Reset();
+                    startnew(CoroutineFunc(Reset));
                 }
 
                 UI::SameLine();
@@ -49,7 +49,7 @@ class RMT : RMC {
 
                 UI::SetItemTooltip("Edit run settings");
             } else if (UI::OrangeButton(Icons::Refresh + " Reset", vec2(buttonWidth, 0))) {
-                Reset();
+                startnew(CoroutineFunc(Reset));
             }
 
             UI::EndDisabled();
@@ -152,6 +152,26 @@ class RMT : RMC {
     }
 
     void Reset() override {
+        if (PluginSettings::RMC_ConfirmReset) {
+            bool needUnpause = !IsPaused;
+            IsPaused = true;
+
+            auto resetDialog = ResetRunModalDialog(this);
+            Renderables::Add(resetDialog);
+
+            while (!resetDialog.HasCompletedCheckbox) {
+                sleep(100);
+            }
+
+            if (!resetDialog.ResetRun) {
+                if (needUnpause) {
+                    IsPaused = false;
+                }
+
+                return;
+            }
+        }
+
         GoalMedalCount = 0;
         BelowMedalCount = 0;
         TimeLeft = TimeLimit;
