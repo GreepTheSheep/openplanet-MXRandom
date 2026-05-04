@@ -17,7 +17,7 @@ namespace MX {
 
                     return maps;
                 }
-                
+
                 if (json["Results"].Length == 0) {
                     if (maps.IsEmpty()) {
                         Log::Error("Found 0 maps for mappack ID #" + mappackId + ". Mappack might not exist or is empty", true);
@@ -62,7 +62,7 @@ namespace MX {
 
         try {
             Json::Value res = API::GetAsync(PluginSettings::RMC_MX_Url + "/api/meta/tags");
-            
+
             for (uint i = 0; i < res.Length; i++) {
                 MapTag@ tag = MapTag(res[i]);
 
@@ -98,7 +98,7 @@ namespace MX {
 
         try {
             Json::Value res = API::GetAsync(PluginSettings::RMC_MX_Url + "/api/meta/vehicles");
-            
+
             for (uint i = 0; i < res.Length; i++) {
                 if (res[i].GetType() != Json::Type::String || res[i] == "") {
                     continue;
@@ -122,7 +122,7 @@ namespace MX {
     }
 
     void GetImpossibleMaps() {
-        array<MapInfo@> mappackMaps = GetMappackMaps(3164);
+        array<MapInfo@> mappackMaps = GetMappackMaps(7695);
 
         if (mappackMaps.IsEmpty()) {
             Log::Error("Failed to get maps from the \"Broken/Cheated/Impossible ATs\" mappack.");
