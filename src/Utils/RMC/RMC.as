@@ -185,7 +185,7 @@ class RMC {
                 IsMapInvalidated = false;
             }
 
-            if (IsPaused && !UnpauseOnExit) {
+            if (IsPaused && !IsMapInvalidated && !UnpauseOnExit) {
                 IsPaused = false;
             }
         }
@@ -846,7 +846,7 @@ class RMC {
                         uint noRespawnTime = TM::GetNoRespawnTime();
 
                         if (noRespawnTime != uint(-1)) {
-                            score = Math::Min(score, TM::GetNoRespawnTime());
+                            score = Math::Min(score, noRespawnTime);
                         }
                     }
 

@@ -6,7 +6,7 @@ namespace MX {
 
         while (moreMaps) {
             string reqUrl = PluginSettings::RMC_MX_Url + "/api/maps?count=1000&fields=" + MAP_FIELDS + "&mappackid=" + mappackId;
-            if (moreMaps && lastId != 0) reqUrl += "&after=" + lastId;
+            if (lastId != 0) reqUrl += "&after=" + lastId;
 
             try {
                 Json::Value json = API::GetAsync(reqUrl);
@@ -124,7 +124,7 @@ namespace MX {
         array<MapInfo@> mappackMaps = GetMappackMaps(7695);
 
         if (mappackMaps.IsEmpty()) {
-            Log::Error("Failed to get maps from the \"Broken/Cheated/Impossible ATs\" mappack.");
+            Log::Error("Failed to get maps from the \"Unbeaten ATs Hidden Maps\" mappack.");
             return;
         }
 
