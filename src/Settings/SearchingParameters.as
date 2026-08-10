@@ -1,10 +1,4 @@
 namespace PluginSettings {
-    array<string> MapAuthorNamesArr = {};
-
-    array<string> ExcludedTermsArr = {};
-
-    array<string> ExcludedAuthorsArr = {};
-
     [Setting hidden]
     bool UseCustomLength = false;
 
@@ -65,8 +59,6 @@ namespace PluginSettings {
     array<int> ExcludeMapTagsArr = {6, 10, 20, 39};
 #endif
 
-    bool initArrays = false;
-
     [Setting hidden]
     bool TagInclusiveSearch = false;
 
@@ -100,6 +92,31 @@ namespace PluginSettings {
     [Setting hidden]
     bool BetaMaps = false;
 
+    [Setting hidden]
+    string CustomParamsStr = "";
+    CustomParameters@ CustomParams = CustomParameters();
+
+    void LoadSettings() {
+        MapTagsArr        = StringToIntArray(MapTags);
+        ExcludeMapTagsArr = StringToIntArray(ExcludeMapTags);
+        DifficultiesArray = StringToIntArray(Difficulties);
+        EnvironmentsArr   = StringToIntArray(Environments);
+        VehiclesArr       = SplitAndFilterString(Vehicles);
+
+        if (CustomParamsStr != "") {
+            CustomParams.LoadJson(Json::Parse(CustomParamsStr));
+        }
+    }
+
+    void SaveSettings() {
+        MapTags         = IntArrayToString(MapTagsArr);
+        ExcludeMapTags  = IntArrayToString(ExcludeMapTagsArr);
+        Difficulties    = IntArrayToString(DifficultiesArray);
+        Environments    = IntArrayToString(EnvironmentsArr);
+        Vehicles        = Text::Join(VehiclesArr, ",");
+        CustomParamsStr = Json::Write(CustomParams.ToJson());
+    }
+
     [SettingsTab name="Filters" order="2" icon="Filter"]
     void RenderSearchingSettingTab() {
         bool inSameLine = UI::GetContentRegionAvail().x > 950;
@@ -121,12 +138,10 @@ namespace PluginSettings {
             Vehicles = "";
             Environments = "";
             MapPackID = 0;
+            MapTags = "";
             MapTagsArr = {};
             VehiclesArr = {};
             EnvironmentsArr = {};
-            MapAuthorNamesArr = {};
-            ExcludedTermsArr = {};
-            ExcludedAuthorsArr = {};
             DifficultiesArray = {};
             MinAwards = 0;
             MaxAwards = 0;
@@ -136,10 +151,13 @@ namespace PluginSettings {
             MapType = MapTypes::Race;
             BetaMaps = false;
 #if TMNEXT
+            ExcludeMapTags = "6,10,23,37,40,46,49";
             ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49};
 #else
+            ExcludeMapTags = "6,10,20,39";
             ExcludeMapTagsArr = {6, 10, 20, 39};
 #endif
+            CustomParams.RemoveAll();
         }
 
         UI::PaddedHeaderSeparator("Length");
@@ -281,19 +299,6 @@ namespace PluginSettings {
             MapPackID = 0;
         }
 
-        MapAuthorNamesArr = ConvertStringToArray(MapAuthor);
-        ExcludedTermsArr = ConvertStringToArray(ExcludedTerms);
-        ExcludedAuthorsArr = ConvertStringToArray(ExcludedAuthors);
-
-        if (!initArrays) {
-            MapTagsArr = ConvertListToArray(MapTags);
-            ExcludeMapTagsArr = ConvertListToArray(ExcludeMapTags);
-            DifficultiesArray = ConvertListToArray(Difficulties);
-            EnvironmentsArr = ConvertListToArray(Environments);
-            VehiclesArr = ConvertStringToArray(Vehicles);
-            initArrays = true;
-        }
-
         UI::PaddedHeaderSeparator("Tags");
 
         if (UI::BeginTable("tags", 2, UI::TableFlags::SizingFixedFit)) {
@@ -344,9 +349,6 @@ namespace PluginSettings {
         TagInclusiveSearch = UI::Checkbox("Tag inclusive search", TagInclusiveSearch);
         UI::SettingDescription("If enabled, maps must contain all selected tags.");
 
-        MapTags = ConvertArrayToList(MapTagsArr);
-        ExcludeMapTags = ConvertArrayToList(ExcludeMapTagsArr);
-
 #if TMNEXT
         UI::PaddedHeaderSeparator("Vista / Vehicle");
 
@@ -393,8 +395,6 @@ namespace PluginSettings {
             UI::EndCombo();
         }
 
-        Environments = ConvertArrayToList(EnvironmentsArr);
-
         if (!EnvironmentsArr.IsEmpty() && UI::ResetButton()) {
             EnvironmentsArr.RemoveRange(0, EnvironmentsArr.Length);
         }
@@ -437,8 +437,6 @@ namespace PluginSettings {
 #if TMNEXT
         UI::SettingDescription("\\$f90" + Icons::ExclamationTriangle + "\\$z This will filter by the base vehicle used by the map, it won't include maps that use car triggers instead.\n\nTo include those maps, consider filtering by tags instead.");
 #endif
-
-        Vehicles = Text::Join(VehiclesArr, ",");
 
         UI::PaddedHeaderSeparator("Awards");
 
@@ -512,8 +510,6 @@ namespace PluginSettings {
             DifficultiesArray.RemoveRange(0, DifficultiesArray.Length);
         }
 
-        Difficulties = ConvertArrayToList(DifficultiesArray);
-
 #if TMNEXT
         UI::SetItemText("Map Type:", 250, inSameLine);
         if (UI::BeginCombo("##MapTypes", tostring(MapType))) {
@@ -531,6 +527,14 @@ namespace PluginSettings {
 
         BetaMaps = UI::Checkbox("Beta maps", BetaMaps);
         UI::SettingDescription("If enabled, the plugin will search for maps uploaded to the Beta Area on " + SHORT_MX);
+
+        UI::PaddedHeaderSeparator("Custom Parameters");
+
+        UI::TextWrapped("Custom parameters that can be passed to the " + SHORT_MX + " API. Use it for any parameter this plugin might be missing.");
+
+        UI::NewLine();
+
+        CustomParams.Render(inSameLine);
     }
 
     void ToggleMapTag(array<int>@ tags, int tagID) {
@@ -541,44 +545,5 @@ namespace PluginSettings {
         } else {
             tags.InsertLast(tagID);
         }
-    }
-
-    string ConvertArrayToList(array<int> arr) {
-        string res = "";
-        for (uint i = 0; i < arr.Length; i++) {
-            res += arr[i] + ",";
-        }
-
-        if (!arr.IsEmpty()) res = res.SubStr(0, res.Length - 1);
-        return res;
-    }
-
-    array<int> ConvertListToArray(const string &in arrStr) {
-        array<int> res = {};
-        if (arrStr.Length == 0) return res;
-
-        array<string> values = arrStr.Split(",");
-
-        for (uint i = 0; i < values.Length; i++) {
-            int n;
-
-            if (values[i] != "" && Text::TryParseInt(values[i], n)) {
-                res.InsertLast(n);
-            }
-        }
-
-        return res;
-    }
-
-    array<string> ConvertStringToArray(const string &in str, const string &in separator = ",") {
-        array<string> res = str.Split(separator);
-        for (int i = int(res.Length) - 1; i >= 0; i--) {
-            if (res[i] == "") {
-                res.RemoveAt(i);
-            } else {
-                res[i] = res[i].Trim();
-            }
-        }
-        return res;
     }
 }

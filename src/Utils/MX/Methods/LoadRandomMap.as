@@ -85,7 +85,9 @@ namespace MX {
                 return null;
             }
 
-            if ((!customParameters || PluginSettings::MapAuthorNamesArr.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
+            array<string> authors = SplitAndFilterString(PluginSettings::MapAuthor.ToLower());
+
+            if ((!customParameters || authors.Find(map.Username.ToLower()) == -1) && RMC::config.IsAuthorBlacklisted(map)) {
                 Log::Warn("[GetRandomMap] Map is from a blacklisted author, skipping...");
                 return null;
             }
@@ -171,7 +173,8 @@ namespace MX {
             }
 
             if (PluginSettings::ExcludedTerms != "") {
-                string termsRegex = Text::Join(PluginSettings::ExcludedTermsArr, "|");
+                array<string> excludedWords = SplitAndFilterString(PluginSettings::ExcludedTerms.ToLower());
+                string termsRegex = Text::Join(excludedWords, "|");
 
                 if (PluginSettings::TermsExactMatch) {
                     // Use word boundaries to only find exact matches
@@ -185,7 +188,9 @@ namespace MX {
             }
 
             if (PluginSettings::ExcludedAuthors != "") {
-                foreach (string author : PluginSettings::ExcludedAuthorsArr) {
+                array<string> excludedAuthors = SplitAndFilterString(PluginSettings::ExcludedAuthors.ToLower());
+
+                foreach (string author : excludedAuthors) {
                     if (map.Username.ToLower() == author.ToLower()) {
                         Log::Warn("[GetRandomMap] Map is uploaded by the excluded author \"" + author + "\", skipping...");
                         return null;
@@ -301,35 +306,35 @@ namespace MX {
                 params.Set("uploadedbefore", yesterday);
             }
 
-            if (PluginSettings::MapTags != "") {
-                params.Set("tag", PluginSettings::MapTags);
+            if (!PluginSettings::MapTagsArr.IsEmpty()) {
+                params.Set("tag", IntArrayToString(PluginSettings::MapTagsArr));
             }
 
-            if (PluginSettings::ExcludeMapTags != "") {
-                params.Set("etag", PluginSettings::ExcludeMapTags);
+            if (!PluginSettings::ExcludeMapTagsArr.IsEmpty()) {
+                params.Set("etag", IntArrayToString(PluginSettings::ExcludeMapTagsArr));
             }
 
             if (PluginSettings::TagInclusiveSearch) {
                 params.Set("taginclusive", "true");
             }
 
-            if (PluginSettings::Difficulties != "") {
-                params.Set("difficulty", PluginSettings::Difficulties);
+            if (!PluginSettings::DifficultiesArray.IsEmpty()) {
+                params.Set("difficulty", IntArrayToString(PluginSettings::DifficultiesArray));
             }
 
-            if (PluginSettings::Environments != "") {
-                params.Set("environment", PluginSettings::Environments);
+            if (!PluginSettings::EnvironmentsArr.IsEmpty()) {
+                params.Set("environment", IntArrayToString(PluginSettings::EnvironmentsArr));
             }
 
-            if (PluginSettings::Vehicles != "") {
-                params.Set("vehicle", PluginSettings::Vehicles);
+            if (!PluginSettings::VehiclesArr.IsEmpty()) {
+                params.Set("vehicle", Text::Join(PluginSettings::VehiclesArr, ","));
             }
 
             bool filterByAuthor = true;
             bool filterByName = true;
 
-            array<string> authors = PluginSettings::MapAuthor.Split(",");
-            array<string> words = PluginSettings::MapName.Split(",");
+            array<string> authors = SplitAndFilterString(PluginSettings::MapAuthor.ToLower());
+            array<string> words = SplitAndFilterString(PluginSettings::MapName.ToLower());
 
             if (PluginSettings::MapAuthor != "" && PluginSettings::MapName != "" && PluginSettings::RandomNameAuthorFilter) {
                 filterByAuthor = Math::Rand(0, authors.Length + words.Length) < int(authors.Length); // avoids giving same weight to each array regardless of length
@@ -393,6 +398,8 @@ namespace MX {
             if (PluginSettings::BetaMaps) {
                 params.Set("inbeta", "1");
             }
+
+            PluginSettings::CustomParams.AddToDictionary(params);
         } else {
             params.Set("maptype", SUPPORTED_MAP_TYPE);
             params.Set("authortimemax", tostring(RMC::config.length));

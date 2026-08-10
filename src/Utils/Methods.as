@@ -39,3 +39,44 @@ dictionary JsonToDict(const Json::Value@ json) {
 
     return converted;
 }
+
+string IntArrayToString(array<int> arr) {
+    array<string> res;
+
+    for (uint i = 0; i < arr.Length; i++) {
+        res.InsertLast(tostring(arr[i]));
+    }
+
+    return Text::Join(res, ",");
+}
+
+array<int> StringToIntArray(const string &in arrStr) {
+    array<int> res = {};
+    if (arrStr.Length == 0) return res;
+
+    array<string> values = arrStr.Split(",");
+
+    for (uint i = 0; i < values.Length; i++) {
+        int n;
+
+        if (values[i] != "" && Text::TryParseInt(values[i], n)) {
+            res.InsertLast(n);
+        }
+    }
+
+    return res;
+}
+
+array<string> SplitAndFilterString(const string &in str, const string &in separator = ",") {
+    array<string> res = str.Split(separator);
+
+    for (int i = int(res.Length) - 1; i >= 0; i--) {
+        if (res[i] == "") {
+            res.RemoveAt(i);
+        } else {
+            res[i] = res[i].Trim();
+        }
+    }
+
+    return res;
+}

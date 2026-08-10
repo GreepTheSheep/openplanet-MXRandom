@@ -122,7 +122,17 @@ bool ShouldLoadRandomMap() {
     return true;
 }
 
+void OnDestroyed() {
+    PluginSettings::SaveSettings();
+}
+
+void OnDisabled() {
+    PluginSettings::SaveSettings();
+}
+
 void Main() {
+    PluginSettings::LoadSettings();
+
 #if TMNEXT
     if (!hasPermissions) {
         Log::Error("You need Club / Standard access to use this plugin!", true);
