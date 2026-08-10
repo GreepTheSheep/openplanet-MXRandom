@@ -306,9 +306,10 @@ namespace PluginSettings {
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Include Tags", vec2(200, 300))) {
-                for (uint i = 0; i < MX::m_mapTags.Length; i++) {
-                    MX::MapTag@ tag = MX::m_mapTags[i];
-                    if (UI::Selectable(tag.Name, MapTagsArr.Find(tag.ID) >= 0)) MapTagsArr = ToggleMapTag(MapTagsArr, tag.ID);
+                foreach (MX::MapTag@ tag : MX::m_mapTags) {
+                    if (UI::Selectable(tag.Name, MapTagsArr.Find(tag.ID) >= 0)) {
+                        ToggleMapTag(MapTagsArr, tag.ID);
+                    }
                 }
 
                 UI::EndListBox();
@@ -316,9 +317,10 @@ namespace PluginSettings {
 
             UI::TableNextColumn();
             if (UI::BeginListBox("##Exclude Tags", vec2(200, 300))) {
-                for (uint i = 0; i < MX::m_mapTags.Length; i++) {
-                    MX::MapTag@ tag = MX::m_mapTags[i];
-                    if (UI::Selectable(tag.Name, ExcludeMapTagsArr.Find(tag.ID) >= 0)) ExcludeMapTagsArr = ToggleMapTag(ExcludeMapTagsArr, tag.ID);
+                foreach (MX::MapTag@ tag : MX::m_mapTags) {
+                    if (UI::Selectable(tag.Name, ExcludeMapTagsArr.Find(tag.ID) >= 0)) {
+                        ToggleMapTag(ExcludeMapTagsArr, tag.ID);
+                    }
                 }
 
                 UI::EndListBox();
@@ -531,14 +533,14 @@ namespace PluginSettings {
         UI::SettingDescription("If enabled, the plugin will search for maps uploaded to the Beta Area on " + SHORT_MX);
     }
 
-    array<int> ToggleMapTag(array<int> tags, int tagID) {
+    void ToggleMapTag(array<int>@ tags, int tagID) {
         int position = tags.Find(tagID);
+
         if (position >= 0) {
             tags.RemoveAt(position);
         } else {
             tags.InsertLast(tagID);
         }
-        return tags;
     }
 
     string ConvertArrayToList(array<int> arr) {
