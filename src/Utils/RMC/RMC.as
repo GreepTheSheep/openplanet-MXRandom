@@ -463,7 +463,7 @@ class RMC {
 
     void RenderBelowGoalMedal() {
         if (ModeHasBelowMedal) {
-            UI::HPadding(25);
+            UI::HPadding(int(25 * UI::GetScale()));
             UI::Image(RMC::MedalTextures[RunConfig.GoalMedal - 1], vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
             UI::SameLine();
             UI::AlignTextToImage(tostring(BelowMedalCount), Fonts::TimerFont);

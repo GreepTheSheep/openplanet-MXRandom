@@ -65,7 +65,7 @@ class RMObjective : RMC {
     }
 
     void RenderBelowGoalMedal() override {
-        UI::HPadding(25);
+        UI::HPadding(int(25 * UI::GetScale()));
         UI::Image(RMC::SkipTex, vec2(PluginSettings::RMC_ImageSize * 2 * UI::GetScale()));
         UI::SameLine();
         UI::AlignTextToImage(tostring(Skips), Fonts::TimerFont);

@@ -3,22 +3,22 @@ namespace UI {
 
     void VPadding(int y) {
         UI::PushStyleVar(UI::StyleVar::ItemSpacing, vec2(0, 0));
-        UI::Dummy(vec2(0, y * UI::GetScale()));
+        UI::Dummy(vec2(0, y));
         UI::PopStyleVar();
     }
 
     void HPadding(int x) {
         UI::PushStyleVar(UI::StyleVar::ItemSpacing, vec2(0, 0));
         UI::SameLine();
-        UI::Dummy(vec2(x * UI::GetScale(), 0));
+        UI::Dummy(vec2(x, 0));
         UI::SameLine();
         UI::PopStyleVar();
     }
 
     void PaddedSeparator(const string &in text) {
-        UI::VPadding(5);
+        UI::VPadding(int(5 * UI::GetScale()));
         UI::SeparatorText(text);
-        UI::VPadding(5);
+        UI::VPadding(int(5 * UI::GetScale()));
     }
 
     void PaddedHeaderSeparator(const string &in text) {
