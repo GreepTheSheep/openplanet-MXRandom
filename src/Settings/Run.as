@@ -16,6 +16,9 @@ namespace PluginSettings {
     const bool _DEFAULT_CALCULATE_MEDALS        = true;
     const bool _DEFAULT_FILTER_LOW_EFFORT       = true;
     const bool _DEFAULT_FILTER_UNTAGGED         = true;
+    const bool _DEFAULT_MAP_PICKS               = false;
+    const bool _DEFAULT_TWITCH_PICKS            = false;
+    const bool _DEFAULT_PLAYERS_PICKS           = false;
 
     [Setting hidden]
     RMC::Category SelectedCategory = _DEFAULT_CATEGORY;
@@ -74,6 +77,15 @@ namespace PluginSettings {
     [Setting hidden]
     bool _FilterUntagged = _DEFAULT_FILTER_UNTAGGED;
 
+    [Setting hidden]
+    bool _MapPicks = _DEFAULT_MAP_PICKS;
+
+    [Setting hidden]
+    bool _TwitchPicks = _DEFAULT_TWITCH_PICKS;
+
+    [Setting hidden]
+    bool _PlayersPicks = _DEFAULT_PLAYERS_PICKS;
+
     void ResetRMCSettings() {
         SelectedCategory     = _DEFAULT_CATEGORY;
         SelectedGameMode     = _DEFAULT_GAMEMODE;
@@ -94,6 +106,9 @@ namespace PluginSettings {
         _CalculateMedals     = _DEFAULT_CALCULATE_MEDALS;
         _FilterLowEffort     = _DEFAULT_FILTER_LOW_EFFORT;
         _FilterUntagged      = _DEFAULT_FILTER_UNTAGGED;
+        _MapPicks            = _DEFAULT_MAP_PICKS;
+        _TwitchPicks         = _DEFAULT_TWITCH_PICKS;
+        _PlayersPicks        = _DEFAULT_PLAYERS_PICKS;
     }
 
     Medals get_GoalMedal() {
@@ -341,6 +356,56 @@ namespace PluginSettings {
     void set_FilterUntagged(bool i) {
         if (SelectedCategory == RMC::Category::Custom) {
             _FilterUntagged = i;
+        }
+    }
+
+    bool get_MapPicks() {
+        if (SelectedCategory != RMC::Category::Custom) {
+            return _DEFAULT_MAP_PICKS;
+        }
+
+        return _MapPicks;
+    }
+
+    void set_MapPicks(bool i) {
+        if (SelectedCategory == RMC::Category::Custom) {
+            _MapPicks = i;
+        }
+    }
+
+    bool get_TwitchPicks() {
+#if DEPENDENCY_TWITCHBASE
+        if (SelectedCategory != RMC::Category::Custom) {
+            return _DEFAULT_TWITCH_PICKS;
+        }
+
+        return _TwitchPicks;
+#else
+        return false;
+#endif
+    }
+
+    void set_TwitchPicks(bool i) {
+        if (SelectedCategory == RMC::Category::Custom) {
+            _TwitchPicks = i;
+        }
+    }
+
+    bool get_PlayersPicks() {
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+        if (SelectedGameMode != RMC::GameMode::Together || SelectedCategory != RMC::Category::Custom) {
+            return _DEFAULT_PLAYERS_PICKS;
+        }
+
+        return _PlayersPicks;
+#else
+        return false;
+#endif
+    }
+
+    void set_PlayersPicks(bool i) {
+        if (SelectedCategory == RMC::Category::Custom) {
+            _PlayersPicks = i;
         }
     }
 }

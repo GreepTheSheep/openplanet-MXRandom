@@ -115,6 +115,44 @@ class EditSettingsModalDialog : ModalDialog {
             }
 #endif
 
+            UI::SameLine();
+            UI::CenterAlign();
+            m_settings.MapPicks = UI::Checkbox(Icons::ThLarge + " Map picks", m_settings.MapPicks);
+            UI::SetItemTooltip("Pick the next map between a list of 3 tracks.");
+
+            if (m_settings.MapPicks) {
+#if DEPENDENCY_TWITCHBASE
+                UI::BeginDisabled(m_mode == RMC::GameMode::Together && m_settings.PlayersPicks);
+                m_settings.TwitchPicks = UI::Checkbox(Icons::Twitch + " Twitch votes", m_settings.TwitchPicks && !m_settings.PlayersPicks);
+                UI::SetItemTooltip("Let Twitch chat vote which map comes next.");
+#else
+                UI::BeginDisabled();
+                UI::Checkbox(Icons::Twitch + " Twitch votes", false);
+
+                UI::SetItemTooltip("Let Twitch chat vote which map comes next.\n\nInstall Twitch Base and set it up to use this setting.");
+#endif
+                UI::EndDisabled();
+
+                UI::SameLine();
+                UI::CenterAlign();
+
+#if TMNEXT
+                if (m_mode == RMC::GameMode::Together) {
+#if DEPENDENCY_BETTERCHAT
+                    UI::BeginDisabled(m_settings.TwitchPicks);
+                    m_settings.PlayersPicks = UI::Checkbox(Icons::Comments + " Players vote", m_settings.PlayersPicks && !m_settings.TwitchPicks);
+                    UI::SetItemTooltip("Let the players in the server vote which map comes next.");
+#else
+                    UI::BeginDisabled();
+                    UI::Checkbox(Icons::Comments + " Players vote", false);
+
+                    UI::SetItemTooltip("Let the players in the server vote which map comes next.\n\nInstall Better Chat to use this setting.");
+#endif
+                    UI::EndDisabled();
+                }
+#endif
+            }
+
             UI::PopFontSize();
 
             UI::EndChild();

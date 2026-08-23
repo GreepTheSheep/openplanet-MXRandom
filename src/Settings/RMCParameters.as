@@ -82,6 +82,15 @@ namespace PluginSettings {
     bool RMC_PushLeaderboardResults = false;
 #endif
 
+    [Setting hidden]
+    int RMC_PollDuration = 15;
+
+    [Setting hidden]
+    bool RMC_TwitchSubsOnly = false;
+
+    [Setting hidden]
+    bool RMC_FastRandomizer = false;
+
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab() {
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
@@ -97,6 +106,9 @@ namespace PluginSettings {
                 RMC_SkipPrepatch = false;
                 RMC_PushLeaderboardResults = true;
 #endif
+                RMC_PollDuration = 15;
+                RMC_TwitchSubsOnly = false;
+                RMC_FastRandomizer = false;
             }
 
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(GoalMedal) + " medal", RMC_AutoSwitch);
@@ -111,6 +123,17 @@ namespace PluginSettings {
             RMC_PushLeaderboardResults = UI::Checkbox("Upload every RMC/RMS run to the leaderboard", RMC_PushLeaderboardResults);
             UI::SettingDescription("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif
+
+            UI::PaddedHeaderSeparator("Polls");
+
+            UI::SetNextItemWidth(300);
+            RMC_PollDuration = UI::SliderInt("Poll duration (seconds)", RMC_PollDuration, 10, 120);
+
+            RMC_TwitchSubsOnly = UI::Checkbox("Subscriber-only mode", RMC_TwitchSubsOnly);
+            UI::SettingDescription("If enabled, only subscribers can vote in Twitch polls to pick maps");
+
+            RMC_FastRandomizer = UI::Checkbox("Fast poll tiebreaker", RMC_FastRandomizer);
+            UI::SettingDescription("If enabled, the plugin will skip the animation when picking a random map from a tied poll");
 
             UI::EndTabItem();
         }

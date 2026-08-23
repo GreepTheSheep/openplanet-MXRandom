@@ -46,6 +46,16 @@ class ModalDialog : IRenderable {
 		return !m_visible;
 	}
 
+	void Open()
+	{
+		m_visible = true;
+	}
+
+	bool Visible()
+	{
+		return m_visible;
+	}
+
 	void Close()
 	{
 		m_visible = false;

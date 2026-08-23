@@ -19,6 +19,7 @@ namespace RMC {
     };
 
     RMC@ currentRun = RMC();
+    PollPicksModalDialog@ currentPoll;
 
     enum GameMode {
         Challenge,
@@ -82,5 +83,20 @@ namespace RMC {
         }
 
         return timer;
+    }
+
+    void RenderPollPreview() {
+        if (currentPoll is null) {
+            return;
+        }
+
+        if (currentPoll.HasPicked || (!currentRun.IsRunning && !currentRun.IsStarting)) {
+            @currentPoll = null;
+            return;
+        }
+
+        if (!currentPoll.Visible()) {
+            currentPoll.RenderPreview();
+        }
     }
 }

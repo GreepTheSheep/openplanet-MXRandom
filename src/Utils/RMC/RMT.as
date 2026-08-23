@@ -115,14 +115,35 @@ class RMT : RMC {
         IsSwitchingMap = true;
 
         while (!UserEndedRun) {
-            @currentMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
+            MX::MapInfo@ map = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
-            if (currentMap !is null) {
-                playedMaps.InsertLast(currentMap);
-                break;
+            if (map !is null) {
+                if (RunConfig.MapPicks) {
+                    mapPicks.InsertLast(map);
+
+                    if (mapPicks.Length == 3) {
+                        break;
+                    }
+                } else {
+                    @currentMap = map;
+                    playedMaps.InsertLast(map);
+                    break;
+                }
             }
 
-            sleep(2000);
+            sleep(1000);
+        }
+
+        if (RunConfig.MapPicks) {
+            @currentMap = PickMap();
+
+            if (currentMap is null) {
+                return;
+            }
+        }
+
+        if ((!IsRunning && !IsStarting) || UserEndedRun) {
+            return;
         }
 
         Log::Trace("[SetupMapStart] Loading map " + currentMap.toString());
@@ -192,19 +213,65 @@ class RMT : RMC {
         startnew(CoroutineFunc(SwitchMap));
     }
 
+    MX::MapInfo@ PickMap() override {
+        // Removes cooldown to give time to vote
+        if (RunConfig.TwitchPicks || RunConfig.PlayersPicks) {
+            MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
+        }
+
+#if DEPENDENCY_BETTERCHAT
+        if (RunConfig.PlayersPicks) {
+            BetterChat::SendChatMessage("Starting poll for the next map. Send 1-" + mapPicks.Length + " to vote!");
+
+            array<string> mapLines;
+
+            for (uint i = 0; i < mapPicks.Length; i++) {
+                mapLines.InsertLast(tostring(i + 1) + " - " + mapPicks[i].toString());
+            }
+
+            sleep(200);
+
+            BetterChat::SendChatMessage("Options: " + Text::Join(mapLines, "  |  "));
+        }
+#endif
+
+        MX::MapInfo@ picked = RMC::PickMap();
+
+#if DEPENDENCY_BETTERCHAT
+        if (RunConfig.PlayersPicks) {
+            BetterChat::SendChatMessage("Poll has ended! Winner: " + picked.toString());
+        }
+#endif
+
+        return picked;
+    }
+
     void SwitchMap() override {
         IsSwitchingMap = true;
         IsPaused = true;
         GotGoalMedal = false;
         GotBelowMedal = false;
 
-        if (nextMap is null && !IsPreloading) {
+        if (nextMap is null && mapPicks.IsEmpty() && !IsPreloading) {
+            // Shouldn't happen normally
             Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
         }
 
         while (IsPreloading) {
             yield();
+        }
+
+        if (RunConfig.MapPicks) {
+            @nextMap = PickMap();
+
+            if (nextMap is null) {
+                return;
+            }
+        }
+
+        if ((!IsRunning && !IsStarting) || UserEndedRun) {
+            return;
         }
 
         @currentMap = nextMap;

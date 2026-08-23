@@ -14,6 +14,9 @@ class RunSettings {
     bool CalculateMedals;
     bool FilterLowEffort;
     bool FilterUntagged;
+    bool MapPicks;
+    bool TwitchPicks;
+    bool PlayersPicks;
 
     RunSettings() { }
 
@@ -29,6 +32,8 @@ class RunSettings {
         CalculateMedals     = PluginSettings::CalculateMedals;
         FilterLowEffort     = PluginSettings::FilterLowEffort;
         FilterUntagged      = PluginSettings::FilterUntagged;
+        MapPicks            = PluginSettings::MapPicks;
+        TwitchPicks         = PluginSettings::TwitchPicks;
 
         switch (mode) {
             case RMC::GameMode::Challenge:
@@ -44,6 +49,7 @@ class RunSettings {
             case RMC::GameMode::Together:
                 MaxTimer = PluginSettings::RMT_MaxTimer;
                 FreeSkips = PluginSettings::RMT_FreeSkips;
+                PlayersPicks = PluginSettings::PlayersPicks;
 
                 break;
             case RMC::GameMode::Objective:
@@ -71,6 +77,9 @@ class RunSettings {
         FreeSkips           = json["FreeSkips"];
         RMS_TimeBack        = json["RMS_TimeBack"];
         RMO_Goal            = json["RMO_Goal"];
+        MapPicks            = json.Get("MapPicks", false);
+        TwitchPicks         = json.Get("TwitchPicks", false);
+        PlayersPicks        = json.Get("PlayersPicks", false);
     }
 
     Json::Value ToJson() {
@@ -87,6 +96,9 @@ class RunSettings {
         json["CalculateMedals"]     = CalculateMedals;
         json["FilterLowEffort"]     = FilterLowEffort;
         json["FilterUntagged"]      = FilterUntagged;
+        json["MapPicks"]            = MapPicks;
+        json["TwitchPicks"]         = TwitchPicks;
+        json["PlayersPicks"]        = PlayersPicks;
         json["MaxTimer"]            = MaxTimer;
         json["FreeSkips"]           = FreeSkips;
         json["RMS_TimeBack"]        = RMS_TimeBack;

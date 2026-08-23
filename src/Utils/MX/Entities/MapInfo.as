@@ -15,6 +15,8 @@ namespace MX {
         string Name;
         string GbxMapName;
         string TitlePack;
+        string Vehicle = "Unknown";
+        int Environment = -1;
         int AuthorTime;
         int GoldTime;
         int SilverTime;
@@ -26,6 +28,8 @@ namespace MX {
         bool AuthorBeatable = true;
         int OnlineRecordCount = 0;
         array<MapTag@> Tags;
+        int OnlineWRTime;
+        string OnlineWRName = "Unknown";
         Json::Value@ jsonCache;
         PrepatchMapTag@ PrepatchTag;
 
@@ -62,6 +66,18 @@ namespace MX {
                 OnlineRecordCount = json.Get("OnlineRecordCount", OnlineRecordCount);
                 AuthorBeaten = json.Get("AuthorBeaten", AuthorBeaten);
                 AuthorBeatable = json.Get("AuthorBeatable", AuthorBeatable);
+                Vehicle = json.Get("VehicleName", Vehicle);
+                Environment = json.Get("Environment", Environment);
+
+#if TMNEXT
+                if (json.HasKey("OnlineWR") && json["OnlineWR"].GetType() != Json::Type::Null && json["OnlineWR"]["RecordTime"].GetType() != Json::Type::Null) {
+                    OnlineWRTime = json["OnlineWR"]["RecordTime"];
+
+                    if (json["OnlineWR"]["DisplayName"].GetType() != Json::Type::Null) {
+                        OnlineWRName = json["OnlineWR"]["DisplayName"];
+                    }
+                }
+#endif
 
                 if (json["UpdatedAt"].GetType() != Json::Type::Null) {
                     UpdatedAt = json["UpdatedAt"];
@@ -165,6 +181,8 @@ namespace MX {
                 json["PlayedAt"] = PlayedAt;
                 json["GbxMapName"] = GbxMapName;
                 json["TitlePack"] = TitlePack;
+                json["VehicleName"] = Vehicle;
+                json["Environment"] = Environment;
                 json["AwardCount"] = AwardCount;
                 json["ServerSizeExceeded"] = ServerSizeExceeded;
                 json["Length"] = Length;
@@ -337,6 +355,32 @@ namespace MX {
             return PrepatchTag !is null;
         }
 
+        CachedImage@ get_Thumbnail() {
+            return Images::CachedFromURL(MX_URL + "/mapthumb/" + this.MapId);
+        }
+
+        string get_TagsText() {
+            if (this.Tags.IsEmpty()) {
+                return "None";
+            }
+
+            string text = this.Tags[0].Name;
+
+            for (uint i = 1; i < this.Tags.Length; i++) {
+                text += ", " + this.Tags[i].Name;
+            }
+
+            return text;
+        }
+
+        string get_EnvironmentName() {
+            if (Environment < 1 || Environment >= MX::Environments::Last) {
+                return "Unknown";
+            }
+
+            return tostring(MX::Environments(Environment)).Replace("_", " ");
+        }
+
         bool HasTag(int tagId) {
             for (uint i = 0; i < Tags.Length; i++) {
                 if (Tags[i].ID == tagId) {
@@ -471,7 +515,7 @@ namespace MX {
         }
 
         string toString() {
-            return this.Name + " by " + this.Username;
+            return "\"" + this.Name + "\" by " + this.Username;
         }
     }
 }

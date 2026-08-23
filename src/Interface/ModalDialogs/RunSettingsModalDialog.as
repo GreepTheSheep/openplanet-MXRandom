@@ -177,6 +177,44 @@ class RunSettingsModalDialog : ModalDialog {
             }
 #endif
 
+            UI::SameLine();
+            UI::CenterAlign();
+            PluginSettings::MapPicks = UI::Checkbox(Icons::Sitemap + " Map picks", PluginSettings::MapPicks);
+            UI::SetItemTooltip("Pick the next map between a list of 3 tracks.");
+
+            if (PluginSettings::MapPicks) {
+#if DEPENDENCY_TWITCHBASE
+                UI::BeginDisabled(PluginSettings::SelectedGameMode == RMC::GameMode::Together && PluginSettings::PlayersPicks);
+                PluginSettings::TwitchPicks = UI::Checkbox(Icons::Twitch + " Twitch votes", PluginSettings::TwitchPicks && !PluginSettings::PlayersPicks);
+                UI::SetItemTooltip("Let Twitch chat vote which map comes next.");
+#else
+                UI::BeginDisabled();
+                UI::Checkbox(Icons::Twitch + " Twitch votes", false);
+
+                UI::SetItemTooltip("Let Twitch chat vote which map comes next.\n\nInstall Twitch Base and set it up to use this setting.");
+#endif
+                UI::EndDisabled();
+
+                UI::SameLine();
+                UI::CenterAlign();
+
+#if TMNEXT
+                if (PluginSettings::SelectedGameMode == RMC::GameMode::Together) {
+#if DEPENDENCY_BETTERCHAT
+                    UI::BeginDisabled(PluginSettings::TwitchPicks);
+                    PluginSettings::PlayersPicks = UI::Checkbox(Icons::Comments + " Players vote", PluginSettings::PlayersPicks && !PluginSettings::TwitchPicks);
+                    UI::SetItemTooltip("Let the players in the server vote which map comes next.");
+#else
+                    UI::BeginDisabled();
+                    UI::Checkbox(Icons::Comments + " Players vote", false);
+
+                    UI::SetItemTooltip("Let the players in the server vote which map comes next.\n\nInstall Better Chat to use this setting.");
+#endif
+                    UI::EndDisabled();
+                }
+#endif
+            }
+
             UI::EndDisabled();
 
             UI::PopFontSize();

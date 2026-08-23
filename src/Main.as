@@ -67,6 +67,7 @@ void Render() {
 #endif
     rmcMenu.Render();
     Renderables::Render();
+    RMC::RenderPollPreview();
 }
 
 UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
@@ -124,10 +125,23 @@ bool ShouldLoadRandomMap() {
 
 void OnDestroyed() {
     PluginSettings::SaveSettings();
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+    Chat::UnregisterChatListener();
+#endif
+#if DEPENDENCY_TWITCHBASE
+    if (g_twitchId > 0) Twitch::Unregister(g_twitchId);
+#endif
 }
 
 void OnDisabled() {
     PluginSettings::SaveSettings();
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+    Chat::UnregisterChatListener();
+#endif
+
+#if DEPENDENCY_TWITCHBASE
+    if (g_twitchId > 0) Twitch::Unregister(g_twitchId);
+#endif
 }
 
 void Main() {
@@ -140,6 +154,9 @@ void Main() {
     }
 
     startnew(RMCLeaderAPI::FetchAccountId);
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+    Chat::RegisterChatListener();
+#endif
 #endif
 
     Fonts::Load();

@@ -21,6 +21,7 @@ class RMC {
     MX::MapInfo@ currentMap;
     MX::MapInfo@ nextMap;
     array<MX::MapInfo@> playedMaps;
+    array<MX::MapInfo@> mapPicks;
     int TimeSpentMap = -1;
     int PBOnMap = -1; // for autosaves on PBs
     bool IsMapInvalidated = false;
@@ -121,7 +122,33 @@ class RMC {
         }
 
         if (!ContinueSavedRun) {
-            MX::LoadRandomMap(RunConfig.CustomSearchFilters);
+            if (RunConfig.MapPicks) {
+                while (!UserEndedRun) {
+                    MX::MapInfo@ map = MX::GetRandomMap(RunConfig.CustomSearchFilters);
+
+                    if (map !is null) {
+                        mapPicks.InsertLast(map);
+
+                        if (mapPicks.Length == 3) {
+                            break;
+                        }
+                    }
+
+                    sleep(1000);
+                }
+
+                MX::MapInfo@ pickedMap = PickMap();
+
+                if (UserEndedRun || (!IsRunning && !IsStarting) || pickedMap is null) {
+                    return;
+                }
+
+                Log::LoadingMapNotification(pickedMap);
+                DataManager::SaveMapToRecentlyPlayed(pickedMap);
+                await(startnew(TM::LoadMap, pickedMap));
+            } else {
+                MX::LoadRandomMap(RunConfig.CustomSearchFilters);
+            }
         }
 
         while (!TM::IsMapLoaded() || !TM::IsPlayerReady()) {
@@ -882,37 +909,73 @@ class RMC {
         Log::Trace("[PreloadNextMap] Preloading a new map.");
 
         @nextMap = null;
+        mapPicks.RemoveRange(0, mapPicks.Length);
+
+        IsPreloading = true;
 
         while (IsStarting || IsRunning) {
-            IsPreloading = true;
+            MX::MapInfo@ map = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
-            @nextMap = MX::GetRandomMap(RunConfig.CustomSearchFilters);
-
-            if (nextMap !is null) {
-                if (currentMap !is null && currentMap == nextMap) {
-                    sleep(2000);
-                    continue;
-                }
-
+            if (map !is null) {
                 if (RunConfig.SkipDuplicateMaps) {
-                    if (playedMaps.Find(nextMap) != -1) {
+                    if (playedMaps.Find(map) != -1) {
                         Log::Trace("Map has been played already, skipping...");
-                        sleep(2000);
+                        sleep(1000);
                         continue;
                     }
                 }
 
-                break;
+                if (RunConfig.MapPicks) {
+                    mapPicks.InsertLast(map);
+                    Log::Trace("[PreloadNextMap] Added " + map.toString() + " to preloaded map picks");
+
+                    if (mapPicks.Length == 3) {
+                        break;
+                    }
+                } else {
+                    @nextMap = map;
+                    Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
+                    break;
+                }
             }
 
-            sleep(2000);
+            sleep(1000);
         }
 
         IsPreloading = false;
+    }
 
-        if (nextMap !is null) {
-            Log::Trace("[PreloadNextMap] Preloaded " + nextMap.toString());
+    MX::MapInfo@ PickMap() {
+        while (IsPreloading) {
+            yield();
         }
+
+        if ((!IsStarting && !IsRunning) || UserEndedRun) {
+            return null;
+        }
+
+        PicksModalDialog@ picksDialog = PicksModalDialog(mapPicks);
+
+#if DEPENDENCY_TWITCHBASE
+        if (RunConfig.TwitchPicks) {
+            TwitchPoll@ poll = TwitchPoll(mapPicks.Length, PluginSettings::RMC_PollDuration);
+            @picksDialog = PollPicksModalDialog(mapPicks, poll);
+        }
+#endif
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+        if (Mode == RMC::GameMode::Together && RunConfig.PlayersPicks) {
+            GamePoll@ poll = GamePoll(mapPicks.Length, PluginSettings::RMC_PollDuration);
+            @picksDialog = PollPicksModalDialog(mapPicks, poll);
+        }
+#endif
+
+        Renderables::Add(picksDialog);
+
+        while (!picksDialog.HasPicked) {
+            yield();
+        }
+
+        return picksDialog.picked;
     }
 
     void SwitchMap() {
@@ -922,7 +985,7 @@ class RMC {
 
         yield(150);
 
-        if (nextMap is null && !IsPreloading) {
+        if (nextMap is null && mapPicks.IsEmpty() && !IsPreloading) {
             // Shouldn't happen normally
             Log::Trace("[SwitchMap] Next map is null, preloading a new one.");
             PreloadNextMap();
@@ -930,6 +993,18 @@ class RMC {
 
         while (IsPreloading) {
             yield();
+        }
+
+        if (RunConfig.MapPicks) {
+            @nextMap = PickMap();
+
+            if (nextMap is null) {
+                return;
+            }
+        }
+
+        if (!IsRunning && !IsStarting) {
+            return;
         }
 
         Log::Trace("[SwitchMap] Switching map to " + nextMap.toString());
