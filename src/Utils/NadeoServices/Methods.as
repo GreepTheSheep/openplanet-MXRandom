@@ -35,11 +35,8 @@ namespace MXNadeoServicesGlobal {
 
         string reqUrl = NadeoServices::BaseURLLive() + "/api/token/club/" + PluginSettings::RMC_Together_ClubId + "/room/" + PluginSettings::RMC_Together_RoomId;
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", reqUrl);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         Log::Trace("[CheckNadeoRoom] Response: " + req.String());
         auto res = req.Json();
@@ -72,11 +69,8 @@ namespace MXNadeoServicesGlobal {
 
         Log::Trace("[CheckIfMapExists] URL: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         auto res = req.Json();
 
@@ -139,11 +133,8 @@ namespace MXNadeoServicesGlobal {
 
         Log::Trace("NadeoServices - " + callingFuncName + ": " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         auto res = req.String();
         Log::Trace("NadeoServices - " + callingFuncName + ": Response: " + res);
@@ -159,11 +150,8 @@ namespace MXNadeoServicesGlobal {
 
         Log::Trace("[SetMapToClubRoom]: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         auto res = req.String();
         Log::Trace("[SetMapToClubRoom] Response: " + res);
@@ -173,24 +161,13 @@ namespace MXNadeoServicesGlobal {
         string url = NadeoServices::BaseURLLive() + "/api/token/club/" + room.clubId + "/room/" + room.activityId + "/edit";
         Json::Value bodyJson = Json::Object();
 
-        Json::Value bodyJsonSettingTimeLimit = Json::Object();
-        bodyJsonSettingTimeLimit["key"] = "S_TimeLimit";
-        bodyJsonSettingTimeLimit["value"] = "1";
-        bodyJsonSettingTimeLimit["type"] = "integer";
-
-        Json::Value bodyJsonSettings = Json::Array();
-        bodyJsonSettings.Add(bodyJsonSettingTimeLimit);
-
-        bodyJson["settings"] = bodyJsonSettings;
+        EditRoomPayloadSetTimeout(bodyJson, 1);
         string body = Json::Write(bodyJson);
 
         Log::Trace("[ClubRoomSwitchMapAsync]: " + url + " - " + body);
         Net::HttpRequest@ req = NadeoServices::Post("NadeoLiveServices", url, body);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         auto res = req.String();
         Log::Trace("[ClubRoomSwitchMapAsync] Response: " + res);
@@ -213,11 +190,8 @@ namespace MXNadeoServicesGlobal {
 
         Log::Trace("[GetMapWorldRecord] URL: " + url);
         Net::HttpRequest@ req = NadeoServices::Get("NadeoLiveServices", url);
-        req.Start();
 
-        while (!req.Finished()) {
-            yield();
-        }
+        await(req.Start());
 
         Log::Trace("[GetMapWorldRecord] Response: " + req.String());
         auto res = req.Json();
