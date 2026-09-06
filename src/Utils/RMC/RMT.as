@@ -332,6 +332,10 @@ class RMT : RMC {
 
         if (nextMap !is null) {
             BRM::PreCacheMapByUid_Async(nextMap.MapUid, nextMap.Name);
+        } else if (RunConfig.MapPicks) {
+            for (uint i = 0; i < mapPicks.Length; i++) {
+                BRM::PreCacheMapByUid_Async(mapPicks[i].MapUid, mapPicks[i].Name);
+            }
         }
     }
 #endif
