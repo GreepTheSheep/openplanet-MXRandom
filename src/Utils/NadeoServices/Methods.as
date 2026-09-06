@@ -103,6 +103,23 @@ namespace MXNadeoServicesGlobal {
         }
     }
 
+    void AddSetting(Json::Value@ body, const string &in key, const string &in type, const string &in value) {
+        if (key == "" || type == "" || value == "") {
+            return;
+        }
+
+        if (!body.HasKey("settings")) {
+            body["settings"] = Json::Array();
+        }
+
+        Json::Value settingBody = Json::Object();
+        settingBody["key"] = key;
+        settingBody["type"] = type;
+        settingBody["value"] = value;
+
+        body["settings"].Add(settingBody);
+    }
+
     void EditRoomPayloadSetMaps(Json::Value@ data, string[]@ maps) {
         data["maps"] = Json::Array();
         for (uint i = 0; i < maps.Length; i++) {
@@ -111,13 +128,9 @@ namespace MXNadeoServicesGlobal {
     }
 
     void EditRoomPayloadSetTimeout(Json::Value@ data, int timeout) {
-        if (!data.HasKey("settings")) {
-            data["settings"] = Json::Array();
-        }
-
-        auto timeoutSetting = Json::Parse('{"key": "S_TimeLimit", "type": "integer", "value": "1"}');
-        timeoutSetting["value"] = tostring(timeout);
-        data["settings"].Add(timeoutSetting);
+        AddSetting(data, "S_TimeLimit", "integer", tostring(timeout));
+        AddSetting(data, "S_ChatTime", "integer", "0");
+        AddSetting(data, "S_DelayBeforeNextMap", "integer", "1");
     }
 
     void ClubRoomSetMapAndSwitchAsync(const NadeoServices::ClubRoom@ &in room, const string &in mapUID) {
@@ -233,7 +246,7 @@ namespace MXNadeoServicesGlobal {
             Log::Error("Couldn't get current server info", true);
             return;
         }
-        
+
         if (cs.clubId <= 0) {
             Log::Error("Could not detect club ID for current server (" + cs.name + " / " + cs.login + ")", true);
             return;
