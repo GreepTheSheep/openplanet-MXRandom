@@ -326,7 +326,7 @@ class RMT : RMC {
         IsSwitchingMap = false;
     }
 
-#if DEPENDENCY_BETTERROOMMANAGER
+#if DEPENDENCY_BETTERROOMMANAGER || DEPENDENCY_PRE_CACHE_MAPS
     void PreloadNextMap() override {
         RMC::PreloadNextMap();
 
@@ -334,7 +334,11 @@ class RMT : RMC {
             BRM::PreCacheMapByUid_Async(nextMap.MapUid, nextMap.Name);
         } else if (RunConfig.MapPicks) {
             for (uint i = 0; i < mapPicks.Length; i++) {
+#if DEPENDENCY_BETTERROOMMANAGER
                 BRM::PreCacheMapByUid_Async(mapPicks[i].MapUid, mapPicks[i].Name);
+#elif DEPENDENCY_PRE_CACHE_MAPS
+                PreCacher::CheckAndCacheMapIfNew_Async(mapPicks[i].MapUid, mapPicks[i].Name);
+#endif
             }
         }
     }
