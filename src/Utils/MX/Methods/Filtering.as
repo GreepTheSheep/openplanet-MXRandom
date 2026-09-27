@@ -15,7 +15,7 @@ namespace MX {
         for (uint i = 0; i < names.Length; i++) {
             string name = names[i];
 
-            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|RM[CST] ?free|free ?(RM[CST]?|.*?AT)|RMCF", Regex::Flags::CaseInsensitive)) {
+            if (Regex::Contains(name, "(^|[^a-z])RM[CST]($|[^a-z])|(RM[CST]?|AT) ?free|free ?(RM[CST]?|.*?AT)|RMCF", Regex::Flags::CaseInsensitive)) {
                 Log::Warn("Map contains the word RMC, RMS, or RMT.");
                 return true;
             }
@@ -64,7 +64,7 @@ namespace MX {
             ) {
                 Log::Warn("Map is most likely untagged Altered Nadeo.");
                 return true;
-            } 
+            }
 
             // Training campaign
             if (Regex::Contains(map.Name, "Training (- )?[0-2]?\\d", Regex::Flags::CaseInsensitive) && !map.Name.Contains("Better")) {
