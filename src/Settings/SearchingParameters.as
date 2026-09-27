@@ -372,7 +372,7 @@ namespace PluginSettings {
 
 #if MP4
                 // Skip environments not available yet
-                if (envi >= MX::Environments::Rally && envi <= MX::Environments::Bay) {
+                if (envi == MX::Environments::Rally || envi == MX::Environments::Coast) {
                     continue;
                 }
 #endif

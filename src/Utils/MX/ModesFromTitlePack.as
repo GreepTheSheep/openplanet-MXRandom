@@ -16,7 +16,7 @@ namespace MX {
         // TMOne's script doesn't work outside campaigns
         // { "TMOneAlpine",     "Unbitn/TMOne/TimeAttackOne" },
         // { "TMOneSpeed",      "Unbitn/TMOne/TimeAttackOne" },
-        // { "TMOneBay",        "Unbitn/TMOne/TimeAttackOne" },
+        { "TMOneBay",        "Unbitn/TMOne/TimeAttackOne" },
         { "TM2Rally",        "GlobalSolo" },
         { "TM2U_Island",     "SoloUni" },
         { "TM2_Coast",       "CoastSolo" },
