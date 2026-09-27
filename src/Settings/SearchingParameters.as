@@ -52,11 +52,11 @@ namespace PluginSettings {
 
     [Setting hidden]
 #if TMNEXT
-    string ExcludeMapTags = "6,10,23,37,40,46,49,71";
-    array<int> ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49, 71};
+    string ExcludeMapTags = "6,10,23,37,40,46,49,71,72";
+    array<int> ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49, 71, 72};
 #else
-    string ExcludeMapTags = "6,10,20,39";
-    array<int> ExcludeMapTagsArr = {6, 10, 20, 39};
+    string ExcludeMapTags = "6,10,20,39,49";
+    array<int> ExcludeMapTagsArr = {6, 10, 20, 39, 49};
 #endif
 
     [Setting hidden]
@@ -151,11 +151,11 @@ namespace PluginSettings {
             MapType = MapTypes::Race;
             BetaMaps = false;
 #if TMNEXT
-            ExcludeMapTags = "6,10,23,37,40,46,49,71";
-            ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49, 71};
+            ExcludeMapTags = "6,10,23,37,40,46,49,71,72";
+            ExcludeMapTagsArr = {6, 10, 23, 37, 40, 46, 49, 71, 72};
 #else
-            ExcludeMapTags = "6,10,20,39";
-            ExcludeMapTagsArr = {6, 10, 20, 39};
+            ExcludeMapTags = "6,10,20,39,49";
+            ExcludeMapTagsArr = {6, 10, 20, 39, 49};
 #endif
             CustomParams.RemoveAll();
         }
