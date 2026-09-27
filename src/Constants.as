@@ -82,6 +82,7 @@ const array<string> MAP_FIELDS_ARRAY = {
     "Exebuild",
     "Environment",
     "VehicleName",
+    "Difficulty",
 #if TMNEXT
     "OnlineRecordCount",
     "OnlineWR",

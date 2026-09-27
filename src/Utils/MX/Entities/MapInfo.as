@@ -16,6 +16,7 @@ namespace MX {
         string GbxMapName;
         string TitlePack;
         string Vehicle = "Unknown";
+        Difficulties Difficulty = Difficulties::Beginner;
         int Environment = -1;
         int AuthorTime;
         int GoldTime;
@@ -68,6 +69,7 @@ namespace MX {
                 AuthorBeatable = json.Get("AuthorBeatable", AuthorBeatable);
                 Vehicle = json.Get("VehicleName", Vehicle);
                 Environment = json.Get("Environment", Environment);
+                Difficulty = Difficulties(int(json.Get("Difficulty", Difficulty)));
 
 #if TMNEXT
                 if (json.HasKey("OnlineWR") && json["OnlineWR"].GetType() != Json::Type::Null && json["OnlineWR"]["RecordTime"].GetType() != Json::Type::Null) {
@@ -189,6 +191,7 @@ namespace MX {
                 json["OnlineRecordCount"] = OnlineRecordCount;
                 json["AuthorBeatable"] = AuthorBeatable;
                 json["AuthorBeaten"] = AuthorBeaten;
+                json["Difficulty"] = Difficulty;
 
                 Json::Value uploaderObject = Json::Object();
                 uploaderObject["UserId"] = UserId;
