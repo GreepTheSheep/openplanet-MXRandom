@@ -487,7 +487,7 @@ namespace PluginSettings {
 
         UI::SetItemText("Difficulties:", 250);
         if (UI::BeginCombo("###DifficultyFilter", difficultyText)) {
-            for (uint i = 0; i <= MX::Difficulties::Impossible; i++) {
+            for (uint i = 0; i < MX::Difficulties::Last; i++) {
                 UI::PushID("DifficultyBtn" + i);
 
                 bool inArray = DifficultiesArray.Find(MX::Difficulties(i)) != -1;

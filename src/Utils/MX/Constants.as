@@ -5,7 +5,8 @@ namespace MX {
         Advanced,
         Expert,
         Lunatic,
-        Impossible
+        Impossible,
+        Last
     };
 
     enum Environments {
