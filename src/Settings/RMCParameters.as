@@ -91,6 +91,12 @@ namespace PluginSettings {
     [Setting hidden]
     bool RMC_FastRandomizer = false;
 
+    [Setting hidden]
+    Y_Alignment RMC_Y_Alignment = Y_Alignment::None;
+
+    [Setting hidden]
+    X_Alignment RMC_X_Alignment = X_Alignment::None;
+
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab() {
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
@@ -157,12 +163,37 @@ namespace PluginSettings {
 #endif
                 RMC_EditedMedalsWarns = true;
                 RMC_TagsLength = 1;
-
+                RMC_Y_Alignment = Y_Alignment::None;
+                RMC_X_Alignment = X_Alignment::None;
             }
 
             HideWithGameUI = UI::Checkbox("Show/Hide with game UI", HideWithGameUI);
             HideWithOP = UI::Checkbox("Show/Hide with Openplanet overlay", HideWithOP);
             CloseOverlayOnMapLoad = UI::Checkbox("Hide Openplanet overlay on map loading", CloseOverlayOnMapLoad);
+
+            UI::SetItemText("Window Alignment:", 225);
+            if (UI::BeginCombo("##YAlignment", tostring(RMC_Y_Alignment))) {
+                for (int i = 0; i < Y_Alignment::Last; i++) {
+                    if (UI::Selectable(tostring(Y_Alignment(i)), RMC_Y_Alignment == Y_Alignment(i))) {
+                        RMC_Y_Alignment = Y_Alignment(i);
+                    }
+                }
+
+                UI::EndCombo();
+            }
+
+            UI::SameLine();
+
+            UI::SetNextItemWidth(100);
+            if (UI::BeginCombo("##XAlignment", tostring(RMC_X_Alignment))) {
+                for (int i = 0; i < X_Alignment::Last; i++) {
+                    if (UI::Selectable(tostring(X_Alignment(i)), RMC_X_Alignment == X_Alignment(i))) {
+                        RMC_X_Alignment = X_Alignment(i);
+                    }
+                }
+
+                UI::EndCombo();
+            }
 
             UI::PaddedHeaderSeparator("Game modes");
 

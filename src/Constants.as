@@ -43,6 +43,20 @@ enum Medals {
     Last
 }
 
+enum Y_Alignment {
+    None,
+    Top,
+    Bottom,
+    Last
+}
+
+enum X_Alignment {
+    None,
+    Left,
+    Right,
+    Last
+}
+
 #if FORCE_NO_DEV
 const bool IS_DEV_MODE                  = false;
 #else

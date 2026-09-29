@@ -19,5 +19,25 @@ class RMCWindow : Window {
         } else {
             RMC::RenderMenu();
         }
+
+        AlignWindow();
+    }
+
+    void AlignWindow() {
+        if (PluginSettings::RMC_Y_Alignment != Y_Alignment::None || PluginSettings::RMC_X_Alignment != X_Alignment::None) {
+            vec2 pos = UI::GetWindowPos();
+            vec2 screen = Display::GetSize();
+            vec2 window = UI::GetWindowSize();
+
+            if (PluginSettings::RMC_X_Alignment != X_Alignment::None) {
+                pos.x = (screen.x - window.x) * int(PluginSettings::RMC_X_Alignment - 1);
+            }
+
+            if (PluginSettings::RMC_Y_Alignment != Y_Alignment::None) {
+                pos.y = (screen.y - window.y) * int(PluginSettings::RMC_Y_Alignment - 1);
+            }
+
+            UI::SetWindowPos(pos);
+        }
     }
 }
