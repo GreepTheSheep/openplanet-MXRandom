@@ -101,7 +101,10 @@ class PicksModalDialog : ModalDialog {
             if (CanPickMap()) {
                 UI::SetMouseCursor(UI::MouseCursor::Hand);
 
-                if (UI::IsItemClicked()) {
+                if (UI::IsMouseDoubleClicked()) {
+                    @picked = map;
+                    HasPicked = true;
+                } else if (UI::IsItemClicked()) {
                     @picked = map;
                 } else if (map == picked && UI::IsItemClicked(UI::MouseButton::Right)) {
                     @picked = null;

@@ -124,7 +124,7 @@ class EditSettingsModalDialog : ModalDialog {
 #if DEPENDENCY_TWITCHBASE
                 UI::BeginDisabled(m_mode == RMC::GameMode::Together && m_settings.PlayersPicks);
                 m_settings.TwitchPicks = UI::Checkbox(Icons::Twitch + " Twitch votes", m_settings.TwitchPicks && !m_settings.PlayersPicks);
-                UI::SetItemTooltip("Let Twitch chat vote which map comes next.");
+                UI::SetItemTooltip("Let Twitch chat vote which map comes next.\n\nRemember to set up your channel with the Twitch Base plugin!");
 #else
                 UI::BeginDisabled();
                 UI::Checkbox(Icons::Twitch + " Twitch votes", false);
