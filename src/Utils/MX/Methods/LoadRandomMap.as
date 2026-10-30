@@ -2,7 +2,7 @@ namespace MX {
     bool isLoadingPreload = false;
 
     // "Unassigned" = MP1 Canyon and TMF Stadium maps. They are guaranteed to be compatible as editing the map would change the title ID.
-    const array<string> tmAllCompatibleTitlepacks = { "TMAll", "TMCanyon", "TMStadium", "TMValley", "TMLagoon", "Unassigned" };
+    const array<string> tmAllCompatibleTitlepacks = { "TMAll", "Trackmania_2", "TMCanyon", "TMStadium", "TMValley", "TMLagoon", "Unassigned" };
 
     bool isMapInsideDateParams(const MX::MapInfo@ &in map) {
         int64 mapUpdatedDate = Time::ParseFormatString('%FT%T', map.UpdatedAt);
