@@ -24,6 +24,10 @@ class PollPicksModalDialog : PicksModalDialog {
         return m_picksPoll.HasStarted;
     }
 
+    bool get_HasStarted() override {
+        return m_picksPoll.HasStarted;
+    }
+
     vec2 get_VoteCountSize()   { return VOTE_COUNT_SIZE * UI::GetScale(); }
     vec2 get_VotePreviewSize() { return VOTE_PREVIEW_SIZE * UI::GetScale(); }
 

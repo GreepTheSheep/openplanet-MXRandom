@@ -219,21 +219,7 @@ class RMT : RMC {
             MXNadeoServicesGlobal::ClubRoomSetCountdownTimer(RMTRoom, 0);
         }
 
-#if DEPENDENCY_BETTERCHAT
-        if (RunConfig.PlayersPicks) {
-            BetterChat::SendChatMessage("Starting poll for the next map. Send 1-" + mapPicks.Length + " to vote!");
 
-            array<string> mapLines;
-
-            for (uint i = 0; i < mapPicks.Length; i++) {
-                mapLines.InsertLast(tostring(i + 1) + " - " + mapPicks[i].toString());
-            }
-
-            sleep(200);
-
-            BetterChat::SendChatMessage("Options: " + Text::Join(mapLines, "  |  "));
-        }
-#endif
 
         MX::MapInfo@ picked = RMC::PickMap();
 

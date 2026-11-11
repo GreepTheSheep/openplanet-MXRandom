@@ -971,6 +971,23 @@ class RMC {
 
         Renderables::Add(picksDialog);
 
+#if TMNEXT && DEPENDENCY_BETTERCHAT
+        if (Mode == RMC::GameMode::Together && RunConfig.PlayersPicks) {
+            while (!picksDialog.HasStarted) {
+                yield();
+            }
+
+            BetterChat::SendChatMessage(Icons::Users + " Starting poll for the next map, send 1-" + mapPicks.Length + " to vote. Poll ends in " + PluginSettings::RMC_PollDuration + " seconds!");
+
+            for (uint i = 0; i < mapPicks.Length; i++) {
+                MX::MapInfo@ map = mapPicks[i];
+
+                yield();
+                BetterChat::SendChatMessage(tostring(i + 1) + " - " + map.toString() + " | " + UI::FormatTime(map.AuthorTime, map.Type) + " | " + map.TagsText);
+            }
+        }
+#endif
+
         while (!picksDialog.HasPicked) {
             yield();
         }

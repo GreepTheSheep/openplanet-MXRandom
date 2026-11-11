@@ -29,6 +29,10 @@ class PicksModalDialog : ModalDialog {
     bool CanPickMap() {
         return true;
     }
+    
+    bool get_HasStarted() {
+        return false;
+    }
 
     vec2  get_CardSize()    { return THUMBNAIL_SIZE * UI::GetScale(); }
     vec2  get_PreviewSize() { return CardSize - vec2(0, CardSize.y * 0.8); }
