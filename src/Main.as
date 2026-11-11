@@ -5,7 +5,7 @@ StatsWindow statsMenu;
 
 void RenderMenu() {
 #if TMNEXT
-    if (!hasPermissions) return;
+    if (!HAS_PERMISSIONS) return;
 #endif
     if (UI::BeginMenu(MX_COLOR_STR + Icons::Random + " \\$z" + SHORT_MX + " Randomizer" + (MX::APIDown ? " \\$f00" + Icons::Server : ""))) {
         if (MX::APIDown && !IS_DEV_MODE) {
@@ -54,7 +54,7 @@ void RenderMenu() {
 
 void RenderInterface() {
 #if TMNEXT
-    if (!hasPermissions) return;
+    if (!HAS_PERMISSIONS) return;
 #endif
     mainMenu.Render();
     debugMenu.Render();
@@ -63,7 +63,7 @@ void RenderInterface() {
 
 void Render() {
 #if TMNEXT
-    if (!hasPermissions) return;
+    if (!HAS_PERMISSIONS) return;
 #endif
     rmcMenu.Render();
     Renderables::Render();
@@ -72,7 +72,7 @@ void Render() {
 
 UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
 #if TMNEXT
-    if (!hasPermissions) return UI::InputBlocking::DoNothing;
+    if (!HAS_PERMISSIONS) return UI::InputBlocking::DoNothing;
 #endif
 
     if (PluginSettings::ListeningForKey) {
@@ -148,7 +148,7 @@ void Main() {
     PluginSettings::LoadSettings();
 
 #if TMNEXT
-    if (!hasPermissions) {
+    if (!HAS_PERMISSIONS) {
         Log::Error("You need Club / Standard access to use this plugin!", true);
         return;
     }
