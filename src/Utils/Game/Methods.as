@@ -478,4 +478,28 @@ namespace TM {
 
         return gametime > start;
     }
+
+    CInputScriptPad@ GetActivePad() {
+        auto app = cast<CTrackMania>(GetApp());
+
+        if (app.InputPort is null) {
+            return null;
+        }
+
+        for (uint i = 0; i < app.InputPort.Script_Pads.Length; i++) {
+            CInputScriptPad@ pad = app.InputPort.Script_Pads[i];
+
+            if (pad is null) {
+                continue;
+            }
+
+            if (pad.Type == CInputScriptPad::EPadType::Keyboard || pad.Type == CInputScriptPad::EPadType::Mouse) {
+                continue;
+            }
+
+            return pad;
+        }
+
+        return null;
+    }
 }

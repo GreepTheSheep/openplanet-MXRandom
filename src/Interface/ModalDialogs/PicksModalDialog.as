@@ -20,6 +20,72 @@ class PicksModalDialog : ModalDialog {
         options = maps;
         float width = (THUMBNAIL_SIZE.x * maps.Length) + 50;
         m_size = vec2(width, 400);
+        startnew(CoroutineFunc(PadLoop));
+    }
+
+    void PadLoop() {
+        if (!CanPickMap()) {
+            return;
+        }
+
+        while (!HasPicked) {
+            yield();
+
+            if (!PluginSettings::RMC_PadNavigationPicks) {
+                sleep(500);
+                continue;
+            }
+
+            int index = picked is null ? int(options.Length / 2) : options.Find(picked);
+
+            // Shouldn't happen, but doesn't hurt
+            if (index == -1) {
+                sleep(100);
+                continue;
+            }
+
+            CInputScriptPad@ pad = TM::GetActivePad();
+
+            if (pad is null) {
+                sleep(100);
+                continue;
+            }
+
+            for (uint i = 0; i < pad.ButtonEvents.Length; i++) {
+                switch (pad.ButtonEvents[i]) {
+                    case CInputScriptPad::EButton::A:
+                        if (picked is null) {
+                            @picked = options[index];
+                        } else {
+                            HasPicked = true;
+                            return;
+                        }
+
+                        break;
+
+                    case CInputScriptPad::EButton::Left:
+                    case CInputScriptPad::EButton::LeftStick_Left:
+                    case CInputScriptPad::EButton::RightStick_Left:
+                        if (index > 0) {
+                            @picked = options[index - 1];
+                        }
+
+                        break;
+
+                    case CInputScriptPad::EButton::Right:
+                    case CInputScriptPad::EButton::LeftStick_Right:
+                    case CInputScriptPad::EButton::RightStick_Right:
+                        if (index < int(options.Length - 1)) {
+                            @picked = options[index + 1];
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
     }
 
     bool CanClose() override {

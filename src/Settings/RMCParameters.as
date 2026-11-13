@@ -97,6 +97,9 @@ namespace PluginSettings {
     [Setting hidden]
     X_Alignment RMC_X_Alignment = X_Alignment::None;
 
+    [Setting hidden]
+    bool RMC_PadNavigationPicks = false;
+
     [SettingsTab name="Random Map Challenge" order="1" icon="Random"]
     void RenderRMCSettingTab() {
         UI::BeginTabBar("RMCSettingsCategoryTabBar", UI::TabBarFlags::FittingPolicyResizeDown);
@@ -115,6 +118,7 @@ namespace PluginSettings {
                 RMC_PollDuration = 15;
                 RMC_TwitchSubsOnly = false;
                 RMC_FastRandomizer = false;
+                RMC_PadNavigationPicks = false;
             }
 
             RMC_AutoSwitch = UI::Checkbox("Automatically switch map after getting the " + tostring(GoalMedal) + " medal", RMC_AutoSwitch);
@@ -129,6 +133,9 @@ namespace PluginSettings {
             RMC_PushLeaderboardResults = UI::Checkbox("Upload every RMC/RMS run to the leaderboard", RMC_PushLeaderboardResults);
             UI::SettingDescription("The leaderboard is available on https://flinkblog.de/RMC/");
 #endif
+
+            RMC_PadNavigationPicks = UI::Checkbox("Enable pad navigation for map picks", RMC_PadNavigationPicks);
+            UI::SettingDescription("If enabled, map picks can be selected using a pad.\n\nNote: Inputs will still be sent to the game in the background.");
 
             UI::PaddedHeaderSeparator("Polls");
 
