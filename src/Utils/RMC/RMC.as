@@ -204,6 +204,8 @@ class RMC {
     }
 
     void UpdateSettings(RunSettings@ newSettings) {
+        bool updatePreload = ShouldUpdateMap(RunConfig, newSettings);
+
         if (RunConfig.Category == RMC::Category::Custom || this.Mode == RMC::GameMode::Objective) {
             int oldLimit = TimeLimit;
             @RunConfig = newSettings;
@@ -217,6 +219,28 @@ class RMC {
                 IsPaused = false;
             }
         }
+        
+        while (IsPreloading) {
+            yield();
+        }
+        
+        if (updatePreload) {
+            PreloadNextMap();
+        }
+    }
+    
+    bool ShouldUpdateMap(RunSettings@ old, RunSettings@ new) {
+        if (new.Category != RMC::Category::Custom) {
+            return false;
+        }
+        
+        return old.CustomSearchFilters != new.CustomSearchFilters
+            || old.SkipDuplicateMaps != new. SkipDuplicateMaps
+            || old.SkipUnbeatenMedals != new.SkipUnbeatenMedals
+            || old.SkipUnbeatenMaps != new.SkipUnbeatenMaps
+            || old.FilterLowEffort != new.FilterLowEffort
+            || old.FilterUntagged != new.FilterUntagged
+            || old.MapPicks != new.MapPicks;
     }
 
     Json::Value@ ToJson() {

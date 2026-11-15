@@ -13,6 +13,10 @@ class EditSettingsModalDialog : ModalDialog {
         return false;
     }
 
+    void UpdateRunSettings() {
+        RMC::currentRun.UpdateSettings(m_settings);
+    }
+
     void RenderDialog() override {
         UI::BeginTabBar("RunSettings");
 
@@ -184,8 +188,7 @@ class EditSettingsModalDialog : ModalDialog {
 
         if (UI::Button("Close")) {
             Close();
-
-            RMC::currentRun.UpdateSettings(m_settings);
+            startnew(CoroutineFunc(UpdateRunSettings));
         }
 
         UI::PopFontSize();
