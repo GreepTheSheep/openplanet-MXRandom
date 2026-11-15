@@ -127,6 +127,7 @@ class RMC {
                     MX::MapInfo@ map = MX::GetRandomMap(RunConfig.CustomSearchFilters);
 
                     if (map !is null) {
+                        map.PrecacheThumbnail();
                         mapPicks.InsertLast(map);
 
                         if (mapPicks.Length == 3) {
@@ -926,6 +927,7 @@ class RMC {
                 }
 
                 if (RunConfig.MapPicks) {
+                    map.PrecacheThumbnail();
                     mapPicks.InsertLast(map);
                     Log::Trace("[PreloadNextMap] Added " + map.toString() + " to preloaded map picks");
 

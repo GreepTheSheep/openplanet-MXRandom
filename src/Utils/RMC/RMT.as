@@ -119,6 +119,7 @@ class RMT : RMC {
 
             if (map !is null) {
                 if (RunConfig.MapPicks) {
+                    map.PrecacheThumbnail();
                     mapPicks.InsertLast(map);
 
                     if (mapPicks.Length == 3) {

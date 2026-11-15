@@ -362,6 +362,10 @@ namespace MX {
             return Images::CachedFromURL(MX_URL + "/mapthumb/" + this.MapId);
         }
 
+        void PrecacheThumbnail() {
+            Images::CachedFromURL(MX_URL + "/mapthumb/" + this.MapId);
+        }
+
         string get_TagsText() {
             if (this.Tags.IsEmpty()) {
                 return "None";
