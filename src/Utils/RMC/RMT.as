@@ -318,7 +318,11 @@ class RMT : RMC {
         RMC::PreloadNextMap();
 
         if (nextMap !is null) {
+#if DEPENDENCY_BETTERROOMMANAGER
             BRM::PreCacheMapByUid_Async(nextMap.MapUid, nextMap.Name);
+#elif DEPENDENCY_PRE_CACHE_MAPS
+            PreCacher::CheckAndCacheMapIfNew_Async(nextMap.MapUid, nextMap.Name);
+#endif
         } else if (RunConfig.MapPicks) {
             for (uint i = 0; i < mapPicks.Length; i++) {
 #if DEPENDENCY_BETTERROOMMANAGER
